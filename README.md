@@ -7,14 +7,14 @@
        /_/   
 </pre>
 
-## Overview
+### Overview
 `nlpcraft` project allows to built advanced natural language
 interface to any device, data source or a service. 
 
 ### Prerequisites
 Here's what you will need to get started with `nlpcraft`:
  - [Java SE Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (JRE) ver. 8 or later installed.
- - Latest [Git]("https://git-scm.com/downloads) and [Maven](https://maven.apache.org/install.html).
+ - Latest [Git](https://git-scm.com/downloads) and [Maven](https://maven.apache.org/install.html).
  
 ### Clone This Project
 Clone this project to a local folder:
