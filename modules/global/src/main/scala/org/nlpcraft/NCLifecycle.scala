@@ -26,14 +26,15 @@
 
 package org.nlpcraft
 
-import com.datalingvo.DLE
+import org.nlpcraft._
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.compat.Platform._
 
 /**
- * Basic abstract class defining internal service/manager/component lifecycle.
- */
+  * Basic abstract class defining internal service/manager/component lifecycle. Components that
+  * extend this class are typically called 'managers'.
+  */
 abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
     private val startMsec = currentTime
 
@@ -66,7 +67,7 @@ abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
     /**
      * Starts this component.
      */
-    @throws[DLE]
+    @throws[NCE]
     def start(): NCLifecycle = {
         ensureStopped()
         
@@ -82,7 +83,7 @@ abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
     /**
      * Stops this component.
      */
-    @throws[DLE]
+    @throws[NCE]
     def stop() {
         checkStopping()
         

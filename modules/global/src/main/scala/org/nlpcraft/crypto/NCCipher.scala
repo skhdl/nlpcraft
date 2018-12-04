@@ -28,7 +28,7 @@ package org.nlpcraft.crypto
 
 import java.security.{Key, SecureRandom, GeneralSecurityException ⇒ GSE}
 
-import com.datalingvo._
+import org.nlpcraft._
 import javax.crypto.Cipher
 import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}
 import org.apache.commons.codec.binary.Base64
@@ -66,7 +66,7 @@ object NCCipher {
       * @param data String to encrypt.
       * @return
       */
-    @throws[DLE]
+    @throws[NCE]
     def encrypt(data: String): String =
         encrypt(data, KEY_SPEC)
 
@@ -76,7 +76,7 @@ object NCCipher {
       * @param key Key.
       * @return
       */
-    @throws[DLE]
+    @throws[NCE]
     def encrypt(data: String, key: Key): String = {
         catching(wrapGSE) {
             val iv = generateIv()
@@ -134,7 +134,7 @@ object NCCipher {
       * @param key Encryption key.
       * @return
       */
-    @throws[DLE]
+    @throws[NCE]
     def decrypt(data: String, key: Key): String = {
         catching(wrapGSE) {
             val cipher = newCipher
@@ -160,9 +160,9 @@ object NCCipher {
       *
       * @return
       */
-    @throws[DLE]
+    @throws[NCE]
     private def wrapGSE[R]: Catcher[R] = {
-        case e: GSE ⇒ throw new DLE(s"Cryptography error: ${e.getMessage}", e)
+        case e: GSE ⇒ throw new NCE(s"Cryptography error: ${e.getMessage}", e)
     }
 
     /**

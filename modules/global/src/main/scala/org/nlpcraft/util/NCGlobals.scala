@@ -45,7 +45,6 @@ import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
-import org.nlpcraft.NCDebug
 import resource._
 
 import scala.concurrent.ExecutionContext.Implicits.global
