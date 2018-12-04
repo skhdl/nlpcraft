@@ -26,9 +26,7 @@
 
 package org.nlpcraft
 
-import org.nlpcraft._
 import com.typesafe.scalalogging.LazyLogging
-
 import scala.compat.Platform._
 
 /**

@@ -267,7 +267,6 @@ object NCNlpAsciiLogger extends LazyLogging {
     
     /**
       * Prepares table to print.
-      *
       */
     def prepareTable(sen: NCNlpSentence): NCAsciiTable = {
         val md = filterKeysPairs(sen.flatMap(t ⇒ t.map(n ⇒ for (vk ← n.keys) yield n.noteType → vk)).flatten.distinct)

@@ -55,6 +55,7 @@ under the License.
 
     <modules>
         <module>modules/global</module>
+        <module>modules/mdllib</module>
     </modules>
     
     <properties>

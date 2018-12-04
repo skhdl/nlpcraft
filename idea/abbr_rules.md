@@ -1,7 +1,4 @@
-<img src="http://www.datalingvo.com/images/datalingvo_logo2_40.png">
-
-
-DataLingvo Abbreviation Rules.
+NLPCraft Abbreviation Rules.
 
 <table>
 <tr><th>Name</th><th>Abbreviation</th></tr>

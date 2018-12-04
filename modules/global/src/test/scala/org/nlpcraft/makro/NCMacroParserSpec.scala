@@ -63,7 +63,7 @@ class NCMacroParserSpec extends FlatSpec {
     parser.addMacro("<METRICS_B>", "{metrics|data|info|information|facts}")
     parser.addMacro("<METRICS>","{<METRICS_A>|<METRICS_B>|<METRICS_A> <METRICS_B>|<METRICS_B> <METRICS_A>}")
     
-    private val ignoreDLE = ignoring(classOf[NCE])
+    private val ignoreNCE = ignoring(classOf[NCE])
     
     /**
       *
@@ -221,10 +221,10 @@ class NCMacroParserSpec extends FlatSpec {
             "a c"
         ))
 
-        ignoreDLE { testParser("a | b", Seq.empty); assert(false) }
-        ignoreDLE { testParser("a *", Seq.empty); assert(false) }
-        ignoreDLE { testParser("a}}", Seq.empty); assert(false) }
-        ignoreDLE { testParser("a {a|b} *", Seq.empty); assert(false) }
+        ignoreNCE { testParser("a | b", Seq.empty); assert(false) }
+        ignoreNCE { testParser("a *", Seq.empty); assert(false) }
+        ignoreNCE { testParser("a}}", Seq.empty); assert(false) }
+        ignoreNCE { testParser("a {a|b} *", Seq.empty); assert(false) }
     }
     
     it should "parse option group" in {
@@ -236,9 +236,9 @@ class NCMacroParserSpec extends FlatSpec {
         testGroup("{a {c}|b|*}", Seq("a {c}", "b", "*"))
         testGroup("""{/abc.\*/|\{\*\}}""", Seq("/abc.\\*/", "\\{\\*\\}"))
 
-        ignoreDLE { parser.parseGroup("a"); assert(false) }
-        ignoreDLE { parser.parseGroup("{a"); assert(false) }
-        ignoreDLE { parser.parseGroup("a}"); assert(false) }
+        ignoreNCE { parser.parseGroup("a"); assert(false) }
+        ignoreNCE { parser.parseGroup("{a"); assert(false) }
+        ignoreNCE { parser.parseGroup("a}"); assert(false) }
     }
     
     it should "parse token" in {
@@ -253,17 +253,17 @@ class NCMacroParserSpec extends FlatSpec {
         testToken("c{a}     b", "c", "{a}     b")
         testToken("{{{a}}}", "{{{a}}}", "")
         
-        ignoreDLE { parser.nextToken("a } b"); assert(false) }
-        ignoreDLE { parser.nextToken("{c b"); assert(false) }
-        ignoreDLE { parser.nextToken("a | b"); assert(false) }
-        ignoreDLE { parser.nextToken("a |*"); assert(false) }
+        ignoreNCE { parser.nextToken("a } b"); assert(false) }
+        ignoreNCE { parser.nextToken("{c b"); assert(false) }
+        ignoreNCE { parser.nextToken("a | b"); assert(false) }
+        ignoreNCE { parser.nextToken("a |*"); assert(false) }
         
         assert(parser.nextToken("").isEmpty)
         assert(parser.nextToken("     ").isDefined)
     }
     
     it should "obey max limit" in {
-        ignoreDLE {
+        ignoreNCE {
             parser.expand("<METRICS> <USER> <BY> <WEBSITE> <BY> <SES> <BY> <METRICS> <BY> <USER> <BY> <METRICS>")
 
             assert(false)

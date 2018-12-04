@@ -27,7 +27,7 @@
 package org.nlpcraft
 
 /**
-  * Base NlpCraft (NC) exception.
+  * Base NLPCraft (NC) exception.
   *
   * @param msg Error message.
   * @param cause Optional cause.

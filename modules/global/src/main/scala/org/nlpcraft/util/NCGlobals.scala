@@ -726,7 +726,7 @@ object NCGlobals extends NCDebug with LazyLogging {
                         lines
                 
                 ps.println(s"#")
-                ps.println(s"# $year Copyright (C) NlpCraft Project. All Rights Reserved.")
+                ps.println(s"# $year Copyright (C) NLPCraft Project. All Rights Reserved.")
                 ps.println(s"#")
                 ps.println(s"# Auto-generated on: ${new Date()}")
                 ps.println(s"# Total lines: ${seq.size}")
