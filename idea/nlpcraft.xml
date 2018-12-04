@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inspections version="1.0" is_locked="false">
-  <option name="myName" value="datalingvo" />
+  <option name="myName" value="nlpcraft" />
   <option name="myLocal" value="false" />
   <inspection_tool class="ArraySizeCall" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="CheckImageSize" enabled="false" level="WARNING" enabled_by_default="false" />
