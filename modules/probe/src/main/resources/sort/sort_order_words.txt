@@ -1,0 +1,119 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+#     _   ____      ______           ______
+#    / | / / /___  / ____/________ _/ __/ /_
+#   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+#  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+# /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+#        /_/
+#
+
+#
+# Auto-generated on: Sun Oct 08 22:35:16 MSK 2017
+# Total lines: 84
+#
+# +-------------------------+
+# | DO NOT MODIFY THIS FILE |
+# +-------------------------+
+#
+
+assum descend fashion : false
+assum descend order : false
+assum descend wai : false
+assum revers fashion : false
+assum revers order : false
+assum revers wai : false
+assum top to bottom fashion : false
+assum top to bottom order : false
+assum top to bottom wai : false
+by descend fashion : false
+by descend order : false
+by descend wai : false
+by revers fashion : false
+by revers order : false
+by revers wai : false
+by top to bottom fashion : false
+by top to bottom order : false
+by top to bottom wai : false
+desc : false
+descend : false
+from top to bottom : false
+in descend fashion : false
+in descend order : false
+in descend wai : false
+in revers fashion : false
+in revers order : false
+in revers wai : false
+in top to bottom fashion : false
+in top to bottom order : false
+in top to bottom wai : false
+revers : false
+top to bottom : false
+us descend fashion : false
+us descend order : false
+us descend wai : false
+us revers fashion : false
+us revers order : false
+us revers wai : false
+us top to bottom fashion : false
+us top to bottom order : false
+us top to bottom wai : false
+with descend fashion : false
+with descend order : false
+with descend wai : false
+with revers fashion : false
+with revers order : false
+with revers wai : false
+with top to bottom fashion : false
+with top to bottom order : false
+with top to bottom wai : false
+asc : true
+ascend : true
+assum ascend fashion : true
+assum ascend order : true
+assum ascend wai : true
+assum bottom up fashion : true
+assum bottom up order : true
+assum bottom up wai : true
+bottom up : true
+by ascend fashion : true
+by ascend order : true
+by ascend wai : true
+by bottom up fashion : true
+by bottom up order : true
+by bottom up wai : true
+from bottom up : true
+in ascend fashion : true
+in ascend order : true
+in ascend wai : true
+in bottom up fashion : true
+in bottom up order : true
+in bottom up wai : true
+us ascend fashion : true
+us ascend order : true
+us ascend wai : true
+us bottom up fashion : true
+us bottom up order : true
+us bottom up wai : true
+with ascend fashion : true
+with ascend order : true
+with ascend wai : true
+with bottom up fashion : true
+with bottom up order : true
+with bottom up wai : true

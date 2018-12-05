@@ -42,7 +42,7 @@ under the License.
     </parent>
 
     <artifactId>server</artifactId>
-    <description>Server Library.</description>
+    <description>NLPCraft server.</description>
 
     <dependencies>
         <dependency>
@@ -53,7 +53,7 @@ under the License.
         <dependency>
             <groupId>org.nlpcraft</groupId>
             <artifactId>global</artifactId>
-            <version>0.1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>

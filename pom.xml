@@ -57,6 +57,7 @@ under the License.
         <module>modules/global</module>
         <module>modules/mdllib</module>
         <module>modules/probe</module>
+        <module>modules/server</module>
     </modules>
     
     <properties>
