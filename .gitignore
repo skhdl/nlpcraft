@@ -2,3 +2,4 @@
 modules/global/target
 modules/mdllib/target
 modules/probe/target
+modules/server/target
