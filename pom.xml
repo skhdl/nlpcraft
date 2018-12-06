@@ -58,6 +58,7 @@ under the License.
         <module>modules/mdllib</module>
         <module>modules/probe</module>
         <module>modules/server</module>
+        <module>modules/examples</module>
     </modules>
     
     <properties>

@@ -93,7 +93,7 @@ class NCSentenceImpl(
         srvReqId: String
     ): Seq[NCToken] =
         toks.map(nlpTok ⇒ {
-            // dl:nlp and some optional (after collapsing).
+            // nlp:nlp and some optional (after collapsing).
             require(nlpTok.size <= 2, s"Unexpected token [size=${nlpTok.size}, token=$nlpTok]")
 
             val nlpTokMeta =
