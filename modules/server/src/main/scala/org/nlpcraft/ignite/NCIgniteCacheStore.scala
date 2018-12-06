@@ -33,7 +33,7 @@ import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.resources.CacheStoreSessionResource
 import org.apache.ignite.{Ignition, IgniteException => IE}
 import org.nlpcraft.NCE
-import org.nlpcraft.tx.NCTxManager$
+import org.nlpcraft.tx.NCTxManager
 
 import scala.util.control.Exception._
 
@@ -68,7 +68,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       */
     @throws[NCE]
     protected def ensureInTx(): Unit = {
-        if (!NCTxManager$.inTx())
+        if (!NCTxManager.inTx())
             throw new NCE(s"Thread NOT in transaction: ${Thread.currentThread()}")
     }
     

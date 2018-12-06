@@ -42,7 +42,7 @@ class NCTxCacheStoreSessionListener extends CacheStoreSessionListener {
       */
     override def onSessionEnd(ses: CacheStoreSession, commit: Boolean): Unit = {
         if (ses != null && ses.isWithinTransaction) {
-            val con = NCTxManager$.connection(ses.transaction())
+            val con = NCTxManager.connection(ses.transaction())
             
             if (con != null) {
                 try                  

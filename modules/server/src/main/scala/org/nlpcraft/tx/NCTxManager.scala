@@ -25,7 +25,7 @@ import scala.util.control.Exception.catching
   * Transaction manager based on Ignite transaction management. It manages both Ignite cache
   * and JDBC operations, and allows for multi-threaded transactions.
   */
-object NCTxManager$ extends NCLifecycle("Core TX manager") with NCIgniteGeos {
+object NCTxManager extends NCLifecycle("Core TX manager") with NCIgniteGeos {
     // Internal log switch.
     private final val LOG_TX = false
     
