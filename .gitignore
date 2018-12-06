@@ -1,3 +1,5 @@
+**/.gitignore
+!/.gitignore
 .idea
 modules/global/target
 modules/mdllib/target
