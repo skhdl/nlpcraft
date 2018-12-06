@@ -300,7 +300,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
 
         if (hasLocalWord && geoToks.isEmpty()) {
             // Because we implicitly assume user's current city at this point we need to clear
-            // 'dl:geo' tokens from conversation context since they would no longer be valid.
+            // 'nlp:geo' tokens from conversation context since they would no longer be valid.
             ctx.getQueryContext().getConversationContext().clear(NCTokenUtils::isGeo);
 
             // Return user current city.
@@ -452,7 +452,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
                 "Note: only one optional <b>city</b> and one optional <b>date</b> or <b>date range</b> are allowed.");
         });
 
-        // Match exactly one of weather tokens and optional 'dl:geo' and 'dl:date' tokens.
+        // Match exactly one of weather tokens and optional 'nlp:geo' and 'nlp:date' tokens.
         solver.addIntent(mkIntent("hist|date?|city?", "wt:hist"), this::onHistoryMatch);
         solver.addIntent(mkIntent("fcast|date?|city?", "wt:fcast"), this::onForecastMatch);
         solver.addIntent(mkIntent("curr|date?|city?", "wt:curr"), this::onCurrentMatch);

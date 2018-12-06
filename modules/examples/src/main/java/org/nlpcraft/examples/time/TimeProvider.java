@@ -144,11 +144,11 @@ public class TimeProvider extends NCModelProviderAdapter {
      * @return Query result.
      */
     private NCQueryResult onRemoteMatch(NCIntentSolverContext ctx) {
-        // 'dl:geo' is mandatory.
-        // Only one 'dl:geo' token is allowed, so we don't have to check for it.
+        // 'nlp:geo' is mandatory.
+        // Only one 'nlp:geo' token is allowed, so we don't have to check for it.
         NCToken geoTok = ctx.getIntentTokens().get(1).get(0);
 
-        // Country and city are is mandatory metadata of 'dl:geo' token.
+        // Country and city are is mandatory metadata of 'nlp:geo' token.
         String city = getGeoCity(geoTok);
         String cntry = getGeoCountry(geoTok);
 
@@ -190,7 +190,7 @@ public class TimeProvider extends NCModelProviderAdapter {
             this::onLocalMatch
         );
 
-        // Check for exactly one 'x:time' and one 'dl:geo' CITY token **including** conversation
+        // Check for exactly one 'x:time' and one 'nlp:geo' CITY token **including** conversation
         // context. This is always remote time.
         solver.addIntent(
             new CONV_INTENT(

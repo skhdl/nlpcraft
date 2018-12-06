@@ -123,7 +123,7 @@ public class TimeProvider6 extends NCModelProviderAdapter {
      * @return Query result.
      */
     private NCQueryResult onMatch(NCIntentSolverContext ctx) {
-        // 'dl:geo' is optional here.
+        // 'nlp:geo' is optional here.
         if (ctx.getIntentTokens().get(1).isEmpty()) {
             NCSentence sen = ctx.getQueryContext().getSentence();
 
@@ -138,10 +138,10 @@ public class TimeProvider6 extends NCModelProviderAdapter {
             );
         }
 
-        // Note that only one 'dl:geo' token is allowed per model metadata.
+        // Note that only one 'nlp:geo' token is allowed per model metadata.
         NCToken geoTok = ctx.getIntentTokens().get(1).get(0);
 
-        // Country and city are is mandatory metadata of 'dl:geo' token.
+        // Country and city are is mandatory metadata of 'nlp:geo' token.
         String city = getGeoCity(geoTok);
         String cntry = getGeoCountry(geoTok);
 
@@ -177,7 +177,7 @@ public class TimeProvider6 extends NCModelProviderAdapter {
                 }
             );
 
-        // Check for exactly one 'x:time' token. 'dl:geo' is optional.
+        // Check for exactly one 'x:time' token. 'nlp:geo' is optional.
         solver.addIntent(
             new NON_CONV_INTENT(
                 "time|city?",
