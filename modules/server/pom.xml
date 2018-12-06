@@ -80,6 +80,11 @@ under the License.
             <artifactId>ignite-indexing</artifactId>
             <version>${ignite.ver}</version>
         </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>${c3p0.ver}</version>
+        </dependency>
 
     </dependencies>
 

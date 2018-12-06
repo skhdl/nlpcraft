@@ -40,7 +40,7 @@ import scala.compat.Platform._
  */
 trait NCServer extends LazyLogging {
     // Copyright blurb.
-    protected val COPYRIGHT = /*@copyright*/"Copyright (C) 2013-2019 DataLingvo."
+    protected val COPYRIGHT = /*@copyright*/"Copyright (C) 2013-2019 NLPCraft."
 
     // Version number.
     protected val VER = /*@version*/"x.x.x"
@@ -68,7 +68,7 @@ trait NCServer extends LazyLogging {
      * Starts the server.
      */
     def start(): Unit = {
-        sys.props.put("DATALINGVO_SERVER_NAME", name())
+        sys.props.put("NLPCRAFT_SERVER_NAME", name())
 
         asciiLogo()
     }

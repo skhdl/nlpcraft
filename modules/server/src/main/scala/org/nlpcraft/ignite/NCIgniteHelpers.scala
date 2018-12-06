@@ -39,7 +39,7 @@ import scala.collection.JavaConverters._
 /*
  * Helpers for working with Ignite.
  */
-object NCIgniteHelpers$ extends NCIgniteGeos {
+object NCIgniteHelpers extends NCIgniteGeos {
     /**
      * Helper for work with ignite cache.
      *
