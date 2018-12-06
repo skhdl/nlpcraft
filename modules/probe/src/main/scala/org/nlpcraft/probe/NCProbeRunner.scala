@@ -127,7 +127,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         
         tbl.info(logger, Some("Probe Configuration:"))
         
-        logger.info("Set '-DNLPCRAFT_PROBE_SILENT=' JVM system property to turn off verbose probe logging.")
+        logger.info("Set '-DNLPCRAFT_PROBE_SILENT=true' JVM system property to turn off verbose probe logging.")
     }
     
     /**

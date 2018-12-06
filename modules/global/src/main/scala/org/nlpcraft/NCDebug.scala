@@ -31,7 +31,16 @@ package org.nlpcraft
   */
 trait NCDebug {
     private def getProperty(name: String): Option[String] = sys.props.get(name)
-    private def isSet(name: String): Boolean = getProperty(name).isDefined
+    
+    /**
+      *
+      * @param name Name of the boolean property.
+      * @return
+      */
+    private def isSet(name: String): Boolean = getProperty(name) match {
+        case None ⇒ false
+        case Some(s) ⇒ new java.lang.Boolean(s).booleanValue()
+    }
     
     /** Development vs. production mode. */
     protected lazy final val IS_DEBUG: Boolean = isSet("NLPCRAFT_DEBUG")
