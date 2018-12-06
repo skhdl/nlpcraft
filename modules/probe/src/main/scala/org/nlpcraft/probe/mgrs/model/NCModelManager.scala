@@ -427,7 +427,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                                     s"]")
                         }
                     }
-                    else
+                    else if (!IS_PROBE_SILENT)
                         logger.warn(
                             s"$kind already added (ignoring) [" +
                                 s"model=${mdl.getDescriptor.getId}, " +

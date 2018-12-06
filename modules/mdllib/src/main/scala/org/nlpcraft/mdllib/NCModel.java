@@ -59,7 +59,7 @@ import java.util.*;
  * </ul>
  * Here's Java example of the absolutely minimal model built with model builder (from Hello World example):
  * <pre class="brush: java">
- * NCModelBuilder.newModel("dl.helloworld.ex", "HelloWorld Example Model", "1.0")
+ * NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
  *    // Return HTML result.
  *    .setQueryFunction(ctx -&gt; NCQueryResult.html("Hello World!")
  * )
@@ -358,7 +358,7 @@ public interface NCModel {
      * If using JSON model presentation this is set by <code>vendorName</code> JSON properties:
      * <pre class="brush: js">
      * {
-     *      "vendorName": "NLPCraft"
+     *      "vendorName": "NlpCraft"
      * }
      * </pre>
      *
@@ -569,7 +569,7 @@ public interface NCModel {
 
     /**
      * Whether or not to allow non-English language in user input.
-     * Currently, NLPCraft supports English language only. However, model can choose whether or not
+     * Currently, NlpCraft supports English language only. However, model can choose whether or not
      * to automatically reject user input that is detected to be a non-English. Note that current
      * algorithm only works reliably on longer user input (10+ words). On short sentences it will
      * often produce an incorrect result.
@@ -594,7 +594,7 @@ public interface NCModel {
     }
 
     /**
-     * Whether or not to allow non-Latin charset in user input. Currently, NLPCraft supports
+     * Whether or not to allow non-Latin charset in user input. Currently, NlpCraft supports
      * Latin charset only. However, model can choose whether or not to automatically reject u
      * ser input with characters outside of Latin charset. If {@code false} such user input will
      * be automatically rejected.
@@ -989,7 +989,7 @@ public interface NCModel {
      * Gets optional trivia groups.
      * <br><br>
      * Trivia is an automatic answer for some simple, common, short sentences like {@code hi, bye, hello}. Note
-     * that NLPCraft comes with default set of trivia (see {@link NCModelBuilder#loadDefaultTrivia()}). This
+     * that NlpCraft comes with default set of trivia (see {@link NCModelBuilder#loadDefaultTrivia()}). This
      * method allows model to specify its own set of trivia. Note also that both inputs and responses
      * can use macros and option groups. See {@link NCElement} for documentation on macros and option groups.
      * <br><br>
@@ -1034,7 +1034,7 @@ public interface NCModel {
      * semantic meaning to the sentence. For example, 'the', 'wow', or 'hm' provide no meaning to the
      * sentence and can be safely excluded from semantic analysis.
      * <br><br>
-     * NLPCraft comes with a carefully selected list of English stopwords which should be sufficient
+     * NlpCraft comes with a carefully selected list of English stopwords which should be sufficient
      * for a majority of use cases. However, you can add additional stopwords to this list. The typical
      * use for user-defined stopwords are jargon parasite words that are specific to the model's domain.
      * <br><br>

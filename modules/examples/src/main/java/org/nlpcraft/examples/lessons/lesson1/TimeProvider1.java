@@ -46,7 +46,7 @@ public class TimeProvider1 extends NCModelProviderAdapter {
     TimeProvider1() throws NCException {
         // Initialize adapter.
         setup(
-            NCModelBuilder.newModel("dl.time.ex", "Time Example Model", "1.0").
+            NCModelBuilder.newModel("nlpcraft.time.ex", "Time Example Model", "1.0").
                 setQueryFunction(ctx -> NCQueryResult.text(LessonsUtils.now())).
                 build()
         );

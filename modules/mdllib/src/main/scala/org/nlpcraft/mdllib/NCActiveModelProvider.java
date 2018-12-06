@@ -27,7 +27,7 @@
 package org.nlpcraft.mdllib;
 
 /**
- * NLPCraft active model provider marker. Only providers marked with this annotation
+ * NlpCraft active model provider marker. Only providers marked with this annotation
  * will be instantiated by the probe. This marker is apparently useful when there are multiple model providers
  * but not all of them have to be actually deployed due to internal testing, auxiliary packaging, etc.
  *

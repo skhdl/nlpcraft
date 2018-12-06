@@ -49,7 +49,7 @@ public class HelloWorldProvider extends NCModelProviderAdapter {
         // Initialize adapter.
         setup(
             // Minimally defined model...
-            NCModelBuilder.newModel("dl.helloworld.ex", "HelloWorld Example Model", "1.0")
+            NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
                 // Return HTML result.
                 .setQueryFunction(ctx -> NCQueryResult.html(
                     "Hello World!<br/>" +

@@ -413,7 +413,7 @@ public class NCModelBuilder extends NCJsonBuilder {
     }
 
     /**
-     * Loads default built-in trivia provided by NLPCraft.
+     * Loads default built-in trivia provided by NlpCraft.
      *
      * @return This builder for chaining operations.
      * @throws NCBuilderException Thrown in case of any errors loading trivia.

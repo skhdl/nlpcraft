@@ -220,7 +220,7 @@ public interface NCElement {
      * element ID as a lower case string starting with some model prefix, followed by colon and
      * then the element's name. This naming consistency will greatly help during curation process
      * where a human operator can specify model element directly by its ID. For example, some
-     * built-in NLPCraft IDs are: <code>nlp:date</code>, <code>nlp:geo</code>
+     * built-in NlpCraft IDs are: <code>nlp:date</code>, <code>nlp:geo</code>
      * <br><br>
      * Few important notes:
      * <ul>

@@ -26,11 +26,11 @@
  * Weather example model.
  */
 {
-    "id": "dl.weather.ex",
+    "id": "nlpcraft.weather.ex",
     "name": "Weather Example Model",
     "version": "1.0",
     "description": "Weather example model.",
-    "vendorName": "NLPCraft",
+    "vendorName": "NlpCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",
     "vendorEmail": "info@nlpcraft.org",

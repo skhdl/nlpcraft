@@ -40,12 +40,12 @@ import scala.collection.Seq
   * <p>
   * This example for any user input replies with JSON representation query context
   * corresponding to that input. This is a simple demonstration of the JSON output
-  * and all NLPCraft-provided information that a user defined model can operate on.
+  * and all NlpCraft-provided information that a user defined model can operate on.
   */
 @NCActiveModelProvider
 class EchoProvider extends NCModelProviderAdapter {
     // Any immutable user defined ID.
-    private final val MODEL_ID = "dl.echo.ex"
+    private final val MODEL_ID = "nlpcraft.echo.ex"
     
     /**
       * Escapes given string for JSON according to RFC 4627 http://www.ietf.org/rfc/rfc4627.txt.
@@ -214,7 +214,7 @@ class EchoProvider extends NCModelProviderAdapter {
               |    "name": "Echo Example Model",
               |    "version": "1.0",
               |    "description": "Echo example model.",
-              |    "vendorName": "NLPCraft",
+              |    "vendorName": "NlpCraft",
               |    "vendorUrl": "https://www.nlpcraft.org",
               |    "vendorContact": "Support",
               |    "vendorEmail": "info@nlpcraft.org",

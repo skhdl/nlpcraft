@@ -53,6 +53,7 @@ import org.nlpcraft.probe.mgrs.nlp.post.NCPostChecker
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.nlp.stem.NCStemmerManager
 import org.nlpcraft.probe.dev.NCProbeConfig
 
 import scala.compat.Platform._
@@ -72,18 +73,16 @@ object NCProbeRunner extends LazyLogging with NCDebug {
       */
     private def asciiLogo(cfg: NCProbeConfig) {
         val NL = System getProperty "line.separator"
-    
-        val year = Year.now().getValue
         
-        val copyright = s"Copyright (C) 2014-$year NLPCraft Project"
+        val copyright = s"Copyright (C) NlpCraft Project."
         
         val s = NL +
-            raw"     _   ____      ______           ______   $NL" +
-            raw"    / | / / /___  / ____/________ _/ __/ /_  $NL" +
-            raw"   /  |/ / / __ \\/ /   / ___/ __ `/ /_/ __/  $NL" +
-            raw"  / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
-            raw" /_/ |_/_/ .___/\\____/_/   \\__,_/_/  \\__/    $NL" +
-            raw"        /_/                                  $NL" +
+            raw"    _   ____      ______           ______   $NL" +
+            raw"   / | / / /___  / ____/________ _/ __/ /_  $NL" +
+            raw"  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/  $NL" +
+            raw" / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
+            raw"/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/    $NL" +
+            raw"       /_/                                  $NL$NL" +
             s"Data Probe$NL" +
             s"Version: $VER - $BUILD$NL" +
             raw"$copyright$NL"
@@ -184,6 +183,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
       */
     private def startManagers(cfg: NCProbeConfig): Unit = {
         // Order is important!
+        NCStemmerManager.start()
         NCNumericsManager.start()
         NCExitManager .startWithConfig(cfg)
         NCDeployManager.startWithConfig(cfg)
@@ -231,5 +231,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         NCDeployManager.stop()
         NCExitManager.stop()
         NCNumericsManager.stop()
+        NCStemmerManager.stop()
     }
 }

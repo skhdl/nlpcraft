@@ -27,11 +27,11 @@
  */
 
 {
-    "id": "dl.timer.ex",
+    "id": "nlpcraft.timer.ex",
     "name": "Timer Example Model",
     "version": "1.0",
     "description": "Timer example model.",
-    "vendorName": "NLPCraft",
+    "vendorName": "NlpCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",
     "vendorEmail": "info@nlpcraft.org",

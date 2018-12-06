@@ -42,7 +42,7 @@ under the License.
     </parent>
 
     <artifactId>server</artifactId>
-    <description>NLPCraft server.</description>
+    <description>NlpCraft server.</description>
 
     <dependencies>
         <dependency>

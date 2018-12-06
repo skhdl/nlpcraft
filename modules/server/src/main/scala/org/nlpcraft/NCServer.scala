@@ -36,11 +36,11 @@ import org.nlpcraft.ascii.NCAsciiTable
 import scala.compat.Platform._
 
 /**
- * Basic DL server component trait.
+ * Basic NlpCraft server component trait.
  */
 trait NCServer extends LazyLogging {
     // Copyright blurb.
-    protected val COPYRIGHT = /*@copyright*/"Copyright (C) 2013-2019 NLPCraft."
+    protected val COPYRIGHT = /*@copyright*/"Copyright (C) NlpCraft Project."
 
     // Version number.
     protected val VER = /*@version*/"x.x.x"
@@ -87,12 +87,12 @@ trait NCServer extends LazyLogging {
         val NL = System getProperty "line.separator"
 
         val s = NL +
-            raw"     _   ____      ______           ______   $NL" +
-            raw"    / | / / /___  / ____/________ _/ __/ /_  $NL" +
-            raw"   /  |/ / / __ \\/ /   / ___/ __ `/ /_/ __/  $NL" +
-            raw"  / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
-            raw" /_/ |_/_/ .___/\\____/_/   \\__,_/_/  \\__/    $NL" +
-            raw"        /_/                                  $NL" +
+            raw"    _   ____      ______           ______   $NL" +
+            raw"   / | / / /___  / ____/________ _/ __/ /_  $NL" +
+            raw"  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/  $NL" +
+            raw" / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
+            raw"/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/    $NL" +
+            raw"       /_/                                  $NL$NL" +
             s"Data Probe$NL" +
             s"Version: $VER - $BUILD$NL" +
             raw"$COPYRIGHT$NL"

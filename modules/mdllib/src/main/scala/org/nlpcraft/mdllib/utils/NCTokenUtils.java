@@ -1281,7 +1281,7 @@ public class NCTokenUtils {
      * Tests whether or not the given token is a stopword. Stopwords are some extremely common words which
      * add little value in helping understanding user input and are excluded from the processing
      * entirely. For example, words like {@code a, the, can, of, about, over}, etc. are typical
-     * stopwords in English. NLPCraft has built-in set of stopwords while user models can
+     * stopwords in English. NlpCraft has built-in set of stopwords while user models can
      * specify additional stopwords.
      * <br><br>
      * Corresponds to {@code NLP_STOPWORD} token {@link NCToken#getMetadata() metadata} property.
@@ -1296,7 +1296,7 @@ public class NCTokenUtils {
     }
 
     /**
-     * Tests whether or not the given token is a swear word. NLPCraft has built-in list of common English swear words.
+     * Tests whether or not the given token is a swear word. NlpCraft has built-in list of common English swear words.
      * <br><br>
      * Corresponds to {@code NLP_SWEAR} token {@link NCToken#getMetadata() metadata} property.
      *
@@ -1709,7 +1709,7 @@ public class NCTokenUtils {
 
     /**
      * Gets Penn Treebank POS tag for given token. Note that additionally to standard Penn Treebank POS
-     * tags NLPCraft introduced {@code '---'} synthetic tag to indicate a POS tag for multiword tokens.
+     * tags NlpCraft introduced {@code '---'} synthetic tag to indicate a POS tag for multiword tokens.
      * Learn more at <a href="http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html</a>
      * <br><br>
      * Corresponds to {@code NLP_POS} token {@link NCToken#getMetadata() metadata} property.

@@ -26,11 +26,11 @@
  * "Where Am I" example model.
  */
 {
-    "id": "dl.whereami.ex",
+    "id": "nlpcraft.whereami.ex",
     "name": "Current GEO Location Example Model",
     "version": "1.0",
     "description": "Current user GEO-location example model.",
-    "vendorName": "NLPCraft",
+    "vendorName": "NlpCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",
     "vendorEmail": "info@nlpcraft.org",

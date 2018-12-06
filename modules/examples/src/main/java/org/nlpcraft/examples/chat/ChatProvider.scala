@@ -40,7 +40,7 @@ import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._ /* NOTE: IDEA wrongly ma
 @NCActiveModelProvider
 class ChatProvider extends NCModelProviderAdapter {
     // Any immutable user defined ID.
-    private final val MODEL_ID = "dl.chat.ex"
+    private final val MODEL_ID = "nlpcraft.chat.ex"
     
     // Setting up provider adapter.
     setup(
@@ -53,7 +53,7 @@ class ChatProvider extends NCModelProviderAdapter {
                |    "name": "Chat Example Model",
                |    "version": "1.0",
                |    "description": "Chat example model.",
-               |    "vendorName": "NLPCraft",
+               |    "vendorName": "NlpCraft",
                |    "vendorUrl": "https://www.nlpcraft.org",
                |    "vendorContact": "Support",
                |    "vendorEmail": "info@nlpcraft.org",

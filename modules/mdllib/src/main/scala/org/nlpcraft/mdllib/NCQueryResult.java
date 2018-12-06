@@ -79,10 +79,10 @@ import java.util.stream.*;
  *         <td>{@link #jsonGmap(String)}</td>
  *     </tr>
  * </table>
- * Note that all of these types have specified meaning <b>only</b> for NLPCraft webapp where each of these result types
+ * Note that all of these types have specified meaning <b>only</b> for NlpCraft webapp where each of these result types
  * is rendered and processed in a special way. When used via REST API the responsibility to render and process
- * different result types will rest on REST client itself and may differ from the default processing of NLPCraft
- * webapp. For example, the REST client interfacing between NLPCraft and Amazon Alexa or Apple HomeKit can only
+ * different result types will rest on REST client itself and may differ from the default processing of NlpCraft
+ * webapp. For example, the REST client interfacing between NlpCraft and Amazon Alexa or Apple HomeKit can only
  * accept {@code text} result type and ignore everything else.
  */
 public class NCQueryResult implements Serializable {
@@ -95,7 +95,7 @@ public class NCQueryResult implements Serializable {
      * Creates {@code text} result.
      *
      * @param txt Textual result. Text interpretation will be defined by the client receiving this result. In
-     *      NLPCraft webapp, it will be rendered as {@link #html(String)} result.
+     *      NlpCraft webapp, it will be rendered as {@link #html(String)} result.
      * @return Newly created query result.
      */
     public static NCQueryResult text(String txt) {

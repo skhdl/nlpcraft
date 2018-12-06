@@ -64,7 +64,7 @@ public class TimeProvider2 extends NCModelProviderAdapter {
         // Initialize adapter.
         setup(
             NCModelBuilder.
-                newModel("dl.time.ex", "Time Example Model", "1.0").
+                newModel("nlpcraft.time.ex", "Time Example Model", "1.0").
                 addElement(dateTimeElem).
                 setQueryFunction(solver::solve).
                 build()

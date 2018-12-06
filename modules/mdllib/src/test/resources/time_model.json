@@ -29,12 +29,12 @@
  */
 
 {
-    "id": "dl.time.ex", /* Mandatory. */
+    "id": "nlpcraft.time.ex", /* Mandatory. */
     "name": "Time Example Model", /* Mandatory. */
     "version": "1.0", /* Mandatory. */
     "metadata": {
         "description": "Time example model.",
-        "vendor": "NLPCraft Project",
+        "vendor": "NlpCraft Project",
         "vendorUrl": "https://github.com/vic64/nlpcraft",
         "vendorContact": "info@nlpcraft.org",
         "vendorEmail": "Support",

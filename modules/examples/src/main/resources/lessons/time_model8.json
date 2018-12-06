@@ -27,11 +27,11 @@
  */
 
 {
-    "id": "dl.time.ex",
+    "id": "nlpcraft.time.ex",
     "name": "Time Example Model",
     "version": "1.0",
     "description": "Time example model.",
-    "vendorName": "NLPCraft",
+    "vendorName": "NlpCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",
     "vendorEmail": "info@nlpcraft.org",

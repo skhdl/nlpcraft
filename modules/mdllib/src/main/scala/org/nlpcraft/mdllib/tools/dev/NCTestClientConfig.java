@@ -172,19 +172,19 @@ public class NCTestClientConfig {
     }
 
     /**
-     * Gets the previously set base URL for NLPCraft REST APIs.
+     * Gets the previously set base URL for NlpCraft REST APIs.
      *
-     * @return Previously set base URL for NLPCraft REST APIs.
+     * @return Previously set base URL for NlpCraft REST APIs.
      */
     public String getBaseUrl() {
         return baseUrl;
     }
 
     /**
-     * Sets optional base URL for NLPCraft REST APIs. Note that
+     * Sets optional base URL for NlpCraft REST APIs. Note that
      * this property can be set via {@code NLPCRAFT_TEST_BASEURL} system property or environment variable.
      *
-     * @param baseUrl Base URL for NLPCraft REST APIs.
+     * @param baseUrl Base URL for NlpCraft REST APIs.
      * @see #DFLT_BASEURL
      */
     public void setBaseUrl(String baseUrl) {

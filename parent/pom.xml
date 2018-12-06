@@ -151,7 +151,7 @@ under the License.
                         <requireJavaVersion>
                             <message>
                                 [INFO] ------------------------------------------------------------------------
-                                [ERROR] You are trying to compile NLPCraft with inappropriate JDK version!
+                                [ERROR] You are trying to compile NlpCraft with inappropriate JDK version!
                                 [ERROR] Detected JDK Version: ${java.runtime.version}
                                 [ERROR] JDK version should be >= 1.8.0_1.
                             </message>

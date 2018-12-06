@@ -34,7 +34,7 @@ import java.util.*;
  * Group of trivia user inputs and corresponding randomly chosen responses.
  * <p>
  * Trivia is an automatic answer for some simple, common, short sentences like {@code hi, bye, hello}. Note
- * that NLPCraft comes with default set of trivia (see {@link NCModelBuilder#loadDefaultTrivia()}).
+ * that NlpCraft comes with default set of trivia (see {@link NCModelBuilder#loadDefaultTrivia()}).
  * 
  * @see NCModel#getTrivia()
  */

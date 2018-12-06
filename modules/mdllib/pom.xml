@@ -120,7 +120,7 @@ under the License.
                     <stylesheetfile>${project.basedir}/../../javadoc/stylesheet.css</stylesheetfile>
                     <bottom>
                         <![CDATA[
-                            Copyright &#169; 2013-{currentYear} NLPCraft Project. All rights reserved.
+                            Copyright &#169; 2013-{currentYear} NlpCraft Project. All rights reserved.
                         ]]>
                     </bottom>
                     <top>
@@ -160,12 +160,12 @@ under the License.
                     </groups>
                     <header>
                         <![CDATA[
-                            NLPCraft ${project.version} API <a href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
+                            NlpCraft ${project.version} API <a href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
                         ]]>
                     </header>
                     <footer>
                         <![CDATA[
-                            NLPCraft ${project.version} API
+                            NlpCraft ${project.version} API
                             <script type="text/javascript">
                                 SyntaxHighlighter.defaults["auto-links"] = false;
                                 SyntaxHighlighter.defaults["tab-size"] = 2;
@@ -186,10 +186,10 @@ under the License.
                     </footer>
                     <doctitle>
                         <![CDATA[
-                            NLPCraft ${project.version} API Specification
+                            NlpCraft ${project.version} API Specification
                         ]]>
                     </doctitle>
-                    <windowtitle>NLPCraft ${project.version} API</windowtitle>
+                    <windowtitle>NlpCraft ${project.version} API</windowtitle>
                     <show>public</show>
                     <verbose>false</verbose>
                 </configuration>

@@ -27,7 +27,7 @@
 package org.nlpcraft
 
 /**
-  * NLPCraft lifecycle components test helper.
+  * NlpCraft lifecycle components test helper.
   */
 trait NCTestStartStop {
     private val srvs = scala.collection.mutable.Buffer.empty[NCLifecycle]
