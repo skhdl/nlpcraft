@@ -455,7 +455,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             // Add straight element synonyms (Duplications printed as warnings)
             val synsChunks = for (syn ← elm.getSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (G.containsDups(synsChunks.toList))
+            if (!IS_PROBE_SILENT && G.containsDups(synsChunks.toList))
                 logger.warn(s"Element synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
@@ -468,7 +468,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             // Add value synonyms.
             val valNames = elm.getValues.map(_.getName)
 
-            if (G.containsDups(valNames.toList))
+            if (!IS_PROBE_SILENT && G.containsDups(valNames.toList))
                 logger.warn(s"Element values names duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
@@ -501,7 +501,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                             Some(valSyns)
                     })
 
-                if (G.containsDups(vChunks.toList))
+                if (!IS_PROBE_SILENT && G.containsDups(vChunks.toList))
                     logger.warn(s"Element synonyms duplicate (ignoring) [" +
                         s"model=${mdl.getDescriptor.getId}, " +
                         s"elementId=$elmId, " +
@@ -516,7 +516,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             // Add excluded synonyms (Duplications printed as warnings)
             val exclChunks = for (syn ← elm.getExcludedSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (G.containsDups(exclChunks.toList))
+            if (!IS_PROBE_SILENT && G.containsDups(exclChunks.toList))
                 logger.warn(s"Element exclude synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
