@@ -45,7 +45,7 @@ object NCIgniteHelpers extends NCIgniteGeos {
      *
      * @param ic Ignite cache.
      */
-    implicit class DLCacheHelper[K, V](ic: IgniteCache[K, V]) {
+    implicit class NCCacheHelper[K, V](ic: IgniteCache[K, V]) {
         /**
           * Adds cache events remote listener.
           *

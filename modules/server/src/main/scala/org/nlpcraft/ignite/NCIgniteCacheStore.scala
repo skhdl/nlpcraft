@@ -45,15 +45,15 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
     protected var ses: CacheStoreSession = _
     
     /**
-      * Partial function that catches database 'DLE' and wraps it into Ignite exception.
+      * Partial function that catches database 'NCE' and wraps it into Ignite exception.
       *
       * @tparam R Type of the return value for the body.
       * @return Catcher.
       */
-    protected def wrapDLE[R]: Catcher[R] = {
-        // We assume here that DLE exception is database related.
+    protected def wrapNCE[R]: Catcher[R] = {
+        // We assume here that NCR exception is database related.
         case e: NCE ⇒
-            println(s"|> Wrapping DLE: ${e.toString}")
+            println(s"|> Wrapping NCE: ${e.toString}")
 
             if (e.getCause != null) {
                 println(s"|>    |")

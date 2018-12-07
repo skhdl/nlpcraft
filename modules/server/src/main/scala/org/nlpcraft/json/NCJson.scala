@@ -33,7 +33,7 @@ import com.typesafe.scalalogging.LazyLogging
 import net.liftweb.json.{compact => liftCompact, pretty => liftPretty, render => liftRender, _}
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode
-import org.nlpcraft.apicodes.NCApiStatusCode.DLApiStatusCode
+import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
 
 import scala.annotation.tailrec
 import scala.language.implicitConversions
@@ -53,219 +53,219 @@ class NCJson(val json: JValue) {
     override def equals(obj: scala.Any): Boolean = json.equals(obj)
 
     // Convenient lazy extractors.
-    @throws[DLJ] lazy val dbType: String = value2[String]("dbType", _.trim)
-    @throws[DLJ] lazy val dbName: String = value2[String]("dbName", _.trim)
-    @throws[DLJ] lazy val dbHost: String = value2[String]("dbHost", _.trim)
-    @throws[DLJ] lazy val dbPort: Int = value[Int, BigInt]("dbPort",_.intValue())
-    @throws[DLJ] lazy val dbUser: String = value2[String]("dbUser", _.trim)
-    @throws[DLJ] lazy val dbPasswd: String = value2[String]("dbPasswd", _.trim)
-    @throws[DLJ] lazy val strSeqVal: Seq[String] = value2[Seq[String]]("strSeqVal", a ⇒ a.map(_.trim))
-    @throws[DLJ] lazy val base64Obj: String = value2[String]("base64Obj", _.trim)
-    @throws[DLJ] lazy val teamId: String = value2[String]("teamId", _.trim)
-    @throws[DLJ] lazy val teamName: String = value2[String]("teamName", _.trim)
-    @throws[DLJ] lazy val respTopic: String = value2[String]("respTopic", _.trim)
-    @throws[DLJ] lazy val tokType: String = value2[String]("tokType", _.trim)
-    @throws[DLJ] lazy val strVal: String = value2[String]("strVal", _.trim)
-    @throws[DLJ] lazy val apiVer: Int = value[Int, BigInt]("apiVer", _.intValue())
-    @throws[DLJ] lazy val userId: Long = valueX[Long, BigInt](Seq("userId", "usrId"), _.longValue())
-    @throws[DLJ] lazy val id: Int = value[Int, BigInt]("id", _.intValue())
-    @throws[DLJ] lazy val hash: Long = value[Long, BigInt]("hash", _.longValue())
-    @throws[DLJ] lazy val userRank: Int = value[Int, BigInt]("userRank", _.intValue())
-    @throws[DLJ] lazy val rcvTstamp: Long = value[Long, BigInt]("rcvTstamp", _.longValue())
-    @throws[DLJ] lazy val txt: String = value2[String]("txt", _.trim)
-    @throws[DLJ] lazy val text: String = value2[String]("text", _.trim)
-    @throws[DLJ] lazy val accessToken: String = value2[String]("accessToken", _.trim)
-    @throws[DLJ] lazy val probeGuid: String = value2[String]("probeGuid", _.trim)
-    @throws[DLJ] lazy val comment: String = value2[String]("comment", _.trim)
-    @throws[DLJ] lazy val tmzName: String = value2[String]("tmzName", _.trim)
-    @throws[DLJ] lazy val tmzAbbr: String = value2[String]("tmzAbbr", _.trim)
-    @throws[DLJ] lazy val city: String = value2[String]("city", _.trim)
-    @throws[DLJ] lazy val countryName: String = value2[String]("countryName", _.trim)
-    @throws[DLJ] lazy val countryCode: String = value2[String]("countryCode", _.trim)
-    @throws[DLJ] lazy val regionName: String = value2[String]("regionName", _.trim)
-    @throws[DLJ] lazy val regionCode: String = value2[String]("regionCode", _.trim)
-    @throws[DLJ] lazy val zipCode: String = value2[String]("zipCode", _.trim)
-    @throws[DLJ] lazy val metroCode: Int = value[Int, BigInt]("metroCode", _.intValue)
-    @throws[DLJ] lazy val userAgent: String = value2[String]("userAgent", _.trim)
-    @throws[DLJ] lazy val origin: String = value2[String]("origin", _.trim)
-    @throws[DLJ] lazy val debug: Boolean = value2[Boolean]("debug")
-    @throws[DLJ] lazy val newDomain: Boolean = value2[Boolean]("newDomain")
-    @throws[DLJ] lazy val prefs: String = value2[String]("prefs", _.trim)
-    @throws[DLJ] lazy val rmtAddr: String = value2[String]("rmtAddr", _.trim)
-    @throws[DLJ] lazy val cliReqId: String = value2[String]("cliReqId", _.trim)
-    @throws[DLJ] lazy val curateTxt: String = value2[String]("curateTxt", _.trim)
-    @throws[DLJ] lazy val curateHint: String = value2[String]("curateHint", _.trim)
-    @throws[DLJ] lazy val cliDateTime: String = value2[String]("cliDateTime", _.trim)
-    @throws[DLJ] lazy val restNodeId: String = value2[String]("restNodeId", _.trim)
-    @throws[DLJ] lazy val restNodeIps: List[String] = value2[List[String]]("restNodeIps", a ⇒ a.map(_.trim))
-    @throws[DLJ] lazy val srvReqId: String = value2[String]("srvReqId", _.trim)
-    @throws[DLJ] lazy val srvReqIds: List[String] = value2[List[String]]("srvReqIds")
-    @throws[DLJ] lazy val firstName: String = value2[String]("firstName", _.trim)
-    @throws[DLJ] lazy val lastName: String = value2[String]("lastName", _.trim)
-    @throws[DLJ] lazy val phone: String = value2[String]("phone", _.trim)
-    @throws[DLJ] lazy val department: String = value2[String]("department", _.trim)
-    @throws[DLJ] lazy val title: String = value2[String]("title", _.trim)
-    @throws[DLJ] lazy val avatarUrl: String = value2[String]("avatarUrl", _.trim)
-    @throws[DLJ] lazy val syncReqRes: Boolean = value2[Boolean]("syncReqRes")
-    @throws[DLJ] lazy val syncReqCmd: String = value2[String]("syncReqCmd", _.trim)
-    @throws[DLJ] lazy val password: String = value2[String]("passwd", _.trim)
-    @throws[DLJ] lazy val idTkn: String = value2[String]("idTkn", _.trim)
-    @throws[DLJ] lazy val authCode: String = value2[String]("authCode", _.trim)
-    @throws[DLJ] lazy val loginTkn: String = value2[String]("loginTkn", _.trim)
-    @throws[DLJ] lazy val tkn: String = value2[String]("tkn", _.trim)
-    @throws[DLJ] lazy val domain: String = value2[String]("domain", _.trim)
-    @throws[DLJ] lazy val email: String = value2[String]("email", G.normalizeEmail)
-    @throws[DLJ] lazy val code: String = value2[String]("code", _.trim)
-    @throws[DLJ] lazy val newPassword: String = value2[String]("newPassword", _.trim)
-    @throws[DLJ] lazy val oldPassword: String = value2[String]("oldPassword", _.trim)
-    @throws[DLJ] lazy val probeToken: String = value2[String]("probeToken", _.trim)
-    @throws[DLJ] lazy val name: String = value2[String]("name", _.trim)
-    @throws[DLJ] lazy val website: String = value2[String]("website", _.trim)
-    @throws[DLJ] lazy val region: String = value2[String]("region", _.trim)
-    @throws[DLJ] lazy val address: String = value2[String]("address", _.trim)
-    @throws[DLJ] lazy val country: String = value2[String]("country", _.trim)
-    @throws[DLJ] lazy val postalCode: String = value2[String]("postalCode", _.trim)
-    @throws[DLJ] lazy val synonym: String = value2[String]("synonym", _.trim)
-    @throws[DLJ] lazy val companyName: String = value2[String]("companyName", _.trim)
-    @throws[DLJ] lazy val dsId: Long = value[Long, BigInt]("dsId", _.longValue())
-    @throws[DLJ] lazy val dsName: String = value2[String]("dsName", _.trim)
-    @throws[DLJ] lazy val dsDesc: String = value2[String]("dsDesc", _.trim)
-    @throws[DLJ] lazy val mdlName: String = value2[String]("mdlName", _.trim)
-    @throws[DLJ] lazy val mdlVer: String = value2[String]("mdlVer", _.trim)
-    @throws[DLJ] lazy val mdlId: String = value2[String]("mdlId", _.trim)
-    @throws[DLJ] lazy val modelName: String = value2[String]("modelName", _.trim)
-    @throws[DLJ] lazy val modelId: String = value2[String]("modelId", _.trim)
-    @throws[DLJ] lazy val modelVendor: String = value2[String]("modelVendor", _.trim)
-    @throws[DLJ] lazy val modelVersion: String = value2[String]("modelVersion", _.trim)
-    @throws[DLJ] lazy val status: DLApiStatusCode = value[NCApiStatusCode.DLApiStatusCode, String]("status", NCApiStatusCode.byName)
-    @throws[DLJ] lazy val message: String = value2[String]("message", _.trim)
-    @throws[DLJ] lazy val jsExpanded: NCJson = valueJs("expanded")
-    @throws[DLJ] lazy val jsNlpReq: NCJson = valueJs("nlpReq")
-    @throws[DLJ] lazy val jsNlpSen: NCJson = valueJs("nlpSen")
-    @throws[DLJ] lazy val jsAuto: NCJson = valueJs("auto")
-    @throws[DLJ] lazy val jsJsonData: NCJson = valueJs("jsonData")
-    @throws[DLJ] lazy val jsCache: NCJson = valueJs("cache")
-    @throws[DLJ] lazy val editText: String = value2[String]("editText", _.trim)
-    @throws[DLJ] lazy val result: Boolean = value2[Boolean]("result")
-    @throws[DLJ] lazy val cacheKeyType: String = value2[String]("cacheKeyType", _.trim)
-    @throws[DLJ] lazy val talkback: String = value2[String]("talkback", _.trim)
-    @throws[DLJ] lazy val chartX: String = value2[String]("chartX", _.trim)
-    @throws[DLJ] lazy val chartY: List[String] = value2[List[String]]("chartY", _.map(_.trim))
-    @throws[DLJ] lazy val date: Long = value[Long, BigInt]("date", _.longValue())
-    @throws[DLJ] lazy val metrics: String = value2[String]("metrics", _.trim)
-    @throws[DLJ] lazy val maxRows: Int = value[Int, BigInt]("maxRows", _.intValue())
-    @throws[DLJ] lazy val limit: Int = value[Int, BigInt]("limit", _.intValue())
-    @throws[DLJ] lazy val lastMins: Int = value[Int, BigInt]("lastMins", _.intValue())
-    @throws[DLJ] lazy val noteType: String = value2[String]("noteType", _.trim)
-    @throws[DLJ] lazy val jsNotes: NCJson = valueJs("notes")
-    @throws[DLJ] lazy val jsValues: NCJson = valueJs("values")
-    @throws[DLJ] lazy val longitude: Double = value2[Double]("longitude")
-    @throws[DLJ] lazy val latitude: Double = value2[Double]("latitude")
-    @throws[DLJ] lazy val kind: String = value2[String]("kind", _.trim)
-    @throws[DLJ] lazy val from: Long = value[Long, BigInt]("from", _.longValue())
-    @throws[DLJ] lazy val to: Long = value[Long, BigInt]("to", _.longValue())
-    @throws[DLJ] lazy val numFrom: Double = value2[Double]("from")
-    @throws[DLJ] lazy val numFromIncl: Boolean = value2[Boolean]("fromIncl")
-    @throws[DLJ] lazy val numTo: Double = value2[Double]("to")
-    @throws[DLJ] lazy val numToIncl: Boolean = value2[Boolean]("toIncl")
-    @throws[DLJ] lazy val numIsRangeCondition: Boolean = value2[Boolean]("isRangeCondition")
-    @throws[DLJ] lazy val numIsEqualCondition: Boolean = value2[Boolean]("isEqualCondition")
-    @throws[DLJ] lazy val numIsNotEqualCondition: Boolean = value2[Boolean]("isNotEqualCondition")
-    @throws[DLJ] lazy val numIsFromNegativeInfinity: Boolean = value2[Boolean]("isFromNegativeInfinity")
-    @throws[DLJ] lazy val numIsToPositiveInfinity: Boolean = value2[Boolean]("isToPositiveInfinity")
-    @throws[DLJ] lazy val chartEnabled: Boolean = value2[Boolean]("chartEnabled")
-    @throws[DLJ] lazy val chartType: String = value2[String]("chartType", _.trim)
-    @throws[DLJ] lazy val chartXAxis: String = value2[String]("chartXAxis", _.trim)
-    @throws[DLJ] lazy val chartDataSeries1: String = value2[String]("chartDataSeries1", _.trim)
-    @throws[DLJ] lazy val chartDataSeries2: String = value2[String]("chartDataSeries2", _.trim)
-    @throws[DLJ] lazy val chartDataSeries3: String = value2[String]("chartDataSeries3", _.trim)
-    @throws[DLJ] lazy val all: Boolean = value2[Boolean]("all")
-    @throws[DLJ] lazy val okToSuggest: Boolean = value2[Boolean]("okToSuggest")
-    @throws[DLJ] lazy val suggest: String = value2[String]("suggest")
-    @throws[DLJ] lazy val url: String = value2[String]("url")
-    @throws[DLJ] lazy val probeId: String = value2[String]("probeId")
-    @throws[DLJ] lazy val suggestLimit: Int = value[Int, BigInt]("suggestLimit", _.intValue())
-    @throws[DLJ] lazy val enable: Boolean = value2[Boolean]("enable")
-    @throws[DLJ] lazy val companyId: Long = value[Long, BigInt]("companyId", _.longValue())
-    @throws[DLJ] lazy val notifyFlag: Boolean = value2[Boolean]("notify")
-    @throws[DLJ] lazy val pendingFlag: Boolean = value2[Boolean]("pending")
-    @throws[DLJ] lazy val flag: Boolean = value2[Boolean]("flag")
-    @throws[DLJ] lazy val auto: Boolean = value2[Boolean]("auto")
-    @throws[DLJ] lazy val dashboardItemId: Long = value[Long, BigInt]("dashboardItemId", _.longValue())
+    @throws[NCJ] lazy val dbType: String = value2[String]("dbType", _.trim)
+    @throws[NCJ] lazy val dbName: String = value2[String]("dbName", _.trim)
+    @throws[NCJ] lazy val dbHost: String = value2[String]("dbHost", _.trim)
+    @throws[NCJ] lazy val dbPort: Int = value[Int, BigInt]("dbPort",_.intValue())
+    @throws[NCJ] lazy val dbUser: String = value2[String]("dbUser", _.trim)
+    @throws[NCJ] lazy val dbPasswd: String = value2[String]("dbPasswd", _.trim)
+    @throws[NCJ] lazy val strSeqVal: Seq[String] = value2[Seq[String]]("strSeqVal", a ⇒ a.map(_.trim))
+    @throws[NCJ] lazy val base64Obj: String = value2[String]("base64Obj", _.trim)
+    @throws[NCJ] lazy val teamId: String = value2[String]("teamId", _.trim)
+    @throws[NCJ] lazy val teamName: String = value2[String]("teamName", _.trim)
+    @throws[NCJ] lazy val respTopic: String = value2[String]("respTopic", _.trim)
+    @throws[NCJ] lazy val tokType: String = value2[String]("tokType", _.trim)
+    @throws[NCJ] lazy val strVal: String = value2[String]("strVal", _.trim)
+    @throws[NCJ] lazy val apiVer: Int = value[Int, BigInt]("apiVer", _.intValue())
+    @throws[NCJ] lazy val userId: Long = valueX[Long, BigInt](Seq("userId", "usrId"), _.longValue())
+    @throws[NCJ] lazy val id: Int = value[Int, BigInt]("id", _.intValue())
+    @throws[NCJ] lazy val hash: Long = value[Long, BigInt]("hash", _.longValue())
+    @throws[NCJ] lazy val userRank: Int = value[Int, BigInt]("userRank", _.intValue())
+    @throws[NCJ] lazy val rcvTstamp: Long = value[Long, BigInt]("rcvTstamp", _.longValue())
+    @throws[NCJ] lazy val txt: String = value2[String]("txt", _.trim)
+    @throws[NCJ] lazy val text: String = value2[String]("text", _.trim)
+    @throws[NCJ] lazy val accessToken: String = value2[String]("accessToken", _.trim)
+    @throws[NCJ] lazy val probeGuid: String = value2[String]("probeGuid", _.trim)
+    @throws[NCJ] lazy val comment: String = value2[String]("comment", _.trim)
+    @throws[NCJ] lazy val tmzName: String = value2[String]("tmzName", _.trim)
+    @throws[NCJ] lazy val tmzAbbr: String = value2[String]("tmzAbbr", _.trim)
+    @throws[NCJ] lazy val city: String = value2[String]("city", _.trim)
+    @throws[NCJ] lazy val countryName: String = value2[String]("countryName", _.trim)
+    @throws[NCJ] lazy val countryCode: String = value2[String]("countryCode", _.trim)
+    @throws[NCJ] lazy val regionName: String = value2[String]("regionName", _.trim)
+    @throws[NCJ] lazy val regionCode: String = value2[String]("regionCode", _.trim)
+    @throws[NCJ] lazy val zipCode: String = value2[String]("zipCode", _.trim)
+    @throws[NCJ] lazy val metroCode: Int = value[Int, BigInt]("metroCode", _.intValue)
+    @throws[NCJ] lazy val userAgent: String = value2[String]("userAgent", _.trim)
+    @throws[NCJ] lazy val origin: String = value2[String]("origin", _.trim)
+    @throws[NCJ] lazy val debug: Boolean = value2[Boolean]("debug")
+    @throws[NCJ] lazy val newDomain: Boolean = value2[Boolean]("newDomain")
+    @throws[NCJ] lazy val prefs: String = value2[String]("prefs", _.trim)
+    @throws[NCJ] lazy val rmtAddr: String = value2[String]("rmtAddr", _.trim)
+    @throws[NCJ] lazy val cliReqId: String = value2[String]("cliReqId", _.trim)
+    @throws[NCJ] lazy val curateTxt: String = value2[String]("curateTxt", _.trim)
+    @throws[NCJ] lazy val curateHint: String = value2[String]("curateHint", _.trim)
+    @throws[NCJ] lazy val cliDateTime: String = value2[String]("cliDateTime", _.trim)
+    @throws[NCJ] lazy val restNodeId: String = value2[String]("restNodeId", _.trim)
+    @throws[NCJ] lazy val restNodeIps: List[String] = value2[List[String]]("restNodeIps", a ⇒ a.map(_.trim))
+    @throws[NCJ] lazy val srvReqId: String = value2[String]("srvReqId", _.trim)
+    @throws[NCJ] lazy val srvReqIds: List[String] = value2[List[String]]("srvReqIds")
+    @throws[NCJ] lazy val firstName: String = value2[String]("firstName", _.trim)
+    @throws[NCJ] lazy val lastName: String = value2[String]("lastName", _.trim)
+    @throws[NCJ] lazy val phone: String = value2[String]("phone", _.trim)
+    @throws[NCJ] lazy val department: String = value2[String]("department", _.trim)
+    @throws[NCJ] lazy val title: String = value2[String]("title", _.trim)
+    @throws[NCJ] lazy val avatarUrl: String = value2[String]("avatarUrl", _.trim)
+    @throws[NCJ] lazy val syncReqRes: Boolean = value2[Boolean]("syncReqRes")
+    @throws[NCJ] lazy val syncReqCmd: String = value2[String]("syncReqCmd", _.trim)
+    @throws[NCJ] lazy val password: String = value2[String]("passwd", _.trim)
+    @throws[NCJ] lazy val idTkn: String = value2[String]("idTkn", _.trim)
+    @throws[NCJ] lazy val authCode: String = value2[String]("authCode", _.trim)
+    @throws[NCJ] lazy val loginTkn: String = value2[String]("loginTkn", _.trim)
+    @throws[NCJ] lazy val tkn: String = value2[String]("tkn", _.trim)
+    @throws[NCJ] lazy val domain: String = value2[String]("domain", _.trim)
+    @throws[NCJ] lazy val email: String = value2[String]("email", G.normalizeEmail)
+    @throws[NCJ] lazy val code: String = value2[String]("code", _.trim)
+    @throws[NCJ] lazy val newPassword: String = value2[String]("newPassword", _.trim)
+    @throws[NCJ] lazy val oldPassword: String = value2[String]("oldPassword", _.trim)
+    @throws[NCJ] lazy val probeToken: String = value2[String]("probeToken", _.trim)
+    @throws[NCJ] lazy val name: String = value2[String]("name", _.trim)
+    @throws[NCJ] lazy val website: String = value2[String]("website", _.trim)
+    @throws[NCJ] lazy val region: String = value2[String]("region", _.trim)
+    @throws[NCJ] lazy val address: String = value2[String]("address", _.trim)
+    @throws[NCJ] lazy val country: String = value2[String]("country", _.trim)
+    @throws[NCJ] lazy val postalCode: String = value2[String]("postalCode", _.trim)
+    @throws[NCJ] lazy val synonym: String = value2[String]("synonym", _.trim)
+    @throws[NCJ] lazy val companyName: String = value2[String]("companyName", _.trim)
+    @throws[NCJ] lazy val dsId: Long = value[Long, BigInt]("dsId", _.longValue())
+    @throws[NCJ] lazy val dsName: String = value2[String]("dsName", _.trim)
+    @throws[NCJ] lazy val dsDesc: String = value2[String]("dsDesc", _.trim)
+    @throws[NCJ] lazy val mdlName: String = value2[String]("mdlName", _.trim)
+    @throws[NCJ] lazy val mdlVer: String = value2[String]("mdlVer", _.trim)
+    @throws[NCJ] lazy val mdlId: String = value2[String]("mdlId", _.trim)
+    @throws[NCJ] lazy val modelName: String = value2[String]("modelName", _.trim)
+    @throws[NCJ] lazy val modelId: String = value2[String]("modelId", _.trim)
+    @throws[NCJ] lazy val modelVendor: String = value2[String]("modelVendor", _.trim)
+    @throws[NCJ] lazy val modelVersion: String = value2[String]("modelVersion", _.trim)
+    @throws[NCJ] lazy val status: NCApiStatusCode = value[NCApiStatusCode.NCApiStatusCode, String]("status", NCApiStatusCode.byName)
+    @throws[NCJ] lazy val message: String = value2[String]("message", _.trim)
+    @throws[NCJ] lazy val jsExpanded: NCJson = valueJs("expanded")
+    @throws[NCJ] lazy val jsNlpReq: NCJson = valueJs("nlpReq")
+    @throws[NCJ] lazy val jsNlpSen: NCJson = valueJs("nlpSen")
+    @throws[NCJ] lazy val jsAuto: NCJson = valueJs("auto")
+    @throws[NCJ] lazy val jsJsonData: NCJson = valueJs("jsonData")
+    @throws[NCJ] lazy val jsCache: NCJson = valueJs("cache")
+    @throws[NCJ] lazy val editText: String = value2[String]("editText", _.trim)
+    @throws[NCJ] lazy val result: Boolean = value2[Boolean]("result")
+    @throws[NCJ] lazy val cacheKeyType: String = value2[String]("cacheKeyType", _.trim)
+    @throws[NCJ] lazy val talkback: String = value2[String]("talkback", _.trim)
+    @throws[NCJ] lazy val chartX: String = value2[String]("chartX", _.trim)
+    @throws[NCJ] lazy val chartY: List[String] = value2[List[String]]("chartY", _.map(_.trim))
+    @throws[NCJ] lazy val date: Long = value[Long, BigInt]("date", _.longValue())
+    @throws[NCJ] lazy val metrics: String = value2[String]("metrics", _.trim)
+    @throws[NCJ] lazy val maxRows: Int = value[Int, BigInt]("maxRows", _.intValue())
+    @throws[NCJ] lazy val limit: Int = value[Int, BigInt]("limit", _.intValue())
+    @throws[NCJ] lazy val lastMins: Int = value[Int, BigInt]("lastMins", _.intValue())
+    @throws[NCJ] lazy val noteType: String = value2[String]("noteType", _.trim)
+    @throws[NCJ] lazy val jsNotes: NCJson = valueJs("notes")
+    @throws[NCJ] lazy val jsValues: NCJson = valueJs("values")
+    @throws[NCJ] lazy val longitude: Double = value2[Double]("longitude")
+    @throws[NCJ] lazy val latitude: Double = value2[Double]("latitude")
+    @throws[NCJ] lazy val kind: String = value2[String]("kind", _.trim)
+    @throws[NCJ] lazy val from: Long = value[Long, BigInt]("from", _.longValue())
+    @throws[NCJ] lazy val to: Long = value[Long, BigInt]("to", _.longValue())
+    @throws[NCJ] lazy val numFrom: Double = value2[Double]("from")
+    @throws[NCJ] lazy val numFromIncl: Boolean = value2[Boolean]("fromIncl")
+    @throws[NCJ] lazy val numTo: Double = value2[Double]("to")
+    @throws[NCJ] lazy val numToIncl: Boolean = value2[Boolean]("toIncl")
+    @throws[NCJ] lazy val numIsRangeCondition: Boolean = value2[Boolean]("isRangeCondition")
+    @throws[NCJ] lazy val numIsEqualCondition: Boolean = value2[Boolean]("isEqualCondition")
+    @throws[NCJ] lazy val numIsNotEqualCondition: Boolean = value2[Boolean]("isNotEqualCondition")
+    @throws[NCJ] lazy val numIsFromNegativeInfinity: Boolean = value2[Boolean]("isFromNegativeInfinity")
+    @throws[NCJ] lazy val numIsToPositiveInfinity: Boolean = value2[Boolean]("isToPositiveInfinity")
+    @throws[NCJ] lazy val chartEnabled: Boolean = value2[Boolean]("chartEnabled")
+    @throws[NCJ] lazy val chartType: String = value2[String]("chartType", _.trim)
+    @throws[NCJ] lazy val chartXAxis: String = value2[String]("chartXAxis", _.trim)
+    @throws[NCJ] lazy val chartDataSeries1: String = value2[String]("chartDataSeries1", _.trim)
+    @throws[NCJ] lazy val chartDataSeries2: String = value2[String]("chartDataSeries2", _.trim)
+    @throws[NCJ] lazy val chartDataSeries3: String = value2[String]("chartDataSeries3", _.trim)
+    @throws[NCJ] lazy val all: Boolean = value2[Boolean]("all")
+    @throws[NCJ] lazy val okToSuggest: Boolean = value2[Boolean]("okToSuggest")
+    @throws[NCJ] lazy val suggest: String = value2[String]("suggest")
+    @throws[NCJ] lazy val url: String = value2[String]("url")
+    @throws[NCJ] lazy val probeId: String = value2[String]("probeId")
+    @throws[NCJ] lazy val suggestLimit: Int = value[Int, BigInt]("suggestLimit", _.intValue())
+    @throws[NCJ] lazy val enable: Boolean = value2[Boolean]("enable")
+    @throws[NCJ] lazy val companyId: Long = value[Long, BigInt]("companyId", _.longValue())
+    @throws[NCJ] lazy val notifyFlag: Boolean = value2[Boolean]("notify")
+    @throws[NCJ] lazy val pendingFlag: Boolean = value2[Boolean]("pending")
+    @throws[NCJ] lazy val flag: Boolean = value2[Boolean]("flag")
+    @throws[NCJ] lazy val auto: Boolean = value2[Boolean]("auto")
+    @throws[NCJ] lazy val dashboardItemId: Long = value[Long, BigInt]("dashboardItemId", _.longValue())
 
     // Optional lazy extractors.
-    @throws[DLJ] lazy val phoneOpt: Option[String] = value2Opt[String]("phone", _.trim)
-    @throws[DLJ] lazy val departmentOpt: Option[String] = value2Opt[String]("department", _.trim)
-    @throws[DLJ] lazy val titleOpt: Option[String] = value2Opt[String]("title", _.trim)
-    @throws[DLJ] lazy val modelConfigOpt: Option[String] = value2Opt[String]("modelConfig", _.trim)
-    @throws[DLJ] lazy val mdlCfgOpt: Option[String] = value2Opt[String]("mdlCfg", _.trim)
-    @throws[DLJ] lazy val apiVerOpt: Option[Int] = valueOpt[Int, BigInt]("apiVer", _.intValue())
-    @throws[DLJ] lazy val userIdOpt: Option[Long] = valueOpt[Long, BigInt]("userId", _.longValue())
-    @throws[DLJ] lazy val companyIdOpt: Option[Long] = valueOpt[Long, BigInt]("companyId", _.longValue())
-    @throws[DLJ] lazy val idOpt: Option[Int] = valueOpt[Int, BigInt]("id", _.intValue())
-    @throws[DLJ] lazy val hashOpt: Option[Long] = valueOpt[Long, BigInt]("hash", _.longValue())
-    @throws[DLJ] lazy val userRankOpt: Option[Int] = valueOpt[Int, BigInt]("userRank", _.intValue())
-    @throws[DLJ] lazy val rcvTstampOpt: Option[Long] = valueOpt[Long, BigInt]("rcvTstamp", _.longValue())
-    @throws[DLJ] lazy val txtOpt: Option[String] = value2Opt[String]("txt", _.trim)
-    @throws[DLJ] lazy val userAgentOpt: Option[String] = value2Opt[String]("userAgent", _.trim)
-    @throws[DLJ] lazy val debugOpt: Option[Boolean] = value2Opt[Boolean]("debug")
-    @throws[DLJ] lazy val oldPasswordOpt: Option[String] = value2Opt[ String]("oldPassword", _.trim)
-    @throws[DLJ] lazy val rmtAddrOpt: Option[String] = value2Opt[ String]("rmtAddr", _.trim)
-    @throws[DLJ] lazy val cliReqIdOpt: Option[String] = value2Opt[String]("cliReqId", _.trim)
-    @throws[DLJ] lazy val cliDateTimeOpt: Option[String] = value2Opt[String]("cliDateTime", _.trim)
-    @throws[DLJ] lazy val restNodeIdOpt: Option[String] = value2Opt[String]("restNodeId", _.trim)
-    @throws[DLJ] lazy val restNodeIpsOpt: Option[List[String]] = value2Opt[List[String]]("restNodeIps", a ⇒ a.map(_.trim))
-    @throws[DLJ] lazy val srvReqIdOpt: Option[String] = value2Opt[String]("srvReqId", _.trim)
-    @throws[DLJ] lazy val srvReqIdsOpt: Option[List[String]] = value2Opt[List[String]]("srvReqIds")
-    @throws[DLJ] lazy val firstNameOpt: Option[String] = value2Opt[String]("firstName", _.trim)
-    @throws[DLJ] lazy val lastNameOpt: Option[String] = value2Opt[String]("lastName", _.trim)
-    @throws[DLJ] lazy val avatarUrlOpt: Option[String] = value2Opt[String]("avatarUrl", _.trim)
-    @throws[DLJ] lazy val syncReqResOpt: Option[Boolean] = value2Opt[Boolean]("syncReqRes")
-    @throws[DLJ] lazy val syncReqCmdOpt: Option[String] = value2Opt[String]("syncReqCmd", _.trim)
-    @throws[DLJ] lazy val passwdOpt: Option[String] = value2Opt[String]("passwd", _.trim)
-    @throws[DLJ] lazy val idTknOpt: Option[String] = value2Opt[String]("idTkn", _.trim)
-    @throws[DLJ] lazy val authCodeOpt: Option[String] = value2Opt[String]("authCode", _.trim)
-    @throws[DLJ] lazy val loginTknOpt: Option[String] = value2Opt[String]("loginTkn", _.trim)
-    @throws[DLJ] lazy val tknOpt: Option[String] = value2Opt[String]("tkn", _.trim)
-    @throws[DLJ] lazy val domainOpt: Option[String] = value2Opt[String]("domain", _.trim)
-    @throws[DLJ] lazy val emailOpt: Option[String] = value2Opt[String]("email", G.normalizeEmail)
-    @throws[DLJ] lazy val nameOpt: Option[String] = value2Opt[String]("name", _.trim)
-    @throws[DLJ] lazy val guidOpt: Option[String] = value2Opt[String]("guid", _.trim)
-    @throws[DLJ] lazy val companyNameOpt: Option[String] = value2Opt[String]("companyName", _.trim)
-    @throws[DLJ] lazy val dsIdOpt: Option[Long] = valueOpt[Long, BigInt]("dsId", _.longValue())
-    @throws[DLJ] lazy val dsTypeIdOpt: Option[String] = value2Opt[String]("dsTypeId", _.trim)
-    @throws[DLJ] lazy val dsNameOpt: Option[String] = value2Opt[String]("dsName", _.trim)
-    @throws[DLJ] lazy val dashboardItemIdOpt: Option[Long] = valueOpt[Long, BigInt]("dashboardItemId", _.longValue())
-    @throws[DLJ] lazy val statusOpt: Option[DLApiStatusCode] = valueOpt[DLApiStatusCode, String]("status", NCApiStatusCode.byName)
-    @throws[DLJ] lazy val messageOpt: Option[String] = value2Opt[String]("message", _.trim)
-    @throws[DLJ] lazy val editTextOpt: Option[String] = value2Opt[String]("editText", _.trim)
-    @throws[DLJ] lazy val saveOpt: Option[Boolean] = value2Opt[Boolean]("save")
-    @throws[DLJ] lazy val sqlOpt: Option[String] = value2Opt[String]("sql", _.trim)
-    @throws[DLJ] lazy val dimensionsOpt: Option[String] = value2Opt[String]("dimensions", _.trim)
-    @throws[DLJ] lazy val filtersOpt: Option[String] = value2Opt[String]("filters", _.trim)
-    @throws[DLJ] lazy val segmentOpt: Option[String] = value2Opt[String]("segment", _.trim)
-    @throws[DLJ] lazy val sortsOpt: Option[String] = value2Opt[String]("sorts", _.trim)
-    @throws[DLJ] lazy val startIndexOpt: Option[Int] = valueOpt[Int, BigInt]("startIndex", _.intValue())
-    @throws[DLJ] lazy val fromOpt: Option[Long] = valueOpt[Long, BigInt]("from", _.longValue())
-    @throws[DLJ] lazy val toOpt: Option[Long] = valueOpt[Long, BigInt]("to", _.longValue())
-    @throws[DLJ] lazy val valueListOpt: Option[List[String]] = value2Opt[List[String]]("value", _.map(_.trim))
-    @throws[DLJ] lazy val sortAscOpt: Option[Boolean] = value2Opt[Boolean]("sortAsc")
-    @throws[DLJ] lazy val sortByOpt: Option[String] = value2Opt[String]("sortBy", _.trim)
-    @throws[DLJ] lazy val stopWordOpt: Option[Boolean] = value2Opt[Boolean]("stopWord")
-    @throws[DLJ] lazy val stemOpt: Option[String] = value2Opt[String]("stem", _.trim)
-    @throws[DLJ] lazy val notifyFlagOpt: Option[Boolean] = value2Opt[Boolean]("notify")
-    @throws[DLJ] lazy val refIdOpt: Option[String] = value2Opt[String]("refId", _.trim)
-    @throws[DLJ] lazy val tmzNameOpt: Option[String] = value2Opt[String]("tmzName", _.trim)
-    @throws[DLJ] lazy val tmzAbbrOpt: Option[String] = value2Opt[String]("tmzAbbr", _.trim)
-    @throws[DLJ] lazy val cityOpt: Option[String] = value2Opt[String]("city", _.trim)
-    @throws[DLJ] lazy val countryNameOpt: Option[String] = value2Opt[String]("countryName", _.trim)
-    @throws[DLJ] lazy val countryCodeOpt: Option[String] = value2Opt[String]("countryCode", _.trim)
-    @throws[DLJ] lazy val regionNameOpt: Option[String] = value2Opt[String]("regionName", _.trim)
-    @throws[DLJ] lazy val regionCodeOpt: Option[String] = value2Opt[String]("regionCode", _.trim)
-    @throws[DLJ] lazy val zipCodeOpt: Option[String] = value2Opt[String]("zipCode", _.trim)
-    @throws[DLJ] lazy val metroCodeOpt: Option[Int] = valueOpt[Int, BigInt]("metroCode", _.intValue)
-    @throws[DLJ] lazy val longitudeOpt: Option[Double] = value2Opt[Double]("longitude")
-    @throws[DLJ] lazy val latitudeOpt: Option[Double] = value2Opt[Double]("latitude")
+    @throws[NCJ] lazy val phoneOpt: Option[String] = value2Opt[String]("phone", _.trim)
+    @throws[NCJ] lazy val departmentOpt: Option[String] = value2Opt[String]("department", _.trim)
+    @throws[NCJ] lazy val titleOpt: Option[String] = value2Opt[String]("title", _.trim)
+    @throws[NCJ] lazy val modelConfigOpt: Option[String] = value2Opt[String]("modelConfig", _.trim)
+    @throws[NCJ] lazy val mdlCfgOpt: Option[String] = value2Opt[String]("mdlCfg", _.trim)
+    @throws[NCJ] lazy val apiVerOpt: Option[Int] = valueOpt[Int, BigInt]("apiVer", _.intValue())
+    @throws[NCJ] lazy val userIdOpt: Option[Long] = valueOpt[Long, BigInt]("userId", _.longValue())
+    @throws[NCJ] lazy val companyIdOpt: Option[Long] = valueOpt[Long, BigInt]("companyId", _.longValue())
+    @throws[NCJ] lazy val idOpt: Option[Int] = valueOpt[Int, BigInt]("id", _.intValue())
+    @throws[NCJ] lazy val hashOpt: Option[Long] = valueOpt[Long, BigInt]("hash", _.longValue())
+    @throws[NCJ] lazy val userRankOpt: Option[Int] = valueOpt[Int, BigInt]("userRank", _.intValue())
+    @throws[NCJ] lazy val rcvTstampOpt: Option[Long] = valueOpt[Long, BigInt]("rcvTstamp", _.longValue())
+    @throws[NCJ] lazy val txtOpt: Option[String] = value2Opt[String]("txt", _.trim)
+    @throws[NCJ] lazy val userAgentOpt: Option[String] = value2Opt[String]("userAgent", _.trim)
+    @throws[NCJ] lazy val debugOpt: Option[Boolean] = value2Opt[Boolean]("debug")
+    @throws[NCJ] lazy val oldPasswordOpt: Option[String] = value2Opt[ String]("oldPassword", _.trim)
+    @throws[NCJ] lazy val rmtAddrOpt: Option[String] = value2Opt[ String]("rmtAddr", _.trim)
+    @throws[NCJ] lazy val cliReqIdOpt: Option[String] = value2Opt[String]("cliReqId", _.trim)
+    @throws[NCJ] lazy val cliDateTimeOpt: Option[String] = value2Opt[String]("cliDateTime", _.trim)
+    @throws[NCJ] lazy val restNodeIdOpt: Option[String] = value2Opt[String]("restNodeId", _.trim)
+    @throws[NCJ] lazy val restNodeIpsOpt: Option[List[String]] = value2Opt[List[String]]("restNodeIps", a ⇒ a.map(_.trim))
+    @throws[NCJ] lazy val srvReqIdOpt: Option[String] = value2Opt[String]("srvReqId", _.trim)
+    @throws[NCJ] lazy val srvReqIdsOpt: Option[List[String]] = value2Opt[List[String]]("srvReqIds")
+    @throws[NCJ] lazy val firstNameOpt: Option[String] = value2Opt[String]("firstName", _.trim)
+    @throws[NCJ] lazy val lastNameOpt: Option[String] = value2Opt[String]("lastName", _.trim)
+    @throws[NCJ] lazy val avatarUrlOpt: Option[String] = value2Opt[String]("avatarUrl", _.trim)
+    @throws[NCJ] lazy val syncReqResOpt: Option[Boolean] = value2Opt[Boolean]("syncReqRes")
+    @throws[NCJ] lazy val syncReqCmdOpt: Option[String] = value2Opt[String]("syncReqCmd", _.trim)
+    @throws[NCJ] lazy val passwdOpt: Option[String] = value2Opt[String]("passwd", _.trim)
+    @throws[NCJ] lazy val idTknOpt: Option[String] = value2Opt[String]("idTkn", _.trim)
+    @throws[NCJ] lazy val authCodeOpt: Option[String] = value2Opt[String]("authCode", _.trim)
+    @throws[NCJ] lazy val loginTknOpt: Option[String] = value2Opt[String]("loginTkn", _.trim)
+    @throws[NCJ] lazy val tknOpt: Option[String] = value2Opt[String]("tkn", _.trim)
+    @throws[NCJ] lazy val domainOpt: Option[String] = value2Opt[String]("domain", _.trim)
+    @throws[NCJ] lazy val emailOpt: Option[String] = value2Opt[String]("email", G.normalizeEmail)
+    @throws[NCJ] lazy val nameOpt: Option[String] = value2Opt[String]("name", _.trim)
+    @throws[NCJ] lazy val guidOpt: Option[String] = value2Opt[String]("guid", _.trim)
+    @throws[NCJ] lazy val companyNameOpt: Option[String] = value2Opt[String]("companyName", _.trim)
+    @throws[NCJ] lazy val dsIdOpt: Option[Long] = valueOpt[Long, BigInt]("dsId", _.longValue())
+    @throws[NCJ] lazy val dsTypeIdOpt: Option[String] = value2Opt[String]("dsTypeId", _.trim)
+    @throws[NCJ] lazy val dsNameOpt: Option[String] = value2Opt[String]("dsName", _.trim)
+    @throws[NCJ] lazy val dashboardItemIdOpt: Option[Long] = valueOpt[Long, BigInt]("dashboardItemId", _.longValue())
+    @throws[NCJ] lazy val statusOpt: Option[NCApiStatusCode] = valueOpt[NCApiStatusCode, String]("status", NCApiStatusCode.byName)
+    @throws[NCJ] lazy val messageOpt: Option[String] = value2Opt[String]("message", _.trim)
+    @throws[NCJ] lazy val editTextOpt: Option[String] = value2Opt[String]("editText", _.trim)
+    @throws[NCJ] lazy val saveOpt: Option[Boolean] = value2Opt[Boolean]("save")
+    @throws[NCJ] lazy val sqlOpt: Option[String] = value2Opt[String]("sql", _.trim)
+    @throws[NCJ] lazy val dimensionsOpt: Option[String] = value2Opt[String]("dimensions", _.trim)
+    @throws[NCJ] lazy val filtersOpt: Option[String] = value2Opt[String]("filters", _.trim)
+    @throws[NCJ] lazy val segmentOpt: Option[String] = value2Opt[String]("segment", _.trim)
+    @throws[NCJ] lazy val sortsOpt: Option[String] = value2Opt[String]("sorts", _.trim)
+    @throws[NCJ] lazy val startIndexOpt: Option[Int] = valueOpt[Int, BigInt]("startIndex", _.intValue())
+    @throws[NCJ] lazy val fromOpt: Option[Long] = valueOpt[Long, BigInt]("from", _.longValue())
+    @throws[NCJ] lazy val toOpt: Option[Long] = valueOpt[Long, BigInt]("to", _.longValue())
+    @throws[NCJ] lazy val valueListOpt: Option[List[String]] = value2Opt[List[String]]("value", _.map(_.trim))
+    @throws[NCJ] lazy val sortAscOpt: Option[Boolean] = value2Opt[Boolean]("sortAsc")
+    @throws[NCJ] lazy val sortByOpt: Option[String] = value2Opt[String]("sortBy", _.trim)
+    @throws[NCJ] lazy val stopWordOpt: Option[Boolean] = value2Opt[Boolean]("stopWord")
+    @throws[NCJ] lazy val stemOpt: Option[String] = value2Opt[String]("stem", _.trim)
+    @throws[NCJ] lazy val notifyFlagOpt: Option[Boolean] = value2Opt[Boolean]("notify")
+    @throws[NCJ] lazy val refIdOpt: Option[String] = value2Opt[String]("refId", _.trim)
+    @throws[NCJ] lazy val tmzNameOpt: Option[String] = value2Opt[String]("tmzName", _.trim)
+    @throws[NCJ] lazy val tmzAbbrOpt: Option[String] = value2Opt[String]("tmzAbbr", _.trim)
+    @throws[NCJ] lazy val cityOpt: Option[String] = value2Opt[String]("city", _.trim)
+    @throws[NCJ] lazy val countryNameOpt: Option[String] = value2Opt[String]("countryName", _.trim)
+    @throws[NCJ] lazy val countryCodeOpt: Option[String] = value2Opt[String]("countryCode", _.trim)
+    @throws[NCJ] lazy val regionNameOpt: Option[String] = value2Opt[String]("regionName", _.trim)
+    @throws[NCJ] lazy val regionCodeOpt: Option[String] = value2Opt[String]("regionCode", _.trim)
+    @throws[NCJ] lazy val zipCodeOpt: Option[String] = value2Opt[String]("zipCode", _.trim)
+    @throws[NCJ] lazy val metroCodeOpt: Option[Int] = valueOpt[Int, BigInt]("metroCode", _.intValue)
+    @throws[NCJ] lazy val longitudeOpt: Option[Double] = value2Opt[Double]("longitude")
+    @throws[NCJ] lazy val latitudeOpt: Option[Double] = value2Opt[Double]("latitude")
 
     /**
      * Gets JSON value with given types and name.
@@ -275,7 +275,7 @@ class NCJson(val json: JValue) {
      * @tparam T1 Final type of the value.
      * @tparam T2 Intermediate (Lift JSON) type of value.
      */
-    @throws[DLJ]
+    @throws[NCJ]
     private def value[T1, T2](fn: String, f: T2 ⇒ T1): T1 =
         try
             f(json \ fn match {
@@ -294,7 +294,7 @@ class NCJson(val json: JValue) {
       * @tparam T1 Final type of the value.
       * @tparam T2 Intermediate (Lift JSON) type of value.
       */
-    @throws[DLJ]
+    @throws[NCJ]
     private def valueX[T1, T2](fns: Seq[String], f: T2 ⇒ T1): T1 = {
         var retVal: JValue = null
 
@@ -320,7 +320,7 @@ class NCJson(val json: JValue) {
      * @param fn Field name.
      * @tparam T Type of the value.
      */
-    @throws[DLJ]
+    @throws[NCJ]
     def field[T](fn: String): T =
         try
             json \ fn match {
@@ -367,7 +367,7 @@ class NCJson(val json: JValue) {
      * @tparam T1 Final type of the value.
      * @tparam T2 Intermediate (Lift JSON) type of value.
      */
-    @throws[DLJ]
+    @throws[NCJ]
     private def valueOpt[T1, T2](fn: String, f: T2 ⇒ T1): Option[T1] =
         try
             json \ fn match {
@@ -379,7 +379,7 @@ class NCJson(val json: JValue) {
         }
 
     // Shortcuts.
-    @throws[DLJ]
+    @throws[NCJ]
     private def value2[T](fn: String, f: T ⇒ T = (t: T) ⇒ t): T = value[T, T](fn, f)
     private def value2Opt[T](fn: String, f: T ⇒ T = (t: T) ⇒ t): Option[T] = valueOpt[T, T](fn, f)
 
@@ -457,15 +457,15 @@ class NCJson(val json: JValue) {
  * Static scope for JSON wrapper.
  */
 object NCJson {
-    private type DLJ = NCJsonException
+    private type NCJ = NCJsonException
 
     // Specific control flow exceptions.
-    case class InvalidJson(js: String) extends DLJ(s"Malformed JSON syntax in: $js") with LazyLogging {
+    case class InvalidJson(js: String) extends NCJ(s"Malformed JSON syntax in: $js") with LazyLogging {
         // Log right away.
         logger.error(s"Malformed JSON syntax in: $js")
     }
 
-    case class InvalidJsonField(fn: String, cause: Throwable) extends DLJ(s"Invalid '$fn' JSON field <" +
+    case class InvalidJsonField(fn: String, cause: Throwable) extends NCJ(s"Invalid '$fn' JSON field <" +
         cause.getMessage + ">", cause) with LazyLogging {
         require(cause != null)
 
@@ -473,7 +473,7 @@ object NCJson {
         logger.error(s"Invalid '$fn' JSON field <${cause.getMessage}>")
     }
 
-    case class MissingJsonField(fn: String) extends DLJ(s"Missing mandatory '$fn' JSON field.") with LazyLogging {
+    case class MissingJsonField(fn: String) extends NCJ(s"Missing mandatory '$fn' JSON field.") with LazyLogging {
         // Log right away.
         logger.error(s"Missing mandatory '$fn' JSON field.")
     }
@@ -498,7 +498,7 @@ object NCJson {
      * @param js JSON string presentation.
      * @return JSON wrapper.
      */
-    @throws[DLJ]
+    @throws[NCJ]
     def apply(js: String): NCJson = {
         require(js != null)
 
@@ -514,7 +514,7 @@ object NCJson {
      * @param json Lift `JValue` AST object.
      * @return JSON wrapper.
      */
-    @throws[DLJ]
+    @throws[NCJ]
     def apply(json: JValue): NCJson = {
         require(json != null)
 
@@ -528,15 +528,15 @@ object NCJson {
 //     * @param x 'spray-route' request context.
 //     * @return JSON wrapper.
 //     */
-//    @throws[DLJ]
-//    def apply(x: RequestContext): DLJson = {
+//    @throws[NCJ]
+//    def apply(x: RequestContext): NCJson = {
 //        var js = x.request.entity.asString
 //
 //        if (js != null && js.isEmpty)
 //            js = "{}"
 //
 //        js match {
-//            case s: String if s != null ⇒ DLJson(s)
+//            case s: String if s != null ⇒ NCJson(s)
 //            case null ⇒ throw new NCE(s"Missing HTTP request JSON POST payload in: $x")
 //            case _ ⇒ throw InvalidJson(js)
 //        }
@@ -662,9 +662,8 @@ object NCJson {
     // Implicit conversions.
     implicit def x(jv: JValue): NCJson = new NCJson(jv)
     implicit def x1(js: NCJson): JValue = js.json
-    // TODO: skh
-//    implicit def x2(likeJs: DLJsonLike): JValue = likeJs.toJson.json
-//    implicit def x3(likeJs: DLJsonLike): DLJson = likeJs.toJson
-//    implicit def x4(js: DLJson): String = js.compact
-//    implicit def x4(js: DLJsonLike): String = js.toJson.compact
+    implicit def x2(likeJs: NCJsonLike): JValue = likeJs.toJson.json
+    implicit def x3(likeJs: NCJsonLike): NCJson = likeJs.toJson
+    implicit def x4(js: NCJson): String = js.compact
+    implicit def x4(js: NCJsonLike): String = js.toJson.compact
 }

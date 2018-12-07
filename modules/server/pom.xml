@@ -46,14 +46,19 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.ver}</version>
-        </dependency>
-        <dependency>
             <groupId>org.nlpcraft</groupId>
             <artifactId>global</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nlpcraft</groupId>
+            <artifactId>mdllib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.ver}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -85,7 +90,16 @@ under the License.
             <artifactId>c3p0</artifactId>
             <version>${c3p0.ver}</version>
         </dependency>
-
+        <dependency>
+            <groupId>net.sf.jwordnet</groupId>
+            <artifactId>jwnl</artifactId>
+            <version>${wordnet.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-core_${scala.base}</artifactId>
+            <version>${scalaz.ver}</version>
+        </dependency>
     </dependencies>
 
     <build>

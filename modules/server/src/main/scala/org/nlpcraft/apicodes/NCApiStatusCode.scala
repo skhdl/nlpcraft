@@ -32,7 +32,7 @@ import org.nlpcraft.NCE
  * Enumeration for all APIs status codes.
  */
 object NCApiStatusCode extends Enumeration {
-    type DLApiStatusCode = Value
+    type NCApiStatusCode = Value
 
     // General API codes.
     val API_SYS_FAILURE: Value = Value
@@ -199,7 +199,7 @@ object NCApiStatusCode extends Enumeration {
      *
      * @param name Enumeration's name.
      */
-    def byName(name: String): DLApiStatusCode = {
+    def byName(name: String): NCApiStatusCode = {
         try {
             NCApiStatusCode.withName(name)
         }

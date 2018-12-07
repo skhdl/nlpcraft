@@ -39,7 +39,7 @@ import scala.util.control.Exception._
   */
 trait NCIgniteExceptions {
     /**
-      * Partial function that wraps Ignite exceptions and rethrows 'DLE'.
+      * Partial function that wraps Ignite exceptions and rethrows 'NCE'.
       *
       * @tparam R Type of the return value for the body.
       * @return Catcher.
@@ -50,7 +50,7 @@ trait NCIgniteExceptions {
     }
 
     /**
-      * Partial function that wraps SQL exceptions and rethrows 'DLE'.
+      * Partial function that wraps SQL exceptions and rethrows 'NCE'.
       *
       * @tparam R Type of the return value for the body.
       * @return Catcher.
