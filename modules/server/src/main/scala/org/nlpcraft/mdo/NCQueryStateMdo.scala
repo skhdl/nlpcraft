@@ -26,15 +26,15 @@
 
 package org.nlpcraft.mdo
 
-import javax.cache.annotation.CacheKey
 import net.liftweb.json.JsonAST.{JObject, _}
 import org.nlpcraft._
+import org.nlpcraft.cache.NCCacheKey
 import org.nlpcraft.json.NCJson
+import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.mdo.NCQueryStateMdo._
 import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
-import scala.collection.JavaConverters._
-import org.nlpcraft.mdllib.NCToken
 
+import scala.collection.JavaConverters._
 import scala.collection.Map
 
 /**
@@ -58,7 +58,7 @@ case class NCQueryStateMdo(
     @NCMdoField var curateText: Option[String] = None, // Optional text after human curation.
     @NCMdoField var curateJson: Option[String] = None, // Optional request JSON explanation for curation.
     @NCMdoField var curateHint: Option[String] = None, // Optional hint after human curation.
-    @NCMdoField var cacheKey: Option[CacheKey] = None, // Optional cache key.
+    @NCMdoField var cacheKey: Option[NCCacheKey] = None, // Optional cache key.
     @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.

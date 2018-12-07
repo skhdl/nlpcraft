@@ -24,19 +24,27 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
+package org.nlpcraft.cache
 
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+import org.nlpcraft.ascii.NCAsciiLike
+import org.nlpcraft.json.NCJsonLike
 
 /**
- * Ignite segments filter.
- *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
+ * Cache compound key.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
+trait NCCacheKey extends NCJsonLike with NCAsciiLike {
+    /**
+     * Direct keys. They used for direct searching data in cache.
+     */
+    def directKeys: Seq[NCCacheSingleKey]
+
+    /**
+     * Synonym keys. They used for scanning cache by synonyms of free words.
+     */
+    def synonymKeys: Seq[NCCacheSingleKey]
+
+    /**
+     * Free words.
+     */
+    def freeWords: Seq[NCCacheFreeWord]
 }

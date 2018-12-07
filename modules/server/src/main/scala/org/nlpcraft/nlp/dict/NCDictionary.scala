@@ -27,8 +27,7 @@
 package org.nlpcraft.nlp.dict
 
 import org.nlpcraft.nlp.dict.NCDictType._
-import org.nlpcraft._
-import org.nlpcraft.{NCE, NCLifecycle}
+import org.nlpcraft.{NCE, NCLifecycle, _}
 
 /**
  * English dictionary.

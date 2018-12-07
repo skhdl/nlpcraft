@@ -24,19 +24,13 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
-
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+package org.nlpcraft.quote
 
 /**
- * Ignite segments filter.
- *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
+ * Usage limit type.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
+object NCUsageLimitType extends Enumeration {
+    type NCUsageLimitType = Value
+
+    val SECOND, MINUTE, HOUR, DAY, MONTH, YEAR: Value = Value
 }

@@ -27,12 +27,12 @@
 package org.nlpcraft.ignite
 
 import java.util.UUID
-import javax.cache.Cache
 
+import javax.cache.Cache
+import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.{QueryCursor, SqlQuery}
 import org.apache.ignite.events.CacheEvent
 import org.apache.ignite.lang.{IgniteBiPredicate, IgnitePredicate}
-import org.apache.ignite.IgniteCache
 
 import scala.collection.JavaConverters._
 

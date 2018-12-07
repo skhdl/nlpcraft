@@ -24,19 +24,12 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
+package org.nlpcraft.quote
 
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+import org.nlpcraft.NCException
+import org.nlpcraft.quote.NCUsageLimitType.NCUsageLimitType
 
 /**
- * Ignite segments filter.
- *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
- */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
-}
+  * Usage limit violation exception.
+  */
+case class NCUsageLimitException(typ: NCUsageLimitType) extends NCException(s"Usage limit violation on: $typ")

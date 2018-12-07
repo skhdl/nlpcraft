@@ -24,19 +24,33 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
+package org.nlpcraft.cache
 
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+import org.nlpcraft.ascii.NCAsciiLike
+import org.nlpcraft.cache.NCCacheKeyType.NCCacheKeyType
+import org.nlpcraft.json.{NCJson, NCJsonLike}
 
 /**
- * Ignite segments filter.
- *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
+ * Cache result.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
+trait NCCacheResult extends NCJsonLike with NCAsciiLike {
+    /**
+     * Key type.
+     */
+    def keyType: NCCacheKeyType
+
+    /**
+     * Sorted flag.
+     */
+    def sorted: Boolean
+
+    /**
+     * Json cache result.
+     */
+    def json: NCJson
+
+    /**
+     * Json cache result identifier.
+     */
+    def mainCacheId: Long
 }

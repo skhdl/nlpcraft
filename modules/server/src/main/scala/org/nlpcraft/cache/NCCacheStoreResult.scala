@@ -24,19 +24,12 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
-
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+package org.nlpcraft.cache
 
 /**
- * Ignite segments filter.
+ * Store result.
  *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
+ * @param mainCacheId Main cache ID.
+ * @param fullKeys Flag stored full keys set or lemma and stem only.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
-}
+case class NCCacheStoreResult(mainCacheId: Long, fullKeys: Boolean)

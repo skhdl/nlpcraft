@@ -24,19 +24,26 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
+package org.nlpcraft.cache
 
-import java.util.{List => JList}
-
-import org.apache.ignite.cluster.ClusterNode
-import org.apache.ignite.lang.IgnitePredicate
+import org.nlpcraft.json.NCJsonLike
 
 /**
- * Ignite segments filter.
- *
- * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
+ * Cache key free word representation.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
-    override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
+trait NCCacheFreeWord extends NCJsonLike {
+    /**
+     * Lemma.
+     */
+    def lemma: String
+
+    /**
+     * Penn POS.
+     */
+    def pos: String
+
+    /**
+     * Flag which indicates whether free word is quoted or not.
+     */
+    def quoted: Boolean
 }
