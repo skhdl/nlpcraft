@@ -31,7 +31,7 @@ import net.liftweb.json.JsonDSL._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.cache.NCCacheKeyType._
 import org.nlpcraft.json.NCJson
-import org.nlpcraft.mdllib.NCToken
+//import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.nlp.wordnet.NCWordNet
 import org.nlpcraft.{NCE, NCLifecycle}
 
@@ -77,8 +77,8 @@ object NCCacheKeyGenerator extends NCLifecycle("CORE cache store key generator")
         def x(s: String): String = s"${id}_$s"
 
         id match {
-            case "dl:geo" ⇒ x(t.getMetadata.getString("GEO_KIND"))
-            case "dl:function" ⇒ x(t.getMetadata.getString("FUNCTION_TYPE"))
+            case "nlp:geo" ⇒ x(t.getMetadata.getString("GEO_KIND"))
+            case "nlp:function" ⇒ x(t.getMetadata.getString("FUNCTION_TYPE"))
             case _ ⇒ id
         }
     }
@@ -112,7 +112,7 @@ object NCCacheKeyGenerator extends NCLifecycle("CORE cache store key generator")
             override def keyType: NCCacheKeyType = kd.keyType
             override def keyValue: String =
                 mkKeyValue(kd.keyType, sorted, (if (kd.sort) kd.values.sorted else kd.values).mkString("|")).
-                    replaceAll("dl:", "dl_").
+                    replaceAll("nlp:", "nlp_").
                     toUpperCase
             override def sorted: Boolean = kd.sort
             override def toJson: NCJson = ("keyType" → kd.keyType.toString) ~ ("keyValue" → keyValue) ~ ("sorted" → kd.sort)
@@ -207,7 +207,7 @@ object NCCacheKeyGenerator extends NCLifecycle("CORE cache store key generator")
                     val pos = meta.getString("NLP_POS")
                     val isQuoted = meta.getBoolean("NLP_QUOTED")
 
-                    Word(lemma, stem, pos, if (t.getId == "dl:nlp") None else Some(getKeyToken(t)), isQuoted)
+                    Word(lemma, stem, pos, if (t.getId == "nlp:nlp") None else Some(getKeyToken(t)), isQuoted)
                 })
 
             hs
