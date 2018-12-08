@@ -1,0 +1,139 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ *     _   ____      ______           ______
+ *    / | / / /___  / ____/________ _/ __/ /_
+ *   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ *  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+ * /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+ *        /_/
+ */
+
+[
+    { /* Greetings. */
+        "inputs": [
+            "how {are|r} {you|u}",
+            "how is it going",
+            "what's {up|new|going on}",
+            "how's {everything|live|life}",
+            "how {are|r} things",
+            "{it's|*} {good|nice} to {see|meet} {you|u} {again|*}",
+            "long time no see",
+            "it's been a while",
+            "{hey|hi|hello|howdy|ok} {you|u|there|data lingua|bro|geos|*}",
+            "good {day|morning|evening|afternoon}"
+        ],
+        "responses": [
+            "Hi there.",
+            "Hi, I'm here to answer your questions.",
+            "Hi, I'm here to help.",
+            "Hi, you can ask me another question.",
+            "Hi, I'm ready whenever you are.",
+            "Hi, I'm ready to answer your questions."
+        ]
+    },
+    { /* Bye-bye. */
+        "inputs": [
+            "bye-bye",
+            "bye bye",
+            "bye",
+            "goodbye",
+            "good-bye",
+            "good night",
+            "so long",
+            "catch you later",
+            "peace out",
+            "i'm out",
+            "adios",
+            "ciao",
+            "ttyl",
+            "au revoir",
+            "farewell",
+            "have a {good|nice} day",
+            "take care",
+            "later",
+            "{see|talk to} {you|u} later",
+            "see you"
+        ],
+        "responses": [
+            "Ok, {see you later|bye-bye|goodbye|bye now}.",
+            "Ciao.",
+            "Bye now.",
+            "Ok, thanks for letting me learn new things today."
+        ]
+    },
+    { /* Human vs. machine. */
+        "inputs": [
+            "{are|r} {you|u} {a|*} human {or a {machine|computer|system|algorithm|software}|*}",
+            "{are|r} {you|u} {a|*} {human|machine|computer|system|algorithm|software}",
+            "{are|r} {you|u} alive",
+            "{what|who} {are|r} {you|u}",
+            "{are|r} {you|u} {a|*} {man|boy} or {a|*} {women|girl}",
+            "{are|r} {you|u} {a|*} {man|boy}",
+            "{are|r} {you|u} {a|*} {women|girl}",
+            "can {you|u} {speak|hear|see|understand|feel}",
+            "{are|r} {you|u} smart"
+        ],
+        "responses": [
+            "I'm a {relatively smart|pretty cool|*} computer program.",
+            "I'm a self-learning machine taught by the expert."
+        ]
+    },
+    { /* Name. */
+        "inputs": [
+            "what's your name",
+            "you got {a|*} name",
+            "do {you|u} have {a|*} name",
+            "can {I|we} {ask|get} your name",
+            "can {you|u} tell me your name"
+        ],
+        "responses": [
+            "My {internal|*} {code|*} name is GEOS."
+        ]
+    },
+    { /* How to ask. */
+        "inputs": [
+            "how do {we|I} {ask|type} {a|the|*} question",
+            "how {may|can|could} {we|I} ask {the|a|*} question",
+            "how {may|can|could} {we|I} ask",
+            "{is there }any limitation on how {we|I} {could|can} ask {a|the|*} question"
+        ],
+        "responses": [
+            "Use a free-form natural language - there are no special rules, grammar or terms.",
+            "You can use a normal spoken language to ask any questions.",
+            "There is no limitation on how you can ask the question - use your natural language."
+        ]
+    },
+
+    { /* Shorthands. */
+        "inputs": [
+            "{lol|zzzz|zzz|lulz|omg|omfg|gr8|rotfl|tgif|tl;dr|tldr|lmao|wtf|xoxo|j/k|jk|huh|hm|hmm|hmmm}"
+        ],
+        "responses": [
+            ":-)"
+        ]
+    },
+    { /* Thanks. */
+        "inputs": [
+            "{thank you|thank you!|thanks|thanks!|thank you very much|thank you very much!|thx|tx|thks|tyvm}"
+        ],
+        "responses": [
+            "You are welcome."
+        ]
+    }
+]

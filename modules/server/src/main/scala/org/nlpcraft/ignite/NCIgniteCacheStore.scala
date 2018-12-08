@@ -31,7 +31,7 @@ import org.apache.ignite.cache.CacheAtomicityMode
 import org.apache.ignite.cache.store.{CacheStoreAdapter, CacheStoreSession}
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.resources.CacheStoreSessionResource
-import org.apache.ignite.{Ignition, IgniteException => IE}
+import org.apache.ignite.{Ignition, IgniteException ⇒ IE}
 import org.nlpcraft.NCE
 import org.nlpcraft.tx.NCTxManager
 

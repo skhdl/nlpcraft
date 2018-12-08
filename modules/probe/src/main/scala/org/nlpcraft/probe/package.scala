@@ -39,7 +39,7 @@ package object probe {
       * @param f Clojure to convert.
       * @return Runnable object.
       */
-    implicit def toRunnable(f: () ⇒ Unit): Runnable = () => f()
+    implicit def toRunnable(f: () ⇒ Unit): Runnable = () ⇒ f()
     
     /**
       * Support for Ignite vis-a-vis Scala usage.
@@ -47,5 +47,5 @@ package object probe {
       * @param f Clojure to convert.
       * @return Callable object.
       */
-    implicit def toCallable[R](f: () ⇒ R): Callable[R] = () => f()
+    implicit def toCallable[R](f: () ⇒ R): Callable[R] = () ⇒ f()
 }

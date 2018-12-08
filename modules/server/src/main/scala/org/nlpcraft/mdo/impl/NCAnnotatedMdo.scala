@@ -39,7 +39,7 @@ import org.nlpcraft.{NCE, _}
 import scala.collection.mutable
 import scala.language.existentials
 import scala.reflect.runtime.universe._
-import scala.reflect.runtime.{universe => ru}
+import scala.reflect.runtime.{universe ⇒ ru}
 import scala.util.control.Exception._
 
 sealed case class NCMdoEntityAnnotationException(c: Class[_])
@@ -327,15 +327,15 @@ trait NCAnnotatedMdo[T <: NCAnnotatedMdo[T]] extends NCJsonLike with NCAsciiLike
         else
             v match {
                 case s: String ⇒ Some(s""""${G.escapeJson(s)}"""")
-                case _: Unit => None
-                case z: Boolean => Some(z.toString)
-                case b: Byte => Some(b.toString)
-                case c: Char => Some(s""""$c"""")
-                case s: Short => Some(s.toString)
-                case i: Int => Some(i.toString)
-                case j: Long => Some(j.toString)
-                case f: Float => Some(f.toString)
-                case d: Double => Some(d.toString)
+                case _: Unit ⇒ None
+                case z: Boolean ⇒ Some(z.toString)
+                case b: Byte ⇒ Some(b.toString)
+                case c: Char ⇒ Some(s""""$c"""")
+                case s: Short ⇒ Some(s.toString)
+                case i: Int ⇒ Some(i.toString)
+                case j: Long ⇒ Some(j.toString)
+                case f: Float ⇒ Some(f.toString)
+                case d: Double ⇒ Some(d.toString)
                 case t: Traversable[_] ⇒ Some(s"[${t.filter(_ != null).flatMap(jsonValue).mkString(",")}]")
                 case a: Array[_] ⇒ Some(s"[${a.filter(_ != null).flatMap(jsonValue).mkString(",")}]")
                 case j: NCJson ⇒ Some(j.compact)

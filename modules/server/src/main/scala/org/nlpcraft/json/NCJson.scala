@@ -30,7 +30,7 @@ import java.io.{IOException, _}
 import java.util.zip._
 
 import com.typesafe.scalalogging.LazyLogging
-import net.liftweb.json.{compact => liftCompact, pretty => liftPretty, render => liftRender, _}
+import net.liftweb.json.{compact ⇒ liftCompact, pretty ⇒ liftPretty, render ⇒ liftRender, _}
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode
 import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode

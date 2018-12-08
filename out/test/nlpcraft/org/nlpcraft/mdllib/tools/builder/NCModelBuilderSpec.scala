@@ -24,16 +24,34 @@
  *        /_/
  */
 
-package org.nlpcraft.nlp
+package org.nlpcraft.mdllib.tools.builder
 
-import org.nlpcraft.NCLifecycle
+import org.nlpcraft.mdllib._
+import org.nlpcraft._
+import org.scalatest.FlatSpec
 
-// TODO: skh
-object NCCoreNlp extends NCLifecycle("CORE NLP") {
-    def stemmatizeSeq(strings: Seq[String]): Seq[String] = ???
+import scala.collection.JavaConverters._
 
-    def lemmatize(s: String): String = ???
+/**
+  * Model builder test.
+  */
+class NCModelBuilderSpec extends FlatSpec with NCModelSpecBase {
+    behavior of "model"
+    
+    it should "properly build a valid model" in {
+        try {
+            println(makeValidModelProvider.makeModel(""))
+            
+            assert(true)
+        }
+        catch {
+            case e: NCException ⇒ e.printStackTrace(); assert(false)
+        }
+    }
 
-    def stemmatize(s: String): String = ???
+    it should "load model from JSON file" in {
+        val mdl = NCModelBuilder.newJsonModel(G.getStream("time_model.json"))
 
+        println(s"Model loaded: $mdl")
+    }
 }

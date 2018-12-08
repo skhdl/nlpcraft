@@ -263,7 +263,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                         val pick = m == theMatch
 
                         tbl += (
-                            if (pick) " =>" else "",
+                            if (pick) " ⇒" else "",
                             s"#${m.variantIdx}",
                             if (pick) mkPickTokens(m.intentMatch) else m.intentMatch.intent
                         )
@@ -273,7 +273,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 }
                 else {
                     tbl += (
-                        " =>",
+                        " ⇒",
                         s"#${theMatch.variantIdx}",
                         mkPickTokens(theMatch.intentMatch)
                     )

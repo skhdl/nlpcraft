@@ -33,7 +33,7 @@ import org.nlpcraft.{NCE, NCLifecycle, _}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
-import scala.collection.mutable.{HashMap => HMap, HashSet => HSet}
+import scala.collection.mutable.{HashMap ⇒ HMap, HashSet ⇒ HSet}
 
 /**
  * Stop-word and stop-sentence enricher.

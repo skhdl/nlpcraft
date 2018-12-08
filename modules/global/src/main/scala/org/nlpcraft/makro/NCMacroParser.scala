@@ -79,12 +79,12 @@ object NCMacroParser {
   * - '\' can be used only for escaping '{', '}', '|', and '*' special symbols.
   *
   * Examples:
-  *      "A {B|C} D" => "A B D", "A C D"
-  *      "A \{B\|C\} D" => "A {B|C} D"
-  *      "A {B|*} D" => "A D", "A B D"
-  *      "A {*|B|C} D" => "A D", "A B D", "A C D"
-  *      "A <MACRO>" => "A ..." based on <MACRO> content.
-  *      "A {<MACRO>|*}" => "A", "A ..." based on <MACRO> content.
+  *      "A {B|C} D" ⇒ "A B D", "A C D"
+  *      "A \{B\|C\} D" ⇒ "A {B|C} D"
+  *      "A {B|*} D" ⇒ "A D", "A B D"
+  *      "A {*|B|C} D" ⇒ "A D", "A B D", "A C D"
+  *      "A <MACRO>" ⇒ "A ..." based on <MACRO> content.
+  *      "A {<MACRO>|*}" ⇒ "A", "A ..." based on <MACRO> content.
   *
   * NOTE: Macros cannot be recursive.
   * NOTE: Macros and '{...}' options groups can be nested.

@@ -168,7 +168,7 @@ class NCSynonym(
     override def canEqual(other: Any): Boolean = other.isInstanceOf[NCSynonym]
 
     override def equals(other: Any): Boolean = other match {
-        case that: NCSynonym =>
+        case that: NCSynonym ⇒
             super.equals(that) &&
                 (that canEqual this) &&
                 isTextOnly == that.isTextOnly &&
@@ -178,12 +178,12 @@ class NCSynonym(
                 isElementId == that.isElementId &&
                 isValueName == that.isValueName &&
                 value == that.value
-        case _ => false
+        case _ ⇒ false
     }
 
     override def hashCode(): Int = {
         val state = Seq(super.hashCode(), isTextOnly, posChunks, regexChunks, isValueSynonym, isElementId, isValueName, value)
-        state.map(p ⇒ if (p == null) 0 else p.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+        state.map(p ⇒ if (p == null) 0 else p.hashCode()).foldLeft(0)((a, b) ⇒ 31 * a + b)
     }
 }
 

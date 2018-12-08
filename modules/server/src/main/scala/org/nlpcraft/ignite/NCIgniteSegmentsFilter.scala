@@ -26,7 +26,7 @@
 
 package org.nlpcraft.ignite
 
-import java.util.{List => JList}
+import java.util.{List ⇒ JList}
 
 import org.apache.ignite.cluster.ClusterNode
 import org.apache.ignite.lang.IgnitePredicate

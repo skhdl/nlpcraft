@@ -135,7 +135,7 @@ object NCProbeConnectionManager extends NCProbeManager("PROBE connection manager
         def err(msg: String) = throw new HandshakeError(msg)
     
         resp.getType match {
-            case "P2S_PROBE_OK" ⇒ logger.info("  |==> P2S handshake OK.") // Bingo!
+            case "P2S_PROBE_OK" ⇒ logger.info("  |=⇒ P2S handshake OK.") // Bingo!
             case "P2S_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
             case _ ⇒ err(s"Unexpected server message (you may need to update the probe): ${resp.getType}")
         }
@@ -229,7 +229,7 @@ object NCProbeConnectionManager extends NCProbeManager("PROBE connection manager
                         logger.warn(
                             " >>>> This probe version will soon be unsupported - update or reinstall the probe ASAP. <<<<")
                         
-                    case "S2P_PROBE_OK" ⇒ logger.info("  |==> S2P handshake OK.") // Bingo!
+                    case "S2P_PROBE_OK" ⇒ logger.info("  |=⇒ S2P handshake OK.") // Bingo!
                     
                     case _ ⇒ err(s"Unknown server message (you need to update the probe): ${resp.getType}")
                 }

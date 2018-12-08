@@ -1551,9 +1551,9 @@ public class NCIntentSolver {
         int lastIdx = list.lastIndexOf(',');
 
         if (list.indexOf(',') == lastIdx)
-            list = list.replace(", ", " and "); // "A, B" => "A and B"
+            list = list.replace(", ", " and "); // "A, B" ⇒ "A and B"
         else
-            list = list.substring(0, lastIdx) + ", and" + list.substring(lastIdx); // "A, B, C" => "A, B, and C"
+            list = list.substring(0, lastIdx) + ", and" + list.substring(lastIdx); // "A, B, C" ⇒ "A, B, and C"
 
         return list;
     }

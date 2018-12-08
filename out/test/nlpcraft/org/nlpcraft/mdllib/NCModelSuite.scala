@@ -24,16 +24,14 @@
  *        /_/
  */
 
-package org.nlpcraft.nlp
+package org.nlpcraft.mdllib
 
-import org.nlpcraft.NCLifecycle
+import org.nlpcraft.mdllib.tools.builder.NCModelBuilderSpec
+import org.scalatest.Suites
 
-// TODO: skh
-object NCCoreNlp extends NCLifecycle("CORE NLP") {
-    def stemmatizeSeq(strings: Seq[String]): Seq[String] = ???
-
-    def lemmatize(s: String): String = ???
-
-    def stemmatize(s: String): String = ???
-
-}
+/**
+  * Model test suite.
+  */
+class NCModelSuite extends Suites(
+    new NCModelBuilderSpec
+)
