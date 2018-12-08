@@ -31,7 +31,7 @@ import java.sql.Connection
 import org.apache.ignite.IgniteTransactions
 import org.apache.ignite.lang.IgniteUuid
 import org.apache.ignite.transactions.{Transaction, TransactionConcurrency, TransactionIsolation}
-import org.nlpcraft.ignite.NCIgniteGeos
+import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.{NCE, NCLifecycle, _}
 
 import scala.collection.mutable
@@ -41,7 +41,7 @@ import scala.util.control.Exception.catching
   * Transaction manager based on Ignite transaction management. It manages both Ignite cache
   * and JDBC operations, and allows for multi-threaded transactions.
   */
-object NCTxManager extends NCLifecycle("Core TX manager") with NCIgniteGeos {
+object NCTxManager extends NCLifecycle("Core TX manager") with NCIgniteNlpCraft {
     // Internal log switch.
     private final val LOG_TX = false
     
@@ -68,7 +68,7 @@ object NCTxManager extends NCLifecycle("Core TX manager") with NCIgniteGeos {
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        itx = geos.transactions()
+        itx = nlpcraft.transactions()
 
         super.start()
     }

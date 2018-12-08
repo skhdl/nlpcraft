@@ -31,7 +31,7 @@ import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.cache.NCCacheKey
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteGeos
+import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.mdo.NCQueryStateMdo
@@ -45,7 +45,7 @@ import scala.util.control.Exception._
 /**
   * Query state machine.
   */
-object NCQueryStateManager extends NCLifecycle("SERVER query state manager") with NCIgniteGeos {
+object NCQueryStateManager extends NCLifecycle("SERVER query state manager") with NCIgniteNlpCraft {
     private final val ASK_WAIT_LINGUIST_STR = ASK_WAIT_LINGUIST.toString
     private final val ASK_READY_STR = ASK_READY.toString
     
@@ -60,7 +60,7 @@ object NCQueryStateManager extends NCLifecycle("SERVER query state manager") wit
         
         cache = null
     
-        if (geosSegment == "rest" && notifier != null)
+        if (segment == "rest" && notifier != null)
             G.stopThread(notifier)
         
         super.stop()
@@ -73,11 +73,11 @@ object NCQueryStateManager extends NCLifecycle("SERVER query state manager") wit
         ensureStopped()
     
         catching(wrapIE) {
-            cache = geos.cache[String/*Server request ID*/, NCQueryStateMdo]("core-qry-state-cache")
+            cache = nlpcraft.cache[String/*Server request ID*/, NCQueryStateMdo]("core-qry-state-cache")
         }
         
         // Start notifier thread only on REST server.
-        if (geosSegment == "rest") {
+        if (segment == "rest") {
             notifier = G.mkThread("query-state-notifier") { t ⇒
                 val NOTIFIER_DELAY = 15 * 1000 // 15 seconds.
                 

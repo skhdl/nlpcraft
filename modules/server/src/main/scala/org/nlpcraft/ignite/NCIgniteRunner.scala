@@ -40,7 +40,7 @@ import scala.sys.SystemProperties
  */
 object NCIgniteRunner extends LazyLogging {
     // Segment attribute name.
-    private final val SGM_ATTR_NAME = "geos.segment"
+    private final val SGM_ATTR_NAME = "nlpcraft.segment"
 
     /**
      * Starts Ignite node with given Ignite install directory and configuration path,
@@ -68,7 +68,7 @@ object NCIgniteRunner extends LazyLogging {
             assume(sgm != null, s"Node attribute '$SGM_ATTR_NAME' is not set.")
 
             def checkStarted(sgm: String): Unit =
-                if (!ignite.cluster().nodes().asScala.exists(x ⇒ Objects.equals(x.attributes.get("geos.segment"), sgm)))
+                if (!ignite.cluster().nodes().asScala.exists(x ⇒ Objects.equals(x.attributes.get("nlpcraft.segment"), sgm)))
                     throw new IgniteException(s"Server is not started: $sgm")
 
             // `adm` and `share` servers should always be started first in the cluster.
@@ -78,7 +78,7 @@ object NCIgniteRunner extends LazyLogging {
                 checkStarted("share")
 
             // Ack segment.
-            logger.info(s"GEOS segment: $sgm")
+            logger.info(s"Ignite segment: $sgm")
 
             body
         }

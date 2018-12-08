@@ -32,7 +32,7 @@ import java.util.Date
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
-import org.nlpcraft.ignite.NCIgniteGeos
+import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.mdo.{NCSynonymCacheKeyMdo, _}
 import org.nlpcraft.{NCE, NCLifecycle, _}
 
@@ -40,7 +40,7 @@ import org.nlpcraft.{NCE, NCLifecycle, _}
  * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
  * Note that all functions in this class expect outside 'NCPsql.sql()' block.
  */
-object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteGeos {
+object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraft {
     /**
      * Starts manager.
      */

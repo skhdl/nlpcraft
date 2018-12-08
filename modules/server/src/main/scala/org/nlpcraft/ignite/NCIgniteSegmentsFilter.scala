@@ -38,5 +38,5 @@ import org.apache.ignite.lang.IgnitePredicate
  */
 case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
     override def apply(node: ClusterNode): Boolean =
-        segs.contains(node.attributes().getOrDefault("geos.segment", ""))
+        segs.contains(node.attributes().getOrDefault("nlpcraft.segment", ""))
 }

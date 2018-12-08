@@ -31,7 +31,7 @@ import org.nlpcraft.NCServer
 /**
  * Ignite-based server (starts server inside of initialized Ignite node).
  */
-abstract class NCIgniteServer(val ggCfg: String) extends App with NCServer with NCIgniteGeos {
+abstract class NCIgniteServer(val ggCfg: String) extends App with NCServer with NCIgniteNlpCraft {
     NCIgniteRunner.runWith( s"ignite/$ggCfg", start())
 
     // Exit JVM.

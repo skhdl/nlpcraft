@@ -39,7 +39,7 @@ import scala.collection.JavaConverters._
 /*
  * Helpers for working with Ignite.
  */
-object NCIgniteHelpers extends NCIgniteGeos {
+object NCIgniteHelpers extends NCIgniteNlpCraft {
     /**
      * Helper for work with ignite cache.
      *
@@ -54,10 +54,10 @@ object NCIgniteHelpers extends NCIgniteGeos {
           * @return Listener ID.
           */
         def addListener(onEvent: CacheEvent ⇒ Unit, types: Int*): UUID = {
-            val locNodeId = geos.cluster().localNode().id()
+            val locNodeId = nlpcraft.cluster().localNode().id()
             val cacheName = ic.getName
 
-            geos.events(geos.cluster().forCacheNodes(cacheName)).remoteListen(
+            nlpcraft.events(nlpcraft.cluster().forCacheNodes(cacheName)).remoteListen(
                 new IgniteBiPredicate[UUID, CacheEvent]() {
                     override def apply(evtUuid: UUID, evt: CacheEvent): Boolean = {
                         if (evt.cacheName() == cacheName && evt.node().id() == locNodeId && evt.hasNewValue)
@@ -78,7 +78,7 @@ object NCIgniteHelpers extends NCIgniteGeos {
           *
           * @param id Listener ID.
           */
-        def removeListener(id: UUID): Unit = geos.events().stopRemoteListen(id)
+        def removeListener(id: UUID): Unit = nlpcraft.events().stopRemoteListen(id)
 
         /**
          * Gets an entry from the cache.

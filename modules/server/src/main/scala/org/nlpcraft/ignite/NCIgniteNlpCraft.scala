@@ -29,12 +29,12 @@ package org.nlpcraft.ignite
 import org.apache.ignite.{Ignite, Ignition}
 
 /**
- * Mixin for 'geos' ignite instance.
+ * Mixin for 'nlpcraft' ignite cluster instance.
  */
-trait NCIgniteGeos extends NCIgniteExceptions {
-    // 'GEOS' ignite instance.
-    protected def geos: Ignite = Ignition.ignite("geos")
+trait NCIgniteNlpCraft extends NCIgniteExceptions {
+    // 'NlpCraft' ignite instance.
+    protected def nlpcraft: Ignite = Ignition.ignite("nlpcraft")
     
-    // GEOS segment.
-    protected lazy val geosSegment: String = geos.cluster.localNode.attribute[String]("geos.segment")
+    // NlpCraft segment.
+    protected lazy val segment: String = nlpcraft.cluster.localNode.attribute[String]("nlpcraft.segment")
 }
