@@ -40,7 +40,7 @@ import org.nlpcraft.{NCE, NCLifecycle, _}
  * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
  * Note that all functions in this class expect outside 'NCPsql.sql()' block.
  */
-object NCDbManager extends NCLifecycle("CORE DB manager") with NCIgniteGeos {
+object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteGeos {
     /**
      * Starts manager.
      */

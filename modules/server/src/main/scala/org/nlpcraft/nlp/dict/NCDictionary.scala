@@ -32,7 +32,7 @@ import org.nlpcraft.{NCE, NCLifecycle, _}
 /**
  * English dictionary.
  */
-object NCDictionary extends NCLifecycle("CORE NLP dictionary") {
+object NCDictionary extends NCLifecycle("SERVER NLP dictionary") {
     // Mapping between dictionary type and its configuration file name.
     private val dictFiles: Map[NCDictType, String] =
         Map(

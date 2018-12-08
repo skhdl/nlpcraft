@@ -38,7 +38,7 @@ import scala.concurrent._
 /**
  * SMTP email sender.
  */
-object NCEmailManager extends NCLifecycle("CORE email manager") {
+object NCEmailManager extends NCLifecycle("SERVER email manager") {
     // Type safe and eager settings container.
     private object Config extends NCConfigurable {
         val host: String = hocon.getString("smtp.host")

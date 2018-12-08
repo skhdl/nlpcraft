@@ -41,7 +41,7 @@ import scala.collection._
   * |                                                      |
   * +======================================================+
   */
-object NCSpellChecker extends NCLifecycle("CORE spell checker") {
+object NCSpellChecker extends NCLifecycle("SERVER spell checker") {
     case class Record(correct: String, misspellings: Seq[String])
 
     private val dict: Map[String, String] = (

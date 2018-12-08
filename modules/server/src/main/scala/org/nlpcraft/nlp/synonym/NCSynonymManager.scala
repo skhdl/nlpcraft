@@ -34,7 +34,7 @@ import org.nlpcraft.{NCE, NCLifecycle}
 /**
  * Synonyms manager.
  */
-object NCSynonymManager extends NCLifecycle("CORE synonyms manager") {
+object NCSynonymManager extends NCLifecycle("SERVER synonyms manager") {
     @volatile private var m: Map[String, Seq[Seq[String]]] = _
 
     /**

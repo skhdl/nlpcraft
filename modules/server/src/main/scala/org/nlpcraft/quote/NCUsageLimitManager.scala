@@ -36,7 +36,7 @@ import org.nlpcraft.{NCE, NCLifecycle}
 /**
  * Usage limit manager.
  */
-object NCUsageLimitManager extends NCLifecycle("CORE usage limit manager") {
+object NCUsageLimitManager extends NCLifecycle("SERVER usage limit manager") {
     /**
      * Limit holder.
      *

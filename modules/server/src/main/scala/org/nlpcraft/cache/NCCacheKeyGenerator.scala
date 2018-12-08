@@ -40,7 +40,7 @@ import scala.collection._
 /**
  * Cache generator.
  */
-object NCCacheKeyGenerator extends NCLifecycle("CORE cache store key generator") {
+object NCCacheKeyGenerator extends NCLifecycle("SERVER cache store key generator") {
     implicit val formats: DefaultFormats.type = net.liftweb.json.DefaultFormats
 
     case class KeyDescriptor(keyType: NCCacheKeyType, values: Seq[String], sort: Boolean, name: String)

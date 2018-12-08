@@ -34,7 +34,7 @@ import scala.collection._
 /**
   * Centralized pre-processor for raw text coming from user.
   */
-object NCPreProcessor extends NCLifecycle("CORE pre-processor") {
+object NCPreProcessor extends NCLifecycle("SERVER pre-processor") {
     // List of unambiguous contractions.
     private final val CONTRACTIONS: Map[String, Seq[String]] =
         Map[String, String](

@@ -37,7 +37,7 @@ import org.nlpcraft._
 /**
  * Wrapper for WordNet.
  */
-object NCWordNet extends NCLifecycle("CORE WordNet") {
+object NCWordNet extends NCLifecycle("SERVER WordNet") {
     // Properties file for WordNet.
     private final val WN_PROPS = s"${G.getEnvOrElse("WORDNET_HOME")}/wn_file_properties.xml"
 

@@ -45,7 +45,7 @@ import scala.util.control.Exception._
 /**
   * Query state machine.
   */
-object NCQueryStateManager extends NCLifecycle("CORE query state manager") with NCIgniteGeos {
+object NCQueryStateManager extends NCLifecycle("SERVER query state manager") with NCIgniteGeos {
     private final val ASK_WAIT_LINGUIST_STR = ASK_WAIT_LINGUIST.toString
     private final val ASK_READY_STR = ASK_READY.toString
     
