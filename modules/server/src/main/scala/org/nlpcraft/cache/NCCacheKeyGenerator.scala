@@ -31,6 +31,7 @@ import net.liftweb.json.JsonDSL._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.cache.NCCacheKeyType._
 import org.nlpcraft.json.NCJson
+import org.nlpcraft.mdllib.NCToken
 //import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.nlp.wordnet.NCWordNet
 import org.nlpcraft.{NCE, NCLifecycle}

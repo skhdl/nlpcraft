@@ -70,7 +70,7 @@ object NCSynonymManager extends NCLifecycle("SERVER synonyms manager") {
     def get(lemma: String, pos: String): Map[NCSynonymType, Seq[Seq[String]]] = {
         ensureStarted()
 
-        val dlSyns: Seq[String] =
+        val nlpSyns: Seq[String] =
             m.get(pos) match {
                 case Some(seq) ⇒
                     seq.find(_.contains(lemma)) match {
@@ -83,7 +83,7 @@ object NCSynonymManager extends NCLifecycle("SERVER synonyms manager") {
         val wnSyns: Seq[Seq[String]] = NCWordNet.getSynonyms(lemma, pos)
 
         Map(
-            NLPCRAFT → (if (dlSyns.isEmpty)Seq.empty else Seq(dlSyns)),
+            NLPCRAFT → (if (nlpSyns.isEmpty)Seq.empty else Seq(nlpSyns)),
             WORDNET → wnSyns
         ).filter(_._2.nonEmpty)
     }

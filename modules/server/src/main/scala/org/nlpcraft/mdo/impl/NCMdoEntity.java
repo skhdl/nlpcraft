@@ -26,11 +26,15 @@
 
 package org.nlpcraft.mdo.impl;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Marks class for automated support for (a) JSON conversion, and (b) SQL CRUD operations.
- * Annotations 'DLMdoEntity' and 'DLMdoField' should be used together.
+ * Annotations 'NCMdoEntity' and 'NCMdoField' should be used together.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
