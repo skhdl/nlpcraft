@@ -59,9 +59,6 @@ object NCRestManager extends NCLifecycle("REST manager") with App {
         var port: Int = hocon.getInt("rest.port")
 
         override def check(): Unit = {
-            println("server="+server)
-            println("port="+port)
-
             require(port > 0 && port < 65535)
         }
     }
@@ -83,13 +80,13 @@ object NCRestManager extends NCLifecycle("REST manager") with App {
         val route: Route = {
             post {
                 path(PUB / "signin") {
-                    case class Signin(probeToken: String, email: String)
+                    case class Request(probeToken: String, email: String)
                     case class Response(status: String, accessToken: String)
 
-                    implicit val i1: RootJsonFormat[Response] = jsonFormat2(Response)
-                    implicit val i2: RootJsonFormat[Signin] = jsonFormat2(Signin)
+                    implicit val v1: RootJsonFormat[Response] = jsonFormat2(Response)
+                    implicit val v2: RootJsonFormat[Request] = jsonFormat2(Request)
 
-                    entity(as[Signin]) { s ⇒
+                    entity(as[Request]) { s ⇒
                         NCLoginManager.getAdminAccessToken(s.probeToken, s.email) match {
                             case Some(tkn) ⇒ complete(Response(PUB_API_OK.toString, tkn))
                             case None ⇒ throw AuthFailure()
