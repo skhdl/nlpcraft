@@ -29,29 +29,29 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * Customer company.
   */
-@NCMdoEntity(table = "company")
+@impl.NCMdoEntity(table = "company")
 case class NCCompanyMdo (
-    @NCMdoField(column = "id", pk = true) id: Long,
-    @NCMdoField(column = "origin") origin: String,
-    @NCMdoField(column = "name") name: String,
-    @NCMdoField(column = "sign_up_domain") signUpDomain: String,
-    @NCMdoField(column = "website") website: String,
-    @NCMdoField(column = "address") address: String,
-    @NCMdoField(column = "city") city: String,
-    @NCMdoField(column = "region") region: String,
-    @NCMdoField(column = "postal_code") postalCode: String,
-    @NCMdoField(column = "country") country: String,
-    @NCMdoField(column = "probe_token") probeToken: String,
-    @NCMdoField(column = "probe_token_hash") probeTokenHash: String,
+    @impl.NCMdoField(column = "id", pk = true) id: Long,
+    @impl.NCMdoField(column = "origin") origin: String,
+    @impl.NCMdoField(column = "name") name: String,
+    @impl.NCMdoField(column = "sign_up_domain") signUpDomain: String,
+    @impl.NCMdoField(column = "website") website: String,
+    @impl.NCMdoField(column = "address") address: String,
+    @impl.NCMdoField(column = "city") city: String,
+    @impl.NCMdoField(column = "region") region: String,
+    @impl.NCMdoField(column = "postal_code") postalCode: String,
+    @impl.NCMdoField(column = "country") country: String,
+    @impl.NCMdoField(column = "probe_token") probeToken: String,
+    @impl.NCMdoField(column = "probe_token_hash") probeTokenHash: String,
     
     // Base MDO.
-    @NCMdoField(column = "created_on", json = false) createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on", json = false) lastModifiedOn: Timestamp
+    @impl.NCMdoField(column = "created_on", json = false) createdOn: Timestamp,
+    @impl.NCMdoField(column = "last_modified_on", json = false) lastModifiedOn: Timestamp
 ) extends NCEntityMdo with NCAnnotatedMdo[NCCompanyMdo]
 
 object NCCompanyMdo {

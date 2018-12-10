@@ -29,40 +29,40 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * Extended company data.
   */
-@NCMdoEntity
+@impl.NCMdoEntity
 case class NCCompanyDataMdo(
-    @NCMdoField(column = "id") id: Long,
-    @NCMdoField(column = "origin") origin: String,
-    @NCMdoField(column = "name") name: String,
-    @NCMdoField(column = "sign_up_domain") signUpDomain: String,
-    @NCMdoField(column = "website") website: String,
-    @NCMdoField(column = "address") address: String,
-    @NCMdoField(column = "city") city: String,
-    @NCMdoField(column = "region") region: String,
-    @NCMdoField(column = "postal_code") postalCode: String,
-    @NCMdoField(column = "country") country: String,
-    @NCMdoField(column = "probe_token") probeToken: String,
-    @NCMdoField(column = "probe_token_hash") probeTokenHash: String,
+    @impl.NCMdoField(column = "id") id: Long,
+    @impl.NCMdoField(column = "origin") origin: String,
+    @impl.NCMdoField(column = "name") name: String,
+    @impl.NCMdoField(column = "sign_up_domain") signUpDomain: String,
+    @impl.NCMdoField(column = "website") website: String,
+    @impl.NCMdoField(column = "address") address: String,
+    @impl.NCMdoField(column = "city") city: String,
+    @impl.NCMdoField(column = "region") region: String,
+    @impl.NCMdoField(column = "postal_code") postalCode: String,
+    @impl.NCMdoField(column = "country") country: String,
+    @impl.NCMdoField(column = "probe_token") probeToken: String,
+    @impl.NCMdoField(column = "probe_token_hash") probeTokenHash: String,
 
     // Totals for the company.
-    @NCMdoField(column = "total_enabled_users") totalEnabledUsers: Int,
-    @NCMdoField(column = "total_questions") totalQuestions: Int,
-    @NCMdoField(column = "total_rejections") totalRejections: Int,
-    @NCMdoField(column = "total_answers") totalAnswers: Int,
+    @impl.NCMdoField(column = "total_enabled_users") totalEnabledUsers: Int,
+    @impl.NCMdoField(column = "total_questions") totalQuestions: Int,
+    @impl.NCMdoField(column = "total_rejections") totalRejections: Int,
+    @impl.NCMdoField(column = "total_answers") totalAnswers: Int,
     
-    @NCMdoField(column = "probe_token") firstLoginTime: Timestamp, // First login of the 1st user in this company.
-    @NCMdoField(column = "probe_token") lastLoginTime: Timestamp, // Latest login of any user in this company.
+    @impl.NCMdoField(column = "probe_token") firstLoginTime: Timestamp, // First login of the 1st user in this company.
+    @impl.NCMdoField(column = "probe_token") lastLoginTime: Timestamp, // Latest login of any user in this company.
     
     // Number of requests for given time period.
-    @NCMdoField(column = "l30m") l30m: Int,
-    @NCMdoField(column = "l24h") l24h: Int,
-    @NCMdoField(column = "l7d") l7d: Int,
-    @NCMdoField(column = "l30d") l30d: Int
+    @impl.NCMdoField(column = "l30m") l30m: Int,
+    @impl.NCMdoField(column = "l24h") l24h: Int,
+    @impl.NCMdoField(column = "l7d") l7d: Int,
+    @impl.NCMdoField(column = "l30d") l30d: Int
 ) extends NCAnnotatedMdo[NCCompanyDataMdo]
 
 object NCCompanyDataMdo {

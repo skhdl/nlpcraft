@@ -26,8 +26,8 @@
 
 package org.nlpcraft.login
 
-import org.nlpcraft2.json.NCJson
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.json.NCJson
+import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
 
 /**
  * Successful login context.

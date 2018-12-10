@@ -27,9 +27,11 @@
 package org.nlpcraft.quote
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.{Calendar ⇒ C}
+import java.util.{Calendar => C}
 
-import org.nlpcraft2.json.NCJson
+import org.nlpcraft.json.NCJson
+
+// import org.nlpcraft.json.NCJson
 import org.nlpcraft.quote.NCUsageLimitType.{NCUsageLimitType, _}
 import org.nlpcraft.{NCE, NCLifecycle}
 

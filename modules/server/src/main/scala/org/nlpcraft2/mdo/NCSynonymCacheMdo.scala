@@ -28,7 +28,7 @@ package org.nlpcraft2.mdo
 
 import org.apache.ignite.cache.query.annotations.QuerySqlField
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 import scala.annotation.meta.field
 
@@ -38,11 +38,11 @@ import scala.annotation.meta.field
   * @param modelId Model ID.
   * @param cacheKey Key.
   */
-@NCMdoEntity
+@impl.NCMdoEntity
 case class NCSynonymCacheKeyMdo(
-    @(QuerySqlField @field)(index = true) @NCMdoField(column = "model_id") modelId: String,
-    @(QuerySqlField @field)(index = true) @NCMdoField(column = "cache_key") cacheKey: String,
-    @(QuerySqlField @field) @NCMdoField(column = "base_words") baseWords: String
+    @(QuerySqlField @field)(index = true) @impl.NCMdoField(column = "model_id") modelId: String,
+    @(QuerySqlField @field)(index = true) @impl.NCMdoField(column = "cache_key") cacheKey: String,
+    @(QuerySqlField @field) @impl.NCMdoField(column = "base_words") baseWords: String
 ) extends NCAnnotatedMdo[NCSynonymCacheKeyMdo]
 
 object NCSynonymCacheKeyMdo {
@@ -52,11 +52,11 @@ object NCSynonymCacheKeyMdo {
 /**
   * Synonym cache object.
   */
-@NCMdoEntity
+@impl.NCMdoEntity
 case class NCSynonymCacheMdo(
-    @(QuerySqlField @field) @NCMdoField(column = "id") id: Long,
-    @(QuerySqlField @field) @NCMdoField(column = "main_cache_id") mainId: Long,
-    @(QuerySqlField @field) @NCMdoField(column = "sorted") sorted: Boolean
+    @(QuerySqlField @field) @impl.NCMdoField(column = "id") id: Long,
+    @(QuerySqlField @field) @impl.NCMdoField(column = "main_cache_id") mainId: Long,
+    @(QuerySqlField @field) @impl.NCMdoField(column = "sorted") sorted: Boolean
 ) extends NCAnnotatedMdo[NCSynonymCacheMdo]
 
 object NCSynonymCacheMdo {

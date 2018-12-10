@@ -30,53 +30,53 @@ import java.sql.Timestamp
 
 import org.nlpcraft._
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.json.NCJson
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.json.NCJson
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * Company user.
   */
-@NCMdoEntity(table = "company_user")
+@impl.NCMdoEntity(table = "company_user")
 case class NCUserMdo(
-    @NCMdoField(column = "id", pk = true) id: Long,
+    @impl.NCMdoField(column = "id", pk = true) id: Long,
     
     // Personal contact info.
-    @NCMdoField(column = "first_name") firstName: String,
-    @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "email") email: String,
-    @NCMdoField(column = "title") title: String,
-    @NCMdoField(column = "department") department: String,
-    @NCMdoField(column = "phone") phone: String,
+    @impl.NCMdoField(column = "first_name") firstName: String,
+    @impl.NCMdoField(column = "last_name") lastName: String,
+    @impl.NCMdoField(column = "email") email: String,
+    @impl.NCMdoField(column = "title") title: String,
+    @impl.NCMdoField(column = "department") department: String,
+    @impl.NCMdoField(column = "phone") phone: String,
 
     // Other info.
-    @NCMdoField(column = "origin") origin: String,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
-    @NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @NCMdoField(column = "company_id") companyId: Long,
-    @NCMdoField(column = "is_active") isActive: Boolean,
-    @NCMdoField(column = "is_first_login") isFirstLogin: Boolean,
-    @NCMdoField(column = "is_admin") isAdmin: Boolean,
-    @NCMdoField(column = "is_root") isRoot: Boolean,
-    @NCMdoField(column = "active_ds_id") activeDsId: Long,
-    @NCMdoField(column = "prefs_json") prefsJson: String,
-    @NCMdoField(column = "referral_code") referralCode: String,
+    @impl.NCMdoField(column = "origin") origin: String,
+    @impl.NCMdoField(column = "avatar_url") avatarUrl: String,
+    @impl.NCMdoField(column = "passwd_salt") passwordSalt: String,
+    @impl.NCMdoField(column = "company_id") companyId: Long,
+    @impl.NCMdoField(column = "is_active") isActive: Boolean,
+    @impl.NCMdoField(column = "is_first_login") isFirstLogin: Boolean,
+    @impl.NCMdoField(column = "is_admin") isAdmin: Boolean,
+    @impl.NCMdoField(column = "is_root") isRoot: Boolean,
+    @impl.NCMdoField(column = "active_ds_id") activeDsId: Long,
+    @impl.NCMdoField(column = "prefs_json") prefsJson: String,
+    @impl.NCMdoField(column = "referral_code") referralCode: String,
     
     // Optional IP-based GEO location information.
-    @NCMdoField(column = "tmz_name") tmzName: String,
-    @NCMdoField(column = "tmz_abbr") tmzAbbr: String,
-    @NCMdoField(column = "latitude") latitude: Double,
-    @NCMdoField(column = "longitude") longitude: Double,
-    @NCMdoField(column = "country_name") countryName: String,
-    @NCMdoField(column = "country_code") countryCode: String,
-    @NCMdoField(column = "region_name") regionName: String,
-    @NCMdoField(column = "region_code") regionCode: String,
-    @NCMdoField(column = "city") city: String,
-    @NCMdoField(column = "zip_code") zipCode: String,
-    @NCMdoField(column = "metro_code") metroCode: Long,
+    @impl.NCMdoField(column = "tmz_name") tmzName: String,
+    @impl.NCMdoField(column = "tmz_abbr") tmzAbbr: String,
+    @impl.NCMdoField(column = "latitude") latitude: Double,
+    @impl.NCMdoField(column = "longitude") longitude: Double,
+    @impl.NCMdoField(column = "country_name") countryName: String,
+    @impl.NCMdoField(column = "country_code") countryCode: String,
+    @impl.NCMdoField(column = "region_name") regionName: String,
+    @impl.NCMdoField(column = "region_code") regionCode: String,
+    @impl.NCMdoField(column = "city") city: String,
+    @impl.NCMdoField(column = "zip_code") zipCode: String,
+    @impl.NCMdoField(column = "metro_code") metroCode: Long,
     
     // Base MDO.
-    @NCMdoField(column = "created_on") createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
+    @impl.NCMdoField(column = "created_on") createdOn: Timestamp,
+    @impl.NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
 ) extends NCEntityMdo with NCAnnotatedMdo[NCUserMdo] {
     /**
       * Preferences for this user in JSON format.

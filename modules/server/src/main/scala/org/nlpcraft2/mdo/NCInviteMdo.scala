@@ -29,27 +29,27 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * User invitation.
   */
-@NCMdoEntity(table = "invite")
+@impl.NCMdoEntity(table = "invite")
 case class NCInviteMdo (
-    @NCMdoField(column = "id", pk = true) id: Long,
-    @NCMdoField(column = "first_name") firstName: String,
-    @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "email") email: String,
-    @NCMdoField(column = "token", jsonName = "tkn") token: String,
-    @NCMdoField(column = "user_id") userId: Long,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
-    @NCMdoField(column = "requested_on", jsonConverter = "sqlTstampConverter") requestedOn: Timestamp,
-    @NCMdoField(column = "invited_on", jsonConverter = "sqlTstampConverter") invitedOn: Timestamp,
-    @NCMdoField(column = "signed_up_on", jsonConverter = "sqlTstampConverter") signedUpOn: Timestamp,
+    @impl.NCMdoField(column = "id", pk = true) id: Long,
+    @impl.NCMdoField(column = "first_name") firstName: String,
+    @impl.NCMdoField(column = "last_name") lastName: String,
+    @impl.NCMdoField(column = "email") email: String,
+    @impl.NCMdoField(column = "token", jsonName = "tkn") token: String,
+    @impl.NCMdoField(column = "user_id") userId: Long,
+    @impl.NCMdoField(column = "avatar_url") avatarUrl: String,
+    @impl.NCMdoField(column = "requested_on", jsonConverter = "sqlTstampConverter") requestedOn: Timestamp,
+    @impl.NCMdoField(column = "invited_on", jsonConverter = "sqlTstampConverter") invitedOn: Timestamp,
+    @impl.NCMdoField(column = "signed_up_on", jsonConverter = "sqlTstampConverter") signedUpOn: Timestamp,
     
     // Base MDO.
-    @NCMdoField(column = "created_on") createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
+    @impl.NCMdoField(column = "created_on") createdOn: Timestamp,
+    @impl.NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
 ) extends NCEntityMdo with NCAnnotatedMdo[NCInviteMdo]
 
 object NCInviteMdo {

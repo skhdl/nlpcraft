@@ -32,7 +32,7 @@ import org.nlpcraft2.cache.NCCacheKey
 import org.nlpcraft2.json.NCJson
 import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft2.mdo.NCQueryStateMdo._
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft2.mdo.impl.NCAnnotatedMdo
 
 import scala.collection.JavaConverters._
 import scala.collection.Map
@@ -40,41 +40,41 @@ import scala.collection.Map
 /**
   * Query state MDO.
   */
-@NCMdoEntity(sql = false)
+@impl.NCMdoEntity(sql = false)
 case class NCQueryStateMdo(
-    @NCMdoField srvReqId: String,
-    @NCMdoField test: Boolean,
-    @NCMdoField userAgent: String,
-    @NCMdoField companyId: Long,
-    @NCMdoField dsId: Long,
-    @NCMdoField modelId: String,
-    @NCMdoField userId: Long,
-    @NCMdoField email: String,
-    @NCMdoField origText: String, // Text of the initial question.
-    @NCMdoField origin: String,
-    @NCMdoField createTstamp: Long, // Creation timestamp.
-    @NCMdoField var updateTstamp: Long, // Last update timestamp.
-    @NCMdoField var status: String,
-    @NCMdoField var curateText: Option[String] = None, // Optional text after human curation.
-    @NCMdoField var curateJson: Option[String] = None, // Optional request JSON explanation for curation.
-    @NCMdoField var curateHint: Option[String] = None, // Optional hint after human curation.
-    @NCMdoField var cacheKey: Option[NCCacheKey] = None, // Optional cache key.
-    @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
-    @NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
-    @NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.
-    @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
-    @NCMdoField var lingUserId: Option[Long] = None, // Optional ID of the last linguist.
-    @NCMdoField var lingOp: Option[String] = None, // Optional last linguist operation.
-    @NCMdoField var resNotifyDue: Boolean = false, // Result email notification is due.
-    @NCMdoField var curNotifyDue: Boolean = false, // Curation email notification is due.
+    @impl.NCMdoField srvReqId: String,
+    @impl.NCMdoField test: Boolean,
+    @impl.NCMdoField userAgent: String,
+    @impl.NCMdoField companyId: Long,
+    @impl.NCMdoField dsId: Long,
+    @impl.NCMdoField modelId: String,
+    @impl.NCMdoField userId: Long,
+    @impl.NCMdoField email: String,
+    @impl.NCMdoField origText: String, // Text of the initial question.
+    @impl.NCMdoField origin: String,
+    @impl.NCMdoField createTstamp: Long, // Creation timestamp.
+    @impl.NCMdoField var updateTstamp: Long, // Last update timestamp.
+    @impl.NCMdoField var status: String,
+    @impl.NCMdoField var curateText: Option[String] = None, // Optional text after human curation.
+    @impl.NCMdoField var curateJson: Option[String] = None, // Optional request JSON explanation for curation.
+    @impl.NCMdoField var curateHint: Option[String] = None, // Optional hint after human curation.
+    @impl.NCMdoField var cacheKey: Option[NCCacheKey] = None, // Optional cache key.
+    @impl.NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
+    @impl.NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
+    @impl.NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.
+    @impl.NCMdoField var probeId: Option[String] = None, // Optional probe ID.
+    @impl.NCMdoField var lingUserId: Option[Long] = None, // Optional ID of the last linguist.
+    @impl.NCMdoField var lingOp: Option[String] = None, // Optional last linguist operation.
+    @impl.NCMdoField var resNotifyDue: Boolean = false, // Result email notification is due.
+    @impl.NCMdoField var curNotifyDue: Boolean = false, // Curation email notification is due.
     // Query OK (result, trivia, or talkback).
-    @NCMdoField var resultType: Option[String] = None,
-    @NCMdoField var resultBody: Option[String] = None,
-    @NCMdoField var resultMetadata: Option[Map[String, Object]] = None,
+    @impl.NCMdoField var resultType: Option[String] = None,
+    @impl.NCMdoField var resultBody: Option[String] = None,
+    @impl.NCMdoField var resultMetadata: Option[Map[String, Object]] = None,
     // Query ERROR (HTML message).
-    @NCMdoField var error: Option[String] = None,
+    @impl.NCMdoField var error: Option[String] = None,
     // 'initial', 'trivia', 'talkback', 'reject', 'error', 'validation, 'curator', 'ok'.
-    @NCMdoField var responseType: String = "RESP_INITIAL"
+    @impl.NCMdoField var responseType: String = "RESP_INITIAL"
 ) extends NCAnnotatedMdo[NCQueryStateMdo] {
     /**
       * Abbreviated dataset for public API.

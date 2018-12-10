@@ -36,7 +36,7 @@ import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.login.NCLoginManager
 import org.nlpcraft.{NCE, NCLifecycle}
-import org.nlpcraft2.NCConfigurable
+import org.nlpcraft.NCConfigurable
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 

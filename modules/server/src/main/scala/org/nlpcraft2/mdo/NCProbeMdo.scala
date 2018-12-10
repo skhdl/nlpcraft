@@ -26,7 +26,7 @@
 
 package org.nlpcraft2.mdo
 
-import org.nlpcraft2.mdo.impl._
+import org.nlpcraft.mdo.impl._
 
 /**
   * Probe MDO for rest probe manager.

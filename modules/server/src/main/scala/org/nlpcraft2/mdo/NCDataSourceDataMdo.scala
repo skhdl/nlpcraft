@@ -29,42 +29,42 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * Extended data source instance data.
   */
-@NCMdoEntity
+@impl.NCMdoEntity
 case class NCDataSourceDataMdo (
     // Data source instance data.
-    @NCMdoField(column = "id")  id: Long,
-    @NCMdoField(column = "name") name: String,
-    @NCMdoField(column = "short_desc") shortDesc: String,
-    @NCMdoField(column = "user_id") userId: Long,
-    @NCMdoField(column = "enabled") enabled: Boolean,
-    @NCMdoField(column = "model_id") modelId: String,
-    @NCMdoField(column = "model_name") modelName: String,
-    @NCMdoField(column = "model_ver") modelVersion: String,
-    @NCMdoField(column = "model_cfg") modelConfig: String,
+    @impl.NCMdoField(column = "id")  id: Long,
+    @impl.NCMdoField(column = "name") name: String,
+    @impl.NCMdoField(column = "short_desc") shortDesc: String,
+    @impl.NCMdoField(column = "user_id") userId: Long,
+    @impl.NCMdoField(column = "enabled") enabled: Boolean,
+    @impl.NCMdoField(column = "model_id") modelId: String,
+    @impl.NCMdoField(column = "model_name") modelName: String,
+    @impl.NCMdoField(column = "model_ver") modelVersion: String,
+    @impl.NCMdoField(column = "model_cfg") modelConfig: String,
     
     // User data.
-    @NCMdoField(column = "prefs_json", jsonConverter = "asJson") userPrefs: String,
-    @NCMdoField(column = "avatar_url") userAvatarUrl: String,
-    @NCMdoField(column = "user_origin") userOrigin: String,
-    @NCMdoField(column = "company_origin") userCompanyOrigin: String,
-    @NCMdoField(column = "first_name") userFirstName: String,
-    @NCMdoField(column = "last_name") userLastName: String,
-    @NCMdoField(column = "email") userEmail: String,
-    @NCMdoField(column = "company") userCompany: String,
-    @NCMdoField(column = "probe_token") probeToken: String,
-    @NCMdoField(column = "sign_up_domain") userSignUpDomain: String,
-    @NCMdoField(column = "registration_date", jsonConverter = "sqlTstampConverter") userRegistrationDate: Timestamp,
-    @NCMdoField(column = "is_active") userActive: Boolean,
-    @NCMdoField(column = "last_login_time", jsonConverter = "sqlTstampConverter") userLastLoginTime: Timestamp,
-    @NCMdoField(column = "last_question_time", jsonConverter = "sqlTstampConverter") userLastQuestionTime: Timestamp,
-    @NCMdoField(column = "total_question_count") userTotalQuestionCount: Long,
-    @NCMdoField(column = "is_admin") userIsAdmin: Boolean,
-    @NCMdoField(column = "is_root") userIsRoot: Boolean
+    @impl.NCMdoField(column = "prefs_json", jsonConverter = "asJson") userPrefs: String,
+    @impl.NCMdoField(column = "avatar_url") userAvatarUrl: String,
+    @impl.NCMdoField(column = "user_origin") userOrigin: String,
+    @impl.NCMdoField(column = "company_origin") userCompanyOrigin: String,
+    @impl.NCMdoField(column = "first_name") userFirstName: String,
+    @impl.NCMdoField(column = "last_name") userLastName: String,
+    @impl.NCMdoField(column = "email") userEmail: String,
+    @impl.NCMdoField(column = "company") userCompany: String,
+    @impl.NCMdoField(column = "probe_token") probeToken: String,
+    @impl.NCMdoField(column = "sign_up_domain") userSignUpDomain: String,
+    @impl.NCMdoField(column = "registration_date", jsonConverter = "sqlTstampConverter") userRegistrationDate: Timestamp,
+    @impl.NCMdoField(column = "is_active") userActive: Boolean,
+    @impl.NCMdoField(column = "last_login_time", jsonConverter = "sqlTstampConverter") userLastLoginTime: Timestamp,
+    @impl.NCMdoField(column = "last_question_time", jsonConverter = "sqlTstampConverter") userLastQuestionTime: Timestamp,
+    @impl.NCMdoField(column = "total_question_count") userTotalQuestionCount: Long,
+    @impl.NCMdoField(column = "is_admin") userIsAdmin: Boolean,
+    @impl.NCMdoField(column = "is_root") userIsRoot: Boolean
 ) extends NCAnnotatedMdo[NCDataSourceDataMdo] {
     // No-op.
 }

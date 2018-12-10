@@ -29,25 +29,25 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * TODO: add description.
   */
-@NCMdoEntity(table = "ds_instance")
+@impl.NCMdoEntity(table = "ds_instance")
 case class NCDataSourceInstanceMdo(
-    @NCMdoField(column = "id", pk = true)  id: Long,
-    @NCMdoField(column = "name") name: String,
-    @NCMdoField(column = "short_desc") shortDesc: String,
-    @NCMdoField(column = "user_id") userId: Long,
-    @NCMdoField(column = "enabled") enabled: Boolean,
-    @NCMdoField(column = "model_id") modelId: String,
-    @NCMdoField(column = "model_name") modelName: String,
-    @NCMdoField(column = "model_ver") modelVersion: String,
-    @NCMdoField(column = "model_cfg") modelConfig: String,
+    @impl.NCMdoField(column = "id", pk = true)  id: Long,
+    @impl.NCMdoField(column = "name") name: String,
+    @impl.NCMdoField(column = "short_desc") shortDesc: String,
+    @impl.NCMdoField(column = "user_id") userId: Long,
+    @impl.NCMdoField(column = "enabled") enabled: Boolean,
+    @impl.NCMdoField(column = "model_id") modelId: String,
+    @impl.NCMdoField(column = "model_name") modelName: String,
+    @impl.NCMdoField(column = "model_ver") modelVersion: String,
+    @impl.NCMdoField(column = "model_cfg") modelConfig: String,
     // Base MDO.
-    @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
-    @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
+    @impl.NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
+    @impl.NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
 ) extends NCEntityMdo with NCAnnotatedMdo[NCDataSourceInstanceMdo]
 
 object NCDataSourceInstanceMdo {

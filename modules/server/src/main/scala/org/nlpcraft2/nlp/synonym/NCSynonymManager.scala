@@ -26,7 +26,7 @@
 
 package org.nlpcraft2.nlp.synonym
 
-import org.nlpcraft2.json.NCJson
+import org.nlpcraft.json.NCJson
 import org.nlpcraft2.nlp.synonym.NCSynonymType._
 import org.nlpcraft2.nlp.wordnet.NCWordNet
 import org.nlpcraft.{NCE, NCLifecycle}

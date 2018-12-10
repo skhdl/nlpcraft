@@ -24,13 +24,13 @@
  *        /_/
  */
 
-package org.nlpcraft2.json
+package org.nlpcraft.json
 
 import java.io.{IOException, _}
 import java.util.zip._
 
 import com.typesafe.scalalogging.LazyLogging
-import net.liftweb.json.{compact => liftCompact, pretty => liftPretty, render => liftRender, _}
+import net.liftweb.json.{compact ⇒ liftCompact, pretty ⇒ liftPretty, render ⇒ liftRender, _}
 import org.nlpcraft._
 
 import scala.annotation.tailrec

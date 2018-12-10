@@ -29,7 +29,7 @@ package org.nlpcraft.db
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.{NCE, NCLifecycle, _}
-import org.nlpcraft2.mdo._
+import org.nlpcraft.mdo._
 
 /**
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
@@ -59,73 +59,6 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
         checkStopping()
 
         super.stop()
-    }
-
-    /**
-      * Deactivates specified user.
-      *
-      * @param usrId User ID.
-      * @return 'true' if user was successfully deactivated.
-      */
-    @throws[NCE]
-    def deactivateUser(usrId: Long): Boolean = activate0(usrId, active = false)
-
-    /**
-      * Changes active flag of specified user.
-      *
-      * @param id User ID.
-      * @param active Active flag for user.
-      * @return 'true' if user was successfully deactivated.
-      */
-    @throws[NCE]
-    private def activate0(id: Long, active: Boolean): Boolean = activate0(() ⇒ getUser(id), active)
-
-    /**
-      * Changes active flag of specified user.
-      *
-      * @param get User select function.
-      * @param active Active flag for user.
-      * @return 'true' if user was successfully deactivated.
-      */
-    @throws[NCE]
-    private def activate0(get: () ⇒ Option[NCUserMdo], active: Boolean): Boolean = {
-        ensureStarted()
-
-        get() match {
-            case None ⇒ false
-            case Some(user) ⇒ NCPsql.update(
-                """
-                  |UPDATE company_user
-                  |SET
-                  |    is_active = ?,
-                  |    last_modified_on = current_timestamp
-                  |WHERE
-                  |    id = ? AND
-                  |    deleted = FALSE""".stripMargin,
-                active,
-                user.id) == 1
-        }
-    }
-
-    /**
-      * Gets user for given ID.
-      *
-      * @param usrId User ID.
-      * @return User MDO.
-      */
-    @throws[NCE]
-    def getUser(usrId: Long): Option[NCUserMdo] = {
-        ensureStarted()
-
-        NCPsql.selectSingle[NCUserMdo](
-            s"""
-               |SELECT *
-               |FROM company_user
-               |WHERE
-               |    id = ? AND
-               |    deleted = FALSE
-            """.stripMargin,
-            usrId)
     }
 
     /**
@@ -164,11 +97,8 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
         userEmail: String,
         act: String,
         userAgent: String,
-        rmtAddr: String): Unit = {
-        require(userEmail != null)
-        require(userAgent != null)
-        require(act != null)
-
+        rmtAddr: String
+    ): Unit = {
         ensureStarted()
 
         NCPsql.insertSingle(
@@ -215,7 +145,8 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
               |    u.is_admin = TRUE
             """.stripMargin,
             probeTkn,
-            email)
+            email
+        )
     }
 }
 

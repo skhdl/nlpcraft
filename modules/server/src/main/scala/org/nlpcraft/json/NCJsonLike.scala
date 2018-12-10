@@ -24,32 +24,14 @@
  *        /_/
  */
 
-package org.nlpcraft2.mdo
-
-import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+package org.nlpcraft.json
 
 /**
-  * Model usage MDO.
-  */
-@NCMdoEntity(sql = false)
-case class NCModelUsageMdo(
-    @NCMdoField id: String,
-    @NCMdoField name: String,
-    @NCMdoField version: String,
-    @NCMdoField description: String,
-    @NCMdoField docsUrl: String,
-    @NCMdoField vendorUrl: String,
-    @NCMdoField vendorContact: String,
-    @NCMdoField vendorName: String,
-    @NCMdoField vendorEmail: String,
-    @NCMdoField examples: List[String],
-    @NCMdoField elements: List[NCElementUsageMdo]
-)
-extends NCAnnotatedMdo[NCModelUsageMdo] {
-    override def hashCode(): Int = id.hashCode * 37 + name.hashCode
-    override def equals(obj: scala.Any): Boolean =
-        obj match {
-            case x: NCModelUsageMdo ⇒ x.id == id
-            case _ ⇒ false
-        }
+ * Trait for types that can be converted to JSON.
+ */
+trait NCJsonLike {
+    /**
+     * Convert to JSON presentation.
+     */
+    def toJson: NCJson
 }

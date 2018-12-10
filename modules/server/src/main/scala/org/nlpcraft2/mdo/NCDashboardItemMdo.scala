@@ -28,7 +28,7 @@ package org.nlpcraft2.mdo
 
 import java.util.Date
 
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
 
 /**
   * Dashboard item MDO.

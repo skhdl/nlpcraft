@@ -24,32 +24,29 @@
  *        /_/
  */
 
-package org.nlpcraft2.mdo
+package org.nlpcraft.mdo.impl;
 
-import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
-  * Model usage MDO.
-  */
-@NCMdoEntity(sql = false)
-case class NCModelUsageMdo(
-    @NCMdoField id: String,
-    @NCMdoField name: String,
-    @NCMdoField version: String,
-    @NCMdoField description: String,
-    @NCMdoField docsUrl: String,
-    @NCMdoField vendorUrl: String,
-    @NCMdoField vendorContact: String,
-    @NCMdoField vendorName: String,
-    @NCMdoField vendorEmail: String,
-    @NCMdoField examples: List[String],
-    @NCMdoField elements: List[NCElementUsageMdo]
-)
-extends NCAnnotatedMdo[NCModelUsageMdo] {
-    override def hashCode(): Int = id.hashCode * 37 + name.hashCode
-    override def equals(obj: scala.Any): Boolean =
-        obj match {
-            case x: NCModelUsageMdo ⇒ x.id == id
-            case _ ⇒ false
-        }
+ * Marks class for automated support for (a) JSON conversion, and (b) SQL CRUD operations.
+ * Annotations 'NCMdoEntity' and 'NCMdoField' should be used together.
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface NCMdoEntity {
+    /**
+     * Name of the SQL table, if any.
+     */
+    String table() default "";
+
+    /**
+     * Whether or not SQL is supported.
+     */
+    boolean sql() default true;
 }

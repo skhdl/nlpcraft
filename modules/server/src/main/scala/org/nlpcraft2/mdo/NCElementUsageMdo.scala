@@ -26,7 +26,7 @@
 
 package org.nlpcraft2.mdo
 
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
 
 /**
   * Model element usage MDO.

@@ -29,21 +29,21 @@ package org.nlpcraft2.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * Probe release record.
   */
-@NCMdoEntity(table = "probe_release")
+@impl.NCMdoEntity(table = "probe_release")
 case class NCProbeReleaseMdo (
-    @NCMdoField(column = "version") version: String,
-    @NCMdoField(column = "date") date: Timestamp,
-    @NCMdoField(column = "size_bytes") size: Int,
-    @NCMdoField(column = "filename") fileName: String,
-    @NCMdoField(column = "md5_sig_filename") md5SigFileName: String,
-    @NCMdoField(column = "sha1_sig_filename") sha1SigFileName: String,
-    @NCMdoField(column = "sha256_sig_filename") sha256SigFileName: String,
-    @NCMdoField(column = "pgp_sig_filename") pgpSigFileName: String
+    @impl.NCMdoField(column = "version") version: String,
+    @impl.NCMdoField(column = "date") date: Timestamp,
+    @impl.NCMdoField(column = "size_bytes") size: Int,
+    @impl.NCMdoField(column = "filename") fileName: String,
+    @impl.NCMdoField(column = "md5_sig_filename") md5SigFileName: String,
+    @impl.NCMdoField(column = "sha1_sig_filename") sha1SigFileName: String,
+    @impl.NCMdoField(column = "sha256_sig_filename") sha256SigFileName: String,
+    @impl.NCMdoField(column = "pgp_sig_filename") pgpSigFileName: String
 ) extends NCAnnotatedMdo[NCProbeReleaseMdo]
 
 object NCProbeReleaseMdo {

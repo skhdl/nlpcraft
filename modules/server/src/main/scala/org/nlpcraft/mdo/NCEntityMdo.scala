@@ -24,32 +24,19 @@
  *        /_/
  */
 
-package org.nlpcraft2.mdo
+package org.nlpcraft.mdo
 
-import org.nlpcraft.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import java.sql.Timestamp
 
 /**
-  * Model usage MDO.
+  * 'M'odel 'D'ata 'O'bject (MDO) that maps 'entity_base' table in SQL.
   */
-@NCMdoEntity(sql = false)
-case class NCModelUsageMdo(
-    @NCMdoField id: String,
-    @NCMdoField name: String,
-    @NCMdoField version: String,
-    @NCMdoField description: String,
-    @NCMdoField docsUrl: String,
-    @NCMdoField vendorUrl: String,
-    @NCMdoField vendorContact: String,
-    @NCMdoField vendorName: String,
-    @NCMdoField vendorEmail: String,
-    @NCMdoField examples: List[String],
-    @NCMdoField elements: List[NCElementUsageMdo]
-)
-extends NCAnnotatedMdo[NCModelUsageMdo] {
-    override def hashCode(): Int = id.hashCode * 37 + name.hashCode
-    override def equals(obj: scala.Any): Boolean =
-        obj match {
-            case x: NCModelUsageMdo ⇒ x.id == id
-            case _ ⇒ false
-        }
+trait NCEntityMdo {
+    // Corresponds to 'entity_base' in SQL schema.
+    val createdOn: Timestamp
+    val lastModifiedOn: Timestamp
+    
+    // NOTE:
+    // We don't carry on 'deleted' and 'deleted_on' fields as those should never
+    // end up on MDO level (they should only exist and matter on DB level).
 }

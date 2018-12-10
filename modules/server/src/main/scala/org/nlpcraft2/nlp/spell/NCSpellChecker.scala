@@ -27,7 +27,7 @@
 package org.nlpcraft2.nlp.spell
 
 import org.nlpcraft.NCLifecycle
-import org.nlpcraft2.json.NCJson
+import org.nlpcraft.json.NCJson
 
 import scala.collection._
 

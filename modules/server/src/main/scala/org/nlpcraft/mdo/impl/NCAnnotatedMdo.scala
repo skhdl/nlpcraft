@@ -24,7 +24,7 @@
  *        /_/
  */
 
-package org.nlpcraft2.mdo.impl
+package org.nlpcraft.mdo.impl
 
 import java.lang.reflect.{Constructor, Method}
 import java.sql.ResultSet

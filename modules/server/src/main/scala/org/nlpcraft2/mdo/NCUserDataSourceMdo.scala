@@ -27,15 +27,15 @@
 package org.nlpcraft2.mdo
 
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft2.mdo.impl.{NCAnnotatedMdo, NCMdoEntity, NCMdoField}
+import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 
 /**
   * User - data source relationship holder.
   */
-@NCMdoEntity(table = "user_ds")
+@impl.NCMdoEntity(table = "user_ds")
 case class NCUserDataSourceMdo (
-    @NCMdoField(column = "ds_id") dsId: Long,
-    @NCMdoField(column = "user_id") userId: Long
+    @impl.NCMdoField(column = "ds_id") dsId: Long,
+    @impl.NCMdoField(column = "user_id") userId: Long
 ) extends NCAnnotatedMdo[NCUserDataSourceMdo]
 
 object NCUserDataSourceMdo {
