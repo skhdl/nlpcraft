@@ -89,6 +89,10 @@ under the License.
         <maven.shade.plugin.ver>3.1.0</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.0</maven.assembly.plugin.ver>
 
+        <akka.http.2.11.ver>10.1.5</akka.http.2.11.ver>
+        <akka.stream.2.11.ver>2.5.19</akka.stream.2.11.ver>
+        <akka.http.spray.json.2.11.ver>2.4.11.2</akka.http.spray.json.2.11.ver>
+
         <!-- Force specific encoding on text resources. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
