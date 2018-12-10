@@ -32,7 +32,8 @@ import java.sql.{Connection, PreparedStatement, ResultSet, SQLException, Timesta
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.transactions.Transaction
-import org.nlpcraft.{NCConfigurable, NCE}
+import org.nlpcraft.NCE
+import org.nlpcraft2.NCConfigurable
 import org.nlpcraft.tx.NCTxManager
 import resource._
 

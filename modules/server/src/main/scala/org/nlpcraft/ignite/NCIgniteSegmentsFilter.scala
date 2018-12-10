@@ -26,8 +26,6 @@
 
 package org.nlpcraft.ignite
 
-import java.util.{List ⇒ JList}
-
 import org.apache.ignite.cluster.ClusterNode
 import org.apache.ignite.lang.IgnitePredicate
 
@@ -36,7 +34,7 @@ import org.apache.ignite.lang.IgnitePredicate
  *
  * @param segs Segments. Note that it is defined as java collection to simplify Spring configuration.
  */
-case class NCIgniteSegmentsFilter(segs: JList[String]) extends IgnitePredicate[ClusterNode] {
+case class NCIgniteSegmentsFilter(segs: java.util.List[String]) extends IgnitePredicate[ClusterNode] {
     override def apply(node: ClusterNode): Boolean =
         segs.contains(node.attributes().getOrDefault("nlpcraft.segment", ""))
 }

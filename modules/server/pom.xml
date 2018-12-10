@@ -86,6 +86,11 @@ under the License.
             <version>${ignite.ver}</version>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.ver}</version>
+        </dependency>
+        <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.ver}</version>
@@ -117,6 +122,21 @@ under the License.
             <version>${twillio.ver}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-http_2.11</artifactId>
+            <version>${akka.http.2.11.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream_2.11</artifactId>
+            <version>${akka.stream.2.11.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-http-spray-json-experimental_2.11</artifactId>
+            <version>${akka.http.spray.json.2.11.ver}</version>
+        </dependency>
     </dependencies>
 
     <build>

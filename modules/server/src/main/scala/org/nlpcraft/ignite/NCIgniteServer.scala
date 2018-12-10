@@ -26,7 +26,7 @@
 
 package org.nlpcraft.ignite
 
-import org.nlpcraft.NCServer
+import org.nlpcraft2.NCServer
 
 /**
  * Ignite-based server (starts server inside of initialized Ignite node).

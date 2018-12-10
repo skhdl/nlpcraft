@@ -34,7 +34,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 trait NCConfigurable {
     // Configuration factory loading 'application.conf'.
     protected val hocon: Config = ConfigFactory.load()
-    
+
     /**
      * Calling this function will touch the object and trigger
      * the eager evaluation.

@@ -26,13 +26,10 @@
 
 package org.nlpcraft.ignite
 
-import java.util.Objects
-
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.{IgniteException, Ignition}
 import org.nlpcraft._
 
-import scala.collection.JavaConverters._
 import scala.sys.SystemProperties
 
 /**
@@ -66,16 +63,6 @@ object NCIgniteRunner extends LazyLogging {
             val sgm = ignite.cluster.localNode.attribute[String](SGM_ATTR_NAME)
 
             assume(sgm != null, s"Node attribute '$SGM_ATTR_NAME' is not set.")
-
-            def checkStarted(sgm: String): Unit =
-                if (!ignite.cluster().nodes().asScala.exists(x ⇒ Objects.equals(x.attributes.get("nlpcraft.segment"), sgm)))
-                    throw new IgniteException(s"Server is not started: $sgm")
-
-            // `adm` and `share` servers should always be started first in the cluster.
-            checkStarted("adm")
-
-            if (sgm != "adm")
-                checkStarted("share")
 
             // Ack segment.
             logger.info(s"Ignite segment: $sgm")

@@ -31,7 +31,7 @@ import org.apache.ignite.cache.CacheAtomicityMode
 import org.apache.ignite.cache.store.{CacheStoreAdapter, CacheStoreSession}
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.resources.CacheStoreSessionResource
-import org.apache.ignite.{Ignition, IgniteException ⇒ IE}
+import org.apache.ignite.{Ignition, IgniteException}
 import org.nlpcraft.NCE
 import org.nlpcraft.tx.NCTxManager
 
@@ -60,7 +60,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
                 println(s"|>    +--- Immediate cause: ${e.getCause.toString}")
             }
 
-            throw new IE("Cache store error.", e)
+            throw new IgniteException("Cache store error.", e)
     }
     
     /**
@@ -94,7 +94,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       * @param key Key to the cache entry.
       * @param value Value to the cache entry.
       */
-    @throws[IE]
+    @throws[IgniteException]
     protected def put(key: K, value: V): Unit
 
     /**
@@ -104,7 +104,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       *
       * @param key Key to the cache entry.
       */
-    @throws[IE]
+    @throws[IgniteException]
     protected def get(key: K): V
 
     /**
@@ -114,7 +114,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       *
       * @param key The key that is used for the delete operation.
       */
-    @throws[IE]
+    @throws[IgniteException]
     protected def remove(key: K): Unit
 
     /**
@@ -122,7 +122,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
      *
      * @param key Key to the cache entry.
      */
-   @throws[IE]
+   @throws[IgniteException]
    override def load(key: K): V = {
        get(key)
    }
@@ -132,7 +132,7 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       *
       * @param e Key-value entry to write.
       */
-    @throws[IE]
+    @throws[IgniteException]
     override def write(e: Entry[_ <: K, _ <: V]): Unit = {
         put(e.getKey, e.getValue)
     }
@@ -142,6 +142,6 @@ abstract class NCIgniteCacheStore[K, V] extends CacheStoreAdapter[K, V] with Ser
       *
       * @param key Key to the cache entry.
       */
-    @throws[IE]
+    @throws[IgniteException]
     override def delete(key: scala.Any): Unit = remove(key.asInstanceOf[K])
 }
