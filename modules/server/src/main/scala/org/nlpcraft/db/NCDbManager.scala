@@ -96,12 +96,12 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
             case Some(user) ⇒ NCPsql.update(
                 """
                   |UPDATE company_user
-                  |  SET
-                  |     is_active = ?,
-                  |     last_modified_on = current_timestamp
-                  |  WHERE
-                  |     id = ? AND
-                  |     deleted = FALSE""".stripMargin,
+                  |SET
+                  |    is_active = ?,
+                  |    last_modified_on = current_timestamp
+                  |WHERE
+                  |    id = ? AND
+                  |    deleted = FALSE""".stripMargin,
                 active,
                 user.id) == 1
         }
@@ -119,13 +119,11 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
 
         NCPsql.selectSingle[NCUserMdo](
             s"""
-               |SELECT
-               |  *
-               |FROM
-               |  company_user
+               |SELECT *
+               |FROM company_user
                |WHERE
-               |  id = ? AND
-               |  deleted = FALSE
+               |    id = ? AND
+               |    deleted = FALSE
             """.stripMargin,
             usrId)
     }
@@ -176,11 +174,11 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
         NCPsql.insertSingle(
             """
               |INSERT INTO login_history (
-              |  user_id,
-              |  user_email,
-              |  act,
-              |  user_agent,
-              |  rmt_addr)
+              |    user_id,
+              |    user_email,
+              |    act,
+              |    user_agent,
+              |    rmt_addr)
               |VALUES (?, ?, ?, ?, ?)""".stripMargin,
             usrId,
             G.normalizeEmail(userEmail),
@@ -188,61 +186,6 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
             userAgent,
             rmtAddr
         )
-    }
-
-    /**
-      * Deactivates first login flag of user with given email.
-      *
-      * @param email User's email.
-      * @return 'true' if flag was successfully deactivated.
-      */
-    @throws[NCE]
-    def deactivateFirstLogin(email: String): Boolean = {
-        ensureStarted()
-
-        getUserByEmail(email) match {
-            case None ⇒ false
-            case Some(user) ⇒ NCPsql.update(
-                """
-                  |UPDATE
-                  |     company_user
-                  |SET
-                  |     is_first_login = false,
-                  |     last_modified_on = current_timestamp
-                  |WHERE
-                  |     id = ? AND
-                  |     deleted = FALSE""".stripMargin,
-                user.id) match {
-                case 1 ⇒
-                    logger.trace(s"User first login flag deactivated for $email")
-
-                    true
-
-                case _ ⇒
-                    false
-            }
-        }
-    }
-
-    /**
-      * Gets company for given ID.
-      *
-      * @param compId Company ID.
-      * @return Company MDO.
-      */
-    @throws[NCE]
-    def getCompany(compId: Long): Option[NCCompanyMdo] = {
-        ensureStarted()
-
-        NCPsql.selectSingle[NCCompanyMdo](
-            """
-              | SELECT *
-              | FROM company
-              | WHERE
-              |     id = ? AND
-              |     deleted = FALSE
-            """.stripMargin,
-            compId)
     }
 
     /**
@@ -258,32 +201,21 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
 
         NCPsql.exists(
             """
-              | SELECT 1
-              | FROM
-              |     company c,
-              |     company_user u
-              | WHERE
-              |     c.probe_token = ? AND
-              |     u.email = ? AND
-              |     u.company_id = c.id AND
-              |     c.deleted = FALSE AND
-              |     u.deleted = FALSE AND
-              |     u.is_active = TRUE AND
-              |     u.is_admin = TRUE
+              |SELECT 1
+              |FROM
+              |    company c,
+              |    company_user u
+              |WHERE
+              |    c.probe_token = ? AND
+              |    u.email = ? AND
+              |    u.company_id = c.id AND
+              |    c.deleted = FALSE AND
+              |    u.deleted = FALSE AND
+              |    u.is_active = TRUE AND
+              |    u.is_admin = TRUE
             """.stripMargin,
             probeTkn,
             email)
     }
-
-    /**
-      * Checks if given hash exists in the passwrod pool.
-      *
-      * @param hash Hash to check.
-      */
-    @throws[NCE]
-    def isKnownPasswordHash(hash: String): Boolean = {
-        ensureStarted()
-
-        NCPsql.exists("passwd_pool WHERE passwd_hash = ?", hash)
-    }
 }
+
