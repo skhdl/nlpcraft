@@ -99,29 +99,29 @@ case class NCUserMdo(
         import net.liftweb.json.JsonDSL._
 
         ("id" → id) ~
-            ("firstName" → G.escapeJson(firstName)) ~
-            ("lastName" → G.escapeJson(lastName)) ~
-            ("email" → G.escapeJson(email)) ~
-            ("title" → G.escapeJson(title)) ~
-            ("department" → G.escapeJson(department)) ~
-            ("phone" → phone) ~
-            ("avatarUrl" → G.escapeJson(avatarUrl)) ~
-            ("isActive" → isActive) ~
-            ("isFirstLogin" → isFirstLogin) ~
-            ("isAdmin" → isAdmin) ~
-            ("activeDsId" → activeDsId) ~
-            ("origin" → G.escapeJson(origin)) ~
-            ("tmzName" → G.escapeJson(tmzName)) ~
-            ("tmzAbbr" → G.escapeJson(tmzAbbr)) ~
-            ("latitude" → latitude) ~
-            ("longitude" → longitude) ~
-            ("countryName" → G.escapeJson(countryName)) ~
-            ("countryCode" → countryCode) ~
-            ("regionName" → G.escapeJson(regionName)) ~
-            ("regionCode" → regionCode) ~
-            ("city" → G.escapeJson(city)) ~
-            ("zipCode" → zipCode) ~
-            ("metroCode" → metroCode)
+        ("firstName" → G.escapeJson(firstName)) ~
+        ("lastName" → G.escapeJson(lastName)) ~
+        ("email" → G.escapeJson(email)) ~
+        ("title" → G.escapeJson(title)) ~
+        ("department" → G.escapeJson(department)) ~
+        ("phone" → phone) ~
+        ("avatarUrl" → G.escapeJson(avatarUrl)) ~
+        ("isActive" → isActive) ~
+        ("isFirstLogin" → isFirstLogin) ~
+        ("isAdmin" → isAdmin) ~
+        ("activeDsId" → activeDsId) ~
+        ("origin" → G.escapeJson(origin)) ~
+        ("tmzName" → G.escapeJson(tmzName)) ~
+        ("tmzAbbr" → G.escapeJson(tmzAbbr)) ~
+        ("latitude" → latitude) ~
+        ("longitude" → longitude) ~
+        ("countryName" → G.escapeJson(countryName)) ~
+        ("countryCode" → countryCode) ~
+        ("regionName" → G.escapeJson(regionName)) ~
+        ("regionCode" → regionCode) ~
+        ("city" → G.escapeJson(city)) ~
+        ("zipCode" → zipCode) ~
+        ("metroCode" → metroCode)
     }
 }
 
