@@ -21,10 +21,9 @@
 #   / /|  / / /_/ / /___/ /  / /_/ / __/ /_
 #  /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
 #         /_/
+#       /_/
 #
-
-# REST configuration.
-rest {
-    host=localhost
-    port=8081
-}
+#!/bin/bash
+sudo -u postgres psql
+create user nlpcraft with password 'nlpcraft';
+create database nlpcraft owner nlpcraft;

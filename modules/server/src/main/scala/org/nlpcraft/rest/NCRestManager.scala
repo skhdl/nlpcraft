@@ -42,14 +42,13 @@ import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-
-object NCRestManager extends NCLifecycle("REST manager") with App {
+object NCRestManager extends NCLifecycle("REST manager") {
     // Akka intestines.
-    private lazy implicit val SYSTEM: ActorSystem = ActorSystem()
-    private lazy implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
-    private lazy implicit val CTX: ExecutionContextExecutor = SYSTEM.dispatcher
+    private implicit val SYSTEM: ActorSystem = ActorSystem()
+    private implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
+    private implicit val CTX: ExecutionContextExecutor = SYSTEM.dispatcher
 
-    private lazy val API = "api" / "v1"
+    private val API = "api" / "v1"
 
     private var bindFut: Future[Http.ServerBinding] = _
 
@@ -88,13 +87,15 @@ object NCRestManager extends NCLifecycle("REST manager") with App {
                         accessToken: String
                     )
 
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
 
                     entity(as[Req]) { req ⇒
-                        NCLoginManager.getAdminAccessToken(req.probeToken, req.email) match {
-                            case Some(tkn) ⇒ complete(Res(PUB_API_OK.toString, tkn))
-                            case None ⇒ throw AuthFailure()
+                        headerValueByName("User-Agent") { userAgent ⇒
+                            NCLoginManager.getAdminAccessToken(req.probeToken, req.email, userAgent) match {
+                                case Some(tkn) ⇒ complete(Res(PUB_API_OK.toString, tkn))
+                                case None ⇒ throw AuthFailure()
+                            }
                         }
                     }
                 }

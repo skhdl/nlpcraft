@@ -34,7 +34,4 @@ import org.apache.ignite.{Ignite, Ignition}
 trait NCIgniteNlpCraft extends NCIgniteExceptions {
     // 'NlpCraft' ignite instance.
     protected def nlpcraft: Ignite = Ignition.ignite("nlpcraft")
-    
-    // NlpCraft segment.
-    protected lazy val segment: String = nlpcraft.cluster.localNode.attribute[String]("nlpcraft.segment")
 }

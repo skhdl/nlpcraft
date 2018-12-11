@@ -60,9 +60,6 @@ object NCQueryStateManager extends NCLifecycle("SERVER query state manager") wit
         
         cache = null
     
-        if (segment == "rest" && notifier != null)
-            G.stopThread(notifier)
-        
         super.stop()
     }
     
@@ -77,41 +74,39 @@ object NCQueryStateManager extends NCLifecycle("SERVER query state manager") wit
         }
         
         // Start notifier thread only on REST server.
-        if (segment == "rest") {
-            notifier = G.mkThread("query-state-notifier") { t ⇒
-                val NOTIFIER_DELAY = 15 * 1000 // 15 seconds.
-                
-                while (!t.isInterrupted) {
-                    catching(logIE(logger)) {
-                        NCTxManager.startTx {
-                            val resNotifies = cache.asScala.map(_.getValue).filter(_.resNotifyDue)
-                            val curNotifies = cache.asScala.map(_.getValue).filter(_.curNotifyDue)
-                            
-                            for (x ← resNotifies) {
-                                notifyOnResult(x)
-                                
-                                x.resNotifyDue = false
-                                
-                                cache += x.srvReqId → x
-                            }
-    
-                            for (x ← curNotifies) {
-                                notifyOnCuration(x)
-        
-                                x.curNotifyDue = false
-        
-                                cache += x.srvReqId → x
-                            }
+        notifier = G.mkThread("query-state-notifier") { t ⇒
+            val NOTIFIER_DELAY = 15 * 1000 // 15 seconds.
+
+            while (!t.isInterrupted) {
+                catching(logIE(logger)) {
+                    NCTxManager.startTx {
+                        val resNotifies = cache.asScala.map(_.getValue).filter(_.resNotifyDue)
+                        val curNotifies = cache.asScala.map(_.getValue).filter(_.curNotifyDue)
+
+                        for (x ← resNotifies) {
+                            notifyOnResult(x)
+
+                            x.resNotifyDue = false
+
+                            cache += x.srvReqId → x
+                        }
+
+                        for (x ← curNotifies) {
+                            notifyOnCuration(x)
+
+                            x.curNotifyDue = false
+
+                            cache += x.srvReqId → x
                         }
                     }
-                    
-                    G.sleep(NOTIFIER_DELAY)
                 }
+
+                G.sleep(NOTIFIER_DELAY)
             }
-            
-            notifier.start()
         }
-    
+
+        notifier.start()
+
         super.start()
     }
     

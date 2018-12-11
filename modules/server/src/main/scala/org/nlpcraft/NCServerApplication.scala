@@ -37,7 +37,7 @@ import org.nlpcraft.tx.NCTxManager
 /**
  * Application.
  */
-object NCServerApplication extends NCIgniteServer("server.xml") with LazyLogging {
+object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging {
     override def name() = "NLPCraft application"
 
     // Starts all managers.

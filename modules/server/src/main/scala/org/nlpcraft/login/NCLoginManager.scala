@@ -29,7 +29,6 @@ package org.nlpcraft.login
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
-import org.nlpcraft.quote.NCUsageLimitManager
 import org.nlpcraft.{NCDebug, NCLifecycle, _}
 
 import scala.collection.mutable
@@ -44,40 +43,30 @@ object NCLoginManager extends NCLifecycle("REST login manager") with NCIgniteNlp
 
     // Access token.
     private case class AccessToken(
+        // TODO: check necessary fields only.
         accessToken: String,
         probeToken: String,
         email: String,
         userId: Long,
         companyId: Long,
         var lastAccessMs: Long
-    ) {
-        /**
-          *
-          */
-        @throws[NCE]
-        def touch(): Unit = {
-            lastAccessMs = System.currentTimeMillis()
-
-            // TODO: 'pubapi.free' is a temporary hack until
-            // TODO: proper paid accounts are introduced.
-            NCUsageLimitManager.onActionEx(userId, "pubapi.free")
-        }
-    }
+    )
 
     /**
       * Generates new token or returns existing one for given probe token and user email.
       *
       * @param probeTkn Probe token.
       * @param email User email.
+      * @param userAgent User agent.
       * @return New or existing access token for this user.
       */
     @throws[NCE]
-    def getAdminAccessToken(probeTkn: String, email: String): Option[String] = {
+    def getAdminAccessToken(probeTkn: String, email: String, userAgent: String): Option[String] = {
         ensureStarted()
 
         accessTkns.synchronized {
             accessTkns.values.find(x ⇒ x.probeToken == probeTkn && x.email == email) match {
-                case Some(x) ⇒ x.touch(); Some(x.accessToken)
+                case Some(x) ⇒ Some(x.accessToken)
                 case None ⇒
                     NCPsql.sql {
                         if (NCDbManager.checkProbeTokenAndAdminEmail(probeTkn, email)) {
@@ -90,7 +79,7 @@ object NCLoginManager extends NCLifecycle("REST login manager") with NCIgniteNlp
                                             usrId = adm.id,
                                             userEmail = adm.email,
                                             act = "LOGIN",
-                                            userAgent = "rest",
+                                            userAgent = userAgent,
                                             rmtAddr = null
                                         )
                                     }
