@@ -44,13 +44,12 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 
 
 object NCRestManager extends NCLifecycle("REST manager") with App {
-    // Needed to run the route.
+    // Akka intestines.
     private lazy implicit val SYSTEM: ActorSystem = ActorSystem()
     private lazy implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
-    // Needed for the future map/flatmap in the end and future in fetchItem and saveOrder
     private lazy implicit val CTX: ExecutionContextExecutor = SYSTEM.dispatcher
 
-    private lazy val PUB = "pub" / "v1"
+    private lazy val API = "api" / "v1"
 
     private var bindFut: Future[Http.ServerBinding] = _
 
@@ -77,18 +76,24 @@ object NCRestManager extends NCLifecycle("REST manager") with App {
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        val route: Route = {
+        val routes: Route = {
             post {
-                path(PUB / "signin") {
-                    case class Request(probeToken: String, email: String)
-                    case class Response(status: String, accessToken: String)
+                path(API / "signin") {
+                    case class Req(
+                        probeToken: String,
+                        email: String
+                    )
+                    case class Res(
+                        status: String,
+                        accessToken: String
+                    )
 
-                    implicit val v1: RootJsonFormat[Response] = jsonFormat2(Response)
-                    implicit val v2: RootJsonFormat[Request] = jsonFormat2(Request)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
 
-                    entity(as[Request]) { s ⇒
-                        NCLoginManager.getAdminAccessToken(s.probeToken, s.email) match {
-                            case Some(tkn) ⇒ complete(Response(PUB_API_OK.toString, tkn))
+                    entity(as[Req]) { req ⇒
+                        NCLoginManager.getAdminAccessToken(req.probeToken, req.email) match {
+                            case Some(tkn) ⇒ complete(Res(PUB_API_OK.toString, tkn))
                             case None ⇒ throw AuthFailure()
                         }
                     }
@@ -96,9 +101,9 @@ object NCRestManager extends NCLifecycle("REST manager") with App {
             }
         }
 
-        bindFut = Http().bindAndHandle(route, Config.server, Config.port)
+        bindFut = Http().bindAndHandle(routes, Config.server, Config.port)
 
-        logger.info(s"REST initialized [host=${Config.server}, port=${Config.port}]")
+        logger.info(s"REST server listens on ${Config.server}:${Config.port}")
 
         super.start()
     }

@@ -39,7 +39,6 @@ import scala.util.matching.Regex
 
 /**
  * Project-wide, Lift-based general JSON wrapper.
- *
  */
 class NCJson(val json: JValue) {
     import NCJson._
