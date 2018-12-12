@@ -52,7 +52,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
     private var bindFut: Future[Http.ServerBinding] = _
 
-    private[rest] object Config extends NCConfigurable {
+    private object Config extends NCConfigurable {
         var server: String = hocon.getString("rest.host")
         var port: Int = hocon.getInt("rest.port")
 
