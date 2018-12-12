@@ -36,7 +36,7 @@ import scala.collection.mutable
 /**
  * Login/logout manager.
  */
-object NCLoginManager extends NCLifecycle("REST login manager") with NCIgniteNlpCraft with NCDebug {
+object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft with NCDebug {
     // Public API access tokens.
     // TODO: not using cache here...
     private val accessTkns = mutable.HashMap.empty[String/*Access token*/, AccessToken]
