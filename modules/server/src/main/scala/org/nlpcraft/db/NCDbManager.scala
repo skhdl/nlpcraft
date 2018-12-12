@@ -119,10 +119,10 @@ object NCDbManager extends NCLifecycle("SERVER DB manager") with NCIgniteNlpCraf
     }
 
     /**
-      * Checks probe token and user email for public REST API authentication.
+      * Checks probe token and admin user email for REST API authentication.
       *
       * @param probeTkn Probe token.
-      * @param email User email.
+      * @param email Admin user email.
       * @return
       */
     @throws[NCE]

@@ -82,47 +82,6 @@ case class NCUserMdo(
       * Preferences for this user in JSON format.
       */
     lazy val preferences: NCJson = NCJson(prefsJson)
-
-    // Individual accessor for user preferences.
-    lazy val isNotifyBySlack: Boolean = preferences.fieldOpt("notifyBySlack").getOrElse(false)
-    lazy val isNotifyByEmail: Boolean = preferences.fieldOpt("notifyByEmail").getOrElse(false)
-    lazy val isNotifyBySms: Boolean = preferences.fieldOpt("notifyBySms").getOrElse(false)
-    lazy val defaultHomePage: String = preferences.fieldOpt("defaultHomePage").getOrElse("ask")
-    lazy val csvExportDelimiter: String = preferences.fieldOpt("csvExportDelimiter").getOrElse(",")
-
-    /**
-      * Abbreviated dataset for public API.
-      *
-      * @return
-      */
-    def pubApiJson(): NCJson = {
-        import net.liftweb.json.JsonDSL._
-
-        ("id" → id) ~
-        ("firstName" → G.escapeJson(firstName)) ~
-        ("lastName" → G.escapeJson(lastName)) ~
-        ("email" → G.escapeJson(email)) ~
-        ("title" → G.escapeJson(title)) ~
-        ("department" → G.escapeJson(department)) ~
-        ("phone" → phone) ~
-        ("avatarUrl" → G.escapeJson(avatarUrl)) ~
-        ("isActive" → isActive) ~
-        ("isFirstLogin" → isFirstLogin) ~
-        ("isAdmin" → isAdmin) ~
-        ("activeDsId" → activeDsId) ~
-        ("origin" → G.escapeJson(origin)) ~
-        ("tmzName" → G.escapeJson(tmzName)) ~
-        ("tmzAbbr" → G.escapeJson(tmzAbbr)) ~
-        ("latitude" → latitude) ~
-        ("longitude" → longitude) ~
-        ("countryName" → G.escapeJson(countryName)) ~
-        ("countryCode" → countryCode) ~
-        ("regionName" → G.escapeJson(regionName)) ~
-        ("regionCode" → regionCode) ~
-        ("city" → G.escapeJson(city)) ~
-        ("zipCode" → zipCode) ~
-        ("metroCode" → metroCode)
-    }
 }
 
 object NCUserMdo {
