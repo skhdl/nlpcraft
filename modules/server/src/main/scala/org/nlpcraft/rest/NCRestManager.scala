@@ -52,7 +52,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
     private var bindFut: Future[Http.ServerBinding] = _
 
-    private[rest] object Config extends NCConfigurable {
+    private object Config extends NCConfigurable {
         var server: String = hocon.getString("rest.host")
         var port: Int = hocon.getInt("rest.port")
 
@@ -93,7 +93,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     entity(as[Req]) { req ⇒
                         headerValueByName("User-Agent") { userAgent ⇒
                             NCLoginManager.getAdminAccessToken(req.probeToken, req.email, userAgent) match {
-                                case Some(tkn) ⇒ complete(Res(PUB_API_OK.toString, tkn))
+                                case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
                                 case None ⇒ throw AuthFailure()
                             }
                         }

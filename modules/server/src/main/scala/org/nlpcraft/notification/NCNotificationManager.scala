@@ -24,14 +24,20 @@
  *        /_/
  */
 
-package org.nlpcraft.apicodes
+package org.nlpcraft.notification
+
+import org.nlpcraft.{NCConfigurable, NCLifecycle}
+import scala.collection.JavaConverters._
 
 /**
-  * Enumeration for all APIs status codes.
+  * Push-based notification manager.
   */
-object NCApiStatusCode extends Enumeration {
-    type NCApiStatusCode = Value
-
-    // API codes.
-    val API_OK: Value = Value
+object NCNotificationManager extends NCLifecycle("Notification manager") {
+    private object Config extends NCConfigurable {
+        private val CFG_PATH = "notification.endpoints"
+    
+        private val epList: List[String] = if (hocon.hasPath(CFG_PATH)) hocon.getStringList(CFG_PATH).asScala.toList else Nil
+    }
+    
+    Config.check()
 }

@@ -38,13 +38,13 @@ import scala.compat.Platform._
  * Basic NlpCraft server component trait.
  */
 trait NCServer extends LazyLogging {
-    // Copyright blurb.
+    // Copyright blurb. Can be changed at build time.
     protected val COPYRIGHT = /*@copyright*/"Copyright (C) NlpCraft Project."
 
-    // Version number.
+    // Version number. Can be changed at build time.
     protected val VER = /*@version*/"x.x.x"
 
-    // Build number.
+    // Build number. Can be changed at build time.
     protected val BUILD: String = /*@build*/new SimpleDateFormat("MMddyyyy").format(new Date())
 
     private val startMsec = currentTime
