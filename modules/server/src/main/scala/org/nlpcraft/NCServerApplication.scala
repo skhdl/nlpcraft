@@ -35,10 +35,10 @@ import org.nlpcraft.login.NCLoginManager
 import org.nlpcraft.tx.NCTxManager
 
 /**
- * Application.
+ * Main server entry-point.
  */
 object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging {
-    override def name() = "NLPCraft application"
+    override def name() = "NlpCraft Server"
 
     // Starts all managers.
     private def startComponents(): Unit = {
