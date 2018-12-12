@@ -92,7 +92,7 @@ trait NCServer extends LazyLogging {
             raw" / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
             raw"/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/    $NL" +
             raw"       /_/                                  $NL$NL" +
-            s"Data Probe$NL" +
+            s"${name()}$NL" +
             s"Version: $VER - $BUILD$NL" +
             raw"$COPYRIGHT$NL"
 

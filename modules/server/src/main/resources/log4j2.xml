@@ -30,12 +30,18 @@
 <Configuration status="TRACE">
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+            <PatternLayout pattern="[%-5level] %C %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="TRACE">
+        <Root level="INFO">
             <AppenderRef ref="CONSOLE"/>
         </Root>
+        <Logger name="org.nlpcraft" level="TRACE" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+        </Logger>
+        <Logger name="com.mchange" level="WARN" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+        </Logger>
     </Loggers>
 </Configuration>
