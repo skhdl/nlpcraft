@@ -32,6 +32,6 @@ package org.nlpcraft.apicodes
 object NCApiStatusCode extends Enumeration {
     type NCApiStatusCode = Value
 
-    // Public API codes.
-    val PUB_API_OK: Value = Value
+    // API codes.
+    val API_OK: Value = Value
 }

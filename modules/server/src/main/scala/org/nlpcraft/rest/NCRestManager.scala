@@ -93,7 +93,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     entity(as[Req]) { req ⇒
                         headerValueByName("User-Agent") { userAgent ⇒
                             NCLoginManager.getAdminAccessToken(req.probeToken, req.email, userAgent) match {
-                                case Some(tkn) ⇒ complete(Res(PUB_API_OK.toString, tkn))
+                                case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
                                 case None ⇒ throw AuthFailure()
                             }
                         }
