@@ -77,11 +77,11 @@ object NCPsql extends LazyLogging {
         val driver: String = hocon.getString("postgres.jdbc.driver")
         val username: String = hocon.getString("postgres.jdbc.username")
         val passwd: String = hocon.getString("postgres.jdbc.password")
-        val maxStmt: Int = hocon.getInt("postgres.c3p0.max.statements")
-        val initPoolSize: Int = hocon.getInt("postgres.c3p0.pool.init.size")
-        val minPoolSize: Int = hocon.getInt("postgres.c3p0.pool.min.size")
-        val maxPoolSize: Int = hocon.getInt("postgres.c3p0.pool.max.size")
-        val acqInc: Int = hocon.getInt("postgres.c3p0.pool.acquire.increment")
+        val maxStmt: Int = hocon.getInt("postgres.c3p0.maxStatements")
+        val initPoolSize: Int = hocon.getInt("postgres.c3p0.pool.initSize")
+        val minPoolSize: Int = hocon.getInt("postgres.c3p0.pool.minSize")
+        val maxPoolSize: Int = hocon.getInt("postgres.c3p0.pool.maxSize")
+        val acqInc: Int = hocon.getInt("postgres.c3p0.pool.acquireIncrement")
 
         override def check(): Unit = {
             require(minPoolSize <= initPoolSize)

@@ -113,9 +113,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
       * Stops this component.
       */
     override def stop(): Unit = {
-        super.stop()
-
         if (bindFut != null)
             bindFut.flatMap(_.unbind()).onComplete(_ ⇒ SYSTEM.terminate())
+
+        super.stop()
     }
 }

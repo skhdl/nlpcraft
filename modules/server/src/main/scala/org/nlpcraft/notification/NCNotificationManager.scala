@@ -37,7 +37,30 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
         private val CFG_PATH = "notification.endpoints"
     
         private val epList: List[String] = if (hocon.hasPath(CFG_PATH)) hocon.getStringList(CFG_PATH).asScala.toList else Nil
+        
+        val flushMsec = hocon.getLong("notification.flushSecs") * 1000
     }
     
     Config.check()
+    
+    /**
+      * Adds event with given name and optional parameters to the buffer. Buffer will be pushed to configured
+      * endpoints periodically.
+      *
+      * @param evtName Event name.
+      * @param params Optional set of named event parameters. Note that parameter values should JSON compatible.
+      */
+    def addEvent(evtName: String, params: (String, Any)*): Unit = {
+        ensureStarted()
+        
+        
+    }
+    
+    override def start(): NCLifecycle = {
+        super.start()
+    }
+    
+    override def stop(): Unit = {
+        super.stop()
+    }
 }

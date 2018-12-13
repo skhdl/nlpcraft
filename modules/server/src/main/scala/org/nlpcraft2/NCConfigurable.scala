@@ -3,10 +3,10 @@ package org.nlpcraft2
 import com.typesafe.config.{Config, ConfigFactory}
 
 /**
- * Mixin for configuration factory (defined in standard 'application.conf').
+ * Mixin for configuration factory (defined in standard 'nlpcraft.conf').
  */
 trait NCConfigurable {
-    // Configuration factory loading 'application.conf'.
+    // Configuration factory loading 'nlpcraft.conf'.
     protected val hocon: Config = ConfigFactory.load()
 
     /**
