@@ -91,8 +91,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
 
                     entity(as[Req]) { req ⇒
-                        headerValueByName("User-Agent") { userAgent ⇒
-                            NCLoginManager.getAdminAccessToken(req.probeToken, req.email, userAgent) match {
+                        headerValueByName("User-Agent") { usrAgent ⇒
+                            NCLoginManager.getAdminAccessToken(req.probeToken, req.email, usrAgent) match {
                                 case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
                                 case None ⇒ throw AuthFailure()
                             }

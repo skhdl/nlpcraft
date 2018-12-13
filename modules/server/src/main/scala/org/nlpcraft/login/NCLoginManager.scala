@@ -37,7 +37,7 @@ import scala.collection.mutable
  * Login/logout manager.
  */
 object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft with NCDebug {
-    // Public API access tokens.
+    // API access tokens.
     // TODO: not using cache here...
     private val accessTkns = mutable.HashMap.empty[String/*Access token*/, AccessToken]
 
@@ -57,11 +57,11 @@ object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft
       *
       * @param probeTkn Probe token.
       * @param email User email.
-      * @param userAgent User agent.
-      * @return New or existing access token for this user.
+      * @param usrAgent User agent.
+      * @return New or existing access token for this user or `None` in case of authentication problem.
       */
     @throws[NCE]
-    def getAdminAccessToken(probeTkn: String, email: String, userAgent: String): Option[String] = {
+    def getAdminAccessToken(probeTkn: String, email: String, usrAgent: String): Option[String] = {
         ensureStarted()
 
         accessTkns.synchronized {
@@ -73,14 +73,13 @@ object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft
                             val accessTkn = G.genGuid()
 
                             NCDbManager.getUserByEmail(email) match {
-                                case Some(adm) ⇒
+                                case Some(usr) ⇒
                                     NCPsql.sql {
                                         NCDbManager.addLoginHistory(
-                                            usrId = adm.id,
-                                            userEmail = adm.email,
+                                            usrId = usr.id,
+                                            userEmail = usr.email,
                                             act = "LOGIN",
-                                            userAgent = userAgent,
-                                            rmtAddr = null
+                                            usrAgent = usrAgent
                                         )
                                     }
 
@@ -89,8 +88,8 @@ object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft
                                             accessTkn,
                                             probeTkn,
                                             email,
-                                            adm.id,
-                                            adm.companyId,
+                                            usr.id,
+                                            usr.companyId,
                                             System.currentTimeMillis()
                                         )
 

@@ -83,42 +83,6 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
 
     /**
-      * Adds login history record.
-      *
-      * @param usrId User ID.
-      * @param userEmail User email.
-      * @param act Specific login or logout action.
-      * @param userAgent User agent descriptor.
-      * @param rmtAddr Remote address.
-      */
-    @throws[NCE]
-    def addLoginHistory(
-        usrId: Long,
-        userEmail: String,
-        act: String,
-        userAgent: String,
-        rmtAddr: String
-    ): Unit = {
-        ensureStarted()
-
-        NCPsql.insertSingle(
-            """
-              |INSERT INTO login_history (
-              |    user_id,
-              |    user_email,
-              |    act,
-              |    user_agent,
-              |    rmt_addr)
-              |VALUES (?, ?, ?, ?, ?)""".stripMargin,
-            usrId,
-            G.normalizeEmail(userEmail),
-            act.toUpperCase,
-            userAgent,
-            rmtAddr
-        )
-    }
-
-    /**
       * Checks probe token and admin user email for REST API authentication.
       *
       * @param probeTkn Probe token.

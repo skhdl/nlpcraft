@@ -89,7 +89,6 @@ CREATE TABLE company_user (
     LIKE base INCLUDING DEFAULTS,
 
     id SERIAL PRIMARY KEY,
-    origin VARCHAR(16) NOT NULL, -- From where this user has been created, e.g. 'web', 'test', 'dev', etc.
     avatar_url TEXT, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
@@ -98,39 +97,14 @@ CREATE TABLE company_user (
     department VARCHAR(64), -- Company department or group (sales, marketing, etc.).
     title VARCHAR(64),
     passwd_salt VARCHAR(64), -- Optional salt for password hash (if password signup was used).
-    is_active BOOL NOT NULL,
-    is_first_login BOOL NOT NULL DEFAULT true,
-    active_ds_id BIGINT NOT NULL,
-    is_admin BOOL NOT NULL, -- Admin for the company.
-    is_root BOOL NOT NULL, -- Global system root.
-    rank INTEGER NOT NULL, -- Internal rank. The higher the rank, the mort important user.
     phone VARCHAR(64),
-    prefs_json TEXT NOT NULL, -- JSON object containing user preferences.
-    referral_code VARCHAR(32) NULL,
-
-    -- All-optional IP-based GEO location information from last web access.
-    tmz_name VARCHAR(64) NULL,
-    tmz_abbr VARCHAR(8) NULL,
-    latitude FLOAT NULL,
-    longitude FLOAT NULL,
-    city VARCHAR(64) NULL,
-    country_name VARCHAR(64) NULL,
-    country_code VARCHAR(8) NULL,
-    region_name VARCHAR(64) NULL,
-    region_code VARCHAR(8) NULL,
-    zip_code VARCHAR(16) NULL,
-    metro_code BIGINT NULL
+    prefs_json TEXT NOT NULL -- JSON object containing user preferences.
 );
 
 CREATE INDEX company_user_idx_1 ON company_user(origin);
 CREATE INDEX company_user_idx_2 ON company_user(email);
 CREATE INDEX company_user_idx_3 ON company_user(company_id);
-CREATE INDEX company_user_idx_4 ON company_user(is_active);
-CREATE INDEX company_user_idx_5 ON company_user(is_first_login);
 CREATE INDEX company_user_idx_6 ON company_user(active_ds_id);
-CREATE INDEX company_user_idx_7 ON company_user(is_admin);
-CREATE INDEX company_user_idx_8 ON company_user(rank);
-CREATE INDEX company_user_idx_10 ON company_user(tmz_name);
 
 CREATE UNIQUE INDEX company_user_uk_1 ON company_user(email) WHERE deleted = false;
 
@@ -181,16 +155,3 @@ CREATE TABLE submit_cache (
 
 CREATE INDEX submit_cache_idx_1 ON submit_cache(main_cache_id);
 CREATE INDEX submit_cache_idx_2 ON submit_cache(model_id);
-
---
--- Login/Logout history (log).
---
-DROP TABLE IF EXISTS login_history CASCADE;
-CREATE TABLE login_history (
-    user_id BIGINT NOT NULL,
-    user_email VARCHAR(64),
-    act VARCHAR(32) NOT NULL, -- "LOGIN" or "LOGOUT"
-    user_agent VARCHAR(1024),
-    tstamp TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    rmt_addr VARCHAR(256)
-);

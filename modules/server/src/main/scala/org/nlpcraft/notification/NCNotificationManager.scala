@@ -26,9 +26,12 @@
 
 package org.nlpcraft.notification
 
+import java.net.InetAddress
+
 import org.nlpcraft.{NCConfigurable, NCLifecycle}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -37,7 +40,9 @@ import scala.collection.mutable.ArrayBuffer
 object NCNotificationManager extends NCLifecycle("Notification manager") {
     case class Event(
         name: String,
-        params: Seq[(String, Any)]
+        params: Seq[(String, Any)],
+        tstamp: Long,
+        host: String
     )
     
     private object Config extends NCConfigurable {
@@ -57,6 +62,9 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
     // Bounded buffer of events to be flushed.
     private val evts: ArrayBuffer[Event] = new ArrayBuffer[Event](Config.maxBufferSize)
     
+    // Local host.
+    private val localhost: String = InetAddress.getLocalHost.toString
+    
     /**
       * Adds event with given name and optional parameters to the buffer. Buffer will be pushed to configured
       * endpoints periodically.
@@ -69,7 +77,7 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
     
         if (Config.hasAnyEndpoints)
             evts.synchronized {
-                evts += Event(evtName, params)
+                evts += Event(evtName, params, System.currentTimeMillis(), localhost)
                 
                 if (evts.size > Config.maxBufferSize)
                     flush()
@@ -85,10 +93,15 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
       * Flushes accumulated events, if any, to the registered URL endpoints.
       */
     private def flush(): Unit =
-        if (Config.hasAnyEndpoints)
-            evts.synchronized {
+        if (Config.hasAnyEndpoints) {
+            var copy = mutable.ArrayBuffer.empty[Event]
             
+            evts.synchronized {
+                copy ++= evts
             }
+            
+            // TODO.
+        }
     
     override def start(): NCLifecycle = {
         super.start()
