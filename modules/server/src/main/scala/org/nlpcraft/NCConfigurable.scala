@@ -29,15 +29,22 @@ package org.nlpcraft
 import com.typesafe.config.{Config, ConfigFactory}
 
 /**
- * Mixin for configuration factory (defined in standard 'application.conf').
+ * Mixin for configuration factory (defined in `nlpcraft.conf`).
  */
 trait NCConfigurable {
-    // Configuration factory loading 'application.conf'.
-    protected val hocon: Config = ConfigFactory.load()
+    import NCConfigurable._
+    
+    // Accessor to the loaded config.
+    protected val hocon: Config = cfg
 
     /**
      * Calling this function will touch the object and trigger
      * the eager evaluation.
      */
     def check(): Unit = ()
+}
+
+object NCConfigurable {
+    // Singleton to load full NlpCraft configuration (only once).
+    protected lazy val cfg: Config = ConfigFactory.load("nlpcraft.conf")
 }

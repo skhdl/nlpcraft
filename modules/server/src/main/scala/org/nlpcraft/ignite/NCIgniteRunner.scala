@@ -55,6 +55,7 @@ object NCIgniteRunner extends LazyLogging {
         sysProps.put("IGNITE_ANSI_OFF", "false")
         sysProps.put("IGNITE_QUIET", sysProps.get("IGNITE_QUIET").getOrElse(true).toString)
         sysProps.put("IGNITE_UPDATE_NOTIFIER", "false")
+        sysProps.put("java.net.preferIPv4Stack", "true")
 
         // Start Ignite node.
         val ignite = Ignition.start(G.getStream(cfgRes))
