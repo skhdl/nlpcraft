@@ -39,7 +39,7 @@ under the License.
         <scala.base>2.11</scala.base>
 
         <!-- Versions. -->
-        <ignite.ver>2.4.0</ignite.ver>
+        <ignite.ver>2.7.0</ignite.ver>
         <scala.plugin.ver>3.3.1</scala.plugin.ver>
         <log4j.ver>2.8.1</log4j.ver>
         <scala.ver>${scala.base}.12</scala.ver>
