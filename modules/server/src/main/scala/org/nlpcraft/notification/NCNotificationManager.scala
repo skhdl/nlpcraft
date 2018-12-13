@@ -41,12 +41,10 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
     )
     
     private object Config extends NCConfigurable {
-        private val CFG_PATH = "notification.endpoints"
-    
-        private val epList: List[String] = if (hocon.hasPath(CFG_PATH)) hocon.getStringList(CFG_PATH).asScala.toList else Nil
-        
+        val endpoints: List[String] = hocon.getStringList("notification.endpoints").asScala.toList
         val flushMsec = hocon.getLong("notification.flushSecs") * 1000
         val maxBufferSize = hocon.getInt("notification.maxBufferSize")
+        val hasAnyEndpoints = endpoints.nonEmpty
     
         override def check(): Unit = {
             require(flushMsec > 0 , s"flush interval ($flushMsec) must be > 0")
@@ -69,22 +67,28 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
     def addEvent(evtName: String, params: (String, Any)*): Unit = {
         ensureStarted()
     
-        evts.synchronized {
-            evts += Event(evtName, params)
-            
-            if (evts.size > Config.maxBufferSize)
-                flush()
-        }
+        if (Config.hasAnyEndpoints)
+            evts.synchronized {
+                evts += Event(evtName, params)
+                
+                if (evts.size > Config.maxBufferSize)
+                    flush()
+            }
+        else
+            logger.info("Notification event [" +
+                s"name=$evtName, " +
+                s"params=$params, " +
+            "]")
     }
     
     /**
       * Flushes accumulated events, if any, to the registered URL endpoints.
       */
-    private def flush(): Unit = {
-        evts.synchronized {
-        
-        }
-    }
+    private def flush(): Unit =
+        if (Config.hasAnyEndpoints)
+            evts.synchronized {
+            
+            }
     
     override def start(): NCLifecycle = {
         super.start()
