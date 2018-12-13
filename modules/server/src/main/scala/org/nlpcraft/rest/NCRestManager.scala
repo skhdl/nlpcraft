@@ -57,7 +57,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
         var port: Int = hocon.getInt("rest.port")
 
         override def check(): Unit = {
-            require(port > 0 && port < 65535)
+            require(port > 0 && port < 65535, s"port ($port) must be > 0 and < 65535")
         }
     }
 

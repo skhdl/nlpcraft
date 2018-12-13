@@ -84,8 +84,14 @@ object NCPsql extends LazyLogging {
         val acqInc: Int = hocon.getInt("postgres.c3p0.pool.acquireIncrement")
 
         override def check(): Unit = {
-            require(minPoolSize <= initPoolSize)
-            require(initPoolSize <= maxPoolSize)
+            require(minPoolSize <= maxPoolSize,
+                s"minimum pool size ($minPoolSize) must be <= maximum pool size ($maxPoolSize).")
+            require(minPoolSize <= initPoolSize,
+                s"minimum pool size ($minPoolSize) must be <= initial pool size ($initPoolSize).")
+            require(initPoolSize <= maxPoolSize,
+                s"initial pool size ($initPoolSize) must be <= maximum pool size ($maxPoolSize).")
+            require(acqInc > 0,
+                s"acquire increment ($acqInc) must be > 0.")
         }
     }
 
