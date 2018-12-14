@@ -48,6 +48,14 @@ CREATE TABLE base (
 );
 
 --
+-- Pool of password hashes.
+--
+DROP TABLE IF EXISTS passwd_pool CASCADE;
+CREATE TABLE passwd_pool (
+    passwd_hash VARCHAR(64) NOT NULL
+);
+
+--
 -- Company table.
 --
 DROP TABLE IF EXISTS company CASCADE;
@@ -57,25 +65,13 @@ CREATE TABLE company (
 
     id SERIAL PRIMARY KEY,
 
-    -- Sign up domain (must be UNIQUE).
-    -- TODO: add restriction?
-    sign_up_domain VARCHAR(256) NOT NULL,
-
-    -- Name & contact info (all optional).
-    origin VARCHAR(16) NOT NULL, -- From where this company has been created, e.g. 'web', 'test', 'dev', etc.
+    sign_up_domain VARCHAR(256) NOT NULL, -- Must be unique.
     name VARCHAR(64),
-    website VARCHAR(256),
-    address VARCHAR(256),
-    city VARCHAR(256),
-    region VARCHAR(64),
-    postal_code VARCHAR(32),
-    country VARCHAR(256),
     probe_token VARCHAR(256) NOT NULL,
     probe_token_hash VARCHAR(64) NOT NULL
 );
 
 CREATE INDEX company_idx_1 ON company(sign_up_domain);
-CREATE INDEX company_idx_2 ON company(origin);
 
 CREATE UNIQUE INDEX company_uk_1 ON company(sign_up_domain) WHERE deleted = false;
 CREATE UNIQUE INDEX company_uk_2 ON company(probe_token) WHERE deleted = false;
@@ -90,25 +86,51 @@ CREATE TABLE company_user (
     LIKE base INCLUDING DEFAULTS,
 
     id SERIAL PRIMARY KEY,
+    email VARCHAR(64) NOT NULL, -- Used as username during login.
     avatar_url TEXT, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
-    email VARCHAR(64) NOT NULL, -- Used as username during login.
-    phone VARCHAR(64),
+    last_ds_id BIGINT REFERENCES company, -- Company it belongs to.
     company_id BIGINT REFERENCES company, -- Company it belongs to.
-    department VARCHAR(64), -- Company department or group (sales, marketing, etc.).
-    title VARCHAR(64),
-    passwd_salt VARCHAR(64) NOT NULL,
-    prefs_json TEXT NOT NULL -- JSON object containing user preferences.
+    passwd_salt VARCHAR(64) NOT NULL
 );
 
-CREATE INDEX company_user_idx_1 ON company_user(origin);
-CREATE INDEX company_user_idx_2 ON company_user(email);
-CREATE INDEX company_user_idx_3 ON company_user(company_id);
-CREATE INDEX company_user_idx_6 ON company_user(active_ds_id);
+CREATE INDEX company_user_idx_1 ON company_user(email);
+CREATE INDEX company_user_idx_2 ON company_user(company_id);
+CREATE INDEX company_user_idx_3 ON company_user(last_ds_id);
 
 CREATE UNIQUE INDEX company_user_uk_1 ON company_user(email) WHERE deleted = false;
 
+--
+-- Forced password reset table.
+--
+DROP TABLE IF EXISTS pwd_reset CASCADE;
+CREATE TABLE pwd_reset (
+    user_id BIGINT REFERENCES company_user,
+    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+--
+-- Instance (i.e. company specific instance) of data source.
+--
+DROP TABLE IF EXISTS ds_instance CASCADE;
+CREATE TABLE ds_instance (
+    -- Inherit columns from base entity.
+    LIKE base INCLUDING DEFAULTS,
+
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(128) NOT NULL, -- User friendly (non-unique) name of the data source.
+    short_desc VARCHAR(128) NULL, -- Short, optional description additional to the name.
+    user_id BIGINT NOT NULL REFERENCES company_user, -- User that created that data source.
+    enabled BOOL NOT NULL,
+    model_id VARCHAR(32) NOT NULL,
+    model_name VARCHAR(64) NOT NULL,
+    model_ver VARCHAR(16) NOT NULL,
+    model_cfg VARCHAR(5120) NOT NULL -- Empty if configuration is not used.
+);
+
+CREATE INDEX ds_instance_idx_1 ON ds_instance(user_id);
+CREATE INDEX ds_instance_idx_2 ON ds_instance(enabled);
 
 --
 -- Main cache.
