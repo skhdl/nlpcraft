@@ -38,12 +38,12 @@ import scala.collection.mutable
  */
 object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft with NCDebug {
     // API access tokens.
-    // TODO: not using cache here...
+    // Note: not using cache here...
+    // TODO: how is this cleaned up? expiration?
     private val accessTkns = mutable.HashMap.empty[String/*Access token*/, AccessToken]
 
     // Access token.
     private case class AccessToken(
-        // TODO: check necessary fields only.
         accessToken: String,
         probeToken: String,
         email: String,
@@ -57,32 +57,23 @@ object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft
       *
       * @param probeTkn Probe token.
       * @param email User email.
-      * @param usrAgent User agent.
       * @return New or existing access token for this user or `None` in case of authentication problem.
       */
     @throws[NCE]
-    def getAdminAccessToken(probeTkn: String, email: String, usrAgent: String): Option[String] = {
+    def getAccessToken(probeTkn: String, email: String): Option[String] = {
         ensureStarted()
 
         accessTkns.synchronized {
             accessTkns.values.find(x ⇒ x.probeToken == probeTkn && x.email == email) match {
+                // TODO: check access token expiration?
                 case Some(x) ⇒ Some(x.accessToken)
                 case None ⇒
                     NCPsql.sql {
-                        if (NCDbManager.checkProbeTokenAndAdminEmail(probeTkn, email)) {
+                        if (NCDbManager.checkProbeTokenAndEmail(probeTkn, email)) {
                             val accessTkn = G.genGuid()
 
                             NCDbManager.getUserByEmail(email) match {
                                 case Some(usr) ⇒
-                                    NCPsql.sql {
-                                        NCDbManager.addLoginHistory(
-                                            usrId = usr.id,
-                                            userEmail = usr.email,
-                                            act = "LOGIN",
-                                            usrAgent = usrAgent
-                                        )
-                                    }
-
                                     accessTkns +=
                                         accessTkn → AccessToken(
                                             accessTkn,

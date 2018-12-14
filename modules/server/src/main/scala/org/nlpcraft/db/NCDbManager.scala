@@ -33,7 +33,7 @@ import org.nlpcraft.mdo._
 
 /**
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
-  * Note that all functions in this class expect outside 'NCPsql.sql()' block.
+  * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
 object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     /**
@@ -90,7 +90,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
       * @return
       */
     @throws[NCE]
-    def checkProbeTokenAndAdminEmail(probeTkn: String, email: String): Boolean = {
+    def checkProbeTokenAndEmail(probeTkn: String, email: String): Boolean = {
         ensureStarted()
 
         NCPsql.exists(
@@ -104,9 +104,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
               |    u.email = ? AND
               |    u.company_id = c.id AND
               |    c.deleted = FALSE AND
-              |    u.deleted = FALSE AND
-              |    u.is_active = TRUE AND
-              |    u.is_admin = TRUE
+              |    u.deleted = FALSE
             """.stripMargin,
             probeTkn,
             email

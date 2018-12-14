@@ -58,6 +58,7 @@ CREATE TABLE company (
     id SERIAL PRIMARY KEY,
 
     -- Sign up domain (must be UNIQUE).
+    -- TODO: add restriction?
     sign_up_domain VARCHAR(256) NOT NULL,
 
     -- Name & contact info (all optional).
@@ -93,11 +94,11 @@ CREATE TABLE company_user (
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
     email VARCHAR(64) NOT NULL, -- Used as username during login.
+    phone VARCHAR(64),
     company_id BIGINT REFERENCES company, -- Company it belongs to.
     department VARCHAR(64), -- Company department or group (sales, marketing, etc.).
     title VARCHAR(64),
-    passwd_salt VARCHAR(64), -- Optional salt for password hash (if password signup was used).
-    phone VARCHAR(64),
+    passwd_salt VARCHAR(64) NOT NULL,
     prefs_json TEXT NOT NULL -- JSON object containing user preferences.
 );
 
