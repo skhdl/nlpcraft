@@ -78,15 +78,6 @@ CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
 CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
 
 --
--- Forced password reset table.
---
-DROP TABLE IF EXISTS pwd_reset CASCADE;
-CREATE TABLE pwd_reset (
-    user_id BIGINT REFERENCES nc_user,
-    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
-);
-
---
 -- Instance of data source.
 --
 DROP TABLE IF EXISTS ds_instance CASCADE;
