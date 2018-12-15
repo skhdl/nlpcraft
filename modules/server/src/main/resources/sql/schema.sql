@@ -56,32 +56,10 @@ CREATE TABLE passwd_pool (
 );
 
 --
--- Company table.
+-- User table.
 --
-DROP TABLE IF EXISTS company CASCADE;
-CREATE TABLE company (
-    -- Inherit columns from base entity.
-    LIKE base INCLUDING DEFAULTS,
-
-    id SERIAL PRIMARY KEY,
-
-    sign_up_domain VARCHAR(256) NOT NULL, -- Must be unique.
-    name VARCHAR(64),
-    probe_token VARCHAR(256) NOT NULL,
-    probe_token_hash VARCHAR(64) NOT NULL
-);
-
-CREATE INDEX company_idx_1 ON company(sign_up_domain);
-
-CREATE UNIQUE INDEX company_uk_1 ON company(sign_up_domain) WHERE deleted = false;
-CREATE UNIQUE INDEX company_uk_2 ON company(probe_token) WHERE deleted = false;
-CREATE UNIQUE INDEX company_uk_3 ON company(probe_token_hash) WHERE deleted = false;
-
---
--- Company user table.
---
-DROP TABLE IF EXISTS company_user CASCADE;
-CREATE TABLE company_user (
+DROP TABLE IF EXISTS nc_user CASCADE;
+CREATE TABLE nc_user (
     -- Inherit columns from base entity.
     LIKE base INCLUDING DEFAULTS,
 
@@ -90,28 +68,26 @@ CREATE TABLE company_user (
     avatar_url TEXT, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
-    last_ds_id BIGINT REFERENCES company, -- Company it belongs to.
-    company_id BIGINT REFERENCES company, -- Company it belongs to.
+    last_ds_id BIGINT,
     passwd_salt VARCHAR(64) NOT NULL
 );
 
-CREATE INDEX company_user_idx_1 ON company_user(email);
-CREATE INDEX company_user_idx_2 ON company_user(company_id);
-CREATE INDEX company_user_idx_3 ON company_user(last_ds_id);
+CREATE INDEX nc_user_idx_1 ON nc_user(email);
+CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
 
-CREATE UNIQUE INDEX company_user_uk_1 ON company_user(email) WHERE deleted = false;
+CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
 
 --
 -- Forced password reset table.
 --
 DROP TABLE IF EXISTS pwd_reset CASCADE;
 CREATE TABLE pwd_reset (
-    user_id BIGINT REFERENCES company_user,
+    user_id BIGINT REFERENCES nc_user,
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
 --
--- Instance (i.e. company specific instance) of data source.
+-- Instance of data source.
 --
 DROP TABLE IF EXISTS ds_instance CASCADE;
 CREATE TABLE ds_instance (
@@ -121,7 +97,7 @@ CREATE TABLE ds_instance (
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL, -- User friendly (non-unique) name of the data source.
     short_desc VARCHAR(128) NULL, -- Short, optional description additional to the name.
-    user_id BIGINT NOT NULL REFERENCES company_user, -- User that created that data source.
+    user_id BIGINT NOT NULL REFERENCES nc_user, -- User that created that data source.
     enabled BOOL NOT NULL,
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
