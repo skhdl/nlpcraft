@@ -26,6 +26,8 @@
 
 package org.nlpcraft.apicodes
 
+import scala.language.implicitConversions
+
 /**
   * Enumeration for all APIs status codes.
   */
@@ -34,4 +36,7 @@ object NCApiStatusCode extends Enumeration {
 
     // API codes.
     val API_OK: Value = Value
+    
+    // Support string conversion.
+    implicit def m1(status: NCApiStatusCode): String = status.toString
 }

@@ -31,6 +31,7 @@ import org.apache.commons.validator.routines.EmailValidator
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.notification.NCNotificationManager
 
 /**
   * Signup manager.
@@ -92,7 +93,13 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
                 NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
             )
         
-            // TODO: notification.
+            // Notification.
+            NCNotificationManager.addEvent(
+                "NC_SIGNUP",
+                "firstName" → firstName,
+                "lastName" → lastName,
+                "email" → email
+            )
         
             usrId
         }

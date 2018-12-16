@@ -34,7 +34,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
-import org.nlpcraft.login.NCLoginManager
+import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCE, NCLifecycle}
 import org.nlpcraft.NCConfigurable
 import spray.json.DefaultJsonProtocol._
@@ -67,10 +67,10 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
-            case _ : AuthFailure ⇒ complete(NotAcceptable, "Authentication error")
+            case _ : AuthFailure ⇒ complete(Unauthorized, "Authentication error")
             case e: Throwable ⇒ complete(InternalServerError, e.getMessage)
         }
-
+    
     /**
       * Starts this component.
       */
@@ -93,7 +93,18 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
-                    throw AuthFailure() // TODO
+                    entity(as[Req]) { req ⇒
+                        NCUserManager.signup(
+                            req.adminToken,
+                            req.email,
+                            req.passwd,
+                            req.firstName,
+                            req.lastName,
+                            req.avatarUrl
+                        )
+    
+                        complete(Res(API_OK))
+                    }
                 } ~
                 path(API / "signout") {
                     case class Req(
@@ -122,12 +133,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     throw AuthFailure() // TODO
-//                    entity(as[Req]) { req ⇒
-//                        NCLoginManager.getAccessToken(req.probeToken, req.email) match {
-//                            case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
-//                            case None ⇒ throw AuthFailure()
-//                        }
-//                    }
                 }
             }
         }
