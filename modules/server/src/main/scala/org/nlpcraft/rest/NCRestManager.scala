@@ -77,10 +77,41 @@ object NCRestManager extends NCLifecycle("REST manager") {
     override def start(): NCLifecycle = {
         val routes: Route = {
             post {
+                path(API / "signup") {
+                    case class Req(
+                        rootToken: String,
+                        email: String,
+                        passwd: String,
+                        firstName: String,
+                        lastName: String,
+                        avatarUrl: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    throw AuthFailure() // TODO
+                } ~
+                path(API / "signout") {
+                    case class Req(
+                        accessToken: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    throw AuthFailure() // TODO
+                } ~
                 path(API / "signin") {
                     case class Req(
-                        probeToken: String,
-                        email: String
+                        email: String,
+                        passwd: String
                     )
                     case class Res(
                         status: String,
@@ -89,13 +120,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-
-                    entity(as[Req]) { req ⇒
-                        NCLoginManager.getAccessToken(req.probeToken, req.email) match {
-                            case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
-                            case None ⇒ throw AuthFailure()
-                        }
-                    }
+    
+                    throw AuthFailure() // TODO
+//                    entity(as[Req]) { req ⇒
+//                        NCLoginManager.getAccessToken(req.probeToken, req.email) match {
+//                            case Some(tkn) ⇒ complete(Res(API_OK.toString, tkn))
+//                            case None ⇒ throw AuthFailure()
+//                        }
+//                    }
                 }
             }
         }
