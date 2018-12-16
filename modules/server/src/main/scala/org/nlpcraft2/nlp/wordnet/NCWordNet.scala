@@ -39,7 +39,7 @@ import org.nlpcraft._
  */
 object NCWordNet extends NCLifecycle("SERVER WordNet") {
     // Properties file for WordNet.
-    private final val WN_PROPS = s"${G.getEnvOrElse("WORDNET_HOME")}/wn_file_properties.xml"
+    private final val WN_PROPS = s"${G.getSysEnvPath("WORDNET_HOME")}/wn_file_properties.xml"
 
     @volatile private var dic: Dictionary = _
     @volatile private var morph: MorphologicalProcessor = _

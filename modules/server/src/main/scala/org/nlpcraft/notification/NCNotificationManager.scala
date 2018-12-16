@@ -100,7 +100,7 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
                 copy ++= evts
             }
             
-            // TODO.
+            // TODO: add push to each configured endpoint in a separate thread.
         }
     
     override def start(): NCLifecycle = {

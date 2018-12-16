@@ -50,7 +50,7 @@ object NCNotificationManager extends NCLifecycle("CORE notification manager") wi
     // TODO: skh (host)
     // TODO: templates
     // TODO: word xxx
-    private final val WEB_HOST_PORT = if (IS_PROD) "www.xxx.com" else "localhost:8080"
+    private final val WEB_HOST_PORT = if (IS_DEBUG) "www.xxx.com" else "localhost:8080"
     
     private[notification] final val EMAIL_TPL: String =
         read("templates/email-template.html")

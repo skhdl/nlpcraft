@@ -69,6 +69,7 @@ CREATE TABLE nc_user (
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
     last_ds_id BIGINT,
+    is_admin BOOL NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR(64) NOT NULL
 );
 

@@ -513,7 +513,7 @@ object NCCacheManager extends NCLifecycle("CORE NLP cache manager") with NCIgnit
     private def clear[K, T](cache: IgniteCache[K, T]): Unit = {
         ensureStarted()
 
-        if (!IS_PROD) {
+        if (IS_DEBUG) {
             catching(wrapIE) {
                 cache.removeAll()
             }

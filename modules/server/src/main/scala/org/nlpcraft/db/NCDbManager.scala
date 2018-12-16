@@ -28,6 +28,7 @@ package org.nlpcraft.db
 
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.{NCE, NCLifecycle, _}
 import org.nlpcraft.mdo._
 
@@ -60,6 +61,42 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
 
         super.stop()
     }
+    
+    /**
+      * Checks if given hash exists in the password pool.
+      *
+      * @param hash Hash to check.
+      */
+    @throws[NCE]
+    def isKnownPasswordHash(hash: String): Boolean = {
+        ensureStarted()
+    
+        NCPsql.exists("passwd_pool WHERE passwd_hash = ?", hash)
+    }
+    
+    /**
+      * Inserts password hash into anonymous password pool.
+      *
+      * @param hash Password hash to insert into anonymous password pool.
+      */
+    @throws[NCE]
+    def addPasswordHash(hash: String): Unit = {
+        ensureStarted()
+    
+        NCPsql.insert("INSERT INTO passwd_pool (passwd_hash) VALUES (?)", hash)
+    }
+    
+    /**
+      * Removes password hash from anonymous password pool.
+      *
+      * @param hash Password hash to remove.
+      */
+    @throws[NCE]
+    def removePasswordHash(hash: String): Unit = {
+        ensureStarted()
+    
+        NCPsql.delete("DELETE FROM passwd_pool WHERE passwd_hash = ?", hash)
+    }
 
     /**
       * Gets user for given email.
@@ -81,7 +118,53 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
             G.normalizeEmail(email)
         )
     }
-
+    
+    /**
+      * Adds new user with given parameters.
+      *
+      * @param firstName User's first name.
+      * @param lastName User's last name.
+      * @param email User's normalized email.
+      * @param passwdSalt Optional salt for password Blowfish hashing.
+      * @param avatarUrl User's avatar URL.
+      * @param isAdmin Whether or not the user is admin.
+      * @return Newly added user ID.
+      */
+    @throws[NCE]
+    def addUser(
+        firstName: String,
+        lastName: String,
+        email: String,
+        passwdSalt: String,
+        avatarUrl: String,
+        isAdmin: Boolean
+    ): Long = {
+        ensureStarted()
+        
+        // Insert user.
+        NCPsql.insertGetKey[Long](
+            """
+              | INSERT INTO company_user
+              | (
+              |    first_name,
+              |    last_name,
+              |    email,
+              |    passwd_salt
+              |    avatar_url,
+              |    last_ds_id,
+              |    is_admin,
+              | )
+              | VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+            firstName,
+            lastName,
+            email,
+            passwdSalt,
+            avatarUrl,
+            -1, // No data source yet.
+            isAdmin
+        )
+    }
+    
     /**
       * Checks probe token and admin user email for REST API authentication.
       *

@@ -24,12 +24,15 @@
  *        /_/
  */
 
-package org.nlpcraft.signup
-
-import org.nlpcraft.NCLifecycle
+package org.nlpcraft
 
 /**
-  * TODO: add description.
+  * Mixin for admin token. This provides a trivial implementation based on system property
+  * or environment variable setting.
   */
-object NCSignupManager extends NCLifecycle("Signup manager") {
+trait NCAdminToken {
+    /**
+      * Gets global admin token for this server.
+      */
+    final val goldFinger: String = G.mandatorySysEnv("NLPCRAFT_ADMIN_TOKEN")
 }

@@ -79,7 +79,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
             post {
                 path(API / "signup") {
                     case class Req(
-                        rootToken: String,
+                        adminToken: String,
                         email: String,
                         passwd: String,
                         firstName: String,

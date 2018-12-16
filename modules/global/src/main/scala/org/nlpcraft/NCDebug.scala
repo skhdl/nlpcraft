@@ -30,14 +30,12 @@ package org.nlpcraft
   * Runtime flags.
   */
 trait NCDebug {
-    private def getProperty(name: String): Option[String] = sys.props.get(name)
-    
     /**
       *
       * @param name Name of the boolean property.
       * @return
       */
-    private def isSet(name: String): Boolean = getProperty(name) match {
+    private def isSet(name: String): Boolean = G.sysEnv(name) match {
         case None ⇒ false
         case Some(s) ⇒ new java.lang.Boolean(s).booleanValue()
     }
@@ -46,11 +44,4 @@ trait NCDebug {
     protected lazy final val IS_DEBUG: Boolean = isSet("NLPCRAFT_DEBUG")
     /** Verbose output or not. */
     protected lazy final val IS_PROBE_SILENT: Boolean = isSet("NLPCRAFT_PROBE_SILENT")
-    
-    /** Running under production mode? */
-    protected lazy final val IS_PROD: Boolean =
-        getProperty("NLPCRAFT_PRODUCTION") match {
-            case Some(v) ⇒ java.lang.Boolean.parseBoolean(v)
-            case None ⇒ false
-        }
 }

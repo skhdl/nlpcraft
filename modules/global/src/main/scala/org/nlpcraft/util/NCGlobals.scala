@@ -1428,12 +1428,12 @@ object NCGlobals extends NCDebug with LazyLogging {
     def mkPath(path: String): String = new File(s"${new File("").getAbsolutePath}/$path").getAbsolutePath
 
     /**
-      * Gets either environment variable or system property with given name.
+      * Gets either environment variable or system property based path with given name.
       *
       * @param s Environment variable or system property name.
       */
     @throws[NCE]
-    def getEnvOrElse(s: String): String = {
+    def getSysEnvPath(s: String): String = {
         // NOTE: system property overrides environment variable.
         val v = G.mandatorySysEnv(s)
 

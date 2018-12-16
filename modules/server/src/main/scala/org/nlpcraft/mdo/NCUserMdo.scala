@@ -37,15 +37,12 @@ import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 @impl.NCMdoEntity(table = "company_user")
 case class NCUserMdo(
     @impl.NCMdoField(column = "id", pk = true) id: Long,
-
-    // Personal contact info.
     @impl.NCMdoField(column = "email") email: String,
-
-    // Other info.
     @impl.NCMdoField(column = "avatar_url") avatarUrl: String,
     @impl.NCMdoField(column = "passwd_salt") passwordSalt: String,
     @impl.NCMdoField(column = "company_id") companyId: Long,
     @impl.NCMdoField(column = "last_ds_id") lastDsId: Long,
+    @impl.NCMdoField(column = "is_admin") isAdmin: Boolean,
 
     // Base MDO.
     @impl.NCMdoField(column = "created_on") createdOn: Timestamp,
