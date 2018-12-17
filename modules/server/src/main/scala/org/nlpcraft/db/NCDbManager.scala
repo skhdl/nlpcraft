@@ -120,6 +120,18 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
     
     /**
+      * Deletes user record with given ID.
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def deleteUser(usrId: Long): Unit = {
+        ensureStarted()
+    
+        NCPsql.markAsDeleted("nc_user", "id", usrId)
+    }
+    
+    /**
       * Gets user for given ID.
       *
       * @param usrId User ID.

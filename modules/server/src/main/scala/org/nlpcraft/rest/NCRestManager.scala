@@ -41,7 +41,6 @@ import org.nlpcraft.signin.NCSigninManager
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
-import scala.util.control.Exception._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
@@ -112,6 +111,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 }
             }
         }
+    
+    /**
+      * 
+      * @param acsTkn
+      * @return
+      */
+    @throws[NCE]
+    private def getUserId(acsTkn: String): Long =
+        NCSigninManager.getUserIdForAccessToken(acsTkn).getOrElse { throw AuthFailure() }
 
     /**
       * Starts this component.
@@ -142,11 +150,19 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
-        
-                        // TODO.
-        
+                        
+                        val newUsrId = NCUserManager.addUser(
+                            getUserId(req.accessToken),
+                            req.email,
+                            req.passwd,
+                            req.firstName,
+                            req.lastName,
+                            req.avatarUrl,
+                            req.isAdmin
+                        )
+                        
                         complete {
-                            Res(API_OK, 0)
+                            Res(API_OK, newUsrId)
                         }
                     }
                 } ~
@@ -164,8 +180,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
-                        
-                        // TODO.
+    
+                        NCUserManager.deleteUser(getUserId(req.accessToken))
     
                         complete {
                             Res(API_OK)
@@ -194,8 +210,16 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
-        
-                        // TODO.
+    
+                        NCUserManager.updateUser(
+                            getUserId(req.accessToken),
+                            req.userId,
+                            req.passwd,
+                            req.firstName,
+                            req.lastName,
+                            req.avatarUrl,
+                            req.isAdmin
+                        )
         
                         complete {
                             Res(API_OK)

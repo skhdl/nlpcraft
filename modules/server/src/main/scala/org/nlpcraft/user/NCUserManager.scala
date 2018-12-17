@@ -34,7 +34,7 @@ import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.notification.NCNotificationManager
 
 /**
-  * Signup manager.
+  * User management (signup, add, delete, update) manager.
   */
 object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     // Static email validator.
@@ -49,6 +49,121 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     }
     
     Config.check()
+    
+    /**
+      *
+      * @param updaterUsrId
+      * @param usrId
+      * @param passwd
+      * @param firstName
+      * @param lastName
+      * @param avatarUrl
+      * @param isAdmin
+      * @return
+      */
+    @throws[NCE]
+    def updateUser(
+        updaterUsrId: Long,
+        usrId: Long,
+        passwd: String,
+        firstName: String,
+        lastName: String,
+        avatarUrl: String,
+        isAdmin: Boolean
+    ) : Unit = {
+        ensureStarted()
+    
+        // TODO
+    }
+    
+    /**
+      *
+      * @param usrId
+      * @return
+      */
+    @throws[NCE]
+    def deleteUser(usrId: Long) : Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.getUser(usrId) match {
+                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
+                case Some(usr) ⇒
+                    NCDbManager.deleteUser(usrId)
+    
+                    // Notification.
+                    NCNotificationManager.addEvent("NC_USER_DELETE",
+                        "firstName" → usr.firstName,
+                        "lastName" → usr.lastName,
+                        "email" → usr.email
+                    )
+            }
+        }
+    }
+
+    /**
+      * 
+      * @param usrId
+      * @param newUsrEmail
+      * @param newUsrPasswd
+      * @param newUsrFirstName
+      * @param newUsrLastName
+      * @param newUsrAvatarUrl
+      * @param newUsrIsAdmin
+      * @return
+      */
+    @throws[NCE]
+    def addUser(
+        usrId: Long,
+        newUsrEmail: String,
+        newUsrPasswd: String,
+        newUsrFirstName: String,
+        newUsrLastName: String,
+        newUsrAvatarUrl: String,
+        newUsrIsAdmin: Boolean
+    ) : Long = {
+        ensureStarted()
+    
+        val normEmail = G.normalizeEmail(newUsrEmail)
+    
+        if (!EMAIL_VALIDATOR.isValid(normEmail))
+            throw new NCE(s"New user email is invalid: $normEmail")
+    
+        NCPsql.sql {
+            if (NCDbManager.getUserByEmail(normEmail).isDefined)
+                throw new NCE(s"User email already exists: $normEmail")
+        
+            val salt = NCBlowfishHasher.hash(normEmail)
+        
+            // Add new user.
+            val newUsrId = NCDbManager.addUser(
+                newUsrFirstName,
+                newUsrLastName,
+                newUsrEmail,
+                salt,
+                newUsrAvatarUrl,
+                newUsrIsAdmin
+            )
+        
+            // Add actual hash for the password.
+            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newUsrPasswd, salt))
+        
+            // "Stir up" password pool with each user.
+            (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
+                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
+            )
+        
+            // Notification.
+            NCNotificationManager.addEvent("NC_USER_ADD",
+                "addByUserId" → usrId,
+                "firstName" → newUsrFirstName,
+                "lastName" → newUsrLastName,
+                "email" → newUsrEmail
+            )
+    
+            newUsrId
+        }
+    }
     
     /**
       *
@@ -70,6 +185,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
         lastName: String,
         avatarUrl: String
     ): Long = {
+        ensureStarted()
+        
         if (adminToken != goldFinger)
             throw new NCE(s"Admin token is invalid: $adminToken")
         

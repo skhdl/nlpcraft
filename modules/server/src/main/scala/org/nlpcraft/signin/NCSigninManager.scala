@@ -61,8 +61,8 @@ object NCSigninManager extends NCLifecycle("Signin manager") with NCIgniteNlpCra
         val accessTokenExpireTimeoutMins = hocon.getInt("signin.accessTokenExpireTimeoutMins")
         
         override def check(): Unit = {
-            require(timeoutScannerFreqMins > 1 , s"timeout scanner frequency ($timeoutScannerFreqMins) must be > 1")
-            require(accessTokenExpireTimeoutMins > 1 , s"access token expire timeout ($accessTokenExpireTimeoutMins) must be > 1")
+            require(timeoutScannerFreqMins > 0 , s"timeout scanner frequency ($timeoutScannerFreqMins) must be > 0")
+            require(accessTokenExpireTimeoutMins > 0 , s"access token expire timeout ($accessTokenExpireTimeoutMins) must be > 0")
         }
         
         lazy val scannerMs = timeoutScannerFreqMins * 60 * 1000
@@ -107,7 +107,8 @@ object NCSigninManager extends NCLifecycle("Signin manager") with NCIgniteNlpCra
         },
         Config.scannerMs, Config.scannerMs)
     
-        logger.info(s"Access tokens will be scanned for timeout every ${Config.accessTokenExpireTimeoutMins} min.")
+        logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
+        logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
         
         super.start()
     }
