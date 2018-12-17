@@ -120,6 +120,29 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
     
     /**
+      * Gets user for given ID.
+      *
+      * @param usrId User ID.
+      * @return User MDO.
+      */
+    @throws[NCE]
+    def getUser(usrId: Long): Option[NCUserMdo] = {
+        ensureStarted()
+    
+        NCPsql.selectSingle[NCUserMdo](
+            s"""
+               |SELECT
+               |  *
+               |FROM
+               |  company_user
+               |WHERE
+               |  id = ? AND
+               |  deleted = FALSE
+            """.stripMargin,
+            usrId)
+    }
+    
+    /**
       * Adds new user with given parameters.
       *
       * @param firstName User's first name.
