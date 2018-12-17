@@ -103,8 +103,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             )
         
             // Notification.
-            NCNotificationManager.addEvent(
-                "NC_SIGNUP",
+            NCNotificationManager.addEvent("NC_SIGNUP",
                 "firstName" → firstName,
                 "lastName" → lastName,
                 "email" → email

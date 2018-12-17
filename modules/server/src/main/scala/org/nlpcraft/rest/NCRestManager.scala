@@ -37,6 +37,7 @@ import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCE, NCLifecycle}
 import org.nlpcraft.NCConfigurable
+import org.nlpcraft.signin.NCSigninManager
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
@@ -124,7 +125,17 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
-                    throw AuthFailure() // TODO
+                    entity(as[Req]) { req ⇒
+                        if (NCSigninManager.checkAccessToken(req.accessToken)) {
+                            NCSigninManager.signout(req.accessToken)
+                            
+                            complete {
+                                Res(API_OK)
+                            }
+                        }
+                        else
+                            throw AuthFailure()
+                    }
                 } ~
                 path(API / "signin") {
                     case class Req(
@@ -139,7 +150,17 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
-                    throw AuthFailure() // TODO
+                    entity(as[Req]) { req ⇒
+                        NCSigninManager.signin(
+                            req.email,
+                            req.passwd
+                        ) match {
+                            case None ⇒ throw AuthFailure()
+                            case Some(acsTkn) ⇒ complete {
+                                Res(API_OK, acsTkn)
+                            }
+                        }
+                    }
                 }
             }
         }
