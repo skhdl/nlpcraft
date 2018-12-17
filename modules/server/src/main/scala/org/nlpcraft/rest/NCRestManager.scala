@@ -103,7 +103,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             req.avatarUrl
                         )
     
-                        complete(Res(API_OK))
+                        complete {
+                            Res(API_OK)
+                        }
                     }
                 } ~
                 path(API / "signout") {
