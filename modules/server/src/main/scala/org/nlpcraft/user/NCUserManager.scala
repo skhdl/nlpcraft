@@ -39,7 +39,16 @@ import org.nlpcraft.notification.NCNotificationManager
 object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     // Static email validator.
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
-    private final val PASSWD_POOL_BLOWUP = 3
+    
+    private object Config extends NCConfigurable {
+        val pwdPoolBlowup = hocon.getInt("user.pwdPoolBlowup")
+        
+        override def check(): Unit = {
+            require(pwdPoolBlowup > 1 , s"password pool blowup ($pwdPoolBlowup) must be > 1")
+        }
+    }
+    
+    Config.check()
     
     /**
       *
@@ -89,7 +98,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             NCDbManager.addPasswordHash(NCBlowfishHasher.hash(passwd, salt))
         
             // "Stir up" password pool with each user.
-            (0 to Math.round((Math.random() * PASSWD_POOL_BLOWUP) + PASSWD_POOL_BLOWUP).toInt).foreach(_ ⇒
+            (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
                 NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
             )
         

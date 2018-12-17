@@ -36,9 +36,6 @@ import scala.sys.SystemProperties
  * Provides Ignite runner.
  */
 object NCIgniteRunner extends LazyLogging {
-    // Segment attribute name.
-    private final val SGM_ATTR_NAME = "nlpcraft.segment"
-
     /**
      * Starts Ignite node with given Ignite install directory and configuration path,
      * executes given function and stops the node.
@@ -61,13 +58,6 @@ object NCIgniteRunner extends LazyLogging {
         val ignite = Ignition.start(G.getStream(cfgRes))
 
         try {
-            val sgm = ignite.cluster.localNode.attribute[String](SGM_ATTR_NAME)
-
-            assume(sgm != null, s"Node attribute '$SGM_ATTR_NAME' is not set.")
-
-            // Ack segment.
-            logger.info(s"Ignite segment: $sgm")
-
             body
         }
         finally

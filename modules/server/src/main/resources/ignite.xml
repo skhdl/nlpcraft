@@ -66,6 +66,12 @@
         </property>
     </bean>
 
+    <bean name="signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="signin-cache"/>
+        <property name="cacheMode" value="REPLICATED"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+    </bean>
+
     <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <property name="igniteInstanceName" value="nlpcraft"/>
         <property name="localHost" value="127.0.0.1"/>
@@ -74,12 +80,6 @@
                 <!-- Override local port. -->
                 <property name="sharedMemoryPort" value="-1"/>
             </bean>
-        </property>
-
-        <property name="userAttributes">
-            <map>
-                <entry key="nlpcraft.segment" value="nlpcraft"/>
-            </map>
         </property>
 
         <!-- Global cache store session listener. -->
@@ -94,6 +94,13 @@
         <!-- Enable all events. -->
         <property name="includeEventTypes">
             <util:constant static-field="org.apache.ignite.events.EventType.EVTS_ALL"/>
+        </property>
+
+        <!-- Caches. -->
+        <property name="cacheConfiguration">
+            <list>
+                <ref bean="signin-cache"/>
+            </list>
         </property>
     </bean>
 </beans>
