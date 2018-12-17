@@ -71,7 +71,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     
         NCPsql.sql {
             if (NCDbManager.getUserByEmail(normEmail).isDefined)
-                throw new NCE(s"New user email already exists: $normEmail")
+                throw new NCE(s"User email already exists: $normEmail")
     
             val salt = NCBlowfishHasher.hash(normEmail)
     
@@ -82,7 +82,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
                 email,
                 salt,
                 avatarUrl,
-                true
+                isAdmin = true
             )
         
             // Add actual hash for the password.

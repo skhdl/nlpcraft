@@ -34,13 +34,14 @@ import org.nlpcraft.mdo.impl.NCAnnotatedMdo
 /**
   * Company user.
   */
-@impl.NCMdoEntity(table = "company_user")
+@impl.NCMdoEntity(table = "nc_user")
 case class NCUserMdo(
     @impl.NCMdoField(column = "id", pk = true) id: Long,
     @impl.NCMdoField(column = "email") email: String,
+    @impl.NCMdoField(column = "first_name") firstName: String,
+    @impl.NCMdoField(column = "last_name") lastName: String,
     @impl.NCMdoField(column = "avatar_url") avatarUrl: String,
     @impl.NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @impl.NCMdoField(column = "company_id") companyId: Long,
     @impl.NCMdoField(column = "last_ds_id") lastDsId: Long,
     @impl.NCMdoField(column = "is_admin") isAdmin: Boolean,
 

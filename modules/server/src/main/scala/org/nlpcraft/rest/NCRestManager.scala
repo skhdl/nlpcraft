@@ -68,7 +68,12 @@ object NCRestManager extends NCLifecycle("REST manager") {
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
             case _ : AuthFailure ⇒ complete(Unauthorized, "Authentication error")
-            case e: Throwable ⇒ complete(InternalServerError, e.getMessage)
+            case e: Throwable ⇒
+                val errMsg = e.getLocalizedMessage
+                
+                logger.error(s"REST error (${e.getClass.getSimpleName}) => $errMsg")
+                
+                complete(InternalServerError, errMsg)
         }
     
     /**

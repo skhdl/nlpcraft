@@ -709,7 +709,7 @@ public class NCBlowfishHasher {
             passwdB = (passwd + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-            throw new AssertionError(e.getMessage());
+            throw new AssertionError(e.getLocalizedMessage());
         }
 
         byte[] saltB = decodeBase64(realSalt, SALT_LEN);

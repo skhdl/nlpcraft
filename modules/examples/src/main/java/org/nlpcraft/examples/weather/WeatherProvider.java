@@ -331,7 +331,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
             return makeRangeResult(srv.getWeather(geo, date));
         }
         catch (ApixuPeriodException e) {
-            throw new NCRejection(e.getMessage());
+            throw new NCRejection(e.getLocalizedMessage());
         }
     }
 
@@ -411,7 +411,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
                 makeCurrentResult(srv.getCurrentWeather(geo));
         }
         catch (ApixuPeriodException e) {
-            throw new NCRejection(e.getMessage());
+            throw new NCRejection(e.getLocalizedMessage());
         }
         catch (NCRejection | NCCuration e) {
             throw e;

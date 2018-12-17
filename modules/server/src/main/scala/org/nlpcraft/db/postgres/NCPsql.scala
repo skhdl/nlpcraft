@@ -130,7 +130,7 @@ object NCPsql extends LazyLogging {
     private def psqlErrorCodes[R]: Catcher[R] = {
         case e: SQLException ⇒
             e.getSQLState match {
-                case null ⇒ throw new NCE(s"PostgreSQL error: ${e.getMessage}", e)
+                case null ⇒ throw new NCE(s"PostgreSQL error: ${e.getLocalizedMessage}", e)
 
                 // See 'http://www.postgres.org/docs/9.1/static/errcodes-appendix.html' for more details.
                 case st ⇒ st match {
@@ -138,7 +138,7 @@ object NCPsql extends LazyLogging {
                     case err if err.startsWith("21") ⇒ throw NCPsqlCardinalityViolation(err, e) // Class '21'.
                     case err if err.startsWith("22") ⇒ throw NCPsqlDataException(err, e) // Class '22'.
 
-                    case err ⇒ throw new NCE(s"PostgreSQL error: $err", e)
+                    case err ⇒ throw new NCE(s"PostgreSQL error: $err (see https://www.postgresql.org/docs/current/errcodes-appendix.html), ${e.getLocalizedMessage}", e)
                 }
             }
     }

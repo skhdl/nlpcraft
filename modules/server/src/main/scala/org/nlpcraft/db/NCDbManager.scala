@@ -29,7 +29,7 @@ package org.nlpcraft.db
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
-import org.nlpcraft.{NCE, NCLifecycle, _}
+import org.nlpcraft._
 import org.nlpcraft.mdo._
 
 /**
@@ -101,7 +101,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     /**
       * Gets user for given email.
       *
-      * @param email User's email.
+      * @param email User's normalized email.
       * @return User MDO.
       */
     @throws[NCE]
@@ -111,11 +111,11 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
         NCPsql.selectSingle[NCUserMdo](
             """
               |SELECT *
-              |FROM company_user
+              |FROM nc_user
               |WHERE
               |     email = ? AND
               |     deleted = FALSE""".stripMargin,
-            G.normalizeEmail(email)
+            email
         )
     }
     
@@ -144,15 +144,15 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
         // Insert user.
         NCPsql.insertGetKey[Long](
             """
-              | INSERT INTO company_user
+              | INSERT INTO nc_user
               | (
               |    first_name,
               |    last_name,
               |    email,
-              |    passwd_salt
+              |    passwd_salt,
               |    avatar_url,
               |    last_ds_id,
-              |    is_admin,
+              |    is_admin
               | )
               | VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin,
             firstName,

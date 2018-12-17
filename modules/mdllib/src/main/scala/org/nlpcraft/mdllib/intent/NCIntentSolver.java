@@ -1648,7 +1648,7 @@ public class NCIntentSolver {
             }
             catch (NCIntentSkip e) {
                 // No-op - just skipping this result.
-                String msg = e.getMessage();
+                String msg = e.getLocalizedMessage();
 
                 if (msg != null)
                     log.warn("Selected intent skipped due to: " + msg);

@@ -82,11 +82,14 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
                 if (evts.size > Config.maxBufferSize)
                     flush()
             }
-        else
+        else {
+            val paramsStr = params.map(p ⇒ s"${p._1}:${p._2}").mkString("[", ", ", "]")
+            
             logger.info("Notification event [" +
                 s"name=$evtName, " +
-                s"params=$params, " +
+                s"params=$paramsStr" +
             "]")
+        }
     }
     
     /**

@@ -80,7 +80,7 @@ object NCLoginManager extends NCLifecycle("Login manager") with NCIgniteNlpCraft
                                             probeTkn,
                                             email,
                                             usr.id,
-                                            usr.companyId,
+                                            -1,
                                             System.currentTimeMillis()
                                         )
 
