@@ -114,7 +114,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
     /**
       * 
-      * @param acsTkn
+      * @param acsTkn Access token.
       * @return
       */
     @throws[NCE]
@@ -212,9 +212,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         authenticateAsAdmin(req.accessToken)
     
                         NCUserManager.updateUser(
-                            getUserId(req.accessToken),
                             req.userId,
-                            req.passwd,
                             req.firstName,
                             req.lastName,
                             req.avatarUrl,

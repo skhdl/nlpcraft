@@ -52,9 +52,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     
     /**
       *
-      * @param updaterUsrId
       * @param usrId
-      * @param passwd
       * @param firstName
       * @param lastName
       * @param avatarUrl
@@ -63,9 +61,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
       */
     @throws[NCE]
     def updateUser(
-        updaterUsrId: Long,
         usrId: Long,
-        passwd: String,
         firstName: String,
         lastName: String,
         avatarUrl: String,
@@ -73,7 +69,28 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     ) : Unit = {
         ensureStarted()
     
-        // TODO
+        NCPsql.sql {
+            NCDbManager.getUser(usrId) match {
+                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
+                case _ ⇒
+                    NCDbManager.updateUser(
+                        usrId,
+                        avatarUrl,
+                        firstName,
+                        lastName,
+                        isAdmin
+                    )
+    
+                    // Notification.
+                    NCNotificationManager.addEvent("NC_USER_UPDATE",
+                        "userId" → usrId,
+                        "firstName" → firstName,
+                        "lastName" → lastName,
+                        "isAdmin" → isAdmin
+                    )
+                    
+            }
+        }
     }
     
     /**

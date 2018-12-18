@@ -132,6 +132,46 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
     
     /**
+      * Updates user.
+      *
+      * @param usrId ID of the user to update.
+      * @param avatarUrl Avatar URL.
+      * @param firstName First name.
+      * @param lastName Last name.
+      * @param isAdmin Admin flag.
+      */
+    @throws[NCE]
+    def updateUser(
+        usrId: Long,
+        avatarUrl: String,
+        firstName: String,
+        lastName: String,
+        isAdmin: Boolean
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.update(
+            s"""
+               |UPDATE nc_user
+               |  SET
+               |    first_name = ?,
+               |    last_name = ?,
+               |    avatar_url = ?,
+               |    is_admin = ?,
+               |    last_modified_on = current_timestamp
+               |  WHERE
+               |    id = ? AND
+               |    deleted = FALSE
+                """.stripMargin,
+            firstName,
+            lastName,
+            avatarUrl,
+            isAdmin,
+            usrId
+        )
+    }
+    
+    /**
       * Gets user for given ID.
       *
       * @param usrId User ID.
