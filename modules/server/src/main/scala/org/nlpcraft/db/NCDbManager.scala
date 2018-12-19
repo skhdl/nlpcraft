@@ -186,7 +186,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
                |SELECT
                |  *
                |FROM
-               |  company_user
+               |  nc_user
                |WHERE
                |  id = ? AND
                |  deleted = FALSE
@@ -237,35 +237,6 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
             avatarUrl,
             -1, // No data source yet.
             isAdmin
-        )
-    }
-    
-    /**
-      * Checks probe token and admin user email for REST API authentication.
-      *
-      * @param probeTkn Probe token.
-      * @param email Admin user email.
-      * @return
-      */
-    @throws[NCE]
-    def checkProbeTokenAndEmail(probeTkn: String, email: String): Boolean = {
-        ensureStarted()
-
-        NCPsql.exists(
-            """
-              |SELECT 1
-              |FROM
-              |    company c,
-              |    company_user u
-              |WHERE
-              |    c.probe_token = ? AND
-              |    u.email = ? AND
-              |    u.company_id = c.id AND
-              |    c.deleted = FALSE AND
-              |    u.deleted = FALSE
-            """.stripMargin,
-            probeTkn,
-            email
         )
     }
 }

@@ -127,6 +127,27 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         val routes: Route = {
             post {
+                path(API / "ask") {
+                    throw AuthFailure()
+                } ~
+                path(API / "reject") {
+                    throw AuthFailure()
+                } ~
+                path(API / "cancel") {
+                    throw AuthFailure()
+                } ~
+                path(API / "cancel" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "curate") {
+                    throw AuthFailure()
+                } ~
+                path(API / "talkback") {
+                    throw AuthFailure()
+                } ~
+                path(API / "check") {
+                    throw AuthFailure()
+                } ~
                 path(API / "user" / "add") {
                     case class Req(
                         // Current user.
@@ -163,6 +184,35 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         
                         complete {
                             Res(API_OK, newUsrId)
+                        }
+                    }
+                } ~
+                path(API / "user" / "passwd" / "reset") {
+                    case class Req(
+                        // Current user.
+                        accessToken: String,
+        
+                        // New user.
+                        usrId: Long,
+                        newPasswd: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCUserManager.resetPassword(
+                            req.usrId,
+                            req.newPasswd
+                        )
+        
+                        complete {
+                            Res(API_OK)
                         }
                     }
                 } ~
@@ -224,7 +274,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "signup") {
+                path(API / "user" / "signup") {
                     case class Req(
                         adminToken: String,
                         email: String,
@@ -257,7 +307,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "signout") {
+                path(API / "user" / "signout") {
                     case class Req(
                         accessToken: String
                     )
@@ -278,7 +328,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "signin") {
+                path(API / "user" / "signin") {
                     case class Req(
                         email: String,
                         passwd: String
@@ -304,6 +354,30 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                             }
                         }
                     }
+                } ~
+                path(API / "user" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "add") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "update") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "delete") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "stop") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "restart") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "all") {
+                    throw AuthFailure()
                 }
             }
         }

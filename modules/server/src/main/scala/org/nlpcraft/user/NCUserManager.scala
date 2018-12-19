@@ -117,6 +117,33 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             }
         }
     }
+    
+    /**
+      *
+      * @param usrId ID of the user to reset password for.
+      * @param newPasswd New password to set.
+      */
+    @throws[NCE]
+    def resetPassword(usrId: Long, newPasswd: String): Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.getUser(usrId) match {
+                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
+                case Some(usr) ⇒
+                    val salt = NCBlowfishHasher.hash(usr.email)
+
+                    // Add actual hash for the password.
+                    // NOTE: we don't "stir up" password pool for password resets.
+                    NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
+
+                    // Notification.
+                    NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
+                        "userId" → usrId
+                    )
+            }
+        }
+    }
 
     /**
       * 
@@ -156,7 +183,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             val newUsrId = NCDbManager.addUser(
                 newUsrFirstName,
                 newUsrLastName,
-                newUsrEmail,
+                normEmail,
                 salt,
                 newUsrAvatarUrl,
                 newUsrIsAdmin
@@ -175,7 +202,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
                 "addByUserId" → usrId,
                 "firstName" → newUsrFirstName,
                 "lastName" → newUsrLastName,
-                "email" → newUsrEmail
+                "email" → normEmail
             )
     
             newUsrId
@@ -222,7 +249,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             val usrId = NCDbManager.addUser(
                 firstName,
                 lastName,
-                email,
+                normEmail,
                 salt,
                 avatarUrl,
                 isAdmin = true
@@ -240,7 +267,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
             NCNotificationManager.addEvent("NC_SIGNUP",
                 "firstName" → firstName,
                 "lastName" → lastName,
-                "email" → email
+                "email" → normEmail
             )
         
             usrId
