@@ -26,31 +26,23 @@
 
 package org.nlpcraft.mdo
 
-import java.sql.Timestamp
-
-import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
 import org.nlpcraft.mdo.impl._
 
 /**
-  * User MDO.
+  * Probe model MDO.
   */
-@NCMdoEntity(table = "nc_user")
-case class NCUserMdo(
-    @NCMdoField(column = "id", pk = true) id: Long,
-    @NCMdoField(column = "email") email: String,
-    @NCMdoField(column = "first_name") firstName: String,
-    @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
-    @NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @NCMdoField(column = "last_ds_id") lastDsId: Long,
-    @NCMdoField(column = "is_admin") isAdmin: Boolean,
-
-    // Base MDO.
-    @NCMdoField(column = "created_on") createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
-) extends NCEntityMdo with NCAnnotatedMdo[NCUserMdo]
-
-object NCUserMdo {
-    implicit val x: RsParser[NCUserMdo] =
-        NCAnnotatedMdo.mkRsParser(classOf[NCUserMdo])
+@NCMdoEntity(sql = false)
+case class NCProbeModelMdo(
+    @NCMdoField id: String,
+    @NCMdoField name: String,
+    @NCMdoField version: String
+) extends NCAnnotatedMdo[NCProbeModelMdo] {
+    override def hashCode(): Int = s"$id$name".hashCode()
+    
+    override def equals(obj: Any): Boolean = {
+        obj match {
+            case x: NCProbeModelMdo ⇒ x.id == id
+            case _ ⇒ false
+        }
+    }
 }

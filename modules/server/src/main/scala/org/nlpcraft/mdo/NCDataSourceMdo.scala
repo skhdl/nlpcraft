@@ -32,25 +32,24 @@ import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
 import org.nlpcraft.mdo.impl._
 
 /**
-  * User MDO.
+  * Data source MDO.
   */
-@NCMdoEntity(table = "nc_user")
-case class NCUserMdo(
-    @NCMdoField(column = "id", pk = true) id: Long,
-    @NCMdoField(column = "email") email: String,
-    @NCMdoField(column = "first_name") firstName: String,
-    @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
-    @NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @NCMdoField(column = "last_ds_id") lastDsId: Long,
-    @NCMdoField(column = "is_admin") isAdmin: Boolean,
-
+@NCMdoEntity(table = "ds_instance")
+case class NCDataSourceMdo(
+    @NCMdoField(column = "id", pk = true)  id: Long,
+    @NCMdoField(column = "name") name: String,
+    @NCMdoField(column = "short_desc") shortDesc: String,
+    @NCMdoField(column = "model_id") modelId: String,
+    @NCMdoField(column = "model_name") modelName: String,
+    @NCMdoField(column = "model_ver") modelVersion: String,
+    @NCMdoField(column = "model_cfg") modelConfig: String,
+    
     // Base MDO.
-    @NCMdoField(column = "created_on") createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
-) extends NCEntityMdo with NCAnnotatedMdo[NCUserMdo]
+    @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
+    @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
+) extends NCEntityMdo with NCAnnotatedMdo[NCDataSourceMdo]
 
-object NCUserMdo {
-    implicit val x: RsParser[NCUserMdo] =
-        NCAnnotatedMdo.mkRsParser(classOf[NCUserMdo])
+object DLDataSourceInstanceMdo {
+    implicit val x: RsParser[NCDataSourceMdo] =
+        NCAnnotatedMdo.mkRsParser(classOf[NCDataSourceMdo])
 }
