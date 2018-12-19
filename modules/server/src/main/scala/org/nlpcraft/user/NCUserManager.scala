@@ -43,7 +43,7 @@ import scala.util.control.Exception._
 /**
   * User management (signup, add, delete, update) manager.
   */
-object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft with NCDebug {
+object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     // Static email validator.
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
     

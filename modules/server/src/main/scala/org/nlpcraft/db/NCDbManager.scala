@@ -315,8 +315,6 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
       *
       * @param name Name.
       * @param desc Description.
-      * @param usrId User ID.
-      * @param enabled Enabled flag.
       * @param mdlId Model ID.
       * @param mdlName Model name.
       * @param mdlVer Model version.
@@ -326,8 +324,6 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     def addDataSource(
         name: String,
         desc: String,
-        usrId: Long,
-        enabled: Boolean,
         mdlId: String,
         mdlName: String,
         mdlVer: String,
@@ -340,17 +336,13 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
               |INSERT INTO ds_instance(
               |     name,
               |     short_desc,
-              |     user_id,
-              |     enabled,
               |     model_id,
               |     model_name,
               |     model_ver,
               |     model_cfg
-              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+              |) VALUES (?, ?, ?, ?, ?, ?)""".stripMargin,
             name,
             desc,
-            usrId,
-            enabled,
             mdlId,
             mdlName,
             mdlVer,
