@@ -116,22 +116,26 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
       */
     def addDefaultUser(): Unit =
         NCPsql.selectSingle[Int]("SELECT count(*) FROM installation").get match {
-            case 0 ⇒ throw new AssertionError("Unexpected rows count")
+            case 0 ⇒ require(false, "Unexpected rows count")
             case 1 ⇒
-                val email = "admin@test.com"
-
-                addUser(
-                    firstName = "admin",
-                    lastName = "admin",
-                    email = email,
-                    passwdSalt = NCBlowfishHasher.hash(G.normalizeEmail(email)),
-                    avatarUrl = null,
-                    isAdmin = true
-                )
-
                 NCPsql.insert("INSERT INTO installation (state) VALUES(?)", "Default user added")
 
-                logger.info("Default user added.")
+                if (!NCPsql.exists("nc_user")) {
+                    val email = "admin@test.com"
+
+                    addUser(
+                        firstName = "admin",
+                        lastName = "admin",
+                        email = email,
+                        passwdSalt = NCBlowfishHasher.hash(G.normalizeEmail(email)),
+                        avatarUrl = null,
+                        isAdmin = true
+                    )
+
+                    logger.info("Default user added.")
+                }
+                else
+                    logger.info("Default user was not added.")
             case _ ⇒ logger.info("Default user was not added.")
         }
 
