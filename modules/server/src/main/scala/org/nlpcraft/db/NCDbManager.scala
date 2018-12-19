@@ -30,6 +30,7 @@ import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
+import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.mdo._
 
 /**
@@ -44,11 +45,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        // Warm up SQL connection pool.
-        NCPsql.sql {
-            if (!NCPsql.isValid)
-                throw new NCE("No valid JDBC connection found.")
-        }
+        initializeSchema()
 
         super.start()
     }
@@ -61,7 +58,83 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
 
         super.stop()
     }
-    
+
+    /**
+      * Initializes schema if necessary.
+      */
+    private def initializeSchema(): Unit = {
+        val schemaExists =
+            NCPsql.sql {
+                try {
+                    NCPsql.selectSingle[String]("SELECT NULL FROM installation LIMIT 1")
+
+                    true
+                }
+                catch {
+                    case _: NCE ⇒ false
+                }
+            }
+
+        // Note that it must be done in second transaction,
+        // otherwise `select statement` will be trying to rollback when error on DDL clauses.
+        if (!schemaExists) {
+            logger.info("Schema definition script called.")
+
+            try {
+                NCPsql.sql {
+                    G.readResource("sql/schema.sql", "UTF-8").
+                        map(_.trim).
+                        filter(p ⇒ !p.startsWith("--")).
+                        map(p ⇒ {
+                            val idx = p.indexOf("--")
+
+                            if (idx < 0) p else p.take(idx)
+                        }).
+                        mkString(" ").
+                        split(";").
+                        map(_.trim).
+                        foreach(sql ⇒ {
+                            logger.debug(s"SQL executed: $sql")
+
+                            NCPsql.ddl(sql)
+                        })
+
+                    NCPsql.insert("INSERT INTO installation (state) VALUES(?)", "DB manager initialized")
+                }
+            }
+            catch {
+                case e: NCE ⇒
+                    throw new NCE("Errors during schema creating, clear existing tables and create schema manually.", e)
+            }
+        }
+        else
+            logger.info("Schema already exists.")
+    }
+
+    /**
+      * Adds default user.
+      */
+    def addDefaultUser(): Unit =
+        NCPsql.selectSingle[Int]("SELECT count(*) FROM installation").get match {
+            case 0 ⇒ throw new AssertionError("Unexpected rows count")
+            case 1 ⇒
+                val email = "admin@test.com"
+
+                addUser(
+                    firstName = "admin",
+                    lastName = "admin",
+                    email = email,
+                    passwdSalt = NCBlowfishHasher.hash(G.normalizeEmail(email)),
+                    avatarUrl = null,
+                    isAdmin = true
+                )
+
+                NCPsql.insert("INSERT INTO installation (state) VALUES(?)", "Default user added")
+
+                logger.info("Default user added.")
+            case _ ⇒ logger.info("Default user was not added.")
+        }
+
     /**
       * Checks if given hash exists in the password pool.
       *

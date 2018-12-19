@@ -62,11 +62,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft w
 
     private object Config extends NCConfigurable {
         val pwdPoolBlowup: Int = hocon.getInt("user.pwdPoolBlowup")
-        val timeoutScannerFreqMins = hocon.getInt("user.timeoutScannerFreqMins")
-        val accessTokenExpireTimeoutMins = hocon.getInt("user.accessTokenExpireTimeoutMins")
+        val timeoutScannerFreqMins: Int = hocon.getInt("user.timeoutScannerFreqMins")
+        val accessTokenExpireTimeoutMins: Int = hocon.getInt("user.accessTokenExpireTimeoutMins")
 
-        lazy val scannerMs = timeoutScannerFreqMins * 60 * 1000
-        lazy val expireMs = accessTokenExpireTimeoutMins * 60 * 1000
+        lazy val scannerMs: Int = timeoutScannerFreqMins * 60 * 1000
+        lazy val expireMs: Int = accessTokenExpireTimeoutMins * 60 * 1000
 
         override def check(): Unit = {
             require(pwdPoolBlowup > 1 , s"password pool blowup ($pwdPoolBlowup) must be > 1")
@@ -89,29 +89,36 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft w
 
         scanner = new Timer("timeout-scanner")
 
-        scanner.scheduleAtFixedRate(new TimerTask() {
-            def run() {
-                val now = System.currentTimeMillis()
+        scanner.scheduleAtFixedRate(
+            new TimerTask() {
+                def run() {
+                    val now = System.currentTimeMillis()
 
-                // Check access tokens for expiration.
-                ignoring(classOf[IgniteException]) {
-                    for (ses ← signinCache.asScala.map(_.getValue) if now - ses.lastAccessMs >= Config.expireMs) {
-                        signinCache.remove(ses.acsToken)
+                    // Check access tokens for expiration.
+                    ignoring(classOf[IgniteException]) {
+                        for (ses ← signinCache.asScala.map(_.getValue) if now - ses.lastAccessMs >= Config.expireMs) {
+                            signinCache.remove(ses.acsToken)
 
-                        // Notification.
-                        NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
-                            "accessToken" → ses.acsToken,
-                            "userId" → ses.userId,
-                            "signinMs" → ses.signinMs,
-                            "lastAccessMs" → ses.lastAccessMs
-                        )
+                            // Notification.
+                            NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
+                                "accessToken" → ses.acsToken,
+                                "userId" → ses.userId,
+                                "signinMs" → ses.signinMs,
+                                "lastAccessMs" → ses.lastAccessMs
+                            )
 
-                        logger.trace(s"Access token timed out: ${ses.acsToken}")
+                            logger.trace(s"Access token timed out: ${ses.acsToken}")
+                        }
                     }
                 }
-            }
-        },
-            Config.scannerMs, Config.scannerMs)
+            },
+            Config.scannerMs,
+            Config.scannerMs
+        )
+
+        NCPsql.sql {
+            NCDbManager.addDefaultUser()
+        }
 
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
