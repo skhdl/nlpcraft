@@ -27,46 +27,50 @@
 package org.nlpcraft.ds
 
 import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.{NCE, NCLifecycle}
 import org.nlpcraft.mdo.NCProbeMdo
+import org.nlpcraft.notification.NCNotificationManager
 
 /**
   * Datasources manager.
   */
-object NCDsManager extends NCLifecycle("Datasources manager") {
+object NCDsManager extends NCLifecycle("Data source manager") {
     /**
       * Adds new data source.
       *
-      * @param probes Company probes.
-      * @param compId Company ID.
-      * @param usrId User ID.
       * @param name Data source name.
       * @param desc Data source description.
       * @param mdlId Model ID.
       * @param mdlName Model name.
       * @param mdlVer Model version.
       * @param mdlCfg Model configuration.
-      * @return `None` if data source with given name already exists for this user, Option of datasource ID
-      * when new data source has been successfully added.
+      * @return
       */
     @throws[NCE]
     def addDataSource(
-        probes: Seq[NCProbeMdo],
-        compId: Long,
-        usrId: Long,
         name: String,
         desc: String,
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: String): Option[Long] = {
+        mdlCfg: String): Long = {
         ensureStarted()
 
-        // TODO: userId?
-        // TODO: enabled?
+        val dsId = NCPsql.sql {
+            NCDbManager.addDataSource(name, desc, mdlId, mdlName, mdlVer, mdlCfg)
+        }
+    
+        // Notification.
+        NCNotificationManager.addEvent("NC_DS_ADD",
+            "name" → name,
+            "desc" → desc,
+            "modelId" → mdlId,
+            "modelName" → mdlName,
+            "mdlVer" → mdlVer,
+            "mdlCfg" → mdlCfg
+        )
 
-        val dsId = NCDbManager.addDataSource(name, desc, usrId, true, mdlId, mdlName, mdlVer, mdlCfg)
-
-        Some(dsId)
+        dsId
     }
 }
