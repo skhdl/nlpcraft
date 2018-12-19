@@ -26,31 +26,38 @@
 
 package org.nlpcraft.mdo
 
-import java.sql.Timestamp
-
-import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
 import org.nlpcraft.mdo.impl._
 
 /**
-  * User MDO.
+  * Probe MDO.
   */
-@NCMdoEntity(table = "nc_user")
-case class NCUserMdo(
-    @NCMdoField(column = "id", pk = true) id: Long,
-    @NCMdoField(column = "email") email: String,
-    @NCMdoField(column = "first_name") firstName: String,
-    @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
-    @NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @NCMdoField(column = "last_ds_id") lastDsId: Long,
-    @NCMdoField(column = "is_admin") isAdmin: Boolean,
-
-    // Base MDO.
-    @NCMdoField(column = "created_on") createdOn: Timestamp,
-    @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
-) extends NCEntityMdo with NCAnnotatedMdo[NCUserMdo]
-
-object NCUserMdo {
-    implicit val x: RsParser[NCUserMdo] =
-        NCAnnotatedMdo.mkRsParser(classOf[NCUserMdo])
+@NCMdoEntity(sql = false)
+case class NCProbeMdo(
+    @NCMdoField probeToken: String,
+    @NCMdoField probeId: String,
+    @NCMdoField probeGuid: String,
+    @NCMdoField probeApiVersion: Int,
+    @NCMdoField probeApiDate: Long,
+    @NCMdoField osVersion: String,
+    @NCMdoField osName: String,
+    @NCMdoField osArch: String,
+    @NCMdoField startTstamp: Long,
+    @NCMdoField tmzId: String,
+    @NCMdoField tmzAbbr: String,
+    @NCMdoField tmzName: String,
+    @NCMdoField userName: String,
+    @NCMdoField javaVersion: String,
+    @NCMdoField javaVendor: String,
+    @NCMdoField hostName: String,
+    @NCMdoField hostAddr: String,
+    @NCMdoField macAddr: String,
+    @NCMdoField models: Set[NCProbeModelMdo],
+    @NCMdoField email: Option[String]
+) extends NCAnnotatedMdo[NCProbeMdo] {
+    override def hashCode(): Int = probeToken.hashCode() * 37 + probeId.hashCode
+    override def equals(obj: scala.Any): Boolean =
+        obj match {
+            case x: NCProbeMdo ⇒ x.probeId == probeId && x.probeToken == probeToken
+            case _ ⇒ false
+        }
 }

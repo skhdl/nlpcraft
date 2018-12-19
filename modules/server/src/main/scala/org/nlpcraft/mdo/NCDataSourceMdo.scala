@@ -24,15 +24,32 @@
  *        /_/
  */
 
-package org.nlpcraft
+package org.nlpcraft.mdo
+
+import java.sql.Timestamp
+
+import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
+import org.nlpcraft.mdo.impl._
 
 /**
-  * Mixin for admin token. This provides a trivial implementation based on system property
-  * or environment variable setting.
+  * Data source MDO.
   */
-trait NCAdminToken {
-    /**
-      * Gets global admin token for this server.
-      */
-    final val goldFinger: String = G.mandatorySysEnv("NLPCRAFT_ADMIN_TOKEN")
+@NCMdoEntity(table = "ds_instance")
+case class NCDataSourceMdo(
+    @NCMdoField(column = "id", pk = true)  id: Long,
+    @NCMdoField(column = "name") name: String,
+    @NCMdoField(column = "short_desc") shortDesc: String,
+    @NCMdoField(column = "model_id") modelId: String,
+    @NCMdoField(column = "model_name") modelName: String,
+    @NCMdoField(column = "model_ver") modelVersion: String,
+    @NCMdoField(column = "model_cfg") modelConfig: String,
+    
+    // Base MDO.
+    @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
+    @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
+) extends NCEntityMdo with NCAnnotatedMdo[NCDataSourceMdo]
+
+object DLDataSourceInstanceMdo {
+    implicit val x: RsParser[NCDataSourceMdo] =
+        NCAnnotatedMdo.mkRsParser(classOf[NCDataSourceMdo])
 }

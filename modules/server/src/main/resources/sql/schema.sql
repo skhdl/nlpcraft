@@ -100,8 +100,6 @@ CREATE TABLE ds_instance (
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL, -- User friendly (non-unique) name of the data source.
     short_desc VARCHAR(128) NULL, -- Short, optional description additional to the name.
-    user_id BIGINT NOT NULL REFERENCES nc_user, -- User that created that data source.
-    enabled BOOL NOT NULL,
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,

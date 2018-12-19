@@ -37,11 +37,9 @@ import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCE, NCLifecycle}
 import org.nlpcraft.NCConfigurable
-import org.nlpcraft.signin.NCSigninManager
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
-import scala.util.control.Exception._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
@@ -93,7 +91,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     private def authenticate(acsTkn: String): Unit = {
-        if (!NCSigninManager.checkAccessToken(acsTkn))
+        if (!NCUserManager.checkAccessToken(acsTkn))
             throw AuthFailure()
     }
     
@@ -103,7 +101,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     private def authenticateAsAdmin(acsTkn: String): Unit =
-        NCSigninManager.getUserIdForAccessToken(acsTkn) match {
+        NCUserManager.getUserIdForAccessToken(acsTkn) match {
             case None ⇒ throw AuthFailure()
             case Some(usrId) ⇒ NCPsql.sql {
                 NCDbManager.getUser(usrId) match {
@@ -112,6 +110,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 }
             }
         }
+    
+    /**
+      * 
+      * @param acsTkn Access token.
+      * @return
+      */
+    @throws[NCE]
+    private def getUserId(acsTkn: String): Long =
+        NCUserManager.getUserIdForAccessToken(acsTkn).getOrElse { throw AuthFailure() }
 
     /**
       * Starts this component.
@@ -119,6 +126,27 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         val routes: Route = {
             post {
+                path(API / "ask") {
+                    throw AuthFailure()
+                } ~
+                path(API / "reject") {
+                    throw AuthFailure()
+                } ~
+                path(API / "cancel") {
+                    throw AuthFailure()
+                } ~
+                path(API / "cancel" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "curate") {
+                    throw AuthFailure()
+                } ~
+                path(API / "talkback") {
+                    throw AuthFailure()
+                } ~
+                path(API / "check") {
+                    throw AuthFailure()
+                } ~
                 path(API / "user" / "add") {
                     case class Req(
                         // Current user.
@@ -142,11 +170,48 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
+                        
+                        val newUsrId = NCUserManager.addUser(
+                            getUserId(req.accessToken),
+                            req.email,
+                            req.passwd,
+                            req.firstName,
+                            req.lastName,
+                            req.avatarUrl,
+                            req.isAdmin
+                        )
+                        
+                        complete {
+                            Res(API_OK, newUsrId)
+                        }
+                    }
+                } ~
+                path(API / "user" / "passwd" / "reset") {
+                    case class Req(
+                        // Current user.
+                        accessToken: String,
         
-                        // TODO.
+                        // New user.
+                        usrId: Long,
+                        newPasswd: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCUserManager.resetPassword(
+                            req.usrId,
+                            req.newPasswd
+                        )
         
                         complete {
-                            Res(API_OK, 0)
+                            Res(API_OK)
                         }
                     }
                 } ~
@@ -164,8 +229,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
-                        
-                        // TODO.
+    
+                        NCUserManager.deleteUser(getUserId(req.accessToken))
     
                         complete {
                             Res(API_OK)
@@ -194,17 +259,22 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
-        
-                        // TODO.
+    
+                        NCUserManager.updateUser(
+                            req.userId,
+                            req.firstName,
+                            req.lastName,
+                            req.avatarUrl,
+                            req.isAdmin
+                        )
         
                         complete {
                             Res(API_OK)
                         }
                     }
                 } ~
-                path(API / "signup") {
+                path(API / "user" / "signup") {
                     case class Req(
-                        adminToken: String,
                         email: String,
                         passwd: String,
                         firstName: String,
@@ -215,14 +285,13 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         status: String
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
                     
                     // NOTE: no authentication requires on signup.
     
                     entity(as[Req]) { req ⇒
                         NCUserManager.signup(
-                            req.adminToken,
                             req.email,
                             req.passwd,
                             req.firstName,
@@ -235,7 +304,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "signout") {
+                path(API / "user" / "signout") {
                     case class Req(
                         accessToken: String
                     )
@@ -248,15 +317,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticate(req.accessToken)
-                        
-                        NCSigninManager.signout(req.accessToken)
+    
+                        NCUserManager.signout(req.accessToken)
                         
                         complete {
                             Res(API_OK)
                         }
                     }
                 } ~
-                path(API / "signin") {
+                path(API / "user" / "signin") {
                     case class Req(
                         email: String,
                         passwd: String
@@ -272,7 +341,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     // NOTE: no authentication requires on signin.
     
                     entity(as[Req]) { req ⇒
-                        NCSigninManager.signin(
+                        NCUserManager.signin(
                             req.email,
                             req.passwd
                         ) match {
@@ -282,6 +351,30 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                             }
                         }
                     }
+                } ~
+                path(API / "user" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "add") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "update") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "all") {
+                    throw AuthFailure()
+                } ~
+                path(API / "ds" / "delete") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "stop") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "restart") {
+                    throw AuthFailure()
+                } ~
+                path(API / "probe" / "all") {
+                    throw AuthFailure()
                 }
             }
         }
