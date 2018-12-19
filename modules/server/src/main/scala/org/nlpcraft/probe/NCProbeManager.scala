@@ -53,4 +53,47 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             assert(poolSize > 0, s"Pool size must be > 0")
         }
     }
+    
+    /**
+      *
+      * @return
+      */
+    override def start(): NCLifecycle = {
+        super.start()
+    }
+    
+    /**
+      *
+      * @param probeGuid
+      */
+    @throws[NCE]
+    def stopProbe(probeGuid: String): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      * @param probeGuid
+      */
+    @throws[NCE]
+    def restartProbe(probeGuid: String): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      * @param usrId
+      * @param dsId
+      */
+    @throws[NCE]
+    def clearConversation(usrId: Long, dsId: Long): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    override def stop(): Unit = {
+        super.stop()
+    }
 }

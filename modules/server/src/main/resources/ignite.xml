@@ -66,8 +66,8 @@
         </property>
     </bean>
 
-    <bean name="signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="signin-cache"/>
+    <bean name="user-signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="user-signin-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
         <property name="atomicityMode" value="TRANSACTIONAL"/>
     </bean>
@@ -99,7 +99,7 @@
         <!-- Caches. -->
         <property name="cacheConfiguration">
             <list>
-                <ref bean="signin-cache"/>
+                <ref bean="user-signin-cache"/>
             </list>
         </property>
     </bean>
