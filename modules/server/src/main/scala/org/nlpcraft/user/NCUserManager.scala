@@ -41,7 +41,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCAdminToken {
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
     
     private object Config extends NCConfigurable {
-        val pwdPoolBlowup = hocon.getInt("user.pwdPoolBlowup")
+        val pwdPoolBlowup: Int = hocon.getInt("user.pwdPoolBlowup")
         
         override def check(): Unit = {
             require(pwdPoolBlowup > 1 , s"password pool blowup ($pwdPoolBlowup) must be > 1")

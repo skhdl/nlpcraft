@@ -113,8 +113,8 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
               |SELECT *
               |FROM nc_user
               |WHERE
-              |     email = ? AND
-              |     deleted = FALSE""".stripMargin,
+              |    email = ? AND
+              |    deleted = FALSE""".stripMargin,
             email
         )
     }
@@ -131,13 +131,11 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     
         NCPsql.selectSingle[NCUserMdo](
             s"""
-               |SELECT
-               |  *
-               |FROM
-               |  company_user
+               |SELECT *
+               |FROM company_user
                |WHERE
-               |  id = ? AND
-               |  deleted = FALSE
+               |    id = ? AND
+               |    deleted = FALSE
             """.stripMargin,
             usrId)
     }
@@ -167,8 +165,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
         // Insert user.
         NCPsql.insertGetKey[Long](
             """
-              | INSERT INTO nc_user
-              | (
+              | INSERT INTO nc_user(
               |    first_name,
               |    last_name,
               |    email,
@@ -214,6 +211,54 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
             """.stripMargin,
             probeTkn,
             email
+        )
+    }
+
+    /**
+      * Adds new data source instance.
+      *
+      * @param name Name.
+      * @param desc Description.
+      * @param usrId User ID.
+      * @param enabled Enabled flag.
+      * @param mdlId Model ID.
+      * @param mdlName Model name.
+      * @param mdlVer Model version.
+      * @param mdlCfg Model config.
+      */
+    @throws[NCE]
+    def addDataSource(
+        name: String,
+        desc: String,
+        usrId: Long,
+        enabled: Boolean,
+        mdlId: String,
+        mdlName: String,
+        mdlVer: String,
+        mdlCfg: String
+    ): Long = {
+        ensureStarted()
+
+        NCPsql.insertGetKey[Long](
+            """
+              |INSERT INTO ds_instance(
+              |     name,
+              |     short_desc,
+              |     user_id,
+              |     enabled,
+              |     model_id,
+              |     model_name,
+              |     model_ver,
+              |     model_cfg
+              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+            name,
+            desc,
+            usrId,
+            enabled,
+            mdlId,
+            mdlName,
+            mdlVer,
+            mdlCfg
         )
     }
 }

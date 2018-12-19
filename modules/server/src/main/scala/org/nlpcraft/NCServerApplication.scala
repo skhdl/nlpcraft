@@ -28,6 +28,7 @@ package org.nlpcraft
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
@@ -48,6 +49,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCDbManager.start()
         NCNotificationManager.start()
         NCUserManager.start()
+        NCDsManager.start()
         NCSigninManager.start()
         NCRestManager.start()
     }
@@ -66,6 +68,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     private def stopComponents(): Unit = {
         NCRestManager.stop()
         NCSigninManager.stop()
+        NCDsManager.stop()
         NCUserManager.stop()
         NCNotificationManager.stop()
         NCDbManager.stop()
