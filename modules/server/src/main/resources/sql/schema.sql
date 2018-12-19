@@ -25,19 +25,6 @@
 --
 
 --
--- Drop all existing user tables.
---
-DO $$ DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
-        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-    END LOOP;
-END $$;
-
-SET client_min_messages TO WARNING;
-
---
 -- +=================================+
 -- | Postgres SQL schema definition. |
 -- +=================================+
@@ -105,9 +92,6 @@ CREATE TABLE ds_instance (
     model_ver VARCHAR(16) NOT NULL,
     model_cfg VARCHAR(5120) NOT NULL -- Empty if configuration is not used.
 );
-
-CREATE INDEX ds_instance_idx_1 ON ds_instance(user_id);
-CREATE INDEX ds_instance_idx_2 ON ds_instance(enabled);
 
 --
 -- Main cache.
