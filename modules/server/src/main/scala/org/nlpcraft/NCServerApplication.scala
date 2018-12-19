@@ -50,7 +50,6 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCNotificationManager.start()
         NCUserManager.start()
         NCDsManager.start()
-        NCSigninManager.start()
         NCProbeManager.start()
         NCRestManager.start()
     }
@@ -68,9 +67,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     // Stops all managers.
     private def stopComponents(): Unit = {
         NCRestManager.stop()
-        NCSigninManager.stop()
         NCDsManager.stop()
-        NCProbeManager.stop()
         NCUserManager.stop()
         NCNotificationManager.stop()
         NCDbManager.stop()
