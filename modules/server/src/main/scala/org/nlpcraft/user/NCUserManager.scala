@@ -116,8 +116,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             Config.scannerMs
         )
 
-        NCPsql.sql { NCDbManager.addDefaultUser() }
-
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
 

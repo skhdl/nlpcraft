@@ -172,7 +172,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         authenticateAsAdmin(req.accessToken)
                         
                         val newUsrId = NCUserManager.addUser(
-                            getUserId(req.accessToken),
                             req.email,
                             req.passwd,
                             req.firstName,
