@@ -27,6 +27,7 @@
 package org.nlpcraft.rest
 
 import akka.actor.ActorSystem
+import akka.actor.Status.Failure
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.StatusCodes._
@@ -56,7 +57,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     private var bindFut: Future[Http.ServerBinding] = _
 
     private object Config extends NCConfigurable {
-        var server: String = hocon.getString("rest.host")
+        var host: String = hocon.getString("rest.host")
         var port: Int = hocon.getInt("rest.port")
 
         override def check(): Unit = {
@@ -379,9 +380,21 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
             }
         }
 
-        bindFut = Http().bindAndHandle(routes, Config.server, Config.port)
-
-        logger.info(s"REST server listens on ${Config.server}:${Config.port}")
+        bindFut = Http().bindAndHandle(routes, Config.host, Config.port)
+        
+        val url = s"${Config.host}:${Config.port}"
+        
+        bindFut.onFailure {
+            case _ ⇒
+                logger.info(
+                    s"REST server failed to start on '$url'. " +
+                    s"Use 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
+                )
+        }
+    
+        bindFut.onSuccess {
+            case _ ⇒ logger.info(s"REST server is listening on '$url'.")
+        }
 
         super.start()
     }

@@ -29,8 +29,9 @@ package org.nlpcraft
 import com.typesafe.config.{Config, ConfigFactory}
 
 /**
- * Mixin for configuration factory (defined in `nlpcraft.conf`).
- */
+  * Mixin for configuration factory defined by default in `nlpcraft.conf` file. Use `NLPCRAFT_CONFIG_FILE`
+  * system property or environment variable to override the default.
+  */
 trait NCConfigurable {
     import NCConfigurable._
     
@@ -45,6 +46,8 @@ trait NCConfigurable {
 }
 
 object NCConfigurable {
+    private final val cfgFile = G.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
+    
     // Singleton to load full NlpCraft configuration (only once).
-    protected lazy val cfg: Config = ConfigFactory.load("nlpcraft.conf")
+    protected lazy val cfg: Config = ConfigFactory.load(cfgFile)
 }
