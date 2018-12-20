@@ -274,9 +274,30 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
     
     /**
+      * Gets data source for given ID.
+      *
+      * @param dsId Data source ID.
+      * @return Data source MDO.
+      */
+    @throws[NCE]
+    def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
+        ensureStarted()
+        
+        NCPsql.selectSingle[NCDataSourceMdo](
+            s"""
+               |SELECT *
+               |FROM ds_instance
+               |WHERE
+               |    id = ? AND
+               |    deleted = FALSE
+            """.stripMargin,
+            dsId)
+    }
+
+    /**
       * Gets all users.
       *
-      * @return User MDO.
+      * @return User MDOs.
       */
     @throws[NCE]
     def getAllUsers: List[NCUserMdo] = {
@@ -286,6 +307,24 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
             s"""
                |SELECT *
                |FROM nc_user
+               |WHERE
+               |    deleted = FALSE
+            """.stripMargin)
+    }
+    
+    /**
+      * Gets all data sources.
+      *
+      * @return Data source MDOs.
+      */
+    @throws[NCE]
+    def getAllDataSources: List[NCDataSourceMdo] = {
+        ensureStarted()
+        
+        NCPsql.select[NCDataSourceMdo](
+            s"""
+               |SELECT *
+               |FROM ds_instance
                |WHERE
                |    deleted = FALSE
             """.stripMargin)

@@ -28,8 +28,8 @@ package org.nlpcraft.ds
 
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.{NCE, NCLifecycle}
-import org.nlpcraft.mdo.NCProbeMdo
+import org.nlpcraft._
+import org.nlpcraft.mdo._
 import org.nlpcraft.notification.NCNotificationManager
 
 /**
@@ -73,5 +73,17 @@ object NCDsManager extends NCLifecycle("Data source manager") {
         )
 
         dsId
+    }
+    
+    /**
+      * Gets the list of all data sources.
+      */
+    @throws[NCE]
+    def getAllDataSources: List[NCDataSourceMdo] = {
+        ensureStarted()
+        
+        NCPsql.sql {
+            NCDbManager.getAllDataSources
+        }
     }
 }

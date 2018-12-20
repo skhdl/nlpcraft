@@ -49,7 +49,7 @@ case class NCDataSourceMdo(
     @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
 ) extends NCEntityMdo with NCAnnotatedMdo[NCDataSourceMdo]
 
-object DLDataSourceInstanceMdo {
+object NCDataSourceMdo {
     implicit val x: RsParser[NCDataSourceMdo] =
         NCAnnotatedMdo.mkRsParser(classOf[NCDataSourceMdo])
 }

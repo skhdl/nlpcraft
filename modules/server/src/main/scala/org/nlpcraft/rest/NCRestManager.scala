@@ -358,6 +358,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         accessToken: String
                     )
                     case class ResUser(
+                        id: Long,
                         email: String,
                         firstName: String,
                         lastName: String,
@@ -371,13 +372,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat6(ResUser)
+                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat7(ResUser)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
         
-                        val users = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
+                        val usrLst = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
+                            mdo.id,
                             mdo.email,
                             mdo.firstName,
                             mdo.lastName,
@@ -387,7 +389,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         ))
         
                         complete {
-                            Res(API_OK, users)
+                            Res(API_OK, usrLst)
                         }
                     }
                 } ~
@@ -433,7 +435,45 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     throw AuthFailure()
                 } ~
                 path(API / "ds" / "all") {
-                    throw AuthFailure()
+                    case class Req(
+                        // Caller.
+                        accessToken: String
+                    )
+                    case class ResDs(
+                        id: Long,
+                        name: String,
+                        shortDesc: String,
+                        mdlId: String,
+                        mdlName: String,
+                        mdlVer: String,
+                        mdlCfg: String
+                    )
+                    case class Res(
+                        status: String,
+                        dataSources: List[ResDs]
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val usrFmt: RootJsonFormat[ResDs] = jsonFormat7(ResDs)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
+                            mdo.id,
+                            mdo.name,
+                            mdo.shortDesc,
+                            mdo.modelId,
+                            mdo.modelName,
+                            mdo.modelVersion,
+                            mdo.modelConfig
+                        ))
+        
+                        complete {
+                            Res(API_OK, dsLst)
+                        }
+                    }
                 } ~
                 path(API / "ds" / "delete") {
                     throw AuthFailure()
