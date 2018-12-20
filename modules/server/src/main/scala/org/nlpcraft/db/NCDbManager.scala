@@ -31,12 +31,16 @@ import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
 import org.nlpcraft.mdo._
+import scala.util.control.Exception._
 
 /**
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
   * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
 object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
+    // Relative database schema path.
+    private final val SCHEMA_PATH = "sql/schema.sql"
+    
     /**
       * Starts manager.
       */
@@ -44,7 +48,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        initializeSchema()
+        checkSchema()
 
         super.start()
     }
@@ -59,13 +63,13 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
 
     /**
-      * Initializes schema if necessary.
+      * Checks and initializes, if necessary, the database schema.
       */
-    private def initializeSchema(): Unit = {
+    private def checkSchema(): Unit = {
         val schemaExists =
             NCPsql.sql {
                 try {
-                    NCPsql.selectSingle[String]("SELECT NULL FROM installation LIMIT 1")
+                    NCPsql.selectSingle[String]("SELECT NULL FROM base LIMIT 1")
 
                     true
                 }
@@ -74,40 +78,40 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
                 }
             }
 
-        // Note that it must be done in second transaction,
-        // otherwise `select statement` will be trying to rollback when error on DDL clauses.
-        if (!schemaExists) {
-            logger.info("Schema definition script called.")
-
+        if (!schemaExists)
             try {
                 NCPsql.sql {
-                    G.readResource("sql/schema.sql", "UTF-8").
+                    G.readResource(SCHEMA_PATH, "UTF-8").
                         map(_.trim).
-                        filter(p ⇒ !p.startsWith("--")).
-                        map(p ⇒ {
+                        filter(p ⇒ !p.startsWith("--")). // Skip full-line comments.
+                        map(p ⇒ { // Remove partial comments.
                             val idx = p.indexOf("--")
 
                             if (idx < 0) p else p.take(idx)
                         }).
                         mkString(" ").
-                        split(";").
+                        split(";"). // Split by SQL statements.
                         map(_.trim).
-                        foreach(sql ⇒ {
-                            logger.debug(s"SQL executed: $sql")
+                        foreach(sql ⇒ NCPsql.ddl(sql))
 
-                            NCPsql.ddl(sql)
-                        })
-
-                    NCPsql.insert("INSERT INTO installation (state) VALUES(?)", "DB manager initialized")
+                    // Mark the current schema as just created.
+                    NCPsql.ddl("CREATE TABLE new_schema()")
                 }
+                
+                logger.info("DB schema has been created.")
             }
             catch {
                 case e: NCE ⇒
-                    throw new NCE("Errors during schema creating, clear existing tables and create schema manually.", e)
+                    throw new NCE(s"Failed to auto-create database schema - " +
+                        s"clear existing tables and create schema manually using '$SCHEMA_PATH' file.", e)
             }
-        }
         else
-            logger.info("Schema already exists.")
+            // Clean up in case of previous failed start.
+            ignoring(classOf[NCE]) {
+                NCPsql.sql {
+                    NCPsql.ddl("DROP TABLE new_schema")
+                }
+            }
     }
 
     /**

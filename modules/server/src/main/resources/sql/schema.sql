@@ -46,15 +46,6 @@ CREATE TABLE base (
 );
 
 --
--- Installation information.
---
-DROP TABLE IF EXISTS installation CASCADE;
-CREATE TABLE installation (
-    id SERIAL PRIMARY KEY,
-    state VARCHAR(64) NOT NULL
-);
-
---
 -- Pool of password hashes.
 --
 DROP TABLE IF EXISTS passwd_pool CASCADE;

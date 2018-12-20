@@ -34,6 +34,7 @@ import org.apache.ignite.{IgniteCache, IgniteException}
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.notification.NCNotificationManager
 
@@ -118,6 +119,35 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
+    
+        val isFirstStart = NCPsql.sql {
+            NCPsql.sql {
+                try {
+                    NCPsql.selectSingle[String]("SELECT NULL FROM new_schema LIMIT 1")
+            
+                    true
+                }
+                catch {
+                    case _: NCE ⇒ false
+                }
+            }
+        }
+        
+        if (isFirstStart) {
+            try {
+                addDefaultUser()
+            }
+            catch {
+                case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
+            }
+    
+            // Clean up.
+            ignoring(classOf[NCE]) {
+                NCPsql.sql {
+                    NCPsql.ddl("DROP TABLE new_schema")
+                }
+            }
+        }
 
         super.start()
     }
@@ -365,6 +395,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         }
     }
     
+    /**
+      * Adds default user.
+      */
     @throws[NCE]
     private def addDefaultUser(): Unit = {
         val email = "admin@admin.com"
@@ -378,7 +411,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             val salt = NCBlowfishHasher.hash(email)
         
             // Add new user.
-            val usrId = NCDbManager.addUser(
+            NCDbManager.addUser(
                 firstName,
                 lastName,
                 email,
@@ -394,16 +427,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
                 NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
             )
-        
-            // Notification.
-            NCNotificationManager.addEvent("NC_DEFAULT_USER_ADD",
-                "usrId" → usrId,
-                "firstName" → firstName,
-                "lastName" → lastName,
-                "password" → passwd,
-                "email" → email
-            )
         }
+    
+        logger.info(s"Default admin user ($email/$passwd) created.")
     }
 
     /**
