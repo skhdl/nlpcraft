@@ -30,7 +30,7 @@
 <Configuration status="TRACE">
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %C %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] - %msg%n"/>
+            <PatternLayout pattern="%d{MMM-dd HH:mm:ss} [%-5p] - %m%n"/>
         </Console>
     </Appenders>
     <Loggers>

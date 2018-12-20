@@ -34,7 +34,6 @@ import org.apache.ignite.{IgniteCache, IgniteException}
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.NCDbManager
-import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
