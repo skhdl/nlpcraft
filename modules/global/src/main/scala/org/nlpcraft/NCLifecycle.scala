@@ -73,7 +73,7 @@ abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
 
         val dur = s"[${currentTime - startMsec} ms]"
 
-        logger.trace(s"$name started $dur")
+        logger.info(s"$name started $dur")
         
         this
     }
@@ -87,6 +87,6 @@ abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
         
         started = false
 
-        logger.trace(s"$name stopped.")
+        logger.info(s"$name stopped.")
     }
 }
