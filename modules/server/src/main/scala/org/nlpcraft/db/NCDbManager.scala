@@ -211,6 +211,18 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
 
         NCPsql.markAsDeleted("nc_user", "id", usrId)
     }
+    
+    /**
+      * Deletes data source with given ID.
+      *
+      * @param dsId Data source ID.
+      */
+    @throws[NCE]
+    def deleteDataSource(dsId: Long): Unit = {
+        ensureStarted()
+        
+        NCPsql.markAsDeleted("ds_instance", "id", dsId)
+    }
 
     /**
       * Updates user.
@@ -249,6 +261,38 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
             avatarUrl,
             isAdmin,
             usrId
+        )
+    }
+    
+    /**
+      * Updates data source.
+      *
+      * @param dsId ID of the data source to update.
+      * @param name Data source name.
+      * @param shortDesc Short data source description.
+      */
+    @throws[NCE]
+    def updateDataSource(
+        dsId: Long,
+        name: String,
+        shortDesc: String
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.update(
+            s"""
+               |UPDATE ds_instance
+               |SET
+               |    name = ?,
+               |    short_desc = ?,
+               |    last_modified_on = current_timestamp
+               |WHERE
+               |    id = ? AND
+               |    deleted = FALSE
+                """.stripMargin,
+            name,
+            shortDesc,
+            dsId
         )
     }
 

@@ -37,6 +37,37 @@ import org.nlpcraft.notification.NCNotificationManager
   */
 object NCDsManager extends NCLifecycle("Data source manager") {
     /**
+      * Updates given data source.
+      *
+      * @param dsId ID of the data source to update.
+      * @param name Data source name.
+      * @param shortDesc Data source description.
+      */
+    @throws[NCE]
+    def updateDataSource(
+        dsId: Long,
+        name: String,
+        shortDesc: String
+    ): Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.getDataSource(dsId) match {
+                case None ⇒ throw new NCE(s"Unknown data source ID: $dsId")
+                case Some(ds) ⇒
+                    NCDbManager.updateDataSource(dsId, name, shortDesc)
+                
+                    // Notification.
+                    NCNotificationManager.addEvent("NC_DS_UPDATE",
+                        "dsId" → dsId,
+                        "name" → ds.name,
+                        "desc" → ds.shortDesc
+                    )
+            }
+        }
+    }
+    
+    /**
       * Adds new data source.
       *
       * @param name Data source name.
@@ -73,6 +104,35 @@ object NCDsManager extends NCLifecycle("Data source manager") {
         )
 
         dsId
+    }
+    
+    /**
+      * Deletes data source with given DI.
+      *
+      * @param dsId ID of the data source to delete.
+      */
+    @throws[NCE]
+    def deleteDataSource(dsId: Long): Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.getDataSource(dsId) match {
+                case None ⇒ throw new NCE(s"Unknown data source ID: $dsId")
+                case Some(ds) ⇒
+                    NCDbManager.deleteDataSource(dsId)
+    
+                    // Notification.
+                    NCNotificationManager.addEvent("NC_DS_DELETE",
+                        "dsId" → dsId,
+                        "name" → ds.name,
+                        "desc" → ds.shortDesc,
+                        "modelId" → ds.modelId,
+                        "modelName" → ds.modelName,
+                        "mdlVer" → ds.modelVersion,
+                        "mdlCfg" → ds.modelConfig
+                    )
+            }
+        }
     }
     
     /**

@@ -432,7 +432,35 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "ds" / "update") {
-                    throw AuthFailure()
+                    case class Req(
+                        // Caller.
+                        accessToken: String,
+        
+                        // Update data source.
+                        dsId: Long,
+                        name: String,
+                        shortDesc: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCDsManager.updateDataSource(
+                            req.dsId,
+                            req.name,
+                            req.shortDesc
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "ds" / "all") {
                     case class Req(
@@ -476,7 +504,26 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "ds" / "delete") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        dsId: Long
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCDsManager.deleteDataSource(req.dsId)
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "probe" / "stop") {
                     throw AuthFailure()
