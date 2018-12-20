@@ -150,7 +150,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 } ~
                 path(API / "user" / "add") {
                     case class Req(
-                        // Current user.
+                        // Caller.
                         accessToken: String,
                         
                         // New user.
@@ -188,7 +188,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 } ~
                 path(API / "user" / "passwd" / "reset") {
                     case class Req(
-                        // Current user.
+                        // Caller.
                         accessToken: String,
         
                         // New user.
@@ -239,7 +239,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 } ~
                 path(API / "user" / "update") {
                     case class Req(
-                        // Current user.
+                        // Caller.
                         accessToken: String,
         
                         // Update user.
@@ -353,11 +353,47 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "user" / "all") {
-                    throw AuthFailure()
+                    case class Req(
+                        // Caller.
+                        accessToken: String
+                    )
+                    case class ResUser(
+                        email: String,
+                        firstName: String,
+                        lastName: String,
+                        avatarUrl: String,
+                        lastDsId: Long,
+                        isAdmin: Boolean
+                    )
+                    case class Res(
+                        status: String,
+                        users: List[ResUser]
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat6(ResUser)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        val users = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
+                            mdo.email,
+                            mdo.firstName,
+                            mdo.lastName,
+                            mdo.avatarUrl,
+                            mdo.lastDsId,
+                            mdo.isAdmin
+                        ))
+        
+                        complete {
+                            Res(API_OK, users)
+                        }
+                    }
                 } ~
                 path(API / "ds" / "add") {
                     case class Req(
-                        // Current user.
+                        // Caller.
                         accessToken: String,
         
                         // Data source.

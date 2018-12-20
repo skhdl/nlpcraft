@@ -274,6 +274,24 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     }
     
     /**
+      * Gets all users.
+      *
+      * @return User MDO.
+      */
+    @throws[NCE]
+    def getAllUsers: List[NCUserMdo] = {
+        ensureStarted()
+        
+        NCPsql.select[NCUserMdo](
+            s"""
+               |SELECT *
+               |FROM nc_user
+               |WHERE
+               |    deleted = FALSE
+            """.stripMargin)
+    }
+
+    /**
       * Adds new user with given parameters.
       *
       * @param firstName User's first name.

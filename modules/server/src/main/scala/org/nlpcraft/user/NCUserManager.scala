@@ -36,6 +36,7 @@ import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 
 import scala.collection.JavaConverters._
@@ -135,6 +136,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         }
 
         super.start()
+    }
+    
+    /**
+      * Gets the list of all current users.
+      */
+    @throws[NCE]
+    def getAllUsers: List[NCUserMdo] = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.getAllUsers
+        }
     }
 
     /**
