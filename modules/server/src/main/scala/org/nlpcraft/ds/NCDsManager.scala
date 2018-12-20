@@ -63,6 +63,7 @@ object NCDsManager extends NCLifecycle("Data source manager") {
     
         // Notification.
         NCNotificationManager.addEvent("NC_DS_ADD",
+            "dsId" → dsId,
             "name" → name,
             "desc" → desc,
             "modelId" → mdlId,

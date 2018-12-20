@@ -27,7 +27,6 @@
 package org.nlpcraft.rest
 
 import akka.actor.ActorSystem
-import akka.actor.Status.Failure
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.StatusCodes._
@@ -44,6 +43,7 @@ import spray.json.RootJsonFormat
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
+import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
@@ -356,7 +356,42 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     throw AuthFailure()
                 } ~
                 path(API / "ds" / "add") {
-                    throw AuthFailure()
+                    case class Req(
+                        // Current user.
+                        accessToken: String,
+        
+                        // Data source.
+                        name: String,
+                        shortDesc: String,
+                        mdlId: String,
+                        mdlName: String,
+                        mdlVer: String,
+                        mdlCfg: String
+                    )
+                    case class Res(
+                        status: String,
+                        dsId: Long
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        val newDsId = NCDsManager.addDataSource(
+                            req.name,
+                            req.shortDesc,
+                            req.mdlId,
+                            req.mdlName,
+                            req.mdlVer,
+                            req.mdlCfg
+                        )
+        
+                        complete {
+                            Res(API_OK, newDsId)
+                        }
+                    }
                 } ~
                 path(API / "ds" / "update") {
                     throw AuthFailure()
