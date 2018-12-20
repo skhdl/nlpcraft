@@ -30,7 +30,6 @@ import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
-import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.mdo._
 
 /**
@@ -110,30 +109,6 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
         else
             logger.info("Schema already exists.")
     }
-
-    /**
-      * Adds default user.
-      */
-    def addDefaultUser(): Unit =
-        NCPsql.selectSingle[Int]("SELECT count(*) FROM installation").get match {
-            case 0 ⇒ throw new AssertionError("Unexpected rows count")
-            case 1 ⇒
-                val email = "admin@test.com"
-
-                addUser(
-                    firstName = "admin",
-                    lastName = "admin",
-                    email = email,
-                    passwdSalt = NCBlowfishHasher.hash(G.normalizeEmail(email)),
-                    avatarUrl = null,
-                    isAdmin = true
-                )
-
-                NCPsql.insert("INSERT INTO installation (state) VALUES(?)", "Default user added")
-
-                logger.info("Default user added.")
-            case _ ⇒ logger.info("Default user was not added.")
-        }
 
     /**
       * Checks if given hash exists in the password pool.

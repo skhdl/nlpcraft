@@ -331,6 +331,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
                     // Notification.
                     NCNotificationManager.addEvent("NC_USER_DELETE",
+                        "userId" → usrId,
                         "firstName" → usr.firstName,
                         "lastName" → usr.lastName,
                         "email" → usr.email
@@ -365,10 +366,50 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             }
         }
     }
+    
+    @throws[NCE]
+    private def addDefaultUser(): Unit = {
+        val email = "admin@admin.com"
+        val passwd = "admin"
+        val firstName = "Scott"
+        val lastName = "Tiger"
+        val avatarUrl = ""
+        val isAdmin = true
+    
+        NCPsql.sql {
+            val salt = NCBlowfishHasher.hash(email)
+        
+            // Add new user.
+            val usrId = NCDbManager.addUser(
+                firstName,
+                lastName,
+                email,
+                salt,
+                avatarUrl,
+                isAdmin
+            )
+        
+            // Add actual hash for the password.
+            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(passwd, salt))
+        
+            // "Stir up" password pool with each user.
+            (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
+                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
+            )
+        
+            // Notification.
+            NCNotificationManager.addEvent("NC_DEFAULT_USER_ADD",
+                "usrId" → usrId,
+                "firstName" → firstName,
+                "lastName" → lastName,
+                "password" → passwd,
+                "email" → email
+            )
+        }
+    }
 
     /**
       *
-      * @param usrId
       * @param newUsrEmail
       * @param newUsrPasswd
       * @param newUsrFirstName
@@ -379,7 +420,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     def addUser(
-        usrId: Long,
         newUsrEmail: String,
         newUsrPasswd: String,
         newUsrFirstName: String,
@@ -420,7 +460,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
             // Notification.
             NCNotificationManager.addEvent("NC_USER_ADD",
-                "addByUserId" → usrId,
+                "userId" → newUsrId,
                 "firstName" → newUsrFirstName,
                 "lastName" → newUsrLastName,
                 "email" → normEmail
@@ -481,6 +521,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         
             // Notification.
             NCNotificationManager.addEvent("NC_SIGNUP",
+                "userId" → usrId,
                 "firstName" → firstName,
                 "lastName" → lastName,
                 "email" → normEmail
