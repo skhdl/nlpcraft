@@ -113,6 +113,35 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
                 }
             }
     }
+    
+    /**
+      * Whether or not DB schema was just created by the current JVM process.
+      *
+      * @return
+      */
+    @throws[NCE]
+    def isNewSchema: Boolean = {
+        ensureStarted()
+    
+        try {
+            NCPsql.selectSingle[String]("SELECT NULL FROM new_schema LIMIT 1")
+        
+            true
+        }
+        catch {
+            case _: NCE ⇒ false
+        }
+    }
+    
+    /**
+      * Clears the "new DB schema" flag from database.
+      */
+    @throws[NCE]
+    def clearNewSchemaFlag(): Unit = {
+        ensureStarted()
+    
+        NCPsql.ddl("DROP TABLE new_schema")
+    }
 
     /**
       * Checks if given hash exists in the password pool.

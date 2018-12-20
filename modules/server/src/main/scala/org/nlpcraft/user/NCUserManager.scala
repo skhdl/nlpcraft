@@ -120,20 +120,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
     
-        val isFirstStart = NCPsql.sql {
-            NCPsql.sql {
-                try {
-                    NCPsql.selectSingle[String]("SELECT NULL FROM new_schema LIMIT 1")
-            
-                    true
-                }
-                catch {
-                    case _: NCE ⇒ false
-                }
-            }
-        }
+        val isNewDbSchema = NCPsql.sql { NCDbManager.isNewSchema }
         
-        if (isFirstStart) {
+        if (isNewDbSchema) {
             try {
                 addDefaultUser()
             }
@@ -142,11 +131,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             }
     
             // Clean up.
-            ignoring(classOf[NCE]) {
-                NCPsql.sql {
-                    NCPsql.ddl("DROP TABLE new_schema")
-                }
-            }
+            ignoring(classOf[NCE]) { NCPsql.sql { NCDbManager.clearNewSchemaFlag() } }
         }
 
         super.start()
