@@ -31,12 +31,16 @@ import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
 import org.nlpcraft.mdo._
+import scala.util.control.Exception._
 
 /**
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
   * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
 object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
+    // Relative database schema path.
+    private final val SCHEMA_PATH = "sql/schema.sql"
+    
     /**
       * Starts manager.
       */
@@ -44,11 +48,7 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        // Warm up SQL connection pool.
-        NCPsql.sql {
-            if (!NCPsql.isValid)
-                throw new NCE("No valid JDBC connection found.")
-        }
+        checkSchema()
 
         super.start()
     }
@@ -61,7 +61,88 @@ object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
 
         super.stop()
     }
+
+    /**
+      * Checks and initializes, if necessary, the database schema.
+      */
+    private def checkSchema(): Unit = {
+        val schemaExists =
+            NCPsql.sql {
+                try {
+                    NCPsql.selectSingle[String]("SELECT NULL FROM base LIMIT 1")
+
+                    true
+                }
+                catch {
+                    case _: NCE ⇒ false
+                }
+            }
+
+        if (!schemaExists)
+            try {
+                NCPsql.sql {
+                    G.readResource(SCHEMA_PATH, "UTF-8").
+                        map(_.trim).
+                        filter(p ⇒ !p.startsWith("--")). // Skip full-line comments.
+                        map(p ⇒ { // Remove partial comments.
+                            val idx = p.indexOf("--")
+
+                            if (idx < 0) p else p.take(idx)
+                        }).
+                        mkString(" ").
+                        split(";"). // Split by SQL statements.
+                        map(_.trim).
+                        foreach(sql ⇒ NCPsql.ddl(sql))
+
+                    // Mark the current schema as just created.
+                    NCPsql.ddl("CREATE TABLE new_schema()")
+                }
+                
+                logger.info("DB schema has been created.")
+            }
+            catch {
+                case e: NCE ⇒
+                    throw new NCE(s"Failed to auto-create database schema - " +
+                        s"clear existing tables and create schema manually using '$SCHEMA_PATH' file.", e)
+            }
+        else
+            // Clean up in case of previous failed start.
+            ignoring(classOf[NCE]) {
+                NCPsql.sql {
+                    NCPsql.ddl("DROP TABLE new_schema")
+                }
+            }
+    }
     
+    /**
+      * Whether or not DB schema was just created by the current JVM process.
+      *
+      * @return
+      */
+    @throws[NCE]
+    def isNewSchema: Boolean = {
+        ensureStarted()
+    
+        try {
+            NCPsql.selectSingle[String]("SELECT NULL FROM new_schema LIMIT 1")
+        
+            true
+        }
+        catch {
+            case _: NCE ⇒ false
+        }
+    }
+    
+    /**
+      * Clears the "new DB schema" flag from database.
+      */
+    @throws[NCE]
+    def clearNewSchemaFlag(): Unit = {
+        ensureStarted()
+    
+        NCPsql.ddl("DROP TABLE new_schema")
+    }
+
     /**
       * Checks if given hash exists in the password pool.
       *

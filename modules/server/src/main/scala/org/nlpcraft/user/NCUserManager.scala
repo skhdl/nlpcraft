@@ -34,6 +34,7 @@ import org.apache.ignite.{IgniteCache, IgniteException}
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.notification.NCNotificationManager
 
@@ -62,11 +63,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
     private object Config extends NCConfigurable {
         val pwdPoolBlowup: Int = hocon.getInt("user.pwdPoolBlowup")
-        val timeoutScannerFreqMins = hocon.getInt("user.timeoutScannerFreqMins")
-        val accessTokenExpireTimeoutMins = hocon.getInt("user.accessTokenExpireTimeoutMins")
+        val timeoutScannerFreqMins: Int = hocon.getInt("user.timeoutScannerFreqMins")
+        val accessTokenExpireTimeoutMins: Int = hocon.getInt("user.accessTokenExpireTimeoutMins")
 
-        lazy val scannerMs = timeoutScannerFreqMins * 60 * 1000
-        lazy val expireMs = accessTokenExpireTimeoutMins * 60 * 1000
+        lazy val scannerMs: Int = timeoutScannerFreqMins * 60 * 1000
+        lazy val expireMs: Int = accessTokenExpireTimeoutMins * 60 * 1000
 
         override def check(): Unit = {
             require(pwdPoolBlowup > 1 , s"password pool blowup ($pwdPoolBlowup) must be > 1")
@@ -89,32 +90,49 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
         scanner = new Timer("timeout-scanner")
 
-        scanner.scheduleAtFixedRate(new TimerTask() {
-            def run() {
-                val now = System.currentTimeMillis()
+        scanner.scheduleAtFixedRate(
+            new TimerTask() {
+                def run() {
+                    val now = System.currentTimeMillis()
 
-                // Check access tokens for expiration.
-                ignoring(classOf[IgniteException]) {
-                    for (ses ← signinCache.asScala.map(_.getValue) if now - ses.lastAccessMs >= Config.expireMs) {
-                        signinCache.remove(ses.acsToken)
+                    // Check access tokens for expiration.
+                    ignoring(classOf[IgniteException]) {
+                        for (ses ← signinCache.asScala.map(_.getValue) if now - ses.lastAccessMs >= Config.expireMs) {
+                            signinCache.remove(ses.acsToken)
 
-                        // Notification.
-                        NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
-                            "accessToken" → ses.acsToken,
-                            "userId" → ses.userId,
-                            "signinMs" → ses.signinMs,
-                            "lastAccessMs" → ses.lastAccessMs
-                        )
+                            // Notification.
+                            NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
+                                "accessToken" → ses.acsToken,
+                                "userId" → ses.userId,
+                                "signinMs" → ses.signinMs,
+                                "lastAccessMs" → ses.lastAccessMs
+                            )
 
-                        logger.trace(s"Access token timed out: ${ses.acsToken}")
+                            logger.trace(s"Access token timed out: ${ses.acsToken}")
+                        }
                     }
                 }
-            }
-        },
-            Config.scannerMs, Config.scannerMs)
+            },
+            Config.scannerMs,
+            Config.scannerMs
+        )
 
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
+    
+        val isNewDbSchema = NCPsql.sql { NCDbManager.isNewSchema }
+        
+        if (isNewDbSchema) {
+            try {
+                addDefaultUser()
+            }
+            catch {
+                case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
+            }
+    
+            // Clean up.
+            ignoring(classOf[NCE]) { NCPsql.sql { NCDbManager.clearNewSchemaFlag() } }
+        }
 
         super.start()
     }
@@ -326,6 +344,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
                     // Notification.
                     NCNotificationManager.addEvent("NC_USER_DELETE",
+                        "userId" → usrId,
                         "firstName" → usr.firstName,
                         "lastName" → usr.lastName,
                         "email" → usr.email
@@ -360,10 +379,46 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             }
         }
     }
+    
+    /**
+      * Adds default user.
+      */
+    @throws[NCE]
+    private def addDefaultUser(): Unit = {
+        val email = "admin@admin.com"
+        val passwd = "admin"
+        val firstName = "Scott"
+        val lastName = "Tiger"
+        val avatarUrl = ""
+        val isAdmin = true
+    
+        NCPsql.sql {
+            val salt = NCBlowfishHasher.hash(email)
+        
+            // Add new user.
+            NCDbManager.addUser(
+                firstName,
+                lastName,
+                email,
+                salt,
+                avatarUrl,
+                isAdmin
+            )
+        
+            // Add actual hash for the password.
+            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(passwd, salt))
+        
+            // "Stir up" password pool with each user.
+            (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
+                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
+            )
+        }
+    
+        logger.info(s"Default admin user ($email/$passwd) created.")
+    }
 
     /**
       *
-      * @param usrId
       * @param newUsrEmail
       * @param newUsrPasswd
       * @param newUsrFirstName
@@ -374,7 +429,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     def addUser(
-        usrId: Long,
         newUsrEmail: String,
         newUsrPasswd: String,
         newUsrFirstName: String,
@@ -415,7 +469,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
             // Notification.
             NCNotificationManager.addEvent("NC_USER_ADD",
-                "addByUserId" → usrId,
+                "userId" → newUsrId,
                 "firstName" → newUsrFirstName,
                 "lastName" → newUsrLastName,
                 "email" → normEmail
@@ -476,6 +530,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         
             // Notification.
             NCNotificationManager.addEvent("NC_SIGNUP",
+                "userId" → usrId,
                 "firstName" → firstName,
                 "lastName" → lastName,
                 "email" → normEmail
