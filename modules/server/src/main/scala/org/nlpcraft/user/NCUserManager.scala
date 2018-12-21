@@ -428,6 +428,20 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     
         logger.info(s"Default admin user ($email/$passwd) created.")
     }
+    
+    /**
+      * Gets user for given user ID.
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def getUser(usrId: Long): Option[NCUserMdo] = {
+        ensureStarted()
+        
+        NCPsql.sql {
+            NCDbManager.getUser(usrId)
+        }
+    }
 
     /**
       *

@@ -37,6 +37,20 @@ import org.nlpcraft.notification.NCNotificationManager
   */
 object NCDsManager extends NCLifecycle("Data source manager") {
     /**
+      * Gets data source for given user ID.
+      *
+      * @param dsId User ID.
+      */
+    @throws[NCE]
+    def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
+        ensureStarted()
+        
+        NCPsql.sql {
+            NCDbManager.getDataSource(dsId)
+        }
+    }
+    
+    /**
       * Updates given data source.
       *
       * @param dsId ID of the data source to update.

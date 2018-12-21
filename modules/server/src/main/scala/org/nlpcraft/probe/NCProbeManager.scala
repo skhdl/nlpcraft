@@ -26,8 +26,12 @@
 
 package org.nlpcraft.probe
 
+import java.util.concurrent.Executors
+
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft._
+
+import scala.concurrent.ExecutionContext
 
 /**
   * Probe manager.
@@ -45,14 +49,22 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         val poolSize: Int = hocon.getInt("probe.poolSize")
         val reconnectTimeoutMs: Long = hocon.getLong("probe.reconnectTimeoutMs")
+        val pingTimeoutMs: Long = hocon.getLong("probe.pingTimeoutMs")
+        val soTimeoutMs: Long = hocon.getLong("probe.soTimeoutMs")
         
         override def check(): Unit = {
             assert(p2sPort >= 0 && p2sPort <= 65535, s"P2S port ($p2sPort) must be >= 0 and <= 65535")
             assert(s2pPort >= 0 && s2pPort <= 65535, s"S2P port ($s2pPort) must be >= 0 and <= 65535")
             assert(reconnectTimeoutMs > 0, s"Reconnect time must be > 0")
             assert(poolSize > 0, s"Pool size must be > 0")
+            assert(soTimeoutMs > 0, s"SO_TIMEOUT must be > 0")
+            assert(pingTimeoutMs > 0, s"Ping timeout must be > 0")
         }
     }
+    
+    private final val EC = ExecutionContext.fromExecutor(
+        Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors())
+    )
     
     /**
       *

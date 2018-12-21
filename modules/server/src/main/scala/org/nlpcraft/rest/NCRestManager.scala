@@ -51,8 +51,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     private implicit val SYSTEM: ActorSystem = ActorSystem()
     private implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
     private implicit val CTX: ExecutionContextExecutor = SYSTEM.dispatcher
+    
+    // Current REST API version (simple increment number), not a semver based.
+    private final val API_VER = 1
 
-    private val API = "api" / "v1"
+    private val API = "api" / s"v$API_VER"
 
     private var bindFut: Future[Http.ServerBinding] = _
 
@@ -148,7 +151,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 path(API / "check") {
                     throw AuthFailure()
                 } ~
-                path(API / "user" / "add") {
+                /**/path(API / "user" / "add") {
                     case class Req(
                         // Caller.
                         accessToken: String,
@@ -186,7 +189,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "passwd" / "reset") {
+                /**/path(API / "user" / "passwd" / "reset") {
                     case class Req(
                         // Caller.
                         accessToken: String,
@@ -215,7 +218,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "delete") {
+                /**/path(API / "user" / "delete") {
                     case class Req(
                         accessToken: String,
                         userId: Long
@@ -237,7 +240,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "update") {
+                /**/path(API / "user" / "update") {
                     case class Req(
                         // Caller.
                         accessToken: String,
@@ -273,7 +276,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "signup") {
+                /**/path(API / "user" / "signup") {
                     case class Req(
                         email: String,
                         passwd: String,
@@ -304,7 +307,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "signout") {
+                /**/path(API / "user" / "signout") {
                     case class Req(
                         accessToken: String
                     )
@@ -325,7 +328,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "signin") {
+                /**/path(API / "user" / "signin") {
                     case class Req(
                         email: String,
                         passwd: String
@@ -352,7 +355,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "user" / "all") {
+                /**/path(API / "user" / "all") {
                     case class Req(
                         // Caller.
                         accessToken: String
@@ -393,7 +396,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "ds" / "add") {
+                /**/path(API / "ds" / "add") {
                     case class Req(
                         // Caller.
                         accessToken: String,
@@ -431,7 +434,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "ds" / "update") {
+                /**/path(API / "ds" / "update") {
                     case class Req(
                         // Caller.
                         accessToken: String,
@@ -462,7 +465,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "ds" / "all") {
+                /**/path(API / "ds" / "all") {
                     case class Req(
                         // Caller.
                         accessToken: String
@@ -503,7 +506,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "ds" / "delete") {
+                /**/path(API / "ds" / "delete") {
                     case class Req(
                         accessToken: String,
                         dsId: Long
