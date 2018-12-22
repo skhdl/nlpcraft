@@ -37,7 +37,6 @@ import resource.managed
 import scala.collection._
 import scala.language.implicitConversions
 
-// TODO: Stem? PoDesc?
 /**
   * Sentence word.
   *
@@ -47,7 +46,7 @@ import scala.language.implicitConversions
   * @param start From index.
   * @param end To index.
   */
-case class NCCoreToken(word: String, lemma: Option[String], pos: String, start: Int, end: Int, length: Int)
+case class NCCoreWord(word: String, lemma: Option[String], pos: String, start: Int, end: Int, length: Int)
 
 /**
   * Nlp Manager.
@@ -87,37 +86,42 @@ object NCCoreNlp extends NCLifecycle("Core nlp manager") {
     }
 
     /**
-      * Parses sentences.
+      * Parses given sentence.
       *
       * @param sen Sentence text.
       * @return Parsed tokens.
       */
-    def parse(sen: String): Seq[NCCoreToken] = {
-        val spans = tokenizer.tokenizePos(sen)
-        val words = spans.map(_.getCoveredText(sen).toString)
-        val poses = tagger.tag(words)
+    def parse(sen: String): Seq[NCCoreWord] = {
+        // Can be optimized.
+        val (spans, words, poses, lemmas) =
+            this.synchronized {
+                val spans = tokenizer.tokenizePos(sen)
+                val words = spans.map(_.getCoveredText(sen).toString)
+                val poses = tagger.tag(words)
 
-        require(spans.length == poses.length)
+                require(spans.length == poses.length)
 
-        val lemmas = lemmatizer.lemmatize(words, poses)
+                val lemmas = lemmatizer.lemmatize(words, poses)
 
-        require(spans.length == lemmas.length)
+                require(spans.length == lemmas.length)
+
+                (spans, words, poses, lemmas)
+            }
 
         spans.zip(words).zip(poses).zip(lemmas).map { case (((span, word), pos), lemma) ⇒
-            NCCoreToken(
+            NCCoreWord(
                 word = word,
                 lemma = if (lemma == "O") None else Some(lemma),
                 pos = pos,
                 start = span.getStart,
                 end = span.getEnd,
-                length = span.getEnd - span.getStart
+                length = span.length
             )
-
         }
     }
 
     /**
-      * Tokenizes sentence.
+      * Tokenizes given sentence.
       *
       * @param sen Sentence text.
       * @return Tokens.
