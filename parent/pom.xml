@@ -83,6 +83,7 @@ under the License.
         <apache.math.ver>3.6.1</apache.math.ver>
         <apache.common.lang.ver>3.7</apache.common.lang.ver>
         <apache.httpcomponents.ver>4.5.4</apache.httpcomponents.ver>
+        <apache.opennlp.ver>1.9.0</apache.opennlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.antrun.plugin.ver>1.8</maven.antrun.plugin.ver>
         <maven.dependency.plugin.ver>3.0.1</maven.dependency.plugin.ver>

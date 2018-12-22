@@ -600,6 +600,21 @@ object NCGlobals extends NCDebug with LazyLogging {
         catch {
             case e: IOException ⇒ throw new NCE(s"Failed to read file: ${f.getAbsolutePath}", e)
         }
+
+    /**
+      * Reads lines from given stream.
+      *
+      * @param f Zipped stream to read from.
+      * @param enc Encoding.
+      * @param log Logger to use.
+      */
+    @throws[NCE]
+    def readGzipResource(in: InputStream, enc: String, log: Logger = logger): Iterator[String] =
+        try
+            Source.fromInputStream(new GIS(in), enc).getLines().map(p ⇒ p)
+        catch {
+            case e: IOException ⇒ throw new NCE(s"Failed to read stream", e)
+        }
     
     /**
       * Reads bytes from given file.
