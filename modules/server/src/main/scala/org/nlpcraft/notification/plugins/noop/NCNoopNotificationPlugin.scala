@@ -26,7 +26,6 @@
 
 package org.nlpcraft.notification.plugins.noop
 
-import org.nlpcraft.notification.NCNotificationManager.logger
 import org.nlpcraft.plugin.NCNotificationPlugin
 
 /**
@@ -45,6 +44,6 @@ object NCNoopNotificationPlugin extends NCNotificationPlugin {
         logger.info("Notification event [" +
             s"name=$evtName, " +
             s"params=$paramsStr" +
-            "]")
+        "]")
     }
 }

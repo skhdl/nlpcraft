@@ -26,32 +26,72 @@
 
 package org.nlpcraft.plugin
 
-import org.nlpcraft.NCLifecycle
+import org.nlpcraft.{NCConfigurable, NCE, NCLifecycle}
+import scala.reflect.runtime.universe._
 
 /**
   * Plugin manager.
   */
 object NCPluginManager extends NCLifecycle("Plugin manager") {
+    private var notifyPlugin: NCNotificationPlugin = _
+    private var probeAuthPlugin: NCProbeAuthenticationPlugin = _
+    
+    private val mirror = runtimeMirror(getClass.getClassLoader)
+    
+    private object Config extends NCConfigurable {
+        val notifyPluginClass: String = hocon.getString("plugins.notification")
+        val probeAuthPluginClass: String = hocon.getString("plugins.probe.auth")
+    }
+    
+    Config.check()
+    
     /**
       * Starts plugin manager.
       */
     override def start(): NCLifecycle = {
+        notifyPlugin = createPlugin("notify", Config.notifyPluginClass)
+        probeAuthPlugin = createPlugin("probe authentication", Config.probeAuthPluginClass)
+
         super.start()
     }
     
     /**
       *
+      * @param pluginName
+      * @param clsName
+      * @tparam T
       * @return
       */
-    def getNotificationPlugin(): NCNotificationPlugin = {
-        null
+    @throws[NCE]
+    private def createPlugin[T](pluginName: String, clsName: String): T =
+        try {
+            val plugin = mirror.reflectModule(mirror.staticModule(clsName)).instance.asInstanceOf[T]
+            
+            logger.info(s"${pluginName.capitalize} plugin instantiated: $clsName")
+            
+            plugin
+        }
+        catch {
+            case e: Exception ⇒ throw new NCE(s"Failed to instantiate $pluginName plugin: ${e.getLocalizedMessage}")
+        }
+    
+    /**
+      *
+      * @return
+      */
+    def getNotificationPlugin: NCNotificationPlugin = {
+        ensureStarted()
+        
+        notifyPlugin
     }
     
     /**
       * 
       * @return
       */
-    def getProbeAuthenticationPlugin(): NCProbeAuthenticationPlugin = {
-        null
+    def getProbeAuthenticationPlugin: NCProbeAuthenticationPlugin = {
+        ensureStarted()
+        
+        probeAuthPlugin
     }
 }

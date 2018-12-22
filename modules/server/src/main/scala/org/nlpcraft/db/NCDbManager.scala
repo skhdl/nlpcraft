@@ -37,7 +37,7 @@ import scala.util.control.Exception._
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
   * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
-object NCDbManager extends NCLifecycle("DB manager") with NCIgniteNlpCraft {
+object NCDbManager extends NCLifecycle("Database manager") with NCIgniteNlpCraft {
     // Relative database schema path.
     private final val SCHEMA_PATH = "sql/schema.sql"
     

@@ -24,36 +24,22 @@
  *        /_/
  */
 
-package org.nlpcraft.notification
+package org.nlpcraft.probe.plugins.auth.basic
 
-import org.nlpcraft.plugin.{NCNotificationPlugin, NCPluginManager}
-import org.nlpcraft._
+import java.security.Key
+
+import org.nlpcraft.plugin.NCProbeAuthenticationPlugin
 
 /**
-  * Push-based notification manager.
+  * Basic probe authentication plugin.
   */
-object NCNotificationManager extends NCLifecycle("Notification manager") {
-    private var plugin: NCNotificationPlugin = _
-    
-    /**
-      * Passes over to the configured notification plugin.
-      *
-      * @param evtName Event name.
-      * @param params Optional set of named event parameters. Note that parameter values should JSON compatible.
-      */
-    def addEvent(evtName: String, params: (String, Any)*): Unit = {
-        ensureStarted()
-    
-        plugin.onEvent(evtName, params: _*)
-    }
-    
+object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
     /**
       * 
-      * @return
+      * @param probeTokenHash Probe token hash.
+      * @return An encryption key for a given probe token hash, or `None` if given hash is unknown or invalid.
       */
-    override def start(): NCLifecycle = {
-        plugin = NCPluginManager.getNotificationPlugin
-        
-        super.start()
+    override def acquireKey(probeTokenHash: String): Option[Key] = {
+        None // TODO
     }
 }

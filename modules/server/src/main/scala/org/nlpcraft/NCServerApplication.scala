@@ -33,6 +33,7 @@ import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
 import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.tx.NCTxManager
@@ -45,6 +46,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
 
     // Starts all managers.
     private def startComponents(): Unit = {
+        NCPluginManager.start()
         NCTxManager.start()
         NCDbManager.start()
         NCNotificationManager.start()
@@ -72,6 +74,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCNotificationManager.stop()
         NCDbManager.stop()
         NCTxManager.stop()
+        NCPluginManager.stop()
     }
 
     /**
