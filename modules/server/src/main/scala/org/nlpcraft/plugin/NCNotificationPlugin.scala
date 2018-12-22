@@ -24,42 +24,20 @@
  *        /_/
  */
 
-package org.nlpcraft.notification
+package org.nlpcraft.plugin
 
-import java.net.InetAddress
-
-import org.nlpcraft.plugin.{NCNotificationPlugin, NCPluginManager}
-import org.nlpcraft.{NCConfigurable, NCLifecycle}
-
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import org.nlpcraft.NCE
 
 /**
-  * Push-based notification manager.
+  * Notification manager plugin.
   */
-object NCNotificationManager extends NCLifecycle("Notification manager") {
-    private var plugin: NCNotificationPlugin = _
-    
+trait NCNotificationPlugin extends NCPlugin {
     /**
-      * Passes over to the configured notification plugin.
-      *
-      * @param evtName Event name.
-      * @param params Optional set of named event parameters. Note that parameter values should JSON compatible.
-      */
-    def addEvent(evtName: String, params: (String, Any)*): Unit = {
-        ensureStarted()
-    
-        plugin.onEvent(evtName, params: _*)
-    }
-    
-    /**
+      * Callback on new notification event.
       * 
-      * @return
+      * @param evtName Event name.
+      * @param params Optional set of named parameters.
       */
-    override def start(): NCLifecycle = {
-        plugin = NCPluginManager.getNotificationPlugin()
-        
-        super.start()
-    }
+    @throws[NCE]
+    def onEvent(evtName: String, params: (String, Any)*): Unit
 }

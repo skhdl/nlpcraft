@@ -24,42 +24,23 @@
  *        /_/
  */
 
-package org.nlpcraft.notification
+package org.nlpcraft.plugin
 
-import java.net.InetAddress
+import java.security.Key
 
-import org.nlpcraft.plugin.{NCNotificationPlugin, NCPluginManager}
-import org.nlpcraft.{NCConfigurable, NCLifecycle}
-
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import org.nlpcraft.NCE
 
 /**
-  * Push-based notification manager.
+  * Probe manager authentication manager.
   */
-object NCNotificationManager extends NCLifecycle("Notification manager") {
-    private var plugin: NCNotificationPlugin = _
-    
+trait NCProbeAuthenticationPlugin extends NCPlugin {
     /**
-      * Passes over to the configured notification plugin.
-      *
-      * @param evtName Event name.
-      * @param params Optional set of named event parameters. Note that parameter values should JSON compatible.
-      */
-    def addEvent(evtName: String, params: (String, Any)*): Unit = {
-        ensureStarted()
-    
-        plugin.onEvent(evtName, params: _*)
-    }
-    
-    /**
+      * Given probe token hash this method should return an encryption key for that probe token.
+      * Encryption key will be used for secure communication between server and the probe.
       * 
-      * @return
+      * @param probeTokenHash Probe token hash.
+      * @return An encryption key for a given probe token hash, or `None` if given hash is unknown or invalid.
       */
-    override def start(): NCLifecycle = {
-        plugin = NCPluginManager.getNotificationPlugin()
-        
-        super.start()
-    }
+    @throws[NCE]
+    def acquireKey(probeTokenHash: String): Option[Key]
 }
