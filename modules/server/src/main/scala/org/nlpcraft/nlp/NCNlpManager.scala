@@ -127,12 +127,12 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
     def tokenize(sen: String): Seq[String] = this.synchronized { tokenizer.tokenize(sen) }
 
     /**
-      * Stems given sentence.
+      * Stems given word (input text tokenized before).
       *
       * @param sen Sentence text.
       * @return Sentence with stemmed words.
       */
-    def stem(sen: String): String = {
+    def stemSentence(sen: String): String = {
         val seq = this.synchronized {
             tokenizer.tokenizePos(sen).map(span ⇒ (span, stemmer.stem(span.getCoveredText(sen).toString)))
         }
@@ -145,6 +145,14 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
             }
         }.mkString("")
     }
+
+    /**
+      * Stems given word (input text is not tokenized before).
+      *
+      * @param word Word.
+      * @return Stem.
+      */
+    def stemWord(word: String): String = this.synchronized { stemmer.stem(word) }
 
     /**
       * Gets indexes for words which detected as location.
