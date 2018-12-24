@@ -26,11 +26,16 @@
 
 package org.nlpcraft.probe
 
+import java.io._
+import java.security.Key
 import java.util.concurrent.Executors
 
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft._
+import org.nlpcraft.mdo.NCProbeMdo
+import org.nlpcraft.socket.NCSocket
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 /**
@@ -66,12 +71,147 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors())
     )
     
+    // Compound probe key.
+    private case class ProbeKey(
+        probeToken: String, // Probe token.
+        probeId: String, // Unique probe ID.
+        probeGuid: String // Runtime unique ID (to disambiguate different instances of the same probe).
+    ) {
+        override def toString: String = s"Probe key [" +
+            s"probeId=$probeId, " +
+            s"probeGuid=$probeGuid, " +
+            s"probeToken=$probeToken" +
+            s"]"
+    }
+    
+    // Immutable probe holder.
+    private case class ProbeHolder(
+        probeKey: ProbeKey,
+        probe: NCProbeMdo,
+        var p2sSocket: NCSocket,
+        var s2pSocket: NCSocket,
+        var p2sThread: Thread, // Separate thread listening for messages from the probe.
+        cryptoKey: Key, // Encryption key.
+        timestamp: Long = System.currentTimeMillis()
+    ) {
+        /**
+          *
+          */
+        def close(): Unit = {
+            if (p2sThread != null)
+                G.stopThread(p2sThread)
+            
+            if (s2pSocket != null)
+                s2pSocket.close()
+            
+            if (p2sSocket != null)
+                p2sSocket.close()
+        }
+    }
+    
+    private var p2sSrv: Thread = _
+    private var s2pSrv: Thread = _
+    private var pingSrv: Thread = _
+    
+    // All known probes keyed by probe key.
+    private val probes = mutable.HashMap.empty[ProbeKey, ProbeHolder]
+    // All probes pending complete handshake keyed by probe key.
+    private val pending = mutable.HashMap.empty[ProbeKey, ProbeHolder]
+    
     /**
       *
       * @return
       */
     override def start(): NCLifecycle = {
         super.start()
+    }
+    
+    /**
+      *
+      * @param probeKey Probe key.
+      */
+    private def closeAndRemoveHolder(probeKey: ProbeKey): Unit = {
+        // Check pending queue first.
+        pending.synchronized { pending.remove(probeKey) } match {
+            case None ⇒
+                // Check active probes second.
+                probes.synchronized { probes.remove(probeKey) } match {
+                    case None ⇒
+                    case Some(holder) ⇒
+                        holder.close()
+            
+                        //                val modelsToUndeploy = mutable.ArrayBuffer.empty[(String/*probe ID*/, Long/*company ID*/)]
+                        //
+                        //                modelsToUndeploy ++= holder.probe.models.map(p ⇒ p.id → p.companyId)
+                        //
+                        //                // Fail all pending requests for lost models.
+                        //                modelsToUndeploy.foreach {
+                        //                    case (modelId, companyId) ⇒ DLQueryStateManager.setModelUndeploy(modelId, companyId)
+                        //                }
+                        //
+                        //                usages.synchronized {
+                        //                    usages --= modelsToUndeploy
+                        //                }
+            
+                        logger.info(s"Probe closed and removed: $probeKey")
+                }
+
+            case Some(hld) ⇒
+                hld.close()
+                
+                logger.info(s"Pending probe closed and removed: $probeKey")
+        }
+    }
+    
+    /**
+      *
+      * @param probeKey Probe key.
+      * @param probeMsg Probe message to send.
+      */
+    @throws[NCE]
+    @throws[IOException]
+    private def sendToProbe(probeKey: ProbeKey, probeMsg: NCProbeMessage): Boolean = {
+        val (sock, cryptoKey) = probes.synchronized {
+            probes.get(probeKey) match {
+                case None ⇒ (null, null)
+                case Some(h) ⇒ (h.s2pSocket, h.cryptoKey)
+            }
+        }
+        
+        if (sock != null)
+            try {
+                sock.write(probeMsg, cryptoKey)
+                
+                true
+            }
+            catch {
+                case _: EOFException ⇒
+                    logger.trace(s"Probe closed connection: $probeKey")
+                    
+                    closeAndRemoveHolder(probeKey)
+                    
+                    false
+                
+                case e: Throwable ⇒
+                    logger.error(s"S2P socket error [" +
+                        s"sock=$sock, " +
+                        s"probeKey=$probeKey, " +
+                        s"probeMsg=$probeMsg" +
+                        s"error=${e.getLocalizedMessage}" +
+                        s"]")
+                    
+                    closeAndRemoveHolder(probeKey)
+                    
+                    false
+            }
+        else {
+            logger.warn(s"Sending message to unknown probe (ignoring) [" +
+                s"probeKey=$probeKey, " +
+                s"probeMsg=$probeMsg" +
+                s"]")
+            
+            false
+        }
     }
     
     /**
