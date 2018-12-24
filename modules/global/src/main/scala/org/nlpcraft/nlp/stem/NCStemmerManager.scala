@@ -63,7 +63,7 @@ object NCStemmerManager extends NCLifecycle("Stem manager") {
      * Loads stem cache from the local file.
      */
     @throws[IOException]
-    private def loadCache() = {
+    private def loadCache(): Cache = {
         logger.trace(s"Loading stem cache from: $CACHE_PATH")
 
         val file = new File(CACHE_PATH)
@@ -129,7 +129,7 @@ object NCStemmerManager extends NCLifecycle("Stem manager") {
 
         timer.schedule(task, TIMER_PERIOD, TIMER_PERIOD)
 
-        logger.trace(s"Stem cache auto-saver started with period of $TIMER_PERIOD ms.")
+        logger.info(s"Stem cache ${TIMER_PERIOD / 1000}s auto-saver started.")
     
         super.start()
     }

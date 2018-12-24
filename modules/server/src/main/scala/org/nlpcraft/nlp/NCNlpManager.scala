@@ -31,8 +31,8 @@ import java.io.BufferedInputStream
 import opennlp.tools.lemmatizer.DictionaryLemmatizer
 import opennlp.tools.namefind.{NameFinderME, TokenNameFinderModel}
 import opennlp.tools.postag.{POSModel, POSTagger, POSTaggerME}
-import opennlp.tools.stemmer.PorterStemmer
 import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
+import org.nlpcraft.nlp.stem.NCStemmerManager
 import org.nlpcraft.{NCLifecycle, _}
 import resource.managed
 
@@ -40,14 +40,13 @@ import scala.collection._
 import scala.language.implicitConversions
 
 /**
-  * Nlp Manager.
+  * OpenNLP manager.
   */
-object NCNlpManager extends NCLifecycle("Nlp manager") {
+object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     @volatile private var tokenizer: Tokenizer = _
     @volatile private var tagger: POSTagger = _
     @volatile private var lemmatizer: DictionaryLemmatizer = _
     @volatile private var nameFinder: NameFinderME = _
-    @volatile private var stemmer: PorterStemmer = _
 
     /**
       * Starts this component.
@@ -73,8 +72,6 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
                 new DictionaryLemmatizer(in)
             }
 
-        stemmer = new PorterStemmer()
-
         super.start()
     }
 
@@ -85,6 +82,8 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
       * @return Parsed tokens.
       */
     def parse(sen: String): Seq[NCNlpWord] = {
+        ensureStarted()
+        
         // Can be optimized.
         val (spans, words, poses, lemmas) =
             this.synchronized {
@@ -109,7 +108,7 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
                 normalWord = normalWord,
                 // "0" is flag that lemma cannot be obtained for some reasons.
                 lemma = if (lemma == "O") None else Some(lemma),
-                stem = stemmer.stem(normalWord),
+                stem = NCStemmerManager.stem(normalWord),
                 pos = pos,
                 start = span.getStart,
                 end = span.getEnd,
@@ -124,7 +123,11 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
       * @param sen Sentence text.
       * @return Tokens.
       */
-    def tokenize(sen: String): Seq[String] = this.synchronized { tokenizer.tokenize(sen) }
+    def tokenize(sen: String): Seq[String] = {
+        ensureStarted()
+        
+        this.synchronized { tokenizer.tokenize(sen) }
+    }
 
     /**
       * Stems given word (input text tokenized before).
@@ -133,8 +136,10 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
       * @return Sentence with stemmed words.
       */
     def stemSentence(sen: String): String = {
+        ensureStarted()
+        
         val seq = this.synchronized {
-            tokenizer.tokenizePos(sen).map(span ⇒ (span, stemmer.stem(span.getCoveredText(sen).toString)))
+            tokenizer.tokenizePos(sen).map(span ⇒ (span, NCStemmerManager.stem(span.getCoveredText(sen).toString)))
         }
 
         seq.zipWithIndex.map { case ((span, stem), idx) ⇒
@@ -152,7 +157,11 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
       * @param word Word.
       * @return Stem.
       */
-    def stemWord(word: String): String = this.synchronized { stemmer.stem(word) }
+    def stemWord(word: String): String = {
+        ensureStarted()
+        
+        this.synchronized { NCStemmerManager.stem(word) }
+    }
 
     /**
       * Gets indexes for words which detected as location.
@@ -163,6 +172,8 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
       * @return Indexes list.
       */
     def findLocations(words: Seq[String]): Seq[Int] = {
+        ensureStarted()
+        
         this.
             synchronized { nameFinder.find(words.toArray) }.
             flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1))
