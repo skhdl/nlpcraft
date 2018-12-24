@@ -24,14 +24,15 @@
  *        /_/
  */
 
-package org.nlpcraft.ignite
+package org.nlpcraft.query
 
-import org.apache.ignite.{Ignite, Ignition}
+import org.nlpcraft._
+import org.nlpcraft.ignite.NCIgniteNlpCraft
 
 /**
- * Mixin for 'nlpcraft' ignite cluster instance.
- */
-trait NCIgniteNlpCraft extends NCIgniteExceptions {
-    // 'NlpCraft' ignite instance.
-    protected def ignite: Ignite = Ignition.ignite("nlpcraft")
+  * Query state machine.
+  */
+object NCQueryStateManager extends NCLifecycle("Query state manager") with NCIgniteNlpCraft {
+
+
 }

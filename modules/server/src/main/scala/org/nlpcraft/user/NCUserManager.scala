@@ -84,7 +84,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        signinCache = nlpcraft.cache[String, SigninSession]("user-signin-cache")
+        signinCache = ignite.cache[String, SigninSession]("user-signin-cache")
 
         require(signinCache != null)
 

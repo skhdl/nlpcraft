@@ -54,10 +54,10 @@ object NCIgniteHelpers extends NCIgniteNlpCraft {
           * @return Listener ID.
           */
         def addListener(onEvent: CacheEvent ⇒ Unit, types: Int*): UUID = {
-            val locNodeId = nlpcraft.cluster().localNode().id()
+            val locNodeId = ignite.cluster().localNode().id()
             val cacheName = ic.getName
 
-            nlpcraft.events(nlpcraft.cluster().forCacheNodes(cacheName)).remoteListen(
+            ignite.events(ignite.cluster().forCacheNodes(cacheName)).remoteListen(
                 new IgniteBiPredicate[UUID, CacheEvent]() {
                     override def apply(evtUuid: UUID, evt: CacheEvent): Boolean = {
                         if (evt.cacheName() == cacheName && evt.node().id() == locNodeId && evt.hasNewValue)
@@ -78,7 +78,7 @@ object NCIgniteHelpers extends NCIgniteNlpCraft {
           *
           * @param id Listener ID.
           */
-        def removeListener(id: UUID): Unit = nlpcraft.events().stopRemoteListen(id)
+        def removeListener(id: UUID): Unit = ignite.events().stopRemoteListen(id)
 
         /**
          * Gets an entry from the cache.

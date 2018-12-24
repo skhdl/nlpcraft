@@ -68,7 +68,7 @@ object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNlpCr
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        itx = nlpcraft.transactions()
+        itx = ignite.transactions()
 
         super.start()
     }

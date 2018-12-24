@@ -79,7 +79,7 @@ trait NCServer extends LazyLogging {
      * Acks server start.
      */
     protected def ackStart() {
-        val dur = s"[${G.format((currentTime - startMsec) / 1000.0, 2)} sec]"
+        val dur = s"[${G.format((currentTime - startMsec) / 1000.0, 2)}s]"
 
         val tbl = NCAsciiTable()
 

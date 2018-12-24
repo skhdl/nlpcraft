@@ -70,7 +70,7 @@ object NCQueryStateManager extends NCLifecycle("SERVER query state manager") wit
         ensureStopped()
     
         catching(wrapIE) {
-            cache = nlpcraft.cache[String/*Server request ID*/, NCQueryStateMdo]("core-qry-state-cache")
+            cache = ignite.cache[String/*Server request ID*/, NCQueryStateMdo]("core-qry-state-cache")
         }
         
         // Start notifier thread only on REST server.

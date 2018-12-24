@@ -81,7 +81,7 @@ object NCCacheManager extends NCLifecycle("CORE NLP cache manager") with NCIgnit
 
         def make(seqName: String, tab: String, id: String): IgniteAtomicSequence =
             NCPsql.sqlNoTx {
-                nlpcraft.atomicSequence(
+                ignite.atomicSequence(
                     "seqSubmit",
                     NCDbManager.getMaxColumnValue("submit_cache", "id").getOrElse(0),
                     true
@@ -92,9 +92,9 @@ object NCCacheManager extends NCLifecycle("CORE NLP cache manager") with NCIgnit
         seqSubmit = make("seqSubmit", "submit_cache", "id")
         seqSyns = make("seqSyns", "synonyms_cache", "id")
 
-        mainCache = nlpcraft.cache[Long, NCMainCacheMdo]("core-json-main-cache")
-        submitCache = nlpcraft.cache[NCSubmitDsCacheKeyMdo, NCSubmitCacheMdo]("core-json-submit-cache")
-        synonymCache = nlpcraft.cache[NCSynonymCacheKeyMdo, NCSynonymCacheMdo]("core-json-synonym-cache")
+        mainCache = ignite.cache[Long, NCMainCacheMdo]("core-json-main-cache")
+        submitCache = ignite.cache[NCSubmitDsCacheKeyMdo, NCSubmitCacheMdo]("core-json-submit-cache")
+        synonymCache = ignite.cache[NCSynonymCacheKeyMdo, NCSynonymCacheMdo]("core-json-synonym-cache")
 
         super.start()
     }
