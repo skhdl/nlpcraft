@@ -43,7 +43,7 @@ import org.nlpcraft.NCLifecycle
  *
  * Implementation is based on work by Evgeny Kotelnikov 'evgeny.kotelnikov@gmail.com'
  */
-object NCStemmerManager extends NCLifecycle("GLOBAL stemmer") {
+object NCStemmerManager extends NCLifecycle("Stem manager") {
     // Path for local stem cache (outside of Git root).
     private final val CACHE_PATH = G.homeFileName(".nlpcraft_stem_cache")
 

@@ -44,7 +44,7 @@ case class NCNumeric(
 /**
   * Numeric detection helper.
   */
-object NCNumericsManager extends NCLifecycle("GLOBAL numerics manager") {
+object NCNumericsManager extends NCLifecycle("Numerics manager") {
     // Sets EN numeric format.
     Locale.setDefault(Locale.forLanguageTag("EN"))
 

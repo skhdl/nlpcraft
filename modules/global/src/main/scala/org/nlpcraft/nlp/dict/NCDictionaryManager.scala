@@ -33,7 +33,7 @@ import org.nlpcraft.NCLifecycle
 /**
  * English dictionary.
  */
-object NCDictionaryManager extends NCLifecycle("GLOBAL dictionary") {
+object NCDictionaryManager extends NCLifecycle("Dictionary manager") {
     // Mapping between dictionary type and its configuration file name.
     private val dictFiles: Map[NCDictionaryType, String] =
         Map(
