@@ -107,7 +107,7 @@ object NCNlpManager extends NCLifecycle("Nlp manager") {
             NCNlpWord(
                 word = word,
                 normalWord = normalWord,
-                // "0" is flag that lemma cannot be obtained for some reasons (DictionaryLemmatizer feature)
+                // "0" is flag that lemma cannot be obtained for some reasons.
                 lemma = if (lemma == "O") None else Some(lemma),
                 stem = stemmer.stem(normalWord),
                 pos = pos,
