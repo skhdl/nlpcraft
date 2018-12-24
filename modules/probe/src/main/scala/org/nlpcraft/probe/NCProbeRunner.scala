@@ -63,7 +63,7 @@ import scala.util.control.Exception._
   * Basic probe runner to be used by both command line and dev in-process apps.
   */
 object NCProbeRunner extends LazyLogging with NCDebug {
-    private final val VER = /*@version*/"x.x.x"
+    private final val VER = /*@version*/"0.5.0"
     private final val BUILD: String = /*@build*/new SimpleDateFormat("MMddyyyy").format(new Date())
     
     private val startMsec = currentTime

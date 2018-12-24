@@ -42,7 +42,7 @@ trait NCServer extends LazyLogging {
     protected val COPYRIGHT = /*@copyright*/"Copyright (C) NlpCraft Project."
 
     // Version number. Can be changed at build time.
-    protected val VER = /*@version*/"x.x.x"
+    protected val VER = /*@version*/"0.5.0"
 
     // Build number. Can be changed at build time.
     protected val BUILD: String = /*@build*/new SimpleDateFormat("MMddyyyy").format(new Date())
