@@ -100,6 +100,11 @@ under the License.
             <artifactId>scala-arm_${scala.base}</artifactId>
             <version>${scala.arm.ver}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-tools</artifactId>
+            <version>${apache.opennlp.ver}</version>
+        </dependency>
     </dependencies>
 
     <build>

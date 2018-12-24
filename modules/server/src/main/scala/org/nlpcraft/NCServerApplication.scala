@@ -32,7 +32,7 @@ import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
-import org.nlpcraft.nlp.NCNlpManager
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.stem.NCStemmerManager
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager

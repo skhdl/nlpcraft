@@ -1,43 +1,16 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
- *     _   ____      ______           ______
- *    / | / / /___  / ____/________ _/ __/ /_
- *   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
- *  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
- * /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
- *        /_/
- */
-
-package org.nlpcraft.nlp
+package org.nlpcraft.nlp.opennlp
 
 import java.io.BufferedInputStream
 
 import opennlp.tools.lemmatizer.DictionaryLemmatizer
 import opennlp.tools.namefind.{NameFinderME, TokenNameFinderModel}
 import opennlp.tools.postag.{POSModel, POSTagger, POSTaggerME}
+import opennlp.tools.stemmer.{PorterStemmer, Stemmer}
 import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
-import org.nlpcraft.nlp.stem.NCStemmerManager
-import org.nlpcraft.{NCLifecycle, _}
+import org.nlpcraft.{G, NCLifecycle}
 import resource.managed
 
-import scala.collection._
-import scala.language.implicitConversions
+import scala.collection.Seq
 
 /**
   * OpenNLP manager.
@@ -47,6 +20,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     @volatile private var tagger: POSTagger = _
     @volatile private var lemmatizer: DictionaryLemmatizer = _
     @volatile private var nameFinder: NameFinderME = _
+    @volatile private var stemmer: Stemmer = _
 
     /**
       * Starts this component.
@@ -72,6 +46,8 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 new DictionaryLemmatizer(in)
             }
 
+        stemmer = new PorterStemmer
+
         super.start()
     }
 
@@ -83,7 +59,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       */
     def parse(sen: String): Seq[NCNlpWord] = {
         ensureStarted()
-        
+
         // Can be optimized.
         val (spans, words, poses, lemmas) =
             this.synchronized {
@@ -108,7 +84,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 normalWord = normalWord,
                 // "0" is flag that lemma cannot be obtained for some reasons.
                 lemma = if (lemma == "O") None else Some(lemma),
-                stem = NCStemmerManager.stem(normalWord),
+                stem = stemmer.stem(normalWord).toString,
                 pos = pos,
                 start = span.getStart,
                 end = span.getEnd,
@@ -125,7 +101,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       */
     def tokenize(sen: String): Seq[String] = {
         ensureStarted()
-        
+
         this.synchronized { tokenizer.tokenize(sen) }
     }
 
@@ -137,9 +113,9 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       */
     def stemSentence(sen: String): String = {
         ensureStarted()
-        
+
         val seq = this.synchronized {
-            tokenizer.tokenizePos(sen).map(span ⇒ (span, NCStemmerManager.stem(span.getCoveredText(sen).toString)))
+            tokenizer.tokenizePos(sen).map(span ⇒ (span, stemmer.stem(span.getCoveredText(sen).toString)))
         }
 
         seq.zipWithIndex.map { case ((span, stem), idx) ⇒
@@ -159,8 +135,8 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       */
     def stemWord(word: String): String = {
         ensureStarted()
-        
-        this.synchronized { NCStemmerManager.stem(word) }
+
+        this.synchronized { stemmer.stem(word).toString }
     }
 
     /**
@@ -173,7 +149,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       */
     def findLocations(words: Seq[String]): Seq[Int] = {
         ensureStarted()
-        
+
         this.
             synchronized { nameFinder.find(words.toArray) }.
             flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1))

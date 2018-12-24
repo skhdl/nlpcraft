@@ -147,11 +147,6 @@ under the License.
             <artifactId>akka-http-spray-json-experimental_2.11</artifactId>
             <version>${akka.http.spray.json.2.11.ver}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.opennlp</groupId>
-            <artifactId>opennlp-tools</artifactId>
-            <version>${apache.opennlp.ver}</version>
-        </dependency>
     </dependencies>
 
     <build>
