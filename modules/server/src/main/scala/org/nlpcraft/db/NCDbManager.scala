@@ -30,7 +30,9 @@ import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
+import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.mdo._
+
 import scala.util.control.Exception._
 
 /**
@@ -456,6 +458,49 @@ object NCDbManager extends NCLifecycle("Database manager") with NCIgniteNlpCraft
             mdlName,
             mdlVer,
             mdlCfg
+        )
+    }
+    
+    /**
+      * Adds processing log.
+      *
+      * @param usrId User Id.
+      * @param srvReqId Server request ID.
+      * @param origTxt Original text.
+      * @param dsId Data source ID.
+      * @param test Test flag.
+      */
+    @throws[NCE]
+    def addProcessingLog(
+        usrId: Long,
+        srvReqId: String,
+        origTxt: String,
+        dsId: Long,
+        status: NCApiStatusCode,
+        test: Boolean
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.insertSingle(
+            """
+              |INSERT
+              |  INTO history (
+              |     user_id,
+              |     srv_req_id,
+              |     orig_txt,
+              |     ds_id,
+              |     status,
+              |     is_test
+              | )
+              | VALUES (
+              |     ?, ?, ?, ?, ?, ?
+              | )""".stripMargin,
+            usrId,
+            srvReqId,
+            origTxt,
+            dsId,
+            status.toString,
+            test
         )
     }
 }

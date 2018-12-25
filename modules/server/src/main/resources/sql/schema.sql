@@ -139,3 +139,50 @@ CREATE TABLE submit_cache (
 
 CREATE INDEX submit_cache_idx_1 ON submit_cache(main_cache_id);
 CREATE INDEX submit_cache_idx_2 ON submit_cache(model_id);
+
+--
+-- Processing log.
+--
+DROP TABLE IF EXISTS proc_log CASCADE;
+CREATE TABLE proc_log (
+    -- Common part.
+    id SERIAL PRIMARY KEY,
+    srv_req_id VARCHAR(64),
+    orig_txt VARCHAR(1024),
+    user_id BIGINT,
+    ds_id BIGINT,
+    status VARCHAR(32),
+    -- Ask and result timestamps.
+    recv_tstamp TIMESTAMP NOT NULL DEFAULT current_timestamp, -- Initial receive timestamp.
+    resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
+    -- Optional curation part.
+    curate_txt VARCHAR(1024) NULL, -- Last curate text, NULL if there was no curation.
+    curate_hint VARCHAR(1024) NULL, -- Last curate hint, NULL if there was no curation or no hint.
+    -- Result parts.
+    res_type VARCHAR(32) NULL,
+    res_body_gzip TEXT NULL, -- GZIP-ed result body.
+    error TEXT NULL,
+    cache_id BIGINT NULL,
+    -- All-optional probe information for this request.
+    probe_token VARCHAR(256) NULL,
+    probe_id VARCHAR(512) NULL,
+    probe_guid VARCHAR(512) NULL,
+    probe_api_version BIGINT NULL,
+    probe_api_date TIMESTAMP NULL,
+    probe_os_version VARCHAR(512) NULL,
+    probe_os_name VARCHAR(512) NULL,
+    probe_os_arch VARCHAR(512) NULL,
+    probe_start_tstamp TIMESTAMP NULL,
+    probe_tmz_id VARCHAR(64) NULL,
+    probe_tmz_abbr VARCHAR(64) NULL,
+    probe_tmz_name VARCHAR(64) NULL,
+    probe_user_name VARCHAR(512) NULL,
+    probe_java_version VARCHAR(512) NULL,
+    probe_java_vendor VARCHAR(512) NULL,
+    probe_host_name VARCHAR(1024) NULL,
+    probe_host_addr VARCHAR(512) NULL,
+    probe_mac_addr VARCHAR(512) NULL,
+    probe_email VARCHAR(512) NULL,
+    -- Whether or not this is a test run.
+    is_test BOOL NOT NULL DEFAULT FALSE
+);

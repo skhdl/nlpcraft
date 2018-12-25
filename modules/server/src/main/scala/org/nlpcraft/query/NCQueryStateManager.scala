@@ -26,13 +26,100 @@
 
 package org.nlpcraft.query
 
+import org.apache.ignite.IgniteCache
+import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft._
+import org.nlpcraft.db.NCDbManager
+import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.mdo.NCQueryStateMdo
+import org.nlpcraft.tx.NCTxManager
+
+import scala.util.control.Exception._
+import org.nlpcraft.apicodes.NCApiStatusCode._
 
 /**
   * Query state machine.
   */
 object NCQueryStateManager extends NCLifecycle("Query state manager") with NCIgniteNlpCraft {
-
-
+    @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
+    
+    /**
+      * Starts this component.
+      */
+    override def start(): NCLifecycle = {
+        ensureStopped()
+        
+        catching(wrapIE) {
+            cache = ignite.cache[String/*Server request ID*/, NCQueryStateMdo]("qry-state-cache")
+        }
+        
+        require(cache != null)
+        
+        super.start()
+    }
+    
+    /**
+      * Enlists given server request into state machine.
+      * 
+      * @param srvReqId Server request ID.
+      * @param usrAgent User agent string.
+      * @param dsId Data source ID.
+      * @param modelId Data source model ID.
+      * @param usrId User ID.
+      * @param txt Text.
+      * @param test Test flag.
+      */
+    @throws[NCE]
+    def enlist(
+        srvReqId: String,
+        usrAgent: String,
+        dsId: Long,
+        modelId: String,
+        usrId: Long,
+        txt: String,
+        test: Boolean
+    ): Unit = {
+        ensureStarted()
+        
+        catching(wrapIE) {
+            NCTxManager.startTx {
+                NCPsql.sql {
+                    NCDbManager.getUser(usrId) match {
+                        case Some(usr) ⇒
+                            val email = usr.email
+                            
+                            val now = System.currentTimeMillis()
+                            
+                            val mdo = NCQueryStateMdo(
+                                srvReqId,
+                                test,
+                                dsId = dsId,
+                                modelId = modelId,
+                                userId = usrId,
+                                email = email,
+                                status = ASK_WAIT_ENLISTED, // Initial status.
+                                origText = txt,
+                                createTstamp = now,
+                                updateTstamp = now
+                            )
+                            
+                            cache += srvReqId → mdo
+                            
+                            // Add processing log.
+                            NCDbManager.addProcessingLog(
+                                usrId,
+                                srvReqId,
+                                txt,
+                                dsId,
+                                ASK_WAIT_ENLISTED,
+                                test
+                            )
+                        
+                        case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
+                    }
+                }
+            }
+        }
+    }
 }

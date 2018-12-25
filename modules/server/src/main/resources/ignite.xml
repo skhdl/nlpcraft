@@ -66,10 +66,45 @@
         </property>
     </bean>
 
+    <bean id="oneDayPolicy" class="javax.cache.expiry.CreatedExpiryPolicy" factory-method="factoryOf">
+        <constructor-arg>
+            <bean class="javax.cache.expiry.Duration">
+                <constructor-arg value="MILLISECONDS"/>
+                <constructor-arg value="86400000"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="threeHourPolicy" class="javax.cache.expiry.CreatedExpiryPolicy" factory-method="factoryOf">
+        <constructor-arg>
+            <bean class="javax.cache.expiry.Duration">
+                <constructor-arg value="MILLISECONDS"/>
+                <constructor-arg value="10800000"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="fiveMinsPolicy" class="javax.cache.expiry.CreatedExpiryPolicy" factory-method="factoryOf">
+        <constructor-arg>
+            <bean class="javax.cache.expiry.Duration">
+                <constructor-arg value="MILLISECONDS"/>
+                <constructor-arg value="300000"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
     <bean name="user-signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
         <property name="name" value="user-signin-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
         <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
+    </bean>
+    
+    <bean name="qry-state-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="qry-state-cache"/>
+        <property name="cacheMode" value="REPLICATED"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="expiryPolicyFactory" ref="threeHourPolicy"/>
     </bean>
 
     <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
@@ -100,6 +135,7 @@
         <property name="cacheConfiguration">
             <list>
                 <ref bean="user-signin-cache"/>
+                <ref bean="qry-state-cache"/>
             </list>
         </property>
     </bean>
