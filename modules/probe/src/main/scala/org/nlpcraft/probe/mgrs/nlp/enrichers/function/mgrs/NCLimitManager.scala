@@ -26,10 +26,10 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs
 
-import org.nlpcraft.makro.{NCMacroParser ⇒ Parser}
+import org.nlpcraft.makro.{NCMacroParser => Parser}
 import org.nlpcraft.nlp.numeric.NCNumericsManager
-import org.nlpcraft.nlp.stem.NCStemmerManager
-import org.nlpcraft.nlp.{NCNlpSentence ⇒ Sentence, NCNlpSentenceToken ⇒ Token}
+import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.nlp.{NCNlpSentence => Sentence, NCNlpSentenceToken => Token}
 
 /**
   * Limit data container.
@@ -47,7 +47,7 @@ object NCLimitManager {
     private final val DFLT_LIMIT = 10
 
     // Note that single words only supported now in code.
-    private final val FUZZY_NUMS: Map[String, Int] = stemmatize(Map(
+    private final val FUZZY_NUMS: Map[String, Int] = stemmatizeWords(Map(
         "few" → 3,
         "several" → 3,
         "handful" → 5,
@@ -57,7 +57,7 @@ object NCLimitManager {
     ))
 
     // Note that single words only supported now in code.
-    private final val SORT_WORDS: Map[String, Boolean] = stemmatize(Map(
+    private final val SORT_WORDS: Map[String, Boolean] = stemmatizeWords(Map(
         "top" → false,
         "most" → false,
         "first" → false,
@@ -71,13 +71,13 @@ object NCLimitManager {
         "bottom",
         "first",
         "last"
-    ).map(NCStemmerManager.stem)
+    ).map(NCNlpManager.stem)
 
     private final val POST_WORDS: Seq[String] = Seq(
         "total",
         "all together",
         "overall"
-    ).map(NCStemmerManager.stem)
+    ).map(NCNlpManager.stem)
 
     // It designates:
     // - digits (like `25`),
@@ -165,7 +165,7 @@ object NCLimitManager {
       *
       * @param m Map.
       */
-    private def stemmatize[T](m: Map[String, T]): Map[String, T] = m.map(p ⇒ NCStemmerManager.stem(p._1) → p._2)
+    private def stemmatizeWords[T](m: Map[String, T]): Map[String, T] = m.map(p ⇒ NCNlpManager.stem(p._1) → p._2)
 
     /**
       * Tries to parse number.
@@ -185,7 +185,7 @@ object NCLimitManager {
         }
 }
 
-import NCLimitManager._
+import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs.NCLimitManager._
 
 /**
   * Limit manager.

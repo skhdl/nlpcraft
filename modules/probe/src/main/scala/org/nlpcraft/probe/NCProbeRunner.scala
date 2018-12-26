@@ -27,7 +27,6 @@
 package org.nlpcraft.probe
 
 import java.text.SimpleDateFormat
-import java.time.Year
 import java.util.Date
 
 import org.nlpcraft._
@@ -53,7 +52,7 @@ import org.nlpcraft.probe.mgrs.nlp.post.NCPostChecker
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.nlp.stem.NCStemmerManager
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.dev.NCProbeConfig
 
 import scala.compat.Platform._
@@ -183,7 +182,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
       */
     private def startManagers(cfg: NCProbeConfig): Unit = {
         // Order is important!
-        NCStemmerManager.start()
+        NCNlpManager.start()
         NCNumericsManager.start()
         NCExitManager .startWithConfig(cfg)
         NCDeployManager.startWithConfig(cfg)
@@ -231,6 +230,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         NCDeployManager.stop()
         NCExitManager.stop()
         NCNumericsManager.stop()
-        NCStemmerManager.stop()
+        NCNlpManager.stop()
     }
 }

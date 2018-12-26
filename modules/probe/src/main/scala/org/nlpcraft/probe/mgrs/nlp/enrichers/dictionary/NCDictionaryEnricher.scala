@@ -29,7 +29,7 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary
 import org.nlpcraft._
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.dict._
-import org.nlpcraft.nlp.stem._
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
@@ -47,7 +47,7 @@ object NCDictionaryEnricher extends NCProbeEnricher("PROBE dictionary enricher")
     override def start(): NCLifecycle = {
         swearWords =
             G.readTextResource(s"badfilter/swear_words.txt", "UTF-8", logger).
-                map(NCStemmerManager.stems).
+                map(NCNlpManager.stem).
                 toSet
 
         super.start()

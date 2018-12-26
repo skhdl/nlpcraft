@@ -27,8 +27,7 @@
 package org.nlpcraft2.nlp.enrichers.stopword.tools
 
 import org.nlpcraft._
-import org.nlpcraft.nlp.stem.NCStemmerManager
-import org.nlpcraft2.nlp.NCCoreNlp
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.util.NCGlobals
 
 import scala.collection._
@@ -216,7 +215,7 @@ object NCStopWordGenerator extends App {
         for (w1 ← NOUN_WORDS; w2 ← NOUN_WORDS2)
             buf += s"$w1 $w2"
 
-        mkGzip(NOUN_WORDS_FILE, NCCoreNlp.stemmatizeSeq(buf))
+        mkGzip(NOUN_WORDS_FILE, buf.map(NCNlpManager.stem))
     }
 
     private[stopword] def mkFirstWords() {
@@ -350,17 +349,16 @@ object NCStopWordGenerator extends App {
         for (w0 ← DWORDS_PRE; w1 ← DWORDS; w2 ← DWORDS_SUP; w3 ← QWORDS)
             buf += s"$w0 $w1 $w2 $w3"
 
-        mkGzip(FIRST_WORDS_FILE, NCCoreNlp.stemmatizeSeq(buf))
+        mkGzip(FIRST_WORDS_FILE, buf.map(NCNlpManager.stem))
     }
 
     // Start CoreNLP subsystem.
-    NCStemmerManager.start()
-    NCCoreNlp.start()
+    NCNlpManager.start()
 
     mkFirstWords()
     mkNounWords()
 
-    mkGzip(POS_WORDS_FILE, NCCoreNlp.stemmatizeSeq(mkPossessiveStopWords))
+    mkGzip(POS_WORDS_FILE, mkPossessiveStopWords.map(NCNlpManager.stem))
 
     sys.exit()
 }

@@ -26,14 +26,14 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function
 
+import org.nlpcraft.NCLifecycle
 import org.nlpcraft.makro.NCMacroParser
-import org.nlpcraft.nlp.stem._
 import org.nlpcraft.nlp._
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.NCFunction._
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs._
-import org.nlpcraft.NCLifecycle
 
 import scala.collection.JavaConverters._
 import scala.collection._
@@ -65,7 +65,7 @@ object NCFunctionEnricher extends NCProbeEnricher("PROBE function enricher") {
             def add(f: NCFunction, isNumeric: Boolean, syns: String*): Unit =
                 syns.
                     flatMap(macros.expand).
-                    map(p ⇒ p.split(" ").map(_.trim).map(NCStemmerManager.stem).mkString(" ")).
+                    map(p ⇒ p.split(" ").map(_.trim).map(NCNlpManager.stem).mkString(" ")).
                     foreach(s ⇒ m += s → TypedFunction(f, isNumeric))
 
             add(SUM, isNumeric = true, "{sum|summary} {of|*} {data|value|*}")
@@ -89,9 +89,9 @@ object NCFunctionEnricher extends NCProbeEnricher("PROBE function enricher") {
             def add(f: NCFunction, head: String, tails: Seq[String]): Unit = {
                 require(!head.contains(" "))
 
-                val tailsSeq = tails.toSet.map(NCStemmerManager.stem)
+                val tailsSeq = tails.toSet.map(NCNlpManager.stem)
 
-                macros.expand(head).map(NCStemmerManager.stem).foreach(s ⇒ set += ComplexHolder(f, s, tailsSeq + s))
+                macros.expand(head).map(NCNlpManager.stem).foreach(s ⇒ set += ComplexHolder(f, s, tailsSeq + s))
             }
 
             val tails = Seq(

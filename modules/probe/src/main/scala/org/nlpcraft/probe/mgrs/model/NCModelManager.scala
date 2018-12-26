@@ -29,22 +29,22 @@ package org.nlpcraft.probe.mgrs.model
 import java.util.regex.{Pattern, PatternSyntaxException}
 import java.util.{Collection ⇒ JCollection, Set ⇒ JSet}
 
-import org.nlpcraft.mdllib._
-import org.nlpcraft.nlp.stem._
-import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
+import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
+import org.nlpcraft.mdllib._
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._
+import org.nlpcraft.probe.NCSynonymChunkKind._
+import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.deploy._
 import org.nlpcraft.probe.usage._
-import org.nlpcraft.probe._
-import org.nlpcraft.probe.NCSynonymChunkKind._
 
-import scala.collection.convert.DecorateAsScala
 import scala.collection.JavaConversions._
+import scala.collection.convert.DecorateAsScala
 import scala.collection.mutable
-import scala.util.control.Exception._
 import scala.collection.mutable.ArrayBuffer
+import scala.util.control.Exception._
 
 /**
   * Model manager.
@@ -310,7 +310,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         }
         // Regular word.
         else
-            NCSynonymChunk(kind = TEXT, origText = chunk, wordStem = NCStemmerManager.stem(chunk))
+            NCSynonymChunk(kind = TEXT, origText = chunk, wordStem = NCNlpManager.stem(chunk))
     }
     
     /**
@@ -597,7 +597,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             if (hasWhitespace(word))
                 throw new NCE(s"$name cannot have whitespace: '$word'")
             else
-                NCStemmerManager.stem(word)
+                NCNlpManager.stem(word)
     
     /**
       * Checks cyclic child-parent dependencies.
@@ -651,7 +651,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 val ins = ArrayBuffer.empty[String]
                 
                 for (in ← grp.getInputs)
-                    ins ++= parser.expand(in).map(NCStemmerManager.stems)
+                    ins ++= parser.expand(in).map(NCNlpManager.stem)
                 
                 if (ins.nonEmpty)
                     grps += ins.toList

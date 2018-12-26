@@ -29,9 +29,9 @@ package org.nlpcraft.nlp.numeric
 import java.text.{DecimalFormat, ParseException}
 import java.util.Locale
 
-import org.nlpcraft.nlp.stem._
 import org.nlpcraft.nlp._
 import org.nlpcraft.NCLifecycle
+import org.nlpcraft.nlp.opennlp.NCNlpManager
 
 case class NCNumericUnit(name: String, unitType: String)
 case class NCNumeric(
@@ -80,7 +80,7 @@ object NCNumericsManager extends NCLifecycle("Numerics manager") {
             unitsOrigs.get(after) match {
                 case Some(u) ⇒ mkNumeric(u)
                 case None ⇒
-                    unitsStem.get(NCStemmerManager.stem(after)) match {
+                    unitsStem.get(NCNlpManager.stem(after)) match {
                         case Some(u) ⇒ mkNumeric(u)
                         case None ⇒ None
                     }
@@ -110,7 +110,7 @@ object NCNumericsManager extends NCLifecycle("Numerics manager") {
                         // To avoid difference in tokenization behaviour.
                         flatMap(p ⇒ Seq(s"$p .", s"$p."))
 
-            val stem: String = NCStemmerManager.stem(name)
+            val stem: String = NCNlpManager.stem(name)
         }
 
         val hs =

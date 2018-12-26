@@ -111,7 +111,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       * @param sen Sentence text.
       * @return Sentence with stemmed words.
       */
-    def stemSentence(sen: String): String = {
+    def stem(sen: String): String = {
         ensureStarted()
 
         val seq = this.synchronized {
@@ -125,18 +125,6 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 case _ ⇒ if (seq(idx - 1)._1.getEnd <  span.getStart) s" $stem" else stem
             }
         }.mkString("")
-    }
-
-    /**
-      * Stems given word (input text is not tokenized before).
-      *
-      * @param word Word.
-      * @return Stem.
-      */
-    def stemWord(word: String): String = {
-        ensureStarted()
-
-        this.synchronized { stemmer.stem(word).toString }
     }
 
     /**
