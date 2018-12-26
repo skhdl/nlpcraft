@@ -106,16 +106,16 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     }
 
     /**
-      * Stems given word (input text tokenized before).
+      * Stems given word or a sequence of words which will be tokenized before.
       *
-      * @param sen Sentence text.
+      * @param words One or more words to stemmatize.
       * @return Sentence with stemmed words.
       */
-    def stem(sen: String): String = {
+    def stem(words: String): String = {
         ensureStarted()
 
         val seq = this.synchronized {
-            tokenizer.tokenizePos(sen).map(span ⇒ (span, stemmer.stem(span.getCoveredText(sen).toString)))
+            tokenizer.tokenizePos(words).map(span ⇒ (span, stemmer.stem(span.getCoveredText(words).toString)))
         }
 
         seq.zipWithIndex.map { case ((span, stem), idx) ⇒
@@ -128,9 +128,9 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     }
 
     /**
-      * Gets indexes for words which detected as location.
-      * Note that if can detect location taking into accounts their case
-      * (`Moscow` detected, `MOSCOW` or `moscow` is not detected)
+      * Gets indexes for words which detected as GEO locations.
+      * Note that OpenNLP can only detect location in a specific case
+      * (`Moscow` detected, `MOSCOW` or `moscow` is not detected).
       *
       * @param words Words
       * @return Indexes list.
