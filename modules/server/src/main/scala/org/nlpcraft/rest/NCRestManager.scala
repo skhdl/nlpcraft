@@ -45,6 +45,7 @@ import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
+import org.nlpcraft.query.NCQueryManager
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     // Akka intestines.
@@ -131,25 +132,166 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
         val routes: Route = {
             post {
                 path(API / "ask") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        txt: String,
+                        dsId: Long,
+                        isTest: Option[Boolean]
+                    )
+                    case class Res(
+                        status: String,
+                        srvReqId: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticate(req.accessToken)
+        
+                        val newSrvReqId = NCQueryManager.ask(
+                            getUserId(req.accessToken),
+                            req.txt,
+                            req.dsId,
+                            req.isTest.getOrElse(false)
+                        )
+        
+                        complete {
+                            Res(API_OK, newSrvReqId)
+                        }
+                    }
                 } ~
                 path(API / "reject") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        srvReqId: String,
+                        error: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCQueryManager.reject(
+                            req.srvReqId,
+                            req.error
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "cancel") {
-                    throw AuthFailure()
-                } ~
-                path(API / "cancel" / "all") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        srvReqIds: List[String]
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticate(req.accessToken)
+        
+                        NCQueryManager.cancel(
+                            req.srvReqIds
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "curate") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        srvReqId: String,
+                        curateTxt: String,
+                        curateHint: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCQueryManager.curate(
+                            req.srvReqId,
+                            req.curateTxt,
+                            req.curateHint
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "talkback") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String,
+                        srvReqId: String,
+                        talkback: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCQueryManager.talkback(
+                            req.srvReqId,
+                            req.talkback
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "check") {
                     throw AuthFailure()
+                } ~
+                path(API / "clear" / "conversation") {
+                    case class Req(
+                        accessToken: String,
+                        dsId: Long
+                    )
+                    case class Res(
+                        status: String
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticateAsAdmin(req.accessToken)
+        
+                        NCQueryManager.clearConversation(
+                            getUserId(req.accessToken),
+                            req.dsId
+                        )
+        
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 /**/path(API / "user" / "add") {
                     case class Req(
@@ -192,10 +334,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "user" / "passwd" / "reset") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        accessToken: String, // Administrator.
         
-                        // New user.
-                        usrId: Long,
+                        usrId: Long, // ID of the user to reset password for.
                         newPasswd: String
                     )
                     case class Res(

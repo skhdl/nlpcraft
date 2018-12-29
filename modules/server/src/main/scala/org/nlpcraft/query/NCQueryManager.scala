@@ -61,41 +61,82 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     
     /**
       *
+      * @param usrId
+      * @param txt
+      * @param dsId
+      * @param isTest
       */
     @throws[NCE]
-    def ask(): Unit = {
+    def ask(
+        usrId: Long,
+        txt: String,
+        dsId: Long,
+        isTest: Boolean
+    ): String = {
+        ensureStarted()
+        
+        ""
+    }
+    
+    /**
+      *
+      * @param srvReqId
+      * @param error
+      */
+    @throws[NCE]
+    def reject(
+        srvReqId: String,
+        error: String
+    ): Unit = {
         ensureStarted()
     }
     
     /**
       *
+      * @param usrId
+      * @param dsId
       */
     @throws[NCE]
-    def reject(): Unit = {
+    def clearConversation(
+        usrId: Long,
+        dsId: Long
+    ): Unit = {
+        ensureStarted()
+    }
+
+    /**
+      *
+      * @param srvReqId
+      * @param curateTxt
+      * @param curateHint
+      */
+    @throws[NCE]
+    def curate(
+        srvReqId: String,
+        curateTxt: String,
+        curateHint: String): Unit = {
         ensureStarted()
     }
     
     /**
       *
+      * @param srvReqId
+      * @param talkback
       */
     @throws[NCE]
-    def curate(): Unit = {
+    def talkback(
+        srvReqId: String,
+        talkback: String
+    ): Unit = {
         ensureStarted()
     }
     
     /**
       *
+      * @param srvReqIds
       */
     @throws[NCE]
-    def talkback(): Unit = {
-        ensureStarted()
-    }
-    
-    /**
-      *
-      */
-    @throws[NCE]
-    def cancel(): Unit = {
+    def cancel(srvReqIds: List[String]): Unit = {
         ensureStarted()
     }
     
