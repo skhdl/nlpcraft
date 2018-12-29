@@ -38,9 +38,9 @@ object NCApiStatusCode extends Enumeration {
     val API_OK: Value = Value
     
     // Query state machine status.
-    val ASK_WAIT_ENLISTED: Value = Value // Ask query has been enlisted for processing.
-    val ASK_WAIT_CURATE: Value = Value // ASk query has been dispatched for human curation.
-    val ASK_READY: Value = Value // Ask query final result is ready.
+    val QRY_ENLISTED: Value = Value // Query has been enlisted for processing.
+    val QRY_CURATE: Value = Value // Query has been dispatched for human curation.
+    val QRY_READY: Value = Value // Query final result is ready.
     
     // Support string conversion.
     implicit def m1(status: NCApiStatusCode): String = status.toString

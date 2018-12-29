@@ -195,7 +195,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                                 modelId = modelId,
                                 userId = usrId,
                                 email = email,
-                                status = ASK_WAIT_ENLISTED, // Initial status.
+                                status = QRY_ENLISTED, // Initial status.
                                 origText = txt,
                                 createTstamp = now,
                                 updateTstamp = now
@@ -209,7 +209,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                                 srvReqId,
                                 txt,
                                 dsId,
-                                ASK_WAIT_ENLISTED,
+                                QRY_ENLISTED,
                                 test
                             )
                         
