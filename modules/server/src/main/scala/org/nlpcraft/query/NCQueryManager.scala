@@ -41,7 +41,7 @@ import org.nlpcraft.apicodes.NCApiStatusCode._
 /**
   * Query state machine.
   */
-object NCQueryStateManager extends NCLifecycle("Query state manager") with NCIgniteNlpCraft {
+object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft {
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
     
     /**
@@ -60,6 +60,62 @@ object NCQueryStateManager extends NCLifecycle("Query state manager") with NCIgn
     }
     
     /**
+      *
+      */
+    @throws[NCE]
+    def ask(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def reject(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def curate(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def talkback(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def cancel(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def check(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
+      *
+      */
+    @throws[NCE]
+    def pending(): Unit = {
+        ensureStarted()
+    }
+    
+    /**
       * Enlists given server request into state machine.
       * 
       * @param srvReqId Server request ID.
@@ -71,7 +127,7 @@ object NCQueryStateManager extends NCLifecycle("Query state manager") with NCIgn
       * @param test Test flag.
       */
     @throws[NCE]
-    def enlist(
+    private def enlist(
         srvReqId: String,
         usrAgent: String,
         dsId: Long,
