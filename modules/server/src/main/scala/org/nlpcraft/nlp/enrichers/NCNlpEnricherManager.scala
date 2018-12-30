@@ -24,27 +24,30 @@
  *        /_/
  */
 
-package org.nlpcraft.nlp.opennlp
+package org.nlpcraft.nlp.enrichers
+
+import org.nlpcraft.NCLifecycle
+import org.nlpcraft.nlp.enrichers.basenlp.NCBaseNlpEnricher
 
 /**
-  * Word information holder.
-  *
-  * @param word Original word.
-  * @param normalWord Normalized word (lower case representation)
-  * @param lemma Lemma. Optional.
-  * @param stem Stem.
-  * @param pos POS.
-  * @param start From index.
-  * @param end To index.
-  * @param length Length.
+  * Enrichment pipeline manager.
   */
-case class NCNlpWord(
-    word: String,
-    normalWord: String,
-    lemma: Option[String],
-    stem: String,
-    pos: String,
-    start: Int,
-    end: Int,
-    length: Int
-)
+object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") {
+    /**
+      * Starts this manager.
+      */
+    override def start(): NCLifecycle = {
+        NCBaseNlpEnricher.start()
+        
+        super.start()
+    }
+    
+    /**
+      * Stops this manager.
+      */
+    override def stop(): Unit = {
+        NCBaseNlpEnricher.stop()
+        
+        super.stop()
+    }
+}
