@@ -39,6 +39,7 @@ case class NCQueryStateMdo(
     @NCMdoField test: Boolean,
     @NCMdoField dsId: Long,
     @NCMdoField modelId: String,
+    @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
     @NCMdoField userId: Long,
     @NCMdoField email: String,
     @NCMdoField origText: String, // Text of the initial question.
@@ -51,7 +52,6 @@ case class NCQueryStateMdo(
     @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.
-    @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
     // Query OK (result, trivia, or talkback).
     @NCMdoField var resultType: Option[String] = None,
     @NCMdoField var resultBody: Option[String] = None,

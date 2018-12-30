@@ -266,7 +266,40 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "check") {
-                    throw AuthFailure()
+                    case class Req(
+                        accessToken: String
+                    )
+                    case class QueryState(
+                        srvReqId: String,
+                        usrId: Long,
+                        dsId: Long,
+                        modelId: Long,
+                        probeId: Option[Long],
+                        status: String,
+                        resType: Option[String],
+                        resBody: Option[String],
+                        error: Option[String],
+                        createTstamp: Long,
+                        updateTstamp: Long
+                    )
+                    case class Res(
+                        status: String,
+                        users: List[QueryState]
+                    )
+    
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+    
+                    entity(as[Req]) { req ⇒
+                        authenticate(req.accessToken)
+                        
+                        // TODO
+        
+                        complete {
+                            Res(API_OK, Nil)
+                        }
+                    }
                 } ~
                 path(API / "clear" / "conversation") {
                     case class Req(
