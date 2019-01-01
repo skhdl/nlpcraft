@@ -31,7 +31,7 @@ import java.text.DecimalFormat
 /**
  * Java source http://www.rgagnon.com/javadetails/java-0426.html
  */
-object NCNumericsGenerator {
+object NCNumericGenerator {
     private final val FORMATTER = new DecimalFormat("000000000000")
 
     private final val TENS_NAMES = IndexedSeq(

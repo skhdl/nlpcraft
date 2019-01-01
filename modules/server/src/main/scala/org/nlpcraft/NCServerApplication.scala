@@ -33,6 +33,7 @@ import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
 import org.nlpcraft.nlp.enrichers.{NCNlpEnricher, NCNlpEnricherManager}
+import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager
@@ -53,6 +54,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCTxManager.start()
         NCDbManager.start()
         NCNlpManager.start()
+        NCNumericManager.start()
         NCNlpEnricherManager.start()
         NCNotificationManager.start()
         NCUserManager.start()
@@ -80,6 +82,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCUserManager.stop()
         NCNotificationManager.stop()
         NCNlpEnricherManager.stop()
+        NCNumericManager.stop()
         NCNlpManager.stop()
         NCDbManager.stop()
         NCTxManager.stop()

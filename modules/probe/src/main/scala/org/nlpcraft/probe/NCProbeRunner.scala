@@ -39,7 +39,7 @@ import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 import org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates.NCCoordinatesEnricher
-import org.nlpcraft.nlp.numeric.NCNumericsManager
+import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.probe.mgrs.nlp.enrichers.context.NCContextEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary.NCDictionaryEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.NCFunctionEnricher
@@ -183,7 +183,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     private def startManagers(cfg: NCProbeConfig): Unit = {
         // Order is important!
         NCNlpManager.start()
-        NCNumericsManager.start()
+        NCNumericManager.start()
         NCExitManager .startWithConfig(cfg)
         NCDeployManager.startWithConfig(cfg)
         NCModelManager.startWithConfig(cfg)
@@ -229,7 +229,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         NCModelManager.stop()
         NCDeployManager.stop()
         NCExitManager.stop()
-        NCNumericsManager.stop()
+        NCNumericManager.stop()
         NCNlpManager.stop()
     }
 }

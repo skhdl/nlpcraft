@@ -29,6 +29,7 @@ package org.nlpcraft.nlp.enrichers
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft.nlp.enrichers.basenlp.NCBaseNlpEnricher
 import org.nlpcraft.nlp.enrichers.date.NCDateEnricher
+import org.nlpcraft.nlp.enrichers.numeric.NCNumericEnricher
 import org.nlpcraft.nlp.enrichers.quote.NCQuoteEnricher
 import org.nlpcraft.nlp.enrichers.stopword.NCStopWordEnricher
 
@@ -44,6 +45,7 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") {
         NCDateEnricher.start()
         NCStopWordEnricher.start()
         NCQuoteEnricher.start()
+        NCNumericEnricher.start()
         
         super.start()
     }
@@ -52,6 +54,7 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") {
       * Stops this manager.
       */
     override def stop(): Unit = {
+        NCNumericEnricher.stop()
         NCQuoteEnricher.stop()
         NCStopWordEnricher.stop()
         NCDateEnricher.stop()

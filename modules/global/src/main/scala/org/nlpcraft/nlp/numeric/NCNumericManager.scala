@@ -42,9 +42,9 @@ case class NCNumeric(
 )
 
 /**
-  * Numeric detection helper.
+  * Numeric detection manager.
   */
-object NCNumericsManager extends NCLifecycle("Numerics manager") {
+object NCNumericManager extends NCLifecycle("Numeric manager") {
     // Sets EN numeric format.
     Locale.setDefault(Locale.forLanguageTag("EN"))
 
@@ -97,7 +97,7 @@ object NCNumericsManager extends NCLifecycle("Numerics manager") {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        genNums = NCNumericsGenerator.generate(100000).map(p ⇒ p._2 → p._1)
+        genNums = NCNumericGenerator.generate(100000).map(p ⇒ p._2 → p._1)
 
         // Data source: https://www.adducation.info/how-to-improve-your-knowledge/units-of-measurement/
         // Note that this provided data edited.

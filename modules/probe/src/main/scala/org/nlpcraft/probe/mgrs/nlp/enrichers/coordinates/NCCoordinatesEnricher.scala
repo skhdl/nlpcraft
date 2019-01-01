@@ -168,7 +168,7 @@ object NCCoordinatesEnricher extends NCProbeEnricher("PROBE coordinates enricher
       * @param ns NLP sentence to enrich.
       */
     override def enrich(mdl: NCModelDecorator, ns: NCNlpSentence): Unit = {
-        val nums = NCNumericsManager.find(ns).sortBy(_.tokens.head.index)
+        val nums = NCNumericManager.find(ns).sortBy(_.tokens.head.index)
 
         if (nums.size >= 2) {
             val markers = mutable.Buffer.empty[Seq[NCNlpSentenceToken]]

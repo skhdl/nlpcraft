@@ -27,7 +27,7 @@
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs
 
 import org.nlpcraft.makro.{NCMacroParser => Parser}
-import org.nlpcraft.nlp.numeric.NCNumericsManager
+import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.{NCNlpSentence => Sentence, NCNlpSentenceToken => Token}
 
@@ -227,7 +227,7 @@ case class NCLimitManager(ns: Sentence) {
             toMap
     }
 
-    private val nums = NCNumericsManager.find(ns).filter(_.unit.isEmpty)
+    private val nums = NCNumericManager.find(ns).filter(_.unit.isEmpty)
 
     private def trySimpleNumeric(toks: Seq[Token]): Option[NCLimitData] = {
         val mToks = toks.filter(!_.isStopword)
