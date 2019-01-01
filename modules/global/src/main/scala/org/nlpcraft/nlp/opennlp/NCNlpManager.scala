@@ -152,6 +152,14 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
             }
         }.mkString("")
     }
+    
+    /**
+      * Stemmatizes sequence of words.
+      *
+      * @param words Sequence of words to stemmatize.
+      */
+    def stemSeq(words: Iterable[String]): Seq[String] =
+        words.map(stem).toSeq         
 
     /**
       * Gets indexes for words which detected as GEO locations.
