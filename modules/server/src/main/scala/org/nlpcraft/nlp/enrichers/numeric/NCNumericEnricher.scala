@@ -35,7 +35,7 @@ import org.nlpcraft.nlp.opennlp.NCNlpManager
 import scala.collection._
 
 /**
- * DataLingvo numeric enricher.
+ * Numeric enricher.
  */
 object NCNumericEnricher extends NCNlpEnricher("Numeric enricher") {
     val MAX_VALUE: Double = Double.MaxValue
@@ -234,7 +234,7 @@ object NCNumericEnricher extends NCNlpEnricher("Numeric enricher") {
             case None ⇒ // No-op.
         }
     
-        NCNlpSentenceNote(toks.map(_.index), "dl:num", params:_*)
+        NCNlpSentenceNote(toks.map(_.index), "nlp:num", params:_*)
     }
 
     @throws[NCE]

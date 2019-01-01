@@ -382,7 +382,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
     private def mkNote(range: NCDateRange, from: Int, to: Int, toks: Seq[NCNlpSentenceToken]): NCNlpSentenceNote =
         NCNlpSentenceNote(
             toks.map(_.index),
-            "dl:date",
+            "nlp:date",
             "from" → range.from,
             "to" → range.to,
             "periods" → range.periods,
@@ -588,7 +588,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
     }
 
     private def findNeighbours(ns: NCNlpSentence, andSupport: Boolean): Seq[Seq[NCNlpSentenceNote]] = {
-        val hs = ns.getNotes("dl:date").sortBy(_.tokenFrom)
+        val hs = ns.getNotes("nlp:date").sortBy(_.tokenFrom)
 
         case class Wrapper(holder: NCNlpSentenceNote, var group: Int)
 

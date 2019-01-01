@@ -477,7 +477,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
                                 })
 
                             // They called before stopword enricher.
-                            replace("dl:nlp")
+                            replace("nlp:nlp")
 
                             // NLP note special case because has index field.
                             newTok.getNlpNote += "index" → idx
