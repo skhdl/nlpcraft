@@ -1,0 +1,214 @@
+{
+  "name":"Haiti",
+  "regions":[{
+    "name":"Centre",
+    "cities":[{
+      "name":"Hinche",
+      "latitude":19.15,
+      "longitude":-72.01667
+    },{
+      "name":"Lascahobas",
+      "latitude":18.82902,
+      "longitude":-71.93299
+    },{
+      "name":"Maissade",
+      "latitude":19.17334,
+      "longitude":-72.13456
+    },{
+      "name":"Mirebalais",
+      "latitude":18.83333,
+      "longitude":-72.10528
+    }]
+  },{
+    "name":"Departement de Nippes",
+    "cities":[{
+      "name":"Miragoane",
+      "latitude":18.44232,
+      "longitude":-73.08758
+    }]
+  },{
+    "name":"Departement de lArtibonite",
+    "cities":[{
+      "name":"Desarmes",
+      "latitude":18.9916,
+      "longitude":-72.38528
+    },{
+      "name":"Dessalines",
+      "latitude":19.26163,
+      "longitude":-72.51349
+    },{
+      "name":"Gonaives",
+      "latitude":19.44749,
+      "longitude":-72.68903
+    },{
+      "name":"Gros Morne",
+      "latitude":19.66825,
+      "longitude":-72.67761
+    },{
+      "name":"Saint-Marc",
+      "latitude":19.10819,
+      "longitude":-72.69379
+    },{
+      "name":"Verrettes",
+      "latitude":19.05,
+      "longitude":-72.46667
+    }]
+  },{
+    "name":"Departement de lOuest",
+    "cities":[{
+      "name":"Anse a Galets",
+      "latitude":18.83104,
+      "longitude":-72.86077
+    },{
+      "name":"Carrefour",
+      "latitude":18.54114,
+      "longitude":-72.39922
+    },{
+      "name":"Cornillon",
+      "latitude":18.67429,
+      "longitude":-71.9515
+    },{
+      "name":"Croix des Bouquets",
+      "latitude":18.57512,
+      "longitude":-72.22302
+    },{
+      "name":"Delmas 73",
+      "latitude":18.54472,
+      "longitude":-72.30278
+    },{
+      "name":"Fond Parisien",
+      "latitude":18.50583,
+      "longitude":-71.97667
+    },{
+      "name":"Grand Goave",
+      "latitude":18.4262,
+      "longitude":-72.76653
+    },{
+      "name":"Gressier",
+      "latitude":18.55,
+      "longitude":-72.51667
+    },{
+      "name":"Kenscoff",
+      "latitude":18.44773,
+      "longitude":-72.28485
+    },{
+      "name":"Leogane",
+      "latitude":18.50959,
+      "longitude":-72.63147
+    },{
+      "name":"Petionville",
+      "latitude":18.5125,
+      "longitude":-72.28528
+    },{
+      "name":"Petit Goave",
+      "latitude":18.4294,
+      "longitude":-72.86297
+    },{
+      "name":"Port-au-Prince",
+      "latitude":18.53917,
+      "longitude":-72.335
+    },{
+      "name":"Thomazeau",
+      "latitude":18.65094,
+      "longitude":-72.09191
+    }]
+  },{
+    "name":"Departement de la GrandAnse",
+    "cities":[{
+      "name":"Dame-Marie",
+      "latitude":18.56107,
+      "longitude":-74.42167
+    },{
+      "name":"Jeremie",
+      "latitude":18.65,
+      "longitude":-74.11667
+    }]
+  },{
+    "name":"Departement du Nord-Est",
+    "cities":[{
+      "name":"Fort Liberte",
+      "latitude":19.66778,
+      "longitude":-71.83972
+    },{
+      "name":"Ouanaminthe",
+      "latitude":19.54807,
+      "longitude":-71.72397
+    },{
+      "name":"Trou du Nord",
+      "latitude":19.61448,
+      "longitude":-72.02076
+    }]
+  },{
+    "name":"Nord",
+    "cities":[{
+      "name":"Cap-Haitien",
+      "latitude":19.75778,
+      "longitude":-72.20417
+    },{
+      "name":"Dondon",
+      "latitude":19.5262,
+      "longitude":-72.24032
+    },{
+      "name":"Grande Riviere du Nord",
+      "latitude":19.57648,
+      "longitude":-72.16576
+    },{
+      "name":"Limbe",
+      "latitude":19.70409,
+      "longitude":-72.40027
+    },{
+      "name":"Milot",
+      "latitude":19.6057,
+      "longitude":-72.20989
+    },{
+      "name":"Pignon",
+      "latitude":19.33512,
+      "longitude":-72.11252
+    },{
+      "name":"Saint-Raphael",
+      "latitude":19.43799,
+      "longitude":-72.19794
+    }]
+  },{
+    "name":"Nord-Ouest",
+    "cities":[{
+      "name":"Jean-Rabel",
+      "latitude":19.85333,
+      "longitude":-73.19167
+    },{
+      "name":"Port-de-Paix",
+      "latitude":19.9389,
+      "longitude":-72.83257
+    },{
+      "name":"Saint-Louis du Nord",
+      "latitude":19.93264,
+      "longitude":-72.72167
+    },{
+      "name":"Ti Port-de-Paix",
+      "latitude":19.93333,
+      "longitude":-72.83333
+    }]
+  },{
+    "name":"Sud",
+    "cities":[{
+      "name":"Aquin",
+      "latitude":18.28333,
+      "longitude":-73.4
+    },{
+      "name":"Les Anglais",
+      "latitude":18.3054,
+      "longitude":-74.21968
+    },{
+      "name":"Les Cayes",
+      "latitude":18.2,
+      "longitude":-73.75
+    }]
+  },{
+    "name":"Sud-Est",
+    "cities":[{
+      "name":"Jacmel",
+      "latitude":18.23417,
+      "longitude":-72.53472
+    }]
+  }]
+}

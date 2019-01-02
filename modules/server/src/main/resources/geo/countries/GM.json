@@ -1,0 +1,90 @@
+{
+  "name":"Gambia",
+  "regions":[{
+    "name":"Central River Division",
+    "cities":[{
+      "name":"Bansang",
+      "latitude":13.43333,
+      "longitude":-14.65
+    },{
+      "name":"Georgetown",
+      "latitude":13.53333,
+      "longitude":-14.76667
+    }]
+  },{
+    "name":"City of Banjul",
+    "cities":[{
+      "name":"Bakau",
+      "latitude":13.47806,
+      "longitude":-16.68194
+    },{
+      "name":"Banjul",
+      "latitude":13.45274,
+      "longitude":-16.57803
+    }]
+  },{
+    "name":"Lower River Division",
+    "cities":[{
+      "name":"Mansa Konko",
+      "latitude":13.46667,
+      "longitude":-15.55
+    },{
+      "name":"Soma",
+      "latitude":13.43333,
+      "longitude":-15.53333
+    }]
+  },{
+    "name":"North Bank Division",
+    "cities":[{
+      "name":"Barra",
+      "latitude":13.48278,
+      "longitude":-16.54556
+    },{
+      "name":"Essau",
+      "latitude":13.48389,
+      "longitude":-16.53472
+    },{
+      "name":"Farafenni",
+      "latitude":13.56667,
+      "longitude":-15.6
+    },{
+      "name":"Kerewan",
+      "latitude":13.4898,
+      "longitude":-16.08879
+    },{
+      "name":"Lamin",
+      "latitude":13.35222,
+      "longitude":-16.43389
+    }]
+  },{
+    "name":"Upper River Division",
+    "cities":[{
+      "name":"Basse Santa Su",
+      "latitude":13.30995,
+      "longitude":-14.21373
+    },{
+      "name":"Sabi",
+      "latitude":13.23333,
+      "longitude":-14.2
+    }]
+  },{
+    "name":"Western Division",
+    "cities":[{
+      "name":"Abuko",
+      "latitude":13.40417,
+      "longitude":-16.65583
+    },{
+      "name":"Brikama",
+      "latitude":13.27136,
+      "longitude":-16.64944
+    },{
+      "name":"Gunjur",
+      "latitude":13.20194,
+      "longitude":-16.73389
+    },{
+      "name":"Sukuta",
+      "latitude":13.41033,
+      "longitude":-16.70815
+    }]
+  }]
+}

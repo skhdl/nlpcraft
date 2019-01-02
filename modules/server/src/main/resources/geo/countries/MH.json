@@ -1,0 +1,203 @@
+{
+  "name":"Marshall Islands",
+  "regions":[{
+    "name":"Ailinginae Atoll",
+    "cities":[]
+  },{
+    "name":"Ailinglaplap Atoll",
+    "cities":[{
+      "name":"Airuk",
+      "latitude":7.27717,
+      "longitude":168.8203
+    }]
+  },{
+    "name":"Ailuk Atoll",
+    "cities":[{
+      "name":"Ailuk",
+      "latitude":10.21972,
+      "longitude":169.97967
+    }]
+  },{
+    "name":"Arno Atoll",
+    "cities":[{
+      "name":"Arno",
+      "latitude":7.06691,
+      "longitude":171.55413
+    }]
+  },{
+    "name":"Aur Atoll",
+    "cities":[{
+      "name":"Aur",
+      "latitude":8.1499,
+      "longitude":171.16869
+    }]
+  },{
+    "name":"Bikar Atoll",
+    "cities":[]
+  },{
+    "name":"Bikini Atoll",
+    "cities":[]
+  },{
+    "name":"Bokak Atoll",
+    "cities":[]
+  },{
+    "name":"Ebon Atoll",
+    "cities":[{
+      "name":"Ebon",
+      "latitude":4.58199,
+      "longitude":168.69636
+    }]
+  },{
+    "name":"Enewetak Atoll",
+    "cities":[{
+      "name":"Enewetak",
+      "latitude":11.34735,
+      "longitude":162.33733
+    }]
+  },{
+    "name":"Erikub Atoll",
+    "cities":[]
+  },{
+    "name":"Jabat Island",
+    "cities":[{
+      "name":"Jabat",
+      "latitude":7.75003,
+      "longitude":168.97513
+    }]
+  },{
+    "name":"Jaluit Atoll",
+    "cities":[{
+      "name":"Jabor",
+      "latitude":5.92098,
+      "longitude":169.64335
+    }]
+  },{
+    "name":"Jemo Island",
+    "cities":[]
+  },{
+    "name":"Kili Island",
+    "cities":[{
+      "name":"Kili",
+      "latitude":5.64387,
+      "longitude":169.12109
+    }]
+  },{
+    "name":"Kwajalein Atoll",
+    "cities":[{
+      "name":"Ebaye",
+      "latitude":8.77479,
+      "longitude":167.73919
+    }]
+  },{
+    "name":"Lae Atoll",
+    "cities":[{
+      "name":"Lae",
+      "latitude":8.92217,
+      "longitude":166.26344
+    }]
+  },{
+    "name":"Lib Island",
+    "cities":[{
+      "name":"Lib",
+      "latitude":8.31221,
+      "longitude":167.37662
+    }]
+  },{
+    "name":"Likiep Atoll",
+    "cities":[{
+      "name":"Likiep",
+      "latitude":9.82511,
+      "longitude":169.31065
+    }]
+  },{
+    "name":"Majuro Atoll",
+    "cities":[{
+      "name":"Majuro",
+      "latitude":7.08971,
+      "longitude":171.38027
+    },{
+      "name":"RMI Capitol",
+      "latitude":7.08931,
+      "longitude":171.3805
+    }]
+  },{
+    "name":"Maloelap Atoll",
+    "cities":[{
+      "name":"Taroa",
+      "latitude":8.70576,
+      "longitude":171.2275
+    }]
+  },{
+    "name":"Mejit Island",
+    "cities":[{
+      "name":"Mejit",
+      "latitude":10.27531,
+      "longitude":170.86461
+    }]
+  },{
+    "name":"Mili Atoll",
+    "cities":[{
+      "name":"Mili",
+      "latitude":6.0815,
+      "longitude":171.73502
+    }]
+  },{
+    "name":"Namdrik Atoll",
+    "cities":[{
+      "name":"Namdrik",
+      "latitude":5.59944,
+      "longitude":168.10282
+    }]
+  },{
+    "name":"Namu Atoll",
+    "cities":[{
+      "name":"Loen",
+      "latitude":7.76007,
+      "longitude":168.23072
+    }]
+  },{
+    "name":"Rongelap Atoll",
+    "cities":[{
+      "name":"Rongelap",
+      "latitude":11.16351,
+      "longitude":166.89408
+    }]
+  },{
+    "name":"Rongrik Atoll",
+    "cities":[]
+  },{
+    "name":"Taka Atoll",
+    "cities":[]
+  },{
+    "name":"Ujae Atoll",
+    "cities":[{
+      "name":"Ujae",
+      "latitude":8.93218,
+      "longitude":165.76416
+    }]
+  },{
+    "name":"Ujelang Atoll",
+    "cities":[]
+  },{
+    "name":"Utrik Atoll",
+    "cities":[{
+      "name":"Utrik",
+      "latitude":11.22778,
+      "longitude":169.84739
+    }]
+  },{
+    "name":"Wotho Atoll",
+    "cities":[{
+      "name":"Wotho",
+      "latitude":10.16575,
+      "longitude":166.01022
+    }]
+  },{
+    "name":"Wotje Atoll",
+    "cities":[{
+      "name":"Wotje",
+      "latitude":9.45429,
+      "longitude":170.23674
+    }]
+  }]
+}

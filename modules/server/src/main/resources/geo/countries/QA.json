@@ -1,0 +1,89 @@
+{
+  "name":"Qatar",
+  "regions":[{
+    "name":"Al Wakrah",
+    "cities":[{
+      "name":"Al Wakrah",
+      "latitude":25.17151,
+      "longitude":51.60337
+    },{
+      "name":"Al Wukayr",
+      "latitude":25.15083,
+      "longitude":51.53778
+    }]
+  },{
+    "name":"Baladiyat Jarayan al Batinah",
+    "cities":[{
+      "name":"Umm Bab",
+      "latitude":25.21417,
+      "longitude":50.80722
+    }]
+  },{
+    "name":"Baladiyat Umm Sa`id",
+    "cities":[{
+      "name":"Umm Said",
+      "latitude":24.99611,
+      "longitude":51.54889
+    }]
+  },{
+    "name":"Baladiyat Umm Salal",
+    "cities":[{
+      "name":"Umm Salal Muhammad",
+      "latitude":25.41694,
+      "longitude":51.40389
+    },{
+      "name":"Umm Salal `Ali",
+      "latitude":25.46972,
+      "longitude":51.3975
+    }]
+  },{
+    "name":"Baladiyat ad Dawhah",
+    "cities":[{
+      "name":"Doha",
+      "latitude":25.27932,
+      "longitude":51.52245
+    }]
+  },{
+    "name":"Baladiyat al Ghuwayriyah",
+    "cities":[]
+  },{
+    "name":"Baladiyat al Jumayliyah",
+    "cities":[]
+  },{
+    "name":"Baladiyat al Khawr wa adh Dhakhirah",
+    "cities":[{
+      "name":"Al Khawr",
+      "latitude":25.68389,
+      "longitude":51.50583
+    }]
+  },{
+    "name":"Baladiyat ar Rayyan",
+    "cities":[{
+      "name":"Ar Rayyan",
+      "latitude":25.29194,
+      "longitude":51.42444
+    },{
+      "name":"Ash Shahaniyah",
+      "latitude":25.36861,
+      "longitude":51.22639
+    },{
+      "name":"Dukhan",
+      "latitude":25.42972,
+      "longitude":50.78583
+    }]
+  },{
+    "name":"Baladiyat ash Shamal",
+    "cities":[{
+      "name":"Madinat ash Shamal",
+      "latitude":26.12933,
+      "longitude":51.2009
+    }]
+  },{
+    "name":"Baladiyat az Za`ayin",
+    "cities":[{
+      "name":"Az Za`ayin",
+      "latitude":25.57744,
+      "longitude":51.48306
+    }]
+  }]
+}

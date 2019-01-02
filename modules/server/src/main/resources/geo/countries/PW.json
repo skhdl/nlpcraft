@@ -1,0 +1,124 @@
+{
+  "name":"Palau",
+  "regions":[{
+    "name":"State of Aimeliik",
+    "cities":[{
+      "name":"Ngchemiangel",
+      "latitude":7.44613,
+      "longitude":134.47678
+    }]
+  },{
+    "name":"State of Airai",
+    "cities":[{
+      "name":"Ngetkib",
+      "latitude":7.36451,
+      "longitude":134.51484
+    }]
+  },{
+    "name":"State of Angaur",
+    "cities":[{
+      "name":"Angaur State",
+      "latitude":6.90601,
+      "longitude":134.12997
+    }]
+  },{
+    "name":"State of Hatohobei",
+    "cities":[{
+      "name":"Tobi Village",
+      "latitude":3.00488,
+      "longitude":131.12168
+    }]
+  },{
+    "name":"State of Kayangel",
+    "cities":[{
+      "name":"Kayangel",
+      "latitude":8.08228,
+      "longitude":134.71725
+    }]
+  },{
+    "name":"State of Koror",
+    "cities":[{
+      "name":"Koror State",
+      "latitude":7.33978,
+      "longitude":134.47326
+    },{
+      "name":"Koror Town",
+      "latitude":7.34257,
+      "longitude":134.47888
+    }]
+  },{
+    "name":"State of Melekeok",
+    "cities":[{
+      "name":"Melekeok",
+      "latitude":7.50043,
+      "longitude":134.62355
+    },{
+      "name":"Melekeok Village",
+      "latitude":7.49567,
+      "longitude":134.63671
+    }]
+  },{
+    "name":"State of Ngaraard",
+    "cities":[{
+      "name":"Ulimang",
+      "latitude":7.62416,
+      "longitude":134.64208
+    }]
+  },{
+    "name":"State of Ngarchelong",
+    "cities":[{
+      "name":"Mengellang",
+      "latitude":7.6957,
+      "longitude":134.63054
+    }]
+  },{
+    "name":"State of Ngardmau",
+    "cities":[{
+      "name":"Ngardmau",
+      "latitude":7.60986,
+      "longitude":134.5744
+    }]
+  },{
+    "name":"State of Ngatpang",
+    "cities":[{
+      "name":"Ngereklmadel",
+      "latitude":7.48826,
+      "longitude":134.48562
+    }]
+  },{
+    "name":"State of Ngchesar",
+    "cities":[{
+      "name":"Ngchesar Hamlet",
+      "latitude":7.46932,
+      "longitude":134.60991
+    }]
+  },{
+    "name":"State of Ngeremlengui",
+    "cities":[{
+      "name":"Imeong Hamlet",
+      "latitude":7.53134,
+      "longitude":134.52713
+    }]
+  },{
+    "name":"State of Ngiwal",
+    "cities":[{
+      "name":"Ngerkeai",
+      "latitude":7.55456,
+      "longitude":134.63612
+    }]
+  },{
+    "name":"State of Peleliu",
+    "cities":[{
+      "name":"Kloulklubed",
+      "latitude":7.04192,
+      "longitude":134.25561
+    }]
+  },{
+    "name":"State of Sonsorol",
+    "cities":[{
+      "name":"Sonsorol Village",
+      "latitude":5.32608,
+      "longitude":132.21943
+    }]
+  }]
+}

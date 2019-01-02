@@ -1,0 +1,18 @@
+{
+  "name":"Svalbard and Jan Mayen",
+  "regions":[{
+    "name":"Jan Mayen",
+    "cities":[{
+      "name":"Olonkinbyen",
+      "latitude":70.9221,
+      "longitude":-8.7187
+    }]
+  },{
+    "name":"Svalbard",
+    "cities":[{
+      "name":"Longyearbyen",
+      "latitude":78.22,
+      "longitude":15.65
+    }]
+  }]
+}

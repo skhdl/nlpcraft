@@ -1,0 +1,829 @@
+{
+  "name":"Latvia",
+  "regions":[{
+    "name":"Adazu Novads",
+    "cities":[{
+      "name":"Adazi",
+      "latitude":57.07583,
+      "longitude":24.32139
+    }]
+  },{
+    "name":"Aglonas Novads",
+    "cities":[{
+      "name":"Aglona",
+      "latitude":56.13333,
+      "longitude":27.01667
+    }]
+  },{
+    "name":"Aizkraukles Rajons",
+    "cities":[{
+      "name":"Aizkraukle",
+      "latitude":56.60477,
+      "longitude":25.25534
+    }]
+  },{
+    "name":"Aizputes Novads",
+    "cities":[{
+      "name":"Aizpute",
+      "latitude":56.71667,
+      "longitude":21.6
+    }]
+  },{
+    "name":"Aknistes Novads",
+    "cities":[{
+      "name":"Akniste",
+      "latitude":56.16152,
+      "longitude":25.74783
+    }]
+  },{
+    "name":"Alojas Novads",
+    "cities":[{
+      "name":"Aloja",
+      "latitude":57.76694,
+      "longitude":24.8825
+    }]
+  },{
+    "name":"Alsungas Novads",
+    "cities":[{
+      "name":"Alsunga",
+      "latitude":56.98194,
+      "longitude":21.55938
+    }]
+  },{
+    "name":"Aluksnes Rajons",
+    "cities":[{
+      "name":"Aluksne",
+      "latitude":57.41667,
+      "longitude":27.05
+    }]
+  },{
+    "name":"Amatas Novads",
+    "cities":[{
+      "name":"Drabesi",
+      "latitude":57.24316,
+      "longitude":25.27748
+    }]
+  },{
+    "name":"Apes Novads",
+    "cities":[{
+      "name":"Ape",
+      "latitude":57.53928,
+      "longitude":26.69291
+    }]
+  },{
+    "name":"Auces Novads",
+    "cities":[{
+      "name":"Auce",
+      "latitude":56.45981,
+      "longitude":22.90169
+    }]
+  },{
+    "name":"Babites Novads",
+    "cities":[{
+      "name":"Pinki",
+      "latitude":56.94194,
+      "longitude":23.91083
+    }]
+  },{
+    "name":"Baldones Novads",
+    "cities":[{
+      "name":"Baldone",
+      "latitude":56.74278,
+      "longitude":24.39444
+    }]
+  },{
+    "name":"Baltinavas Novads",
+    "cities":[{
+      "name":"Baltinava",
+      "latitude":56.95,
+      "longitude":27.65
+    }]
+  },{
+    "name":"Balvu Rajons",
+    "cities":[{
+      "name":"Balvi",
+      "latitude":57.1313,
+      "longitude":27.26583
+    }]
+  },{
+    "name":"Bauskas Rajons",
+    "cities":[{
+      "name":"Bauska",
+      "latitude":56.4075,
+      "longitude":24.19056
+    }]
+  },{
+    "name":"Beverinas Novads",
+    "cities":[{
+      "name":"Murmuiza",
+      "latitude":57.48333,
+      "longitude":25.48333
+    }]
+  },{
+    "name":"Brocenu Novads",
+    "cities":[{
+      "name":"Broceni",
+      "latitude":56.7,
+      "longitude":22.53333
+    }]
+  },{
+    "name":"Burtnieku Novads",
+    "cities":[{
+      "name":"Matisi",
+      "latitude":57.69892,
+      "longitude":25.15886
+    }]
+  },{
+    "name":"Carnikavas Novads",
+    "cities":[{
+      "name":"Carnikava",
+      "latitude":57.12944,
+      "longitude":24.27444
+    }]
+  },{
+    "name":"Cesu Rajons",
+    "cities":[{
+      "name":"Cesis",
+      "latitude":57.31188,
+      "longitude":25.27456
+    }]
+  },{
+    "name":"Cesvaines Novads",
+    "cities":[{
+      "name":"Cesvaine",
+      "latitude":56.96667,
+      "longitude":26.31667
+    }]
+  },{
+    "name":"Ciblas Novads",
+    "cities":[{
+      "name":"Cibla",
+      "latitude":56.55,
+      "longitude":27.88333
+    }]
+  },{
+    "name":"Dagdas Novads",
+    "cities":[{
+      "name":"Dagda",
+      "latitude":56.09512,
+      "longitude":27.53723
+    }]
+  },{
+    "name":"Daugavpils",
+    "cities":[]
+  },{
+    "name":"Daugavpils municipality",
+    "cities":[{
+      "name":"Daugavpils",
+      "latitude":55.88333,
+      "longitude":26.53333
+    }]
+  },{
+    "name":"Dobeles Rajons",
+    "cities":[{
+      "name":"Dobele",
+      "latitude":56.625,
+      "longitude":23.27861
+    }]
+  },{
+    "name":"Dundagas Novads",
+    "cities":[{
+      "name":"Dundaga",
+      "latitude":57.51667,
+      "longitude":22.35
+    }]
+  },{
+    "name":"Durbes Novads",
+    "cities":[{
+      "name":"Liegi",
+      "latitude":56.58173,
+      "longitude":21.33399
+    }]
+  },{
+    "name":"Engures Novads",
+    "cities":[{
+      "name":"Smarde",
+      "latitude":56.9542,
+      "longitude":23.33736
+    }]
+  },{
+    "name":"Erglu Novads",
+    "cities":[{
+      "name":"Ergli",
+      "latitude":56.89752,
+      "longitude":25.63668
+    }]
+  },{
+    "name":"Garkalne Municipality",
+    "cities":[{
+      "name":"Garkalne",
+      "latitude":57.04611,
+      "longitude":24.42139
+    }]
+  },{
+    "name":"Grobinas Novads",
+    "cities":[{
+      "name":"Grobina",
+      "latitude":56.53521,
+      "longitude":21.16782
+    }]
+  },{
+    "name":"Gulbenes Rajons",
+    "cities":[{
+      "name":"Gulbene",
+      "latitude":57.17767,
+      "longitude":26.75291
+    }]
+  },{
+    "name":"Iecavas Novads",
+    "cities":[{
+      "name":"Iecava",
+      "latitude":56.59861,
+      "longitude":24.20222
+    }]
+  },{
+    "name":"Ikskiles Novads",
+    "cities":[{
+      "name":"Ikskile",
+      "latitude":56.83333,
+      "longitude":24.5
+    }]
+  },{
+    "name":"Ilukstes Novads",
+    "cities":[{
+      "name":"Ilukste",
+      "latitude":55.97754,
+      "longitude":26.29655
+    }]
+  },{
+    "name":"Incukalna Novads",
+    "cities":[{
+      "name":"Incukalns",
+      "latitude":57.09806,
+      "longitude":24.68639
+    }]
+  },{
+    "name":"Jaunjelgavas Novads",
+    "cities":[{
+      "name":"Jaunjelgava",
+      "latitude":56.61667,
+      "longitude":25.08333
+    }]
+  },{
+    "name":"Jaunpiebalgas Novads",
+    "cities":[{
+      "name":"Jaunpiebalga",
+      "latitude":57.18333,
+      "longitude":26.05
+    }]
+  },{
+    "name":"Jaunpils Novads",
+    "cities":[{
+      "name":"Jaunpils",
+      "latitude":56.7325,
+      "longitude":23.01361
+    }]
+  },{
+    "name":"Jekabpils",
+    "cities":[]
+  },{
+    "name":"Jekabpils Municipality",
+    "cities":[{
+      "name":"Jekabpils",
+      "latitude":56.49903,
+      "longitude":25.85735
+    }]
+  },{
+    "name":"Jelgava",
+    "cities":[{
+      "name":"Jelgava",
+      "latitude":56.65,
+      "longitude":23.71278
+    }]
+  },{
+    "name":"Jelgavas Rajons",
+    "cities":[]
+  },{
+    "name":"Jurmala",
+    "cities":[{
+      "name":"Jurmala",
+      "latitude":56.968,
+      "longitude":23.77038
+    }]
+  },{
+    "name":"Kandavas Novads",
+    "cities":[{
+      "name":"Kandava",
+      "latitude":57.04087,
+      "longitude":22.77466
+    }]
+  },{
+    "name":"Karsavas Novads",
+    "cities":[{
+      "name":"Karsava",
+      "latitude":56.78405,
+      "longitude":27.68829
+    }]
+  },{
+    "name":"Keguma Novads",
+    "cities":[{
+      "name":"Kegums",
+      "latitude":56.7451,
+      "longitude":24.72439
+    }]
+  },{
+    "name":"Kekavas Novads",
+    "cities":[{
+      "name":"Kekava",
+      "latitude":56.82662,
+      "longitude":24.23
+    }]
+  },{
+    "name":"Kocenu Novads",
+    "cities":[{
+      "name":"Koceni",
+      "latitude":57.52057,
+      "longitude":25.33821
+    }]
+  },{
+    "name":"Kokneses Novads",
+    "cities":[{
+      "name":"Koknese",
+      "latitude":56.65,
+      "longitude":25.43333
+    }]
+  },{
+    "name":"Kraslavas Rajons",
+    "cities":[{
+      "name":"Kraslava",
+      "latitude":55.89514,
+      "longitude":27.16799
+    }]
+  },{
+    "name":"Krimuldas Novads",
+    "cities":[{
+      "name":"Ragana",
+      "latitude":57.18074,
+      "longitude":24.70731
+    }]
+  },{
+    "name":"Krustpils Novads",
+    "cities":[]
+  },{
+    "name":"Kuldigas Rajons",
+    "cities":[{
+      "name":"Kuldiga",
+      "latitude":56.97399,
+      "longitude":21.95721
+    }]
+  },{
+    "name":"Lielvardes Novads",
+    "cities":[{
+      "name":"Lielvarde",
+      "latitude":56.72066,
+      "longitude":24.80743
+    }]
+  },{
+    "name":"Liepaja",
+    "cities":[{
+      "name":"Liepaja",
+      "latitude":56.51667,
+      "longitude":21.01667
+    },{
+      "name":"Vec-Liepaja",
+      "latitude":56.53333,
+      "longitude":21.01667
+    }]
+  },{
+    "name":"Ligatnes Novads",
+    "cities":[{
+      "name":"Ligatne",
+      "latitude":57.23429,
+      "longitude":25.04059
+    }]
+  },{
+    "name":"Limbazu Rajons",
+    "cities":[{
+      "name":"Limbazi",
+      "latitude":57.51287,
+      "longitude":24.71941
+    }]
+  },{
+    "name":"Livanu Novads",
+    "cities":[{
+      "name":"Livani",
+      "latitude":56.35431,
+      "longitude":26.17579
+    }]
+  },{
+    "name":"Lubanas Novads",
+    "cities":[{
+      "name":"Lubana",
+      "latitude":56.9,
+      "longitude":26.71667
+    }]
+  },{
+    "name":"Ludzas Rajons",
+    "cities":[{
+      "name":"Ludza",
+      "latitude":56.55,
+      "longitude":27.71667
+    }]
+  },{
+    "name":"Madona Municipality",
+    "cities":[{
+      "name":"Madona",
+      "latitude":56.85329,
+      "longitude":26.21698
+    }]
+  },{
+    "name":"Malpils Novads",
+    "cities":[{
+      "name":"Malpils",
+      "latitude":57.01111,
+      "longitude":24.96306
+    }]
+  },{
+    "name":"Marupes Novads",
+    "cities":[{
+      "name":"Marupe",
+      "latitude":56.90544,
+      "longitude":24.05113
+    }]
+  },{
+    "name":"Mazsalacas Novads",
+    "cities":[{
+      "name":"Mazsalaca",
+      "latitude":57.86329,
+      "longitude":25.05475
+    }]
+  },{
+    "name":"Mersraga Novads",
+    "cities":[{
+      "name":"Mersrags",
+      "latitude":57.33535,
+      "longitude":23.12455
+    }]
+  },{
+    "name":"Nauksenu Novads",
+    "cities":[{
+      "name":"Naukseni",
+      "latitude":57.88349,
+      "longitude":25.45609
+    }]
+  },{
+    "name":"Neretas Novads",
+    "cities":[{
+      "name":"Nereta",
+      "latitude":56.20279,
+      "longitude":25.30752
+    }]
+  },{
+    "name":"Nicas Novads",
+    "cities":[{
+      "name":"Nica",
+      "latitude":56.34601,
+      "longitude":21.06401
+    }]
+  },{
+    "name":"Ogres novads",
+    "cities":[{
+      "name":"Ogre",
+      "latitude":56.8162,
+      "longitude":24.61401
+    }]
+  },{
+    "name":"Olaines Novads",
+    "cities":[{
+      "name":"Olaine",
+      "latitude":56.78528,
+      "longitude":23.93806
+    }]
+  },{
+    "name":"Ozolnieku Novads",
+    "cities":[{
+      "name":"Ozolnieki",
+      "latitude":56.68639,
+      "longitude":23.78778
+    }]
+  },{
+    "name":"Pargaujas Novads",
+    "cities":[{
+      "name":"Stalbe",
+      "latitude":57.37065,
+      "longitude":25.03106
+    }]
+  },{
+    "name":"Pavilostas Novads",
+    "cities":[{
+      "name":"Pavilosta",
+      "latitude":56.88791,
+      "longitude":21.18593
+    }]
+  },{
+    "name":"Plavinu Novads",
+    "cities":[{
+      "name":"Plavinas",
+      "latitude":56.6178,
+      "longitude":25.72552
+    }]
+  },{
+    "name":"Preili Municipality",
+    "cities":[{
+      "name":"Preili",
+      "latitude":56.29444,
+      "longitude":26.72459
+    }]
+  },{
+    "name":"Priekules Novads",
+    "cities":[{
+      "name":"Priekule",
+      "latitude":56.44679,
+      "longitude":21.58968
+    }]
+  },{
+    "name":"Priekuli Municipality",
+    "cities":[{
+      "name":"Priekuli",
+      "latitude":57.315,
+      "longitude":25.36147
+    }]
+  },{
+    "name":"Raunas Novads",
+    "cities":[{
+      "name":"Rauna",
+      "latitude":57.33173,
+      "longitude":25.60947
+    }]
+  },{
+    "name":"Rezekne",
+    "cities":[{
+      "name":"Rezekne",
+      "latitude":56.5,
+      "longitude":27.31667
+    }]
+  },{
+    "name":"Rezeknes Rajons",
+    "cities":[]
+  },{
+    "name":"Riebinu Novads",
+    "cities":[{
+      "name":"Riebini",
+      "latitude":56.3428,
+      "longitude":26.79995
+    }]
+  },{
+    "name":"Riga",
+    "cities":[{
+      "name":"Bergi",
+      "latitude":56.98639,
+      "longitude":24.29917
+    },{
+      "name":"Bolderaja",
+      "latitude":57.03132,
+      "longitude":24.05571
+    },{
+      "name":"Daugavgriva",
+      "latitude":57.04315,
+      "longitude":24.03613
+    },{
+      "name":"Riga",
+      "latitude":56.946,
+      "longitude":24.10589
+    }]
+  },{
+    "name":"Rojas Novads",
+    "cities":[{
+      "name":"Roja",
+      "latitude":57.5,
+      "longitude":22.81667
+    }]
+  },{
+    "name":"Ropazu Novads",
+    "cities":[{
+      "name":"Ropazi",
+      "latitude":56.97389,
+      "longitude":24.63361
+    }]
+  },{
+    "name":"Rucavas Novads",
+    "cities":[{
+      "name":"Rucava",
+      "latitude":56.16314,
+      "longitude":21.16156
+    }]
+  },{
+    "name":"Rugaju Novads",
+    "cities":[{
+      "name":"Rugaji",
+      "latitude":57.0,
+      "longitude":27.13333
+    }]
+  },{
+    "name":"Rujienas Novads",
+    "cities":[{
+      "name":"Rujiena",
+      "latitude":57.89752,
+      "longitude":25.33155
+    }]
+  },{
+    "name":"Rundales Novads",
+    "cities":[{
+      "name":"Pilsrundale",
+      "latitude":56.41667,
+      "longitude":24.0
+    }]
+  },{
+    "name":"Salacgrivas Novads",
+    "cities":[{
+      "name":"Salacgriva",
+      "latitude":57.75361,
+      "longitude":24.35806
+    }]
+  },{
+    "name":"Salas Novads",
+    "cities":[{
+      "name":"Sala",
+      "latitude":56.50675,
+      "longitude":25.76423
+    }]
+  },{
+    "name":"Salaspils Novads",
+    "cities":[{
+      "name":"Salaspils",
+      "latitude":56.86014,
+      "longitude":24.36544
+    }]
+  },{
+    "name":"Saldus Municipality",
+    "cities":[{
+      "name":"Saldus",
+      "latitude":56.66363,
+      "longitude":22.48807
+    }]
+  },{
+    "name":"Saulkrastu Novads",
+    "cities":[{
+      "name":"Saulkrasti",
+      "latitude":57.26224,
+      "longitude":24.41471
+    }]
+  },{
+    "name":"Sejas Novads",
+    "cities":[{
+      "name":"Loja",
+      "latitude":57.15444,
+      "longitude":24.64444
+    }]
+  },{
+    "name":"Siguldas Novads",
+    "cities":[{
+      "name":"Sigulda",
+      "latitude":57.15194,
+      "longitude":24.86472
+    }]
+  },{
+    "name":"Skriveru Novads",
+    "cities":[{
+      "name":"Skriveri",
+      "latitude":56.645,
+      "longitude":25.12058
+    }]
+  },{
+    "name":"Skrundas Novads",
+    "cities":[{
+      "name":"Skrunda",
+      "latitude":56.68333,
+      "longitude":22.01667
+    }]
+  },{
+    "name":"Smiltenes Novads",
+    "cities":[{
+      "name":"Smiltene",
+      "latitude":57.42444,
+      "longitude":25.90164
+    }]
+  },{
+    "name":"Stopinu Novads",
+    "cities":[{
+      "name":"Ulbroka",
+      "latitude":56.94111,
+      "longitude":24.28972
+    }]
+  },{
+    "name":"Strencu Novads",
+    "cities":[{
+      "name":"Strenci",
+      "latitude":57.62574,
+      "longitude":25.68535
+    }]
+  },{
+    "name":"Talsi Municipality",
+    "cities":[{
+      "name":"Talsi",
+      "latitude":57.24562,
+      "longitude":22.58137
+    }]
+  },{
+    "name":"Tervetes Novads",
+    "cities":[{
+      "name":"Zelmeni",
+      "latitude":56.45167,
+      "longitude":23.35194
+    }]
+  },{
+    "name":"Tukuma Rajons",
+    "cities":[{
+      "name":"Tukums",
+      "latitude":56.96694,
+      "longitude":23.15528
+    }]
+  },{
+    "name":"Vainodes Novads",
+    "cities":[{
+      "name":"Vainode",
+      "latitude":56.43333,
+      "longitude":21.86667
+    }]
+  },{
+    "name":"Valka Municipality",
+    "cities":[{
+      "name":"Valka",
+      "latitude":57.7752,
+      "longitude":26.01013
+    }]
+  },{
+    "name":"Valmiera District",
+    "cities":[{
+      "name":"Valmiera",
+      "latitude":57.54108,
+      "longitude":25.42751
+    }]
+  },{
+    "name":"Varaklanu Novads",
+    "cities":[{
+      "name":"Varaklani",
+      "latitude":56.60826,
+      "longitude":26.75377
+    }]
+  },{
+    "name":"Varkavas Novads",
+    "cities":[{
+      "name":"Vecvarkava",
+      "latitude":56.18333,
+      "longitude":26.51667
+    }]
+  },{
+    "name":"Vecpiebalgas Novads",
+    "cities":[{
+      "name":"Vecpiebalga",
+      "latitude":57.0609,
+      "longitude":25.81624
+    }]
+  },{
+    "name":"Vecumnieku Novads",
+    "cities":[{
+      "name":"Vecumnieki",
+      "latitude":56.60639,
+      "longitude":24.52222
+    }]
+  },{
+    "name":"Ventspils",
+    "cities":[]
+  },{
+    "name":"Ventspils Municipality",
+    "cities":[{
+      "name":"Ventspils",
+      "latitude":57.38944,
+      "longitude":21.56056
+    }]
+  },{
+    "name":"Viesites Novads",
+    "cities":[{
+      "name":"Viesite",
+      "latitude":56.34751,
+      "longitude":25.55514
+    }]
+  },{
+    "name":"Vilakas Novads",
+    "cities":[{
+      "name":"Vilaka",
+      "latitude":57.18458,
+      "longitude":27.6722
+    }]
+  },{
+    "name":"Vilanu Novads",
+    "cities":[{
+      "name":"Vilani",
+      "latitude":56.55253,
+      "longitude":26.92449
+    }]
+  },{
+    "name":"Zilupes Novads",
+    "cities":[{
+      "name":"Zilupe",
+      "latitude":56.38616,
+      "longitude":28.12165
+    }]
+  }]
+}

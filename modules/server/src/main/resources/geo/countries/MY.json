@@ -1,0 +1,651 @@
+{
+  "name":"Malaysia",
+  "regions":[{
+    "name":"Johor",
+    "cities":[{
+      "name":"Bakri",
+      "latitude":2.0441,
+      "longitude":102.6527
+    },{
+      "name":"Batu Pahat",
+      "latitude":1.8548,
+      "longitude":102.9325
+    },{
+      "name":"Buloh Kasap",
+      "latitude":2.5536,
+      "longitude":102.764
+    },{
+      "name":"Chaah",
+      "latitude":2.249,
+      "longitude":103.048
+    },{
+      "name":"Johor Bahru",
+      "latitude":1.4655,
+      "longitude":103.7578
+    },{
+      "name":"Kampung Pasir Gudang Baru",
+      "latitude":1.4726,
+      "longitude":103.878
+    },{
+      "name":"Kampung Simpang Renggam",
+      "latitude":1.8278,
+      "longitude":103.3
+    },{
+      "name":"Kelapa Sawit",
+      "latitude":1.6698,
+      "longitude":103.5327
+    },{
+      "name":"Kluang",
+      "latitude":2.0251,
+      "longitude":103.3328
+    },{
+      "name":"Kota Tinggi",
+      "latitude":1.7381,
+      "longitude":103.8999
+    },{
+      "name":"Kulai",
+      "latitude":1.6561,
+      "longitude":103.6032
+    },{
+      "name":"Labis",
+      "latitude":2.385,
+      "longitude":103.021
+    },{
+      "name":"Mersing",
+      "latitude":2.4312,
+      "longitude":103.8405
+    },{
+      "name":"Muar",
+      "latitude":2.0442,
+      "longitude":102.5689
+    },{
+      "name":"Parit Raja",
+      "latitude":1.8681,
+      "longitude":103.1124
+    },{
+      "name":"Pekan Nenas",
+      "latitude":1.51,
+      "longitude":103.5141
+    },{
+      "name":"Pontian Kechil",
+      "latitude":1.4866,
+      "longitude":103.3896
+    },{
+      "name":"Segamat",
+      "latitude":2.5148,
+      "longitude":102.8158
+    },{
+      "name":"Sekudai",
+      "latitude":1.53742,
+      "longitude":103.65779
+    },{
+      "name":"Taman Senai",
+      "latitude":1.6006,
+      "longitude":103.6419
+    },{
+      "name":"Tangkak",
+      "latitude":2.2673,
+      "longitude":102.5453
+    },{
+      "name":"Ulu Tiram",
+      "latitude":1.6,
+      "longitude":103.81667
+    },{
+      "name":"Yong Peng",
+      "latitude":2.0136,
+      "longitude":103.0659
+    }]
+  },{
+    "name":"Kedah",
+    "cities":[{
+      "name":"Alor Setar",
+      "latitude":6.12104,
+      "longitude":100.36014
+    },{
+      "name":"Bedong",
+      "latitude":5.72744,
+      "longitude":100.50876
+    },{
+      "name":"Gurun",
+      "latitude":5.81717,
+      "longitude":100.47381
+    },{
+      "name":"Jitra",
+      "latitude":6.26812,
+      "longitude":100.42167
+    },{
+      "name":"Kuah",
+      "latitude":6.32649,
+      "longitude":99.8432
+    },{
+      "name":"Kuala Kedah",
+      "latitude":6.1,
+      "longitude":100.3
+    },{
+      "name":"Kulim",
+      "latitude":5.36499,
+      "longitude":100.56177
+    },{
+      "name":"Sungai Petani",
+      "latitude":5.647,
+      "longitude":100.48772
+    }]
+  },{
+    "name":"Kelantan",
+    "cities":[{
+      "name":"Gua Musang",
+      "latitude":4.8823,
+      "longitude":101.9644
+    },{
+      "name":"Kampong Kadok",
+      "latitude":6.0,
+      "longitude":102.25
+    },{
+      "name":"Kampong Pangkal Kalong",
+      "latitude":5.91667,
+      "longitude":102.21667
+    },{
+      "name":"Kota Bharu",
+      "latitude":6.13328,
+      "longitude":102.2386
+    },{
+      "name":"Pasir Mas",
+      "latitude":6.04934,
+      "longitude":102.13987
+    },{
+      "name":"Peringat",
+      "latitude":6.03333,
+      "longitude":102.28333
+    },{
+      "name":"Tanah Merah",
+      "latitude":5.8,
+      "longitude":102.15
+    },{
+      "name":"Tumpat",
+      "latitude":6.19776,
+      "longitude":102.17098
+    }]
+  },{
+    "name":"Kuala Lumpur",
+    "cities":[{
+      "name":"Kuala Lumpur",
+      "latitude":3.1412,
+      "longitude":101.68653
+    }]
+  },{
+    "name":"Labuan",
+    "cities":[{
+      "name":"Victoria",
+      "latitude":5.27667,
+      "longitude":115.24167
+    }]
+  },{
+    "name":"Malaysia",
+    "cities":[{
+      "name":"Kampung Bukit Tinggi",
+      "latitude":3.35,
+      "longitude":101.81667
+    },{
+      "name":"Sungai Pelek New Village",
+      "latitude":2.65,
+      "longitude":101.7
+    }]
+  },{
+    "name":"Melaka",
+    "cities":[{
+      "name":"Alor Gajah",
+      "latitude":2.3804,
+      "longitude":102.2089
+    },{
+      "name":"Batu Berendam",
+      "latitude":2.2487,
+      "longitude":102.246
+    },{
+      "name":"Bemban",
+      "latitude":2.2684,
+      "longitude":102.3746
+    },{
+      "name":"Bukit Rambai",
+      "latitude":2.2594,
+      "longitude":102.1838
+    },{
+      "name":"Kampong Masjid Tanah",
+      "latitude":2.35,
+      "longitude":102.11667
+    },{
+      "name":"Kampung Ayer Keroh",
+      "latitude":2.2654,
+      "longitude":102.2801
+    },{
+      "name":"Kampung Ayer Molek",
+      "latitude":2.2139,
+      "longitude":102.3278
+    },{
+      "name":"Kampung Bukit Baharu",
+      "latitude":2.2152,
+      "longitude":102.2851
+    },{
+      "name":"Klebang Besar",
+      "latitude":2.2186,
+      "longitude":102.1995
+    },{
+      "name":"Kuala Sungai Baru",
+      "latitude":2.3594,
+      "longitude":102.0353
+    },{
+      "name":"Melaka",
+      "latitude":2.196,
+      "longitude":102.2405
+    },{
+      "name":"Pulau Sebang",
+      "latitude":2.455,
+      "longitude":102.2329
+    },{
+      "name":"Sungai Udang",
+      "latitude":2.269,
+      "longitude":102.1427
+    }]
+  },{
+    "name":"Negeri Sembilan",
+    "cities":[{
+      "name":"Bahau",
+      "latitude":2.8079,
+      "longitude":102.4049
+    },{
+      "name":"Kampung Baharu Nilai",
+      "latitude":2.8033,
+      "longitude":101.7972
+    },{
+      "name":"Kuala Pilah",
+      "latitude":2.7389,
+      "longitude":102.2487
+    },{
+      "name":"Port Dickson",
+      "latitude":2.5228,
+      "longitude":101.7959
+    },{
+      "name":"Seremban",
+      "latitude":2.7297,
+      "longitude":101.9381
+    },{
+      "name":"Tampin",
+      "latitude":2.4701,
+      "longitude":102.2302
+    }]
+  },{
+    "name":"Pahang",
+    "cities":[{
+      "name":"Bentong Town",
+      "latitude":3.51667,
+      "longitude":101.9
+    },{
+      "name":"Jerantut",
+      "latitude":3.936,
+      "longitude":102.3626
+    },{
+      "name":"Kuala Lipis",
+      "latitude":4.1842,
+      "longitude":102.0468
+    },{
+      "name":"Kuantan",
+      "latitude":3.8077,
+      "longitude":103.326
+    },{
+      "name":"Mentekab",
+      "latitude":3.4854,
+      "longitude":102.3484
+    },{
+      "name":"Pekan",
+      "latitude":3.4836,
+      "longitude":103.3996
+    },{
+      "name":"Raub",
+      "latitude":3.7899,
+      "longitude":101.857
+    },{
+      "name":"Tanah Rata",
+      "latitude":4.475,
+      "longitude":101.3704
+    },{
+      "name":"Temerluh",
+      "latitude":3.4506,
+      "longitude":102.4176
+    }]
+  },{
+    "name":"Perak",
+    "cities":[{
+      "name":"Bagan Serai",
+      "latitude":5.0108,
+      "longitude":100.54101
+    },{
+      "name":"Batu Gajah",
+      "latitude":4.46916,
+      "longitude":101.04107
+    },{
+      "name":"Bidur",
+      "latitude":4.11667,
+      "longitude":101.28333
+    },{
+      "name":"Ipoh",
+      "latitude":4.5841,
+      "longitude":101.0829
+    },{
+      "name":"Kampar",
+      "latitude":4.3,
+      "longitude":101.15
+    },{
+      "name":"Kampong Dungun",
+      "latitude":3.21667,
+      "longitude":101.31667
+    },{
+      "name":"Kuala Kangsar",
+      "latitude":4.76667,
+      "longitude":100.93333
+    },{
+      "name":"Lumut",
+      "latitude":4.2323,
+      "longitude":100.6298
+    },{
+      "name":"Pantai Remis",
+      "latitude":4.4557,
+      "longitude":100.6288
+    },{
+      "name":"Parit Buntar",
+      "latitude":5.12671,
+      "longitude":100.49316
+    },{
+      "name":"Simpang Empat",
+      "latitude":4.95,
+      "longitude":100.63333
+    },{
+      "name":"Taiping",
+      "latitude":4.85,
+      "longitude":100.73333
+    },{
+      "name":"Tapah Road",
+      "latitude":4.16667,
+      "longitude":101.2
+    },{
+      "name":"Teluk Intan",
+      "latitude":4.0259,
+      "longitude":101.0213
+    }]
+  },{
+    "name":"Perlis",
+    "cities":[{
+      "name":"Kangar",
+      "latitude":6.4414,
+      "longitude":100.19862
+    },{
+      "name":"Kuala Perlis",
+      "latitude":6.4,
+      "longitude":100.13333
+    }]
+  },{
+    "name":"Pulau Pinang",
+    "cities":[{
+      "name":"Bukit Mertajam",
+      "latitude":5.36301,
+      "longitude":100.4667
+    },{
+      "name":"Butterworth",
+      "latitude":5.3991,
+      "longitude":100.36382
+    },{
+      "name":"George Town",
+      "latitude":5.41123,
+      "longitude":100.33543
+    },{
+      "name":"Juru",
+      "latitude":5.31201,
+      "longitude":100.44229
+    },{
+      "name":"Kampung Sungai Ara",
+      "latitude":5.32699,
+      "longitude":100.27348
+    },{
+      "name":"Kepala Batas",
+      "latitude":5.51707,
+      "longitude":100.4265
+    },{
+      "name":"Nibong Tebal",
+      "latitude":5.16586,
+      "longitude":100.47793
+    },{
+      "name":"Perai",
+      "latitude":5.38333,
+      "longitude":100.38333
+    },{
+      "name":"Permatang Kuching",
+      "latitude":5.46339,
+      "longitude":100.38144
+    },{
+      "name":"Tanjung Tokong",
+      "latitude":5.46061,
+      "longitude":100.30742
+    },{
+      "name":"Tasek Glugor",
+      "latitude":5.48032,
+      "longitude":100.49849
+    }]
+  },{
+    "name":"Putrajaya",
+    "cities":[{
+      "name":"Putrajaya",
+      "latitude":2.93527,
+      "longitude":101.69112
+    }]
+  },{
+    "name":"Sabah",
+    "cities":[{
+      "name":"Bandar Labuan",
+      "latitude":5.28883,
+      "longitude":115.26924
+    },{
+      "name":"Beaufort",
+      "latitude":5.3473,
+      "longitude":115.7455
+    },{
+      "name":"Donggongon",
+      "latitude":5.90702,
+      "longitude":116.10146
+    },{
+      "name":"Keningau",
+      "latitude":5.3378,
+      "longitude":116.1602
+    },{
+      "name":"Kinarut",
+      "latitude":5.8231,
+      "longitude":116.0466
+    },{
+      "name":"Kota Belud",
+      "latitude":6.351,
+      "longitude":116.4305
+    },{
+      "name":"Kota Kinabalu",
+      "latitude":5.9749,
+      "longitude":116.0724
+    },{
+      "name":"Kudat",
+      "latitude":6.8837,
+      "longitude":116.8477
+    },{
+      "name":"Lahad Datu",
+      "latitude":5.0268,
+      "longitude":118.327
+    },{
+      "name":"Papar",
+      "latitude":5.73333,
+      "longitude":115.93333
+    },{
+      "name":"Putatan",
+      "latitude":5.9258,
+      "longitude":116.06094
+    },{
+      "name":"Ranau",
+      "latitude":5.9538,
+      "longitude":116.6641
+    },{
+      "name":"Sandakan",
+      "latitude":5.8402,
+      "longitude":118.1179
+    },{
+      "name":"Semporna",
+      "latitude":4.48178,
+      "longitude":118.61118
+    },{
+      "name":"Tawau",
+      "latitude":4.2498,
+      "longitude":117.8871
+    }]
+  },{
+    "name":"Sarawak",
+    "cities":[{
+      "name":"Bintulu",
+      "latitude":3.16667,
+      "longitude":113.03333
+    },{
+      "name":"Kapit",
+      "latitude":2.01667,
+      "longitude":112.93333
+    },{
+      "name":"Kuching",
+      "latitude":1.55,
+      "longitude":110.33333
+    },{
+      "name":"Limbang",
+      "latitude":4.75,
+      "longitude":115.0
+    },{
+      "name":"Miri",
+      "latitude":4.4148,
+      "longitude":114.0089
+    },{
+      "name":"Sarikei",
+      "latitude":2.11667,
+      "longitude":111.51667
+    },{
+      "name":"Sibu",
+      "latitude":2.3,
+      "longitude":111.81667
+    },{
+      "name":"Simanggang",
+      "latitude":1.24722,
+      "longitude":111.45278
+    }]
+  },{
+    "name":"Selangor",
+    "cities":[{
+      "name":"Banting",
+      "latitude":2.81667,
+      "longitude":101.5
+    },{
+      "name":"Batang Berjuntai",
+      "latitude":3.38333,
+      "longitude":101.41667
+    },{
+      "name":"Batu Arang",
+      "latitude":3.31667,
+      "longitude":101.46667
+    },{
+      "name":"Beranang",
+      "latitude":2.8733,
+      "longitude":101.8697
+    },{
+      "name":"Jenjarum",
+      "latitude":2.88333,
+      "longitude":101.5
+    },{
+      "name":"Kampong Baharu Balakong",
+      "latitude":3.03333,
+      "longitude":101.75
+    },{
+      "name":"Kampung Baru Subang",
+      "latitude":3.15,
+      "longitude":101.53333
+    },{
+      "name":"Kampung Tanjung Karang",
+      "latitude":3.4242,
+      "longitude":101.1849
+    },{
+      "name":"Klang",
+      "latitude":3.03333,
+      "longitude":101.45
+    },{
+      "name":"Kuala Selangor",
+      "latitude":3.35,
+      "longitude":101.25
+    },{
+      "name":"Kuang",
+      "latitude":3.2594,
+      "longitude":101.5541
+    },{
+      "name":"Ladang Seri Kundang",
+      "latitude":3.2856,
+      "longitude":101.519
+    },{
+      "name":"Petaling Jaya",
+      "latitude":3.10726,
+      "longitude":101.60671
+    },{
+      "name":"Rawang",
+      "latitude":3.3213,
+      "longitude":101.5767
+    },{
+      "name":"Sabak Bernam",
+      "latitude":3.7698,
+      "longitude":100.9879
+    },{
+      "name":"Semenyih",
+      "latitude":2.9516,
+      "longitude":101.843
+    },{
+      "name":"Serendah",
+      "latitude":3.3646,
+      "longitude":101.6041
+    },{
+      "name":"Shah Alam",
+      "latitude":3.08507,
+      "longitude":101.53281
+    },{
+      "name":"Subang Jaya",
+      "latitude":3.04384,
+      "longitude":101.58062
+    },{
+      "name":"Sungai Besar",
+      "latitude":3.6746,
+      "longitude":100.9867
+    },{
+      "name":"Tanjung Sepat",
+      "latitude":2.6579,
+      "longitude":101.5629
+    }]
+  },{
+    "name":"Terengganu",
+    "cities":[{
+      "name":"Cukai",
+      "latitude":4.25,
+      "longitude":103.41667
+    },{
+      "name":"Jertih",
+      "latitude":5.7336,
+      "longitude":102.4897
+    },{
+      "name":"Kertih",
+      "latitude":4.5141,
+      "longitude":103.4483
+    },{
+      "name":"Kuala Terengganu",
+      "latitude":5.3302,
+      "longitude":103.1408
+    },{
+      "name":"Marang",
+      "latitude":5.2056,
+      "longitude":103.2059
+    },{
+      "name":"Paka",
+      "latitude":4.6374,
+      "longitude":103.4368
+    }]
+  }]
+}

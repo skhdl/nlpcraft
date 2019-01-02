@@ -1,0 +1,281 @@
+{
+  "name":"Uruguay",
+  "regions":[{
+    "name":"Departamento de Artigas",
+    "cities":[{
+      "name":"Artigas",
+      "latitude":-30.4,
+      "longitude":-56.46667
+    },{
+      "name":"Bella Union",
+      "latitude":-30.27522,
+      "longitude":-57.6007
+    }]
+  },{
+    "name":"Departamento de Canelones",
+    "cities":[{
+      "name":"Canelones",
+      "latitude":-34.52278,
+      "longitude":-56.27778
+    },{
+      "name":"Colonia Nicolich",
+      "latitude":-34.81306,
+      "longitude":-56.04472
+    },{
+      "name":"Joaquin Suarez",
+      "latitude":-34.73361,
+      "longitude":-56.03667
+    },{
+      "name":"La Paz",
+      "latitude":-34.76167,
+      "longitude":-56.22361
+    },{
+      "name":"Las Piedras",
+      "latitude":-34.72639,
+      "longitude":-56.22
+    },{
+      "name":"Pando",
+      "latitude":-34.71667,
+      "longitude":-55.95
+    },{
+      "name":"Paso de Carrasco",
+      "latitude":-34.86028,
+      "longitude":-56.05222
+    },{
+      "name":"Progreso",
+      "latitude":-34.665,
+      "longitude":-56.21944
+    },{
+      "name":"San Ramon",
+      "latitude":-34.3,
+      "longitude":-55.96667
+    },{
+      "name":"Santa Lucia",
+      "latitude":-34.45333,
+      "longitude":-56.39056
+    },{
+      "name":"Sauce",
+      "latitude":-34.64694,
+      "longitude":-56.06278
+    }]
+  },{
+    "name":"Departamento de Cerro Largo",
+    "cities":[{
+      "name":"Melo",
+      "latitude":-32.36667,
+      "longitude":-54.18333
+    },{
+      "name":"Rio Branco",
+      "latitude":-32.59802,
+      "longitude":-53.38583
+    }]
+  },{
+    "name":"Departamento de Colonia",
+    "cities":[{
+      "name":"Carmelo",
+      "latitude":-33.98917,
+      "longitude":-58.28556
+    },{
+      "name":"Colonia del Sacramento",
+      "latitude":-34.46262,
+      "longitude":-57.83976
+    },{
+      "name":"Juan L. Lacaze",
+      "latitude":-34.43333,
+      "longitude":-57.41667
+    },{
+      "name":"Nueva Helvecia",
+      "latitude":-34.3,
+      "longitude":-57.23333
+    },{
+      "name":"Nueva Palmira",
+      "latitude":-33.88333,
+      "longitude":-58.41667
+    },{
+      "name":"Rosario",
+      "latitude":-34.31667,
+      "longitude":-57.35
+    },{
+      "name":"Tarariras",
+      "latitude":-34.28333,
+      "longitude":-57.61667
+    }]
+  },{
+    "name":"Departamento de Durazno",
+    "cities":[{
+      "name":"Durazno",
+      "latitude":-33.41306,
+      "longitude":-56.50056
+    },{
+      "name":"Paso de los Toros",
+      "latitude":-32.81667,
+      "longitude":-56.51667
+    },{
+      "name":"Sarandi del Yi",
+      "latitude":-33.35,
+      "longitude":-55.63333
+    }]
+  },{
+    "name":"Departamento de Flores",
+    "cities":[{
+      "name":"Trinidad",
+      "latitude":-33.5165,
+      "longitude":-56.89957
+    },{
+      "name":"Trinidad",
+      "latitude":-33.53889,
+      "longitude":-56.88861
+    }]
+  },{
+    "name":"Departamento de Florida",
+    "cities":[{
+      "name":"Florida",
+      "latitude":-34.09556,
+      "longitude":-56.21417
+    },{
+      "name":"Sarandi Grande",
+      "latitude":-33.73333,
+      "longitude":-56.33333
+    }]
+  },{
+    "name":"Departamento de Lavalleja",
+    "cities":[{
+      "name":"Jose Pedro Varela",
+      "latitude":-33.45,
+      "longitude":-54.53333
+    },{
+      "name":"Minas",
+      "latitude":-34.37589,
+      "longitude":-55.23771
+    }]
+  },{
+    "name":"Departamento de Maldonado",
+    "cities":[{
+      "name":"Maldonado",
+      "latitude":-34.9,
+      "longitude":-54.95
+    },{
+      "name":"Pan de Azucar",
+      "latitude":-34.8,
+      "longitude":-55.23333
+    },{
+      "name":"Piriapolis",
+      "latitude":-34.86819,
+      "longitude":-55.27436
+    },{
+      "name":"Punta del Este",
+      "latitude":-34.96667,
+      "longitude":-54.95
+    },{
+      "name":"San Carlos",
+      "latitude":-34.8,
+      "longitude":-54.91667
+    }]
+  },{
+    "name":"Departamento de Montevideo",
+    "cities":[{
+      "name":"Montevideo",
+      "latitude":-34.90328,
+      "longitude":-56.18816
+    }]
+  },{
+    "name":"Departamento de Paysandu",
+    "cities":[{
+      "name":"Guichon",
+      "latitude":-32.35,
+      "longitude":-57.2
+    },{
+      "name":"Paysandu",
+      "latitude":-32.32139,
+      "longitude":-58.07556
+    }]
+  },{
+    "name":"Departamento de Rio Negro",
+    "cities":[{
+      "name":"Fray Bentos",
+      "latitude":-33.1325,
+      "longitude":-58.29556
+    },{
+      "name":"Young",
+      "latitude":-32.68333,
+      "longitude":-57.63333
+    }]
+  },{
+    "name":"Departamento de Rivera",
+    "cities":[{
+      "name":"Rivera",
+      "latitude":-30.90534,
+      "longitude":-55.55076
+    },{
+      "name":"Tranqueras",
+      "latitude":-31.2,
+      "longitude":-55.75
+    }]
+  },{
+    "name":"Departamento de Rocha",
+    "cities":[{
+      "name":"Castillos",
+      "latitude":-34.16667,
+      "longitude":-53.83333
+    },{
+      "name":"Chuy",
+      "latitude":-33.69707,
+      "longitude":-53.46162
+    },{
+      "name":"Lascano",
+      "latitude":-33.66667,
+      "longitude":-54.2
+    },{
+      "name":"Rocha",
+      "latitude":-34.48333,
+      "longitude":-54.33333
+    }]
+  },{
+    "name":"Departamento de Salto",
+    "cities":[{
+      "name":"Salto",
+      "latitude":-31.38333,
+      "longitude":-57.96667
+    }]
+  },{
+    "name":"Departamento de San Jose",
+    "cities":[{
+      "name":"Delta del Tigre",
+      "latitude":-34.76333,
+      "longitude":-56.38528
+    },{
+      "name":"Libertad",
+      "latitude":-34.63333,
+      "longitude":-56.61917
+    },{
+      "name":"San Jose de Mayo",
+      "latitude":-34.3375,
+      "longitude":-56.71361
+    }]
+  },{
+    "name":"Departamento de Soriano",
+    "cities":[{
+      "name":"Dolores",
+      "latitude":-33.53009,
+      "longitude":-58.21701
+    },{
+      "name":"Mercedes",
+      "latitude":-33.2524,
+      "longitude":-58.03047
+    }]
+  },{
+    "name":"Departamento de Tacuarembo",
+    "cities":[{
+      "name":"Tacuarembo",
+      "latitude":-31.73333,
+      "longitude":-55.98333
+    }]
+  },{
+    "name":"Departamento de Treinta y Tres",
+    "cities":[{
+      "name":"Treinta y Tres",
+      "latitude":-33.23333,
+      "longitude":-54.38333
+    }]
+  }]
+}

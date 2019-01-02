@@ -1,0 +1,132 @@
+{
+  "name":"Trinidad and Tobago",
+  "regions":[{
+    "name":"Arima",
+    "cities":[{
+      "name":"Arima",
+      "latitude":10.63333,
+      "longitude":-61.28333
+    }]
+  },{
+    "name":"Chaguanas",
+    "cities":[{
+      "name":"Chaguanas",
+      "latitude":10.51667,
+      "longitude":-61.41667
+    }]
+  },{
+    "name":"City of Port of Spain",
+    "cities":[{
+      "name":"Port-of-Spain",
+      "latitude":10.66668,
+      "longitude":-61.51889
+    }]
+  },{
+    "name":"Couva-Tabaquite-Talparo",
+    "cities":[{
+      "name":"Couva",
+      "latitude":10.42248,
+      "longitude":-61.46748
+    }]
+  },{
+    "name":"Diego Martin",
+    "cities":[{
+      "name":"Petit Valley",
+      "latitude":10.7,
+      "longitude":-61.53333
+    }]
+  },{
+    "name":"Eastern Tobago",
+    "cities":[{
+      "name":"Roxborough",
+      "latitude":11.25,
+      "longitude":-60.58333
+    }]
+  },{
+    "name":"Mayaro",
+    "cities":[{
+      "name":"Rio Claro",
+      "latitude":10.3,
+      "longitude":-61.18333
+    }]
+  },{
+    "name":"Penal/Debe",
+    "cities":[{
+      "name":"Penal",
+      "latitude":10.16667,
+      "longitude":-61.46667
+    }]
+  },{
+    "name":"Point Fortin",
+    "cities":[{
+      "name":"Point Fortin",
+      "latitude":10.18333,
+      "longitude":-61.68333
+    }]
+  },{
+    "name":"Princes Town",
+    "cities":[{
+      "name":"Princes Town",
+      "latitude":10.26667,
+      "longitude":-61.38333
+    }]
+  },{
+    "name":"San Fernando",
+    "cities":[{
+      "name":"Marabella",
+      "latitude":10.30618,
+      "longitude":-61.44671
+    },{
+      "name":"Mon Repos",
+      "latitude":10.27979,
+      "longitude":-61.4459
+    },{
+      "name":"San Fernando",
+      "latitude":10.28333,
+      "longitude":-61.46667
+    }]
+  },{
+    "name":"San Juan/Laventille",
+    "cities":[{
+      "name":"Laventille",
+      "latitude":10.64917,
+      "longitude":-61.49889
+    }]
+  },{
+    "name":"Sangre Grande",
+    "cities":[{
+      "name":"Sangre Grande",
+      "latitude":10.58333,
+      "longitude":-61.11667
+    }]
+  },{
+    "name":"Siparia",
+    "cities":[{
+      "name":"Siparia",
+      "latitude":10.13333,
+      "longitude":-61.5
+    }]
+  },{
+    "name":"Tobago",
+    "cities":[{
+      "name":"Scarborough",
+      "latitude":11.18333,
+      "longitude":-60.73333
+    }]
+  },{
+    "name":"Tunapuna/Piarco",
+    "cities":[{
+      "name":"Arouca",
+      "latitude":10.62877,
+      "longitude":-61.33487
+    },{
+      "name":"Paradise",
+      "latitude":10.65298,
+      "longitude":-61.36298
+    },{
+      "name":"Tunapuna",
+      "latitude":10.63333,
+      "longitude":-61.38333
+    }]
+  }]
+}

@@ -1,0 +1,11 @@
+{
+  "name":"Vatican",
+  "regions":[{
+    "name":"Vatican",
+    "cities":[{
+      "name":"Vatican City",
+      "latitude":41.90236,
+      "longitude":12.45332
+    }]
+  }]
+}

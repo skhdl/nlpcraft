@@ -1,0 +1,25 @@
+{
+  "name":"Wallis and Futuna",
+  "regions":[{
+    "name":"Circonscription dAlo",
+    "cities":[{
+      "name":"Alo",
+      "latitude":-14.31096,
+      "longitude":-178.11094
+    }]
+  },{
+    "name":"Circonscription dUvea",
+    "cities":[{
+      "name":"Mata-Utu",
+      "latitude":-13.28163,
+      "longitude":-176.17453
+    }]
+  },{
+    "name":"Circonscription de Sigave",
+    "cities":[{
+      "name":"Sigave",
+      "latitude":-14.29034,
+      "longitude":-178.16551
+    }]
+  }]
+}

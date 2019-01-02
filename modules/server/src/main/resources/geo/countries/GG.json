@@ -1,0 +1,38 @@
+{
+  "name":"Guernsey",
+  "regions":[{
+    "name":"Castel",
+    "cities":[]
+  },{
+    "name":"Forest",
+    "cities":[]
+  },{
+    "name":"Saint Andrew",
+    "cities":[]
+  },{
+    "name":"Saint Martin",
+    "cities":[]
+  },{
+    "name":"Saint Peter Port",
+    "cities":[{
+      "name":"Saint Peter Port",
+      "latitude":49.45981,
+      "longitude":-2.53527
+    }]
+  },{
+    "name":"Saint Pierre du Bois",
+    "cities":[]
+  },{
+    "name":"Saint Sampson",
+    "cities":[]
+  },{
+    "name":"Saint Saviour",
+    "cities":[]
+  },{
+    "name":"Torteval",
+    "cities":[]
+  },{
+    "name":"Vale",
+    "cities":[]
+  }]
+}

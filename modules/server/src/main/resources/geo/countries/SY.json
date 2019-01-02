@@ -1,0 +1,358 @@
+{
+  "name":"Syria",
+  "regions":[{
+    "name":"Al-Hasakah Governorate",
+    "cities":[{
+      "name":"Ad Darbasiyah",
+      "latitude":37.07279,
+      "longitude":40.65199
+    },{
+      "name":"Al Hasakah",
+      "latitude":36.50237,
+      "longitude":40.74772
+    }]
+  },{
+    "name":"Aleppo Governorate",
+    "cities":[{
+      "name":"Al Bab",
+      "latitude":36.36994,
+      "longitude":37.51788
+    },{
+      "name":"Aleppo",
+      "latitude":36.20124,
+      "longitude":37.16117
+    },{
+      "name":"As Safirah",
+      "latitude":36.07696,
+      "longitude":37.37251
+    },{
+      "name":"Dayr Hafir",
+      "latitude":36.15694,
+      "longitude":37.70778
+    },{
+      "name":"I`zaz",
+      "latitude":36.58662,
+      "longitude":37.04628
+    },{
+      "name":"Jarabulus",
+      "latitude":36.8175,
+      "longitude":38.01111
+    },{
+      "name":"Manbij",
+      "latitude":36.52815,
+      "longitude":37.95495
+    },{
+      "name":"Nubl",
+      "latitude":36.37867,
+      "longitude":36.99294
+    },{
+      "name":"Tadif",
+      "latitude":36.34814,
+      "longitude":37.5309
+    },{
+      "name":"Tall Rif`at",
+      "latitude":36.47362,
+      "longitude":37.09672
+    },{
+      "name":"`Afrin",
+      "latitude":36.51194,
+      "longitude":36.86954
+    }]
+  },{
+    "name":"Ar-Raqqah Governorate",
+    "cities":[{
+      "name":"Ar Raqqah",
+      "latitude":35.95283,
+      "longitude":39.00788
+    },{
+      "name":"Ath Thawrah",
+      "latitude":35.83453,
+      "longitude":38.54659
+    }]
+  },{
+    "name":"As-Suwayda Governorate",
+    "cities":[{
+      "name":"As Suwayda",
+      "latitude":32.70896,
+      "longitude":36.56951
+    },{
+      "name":"Salakhid",
+      "latitude":32.87271,
+      "longitude":36.57271
+    },{
+      "name":"Shahba",
+      "latitude":32.85514,
+      "longitude":36.62896
+    }]
+  },{
+    "name":"Damascus Governorate",
+    "cities":[{
+      "name":"Damascus",
+      "latitude":33.5102,
+      "longitude":36.29128
+    }]
+  },{
+    "name":"Daraa Governorate",
+    "cities":[{
+      "name":"Al Harak",
+      "latitude":32.74932,
+      "longitude":36.30994
+    },{
+      "name":"As Sanamayn",
+      "latitude":33.07227,
+      "longitude":36.18382
+    },{
+      "name":"Ash Shaykh Miskin",
+      "latitude":32.82944,
+      "longitude":36.15933
+    },{
+      "name":"Dara",
+      "latitude":32.61889,
+      "longitude":36.10213
+    },{
+      "name":"Inkhil",
+      "latitude":33.01797,
+      "longitude":36.12806
+    },{
+      "name":"Izra`",
+      "latitude":32.8706,
+      "longitude":36.25453
+    },{
+      "name":"Jasim",
+      "latitude":32.99233,
+      "longitude":36.06018
+    },{
+      "name":"Tafas",
+      "latitude":32.73564,
+      "longitude":36.06694
+    }]
+  },{
+    "name":"Deir ez-Zor Governorate",
+    "cities":[{
+      "name":"Al Mayadin",
+      "latitude":35.02089,
+      "longitude":40.45346
+    },{
+      "name":"Albu Kamal",
+      "latitude":34.45,
+      "longitude":40.91861
+    },{
+      "name":"Deir ez-Zor",
+      "latitude":35.33588,
+      "longitude":40.14084
+    },{
+      "name":"Hajin",
+      "latitude":34.6927,
+      "longitude":40.827
+    },{
+      "name":"Subaykhan",
+      "latitude":34.85444,
+      "longitude":40.60833
+    }]
+  },{
+    "name":"Hama Governorate",
+    "cities":[{
+      "name":"As Salamiyah",
+      "latitude":35.01127,
+      "longitude":37.05324
+    },{
+      "name":"Halfaya",
+      "latitude":35.26014,
+      "longitude":36.60581
+    },{
+      "name":"Hamah",
+      "latitude":35.13179,
+      "longitude":36.75783
+    },{
+      "name":"Kafr Zayta",
+      "latitude":35.37425,
+      "longitude":36.6033
+    },{
+      "name":"Masyaf",
+      "latitude":35.0653,
+      "longitude":36.3406
+    },{
+      "name":"Souran",
+      "latitude":35.29193,
+      "longitude":36.74848
+    },{
+      "name":"Tayyibat al Imam",
+      "latitude":35.26592,
+      "longitude":36.71219
+    }]
+  },{
+    "name":"Homs Governorate",
+    "cities":[{
+      "name":"Al Qaryatayn",
+      "latitude":34.22956,
+      "longitude":37.24066
+    },{
+      "name":"Al Qusayr",
+      "latitude":34.50914,
+      "longitude":36.57975
+    },{
+      "name":"Ar Rastan",
+      "latitude":34.92653,
+      "longitude":36.73238
+    },{
+      "name":"Homs",
+      "latitude":34.72682,
+      "longitude":36.72339
+    },{
+      "name":"Kafr Laha",
+      "latitude":34.89469,
+      "longitude":36.49582
+    },{
+      "name":"Mukharram al Fawqani",
+      "latitude":34.81521,
+      "longitude":37.08677
+    },{
+      "name":"Tadmur",
+      "latitude":34.56077,
+      "longitude":38.28055
+    },{
+      "name":"Tallbisah",
+      "latitude":34.84063,
+      "longitude":36.73093
+    },{
+      "name":"Tallkalakh",
+      "latitude":34.66842,
+      "longitude":36.25995
+    }]
+  },{
+    "name":"Idlib Governorate",
+    "cities":[{
+      "name":"Ad Dana",
+      "latitude":36.21252,
+      "longitude":36.76978
+    },{
+      "name":"Binnish",
+      "latitude":35.95664,
+      "longitude":36.7138
+    },{
+      "name":"Idlib",
+      "latitude":35.93062,
+      "longitude":36.63393
+    },{
+      "name":"Jisr ash Shughur",
+      "latitude":35.81426,
+      "longitude":36.32062
+    },{
+      "name":"Kafr Nubl",
+      "latitude":35.61376,
+      "longitude":36.56449
+    },{
+      "name":"Kafr Takharim",
+      "latitude":36.1168,
+      "longitude":36.51522
+    },{
+      "name":"Khan Shaykhun",
+      "latitude":35.44208,
+      "longitude":36.65095
+    },{
+      "name":"Ma`arratmisrin",
+      "latitude":36.01152,
+      "longitude":36.67183
+    },{
+      "name":"Salqin",
+      "latitude":36.13951,
+      "longitude":36.45413
+    },{
+      "name":"Saraqib",
+      "latitude":35.86447,
+      "longitude":36.80591
+    }]
+  },{
+    "name":"Latakia Governorate",
+    "cities":[{
+      "name":"Jablah",
+      "latitude":35.36211,
+      "longitude":35.92759
+    },{
+      "name":"Latakia",
+      "latitude":35.53168,
+      "longitude":35.79011
+    }]
+  },{
+    "name":"Muhafazat Rif Dimashq",
+    "cities":[{
+      "name":"Al Kiswah",
+      "latitude":33.3581,
+      "longitude":36.2419
+    },{
+      "name":"Al Qutayfah",
+      "latitude":33.73848,
+      "longitude":36.60071
+    },{
+      "name":"An Nabk",
+      "latitude":34.02547,
+      "longitude":36.72837
+    },{
+      "name":"At Tall",
+      "latitude":33.61033,
+      "longitude":36.3107
+    },{
+      "name":"Az Zabadani",
+      "latitude":33.72488,
+      "longitude":36.1005
+    },{
+      "name":"Darayya",
+      "latitude":33.45834,
+      "longitude":36.23256
+    },{
+      "name":"Douma",
+      "latitude":33.57175,
+      "longitude":36.4027
+    },{
+      "name":"Harasta",
+      "latitude":33.55869,
+      "longitude":36.36515
+    },{
+      "name":"Jayrud",
+      "latitude":33.8074,
+      "longitude":36.74036
+    },{
+      "name":"Qarah",
+      "latitude":34.1527,
+      "longitude":36.74152
+    },{
+      "name":"Qatana",
+      "latitude":33.43646,
+      "longitude":36.07757
+    },{
+      "name":"Yabrud",
+      "latitude":33.96736,
+      "longitude":36.65741
+    },{
+      "name":"`Irbin",
+      "latitude":33.53719,
+      "longitude":36.36635
+    }]
+  },{
+    "name":"Quneitra Governorate",
+    "cities":[{
+      "name":"Al Qunaytirah",
+      "latitude":33.12594,
+      "longitude":35.82461
+    }]
+  },{
+    "name":"Tartus Governorate",
+    "cities":[{
+      "name":"Baniyas",
+      "latitude":35.18188,
+      "longitude":35.94871
+    },{
+      "name":"Duraykish",
+      "latitude":34.89637,
+      "longitude":36.13138
+    },{
+      "name":"Satita",
+      "latitude":34.81836,
+      "longitude":36.11376
+    },{
+      "name":"Tartouss",
+      "latitude":34.88902,
+      "longitude":35.88659
+    }]
+  }]
+}

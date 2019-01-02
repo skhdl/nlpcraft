@@ -1,0 +1,25 @@
+{
+  "name":"Kiribati",
+  "regions":[{
+    "name":"Gilbert Islands",
+    "cities":[{
+      "name":"Betio Village",
+      "latitude":1.35797,
+      "longitude":172.92105
+    },{
+      "name":"Bikenibeu Village",
+      "latitude":1.3673,
+      "longitude":173.12415
+    },{
+      "name":"Tarawa",
+      "latitude":1.3278,
+      "longitude":172.97696
+    }]
+  },{
+    "name":"Line Islands",
+    "cities":[]
+  },{
+    "name":"Phoenix Islands",
+    "cities":[]
+  }]
+}

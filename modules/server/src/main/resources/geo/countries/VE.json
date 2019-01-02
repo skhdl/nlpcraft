@@ -1,0 +1,511 @@
+{
+  "name":"Venezuela",
+  "regions":[{
+    "name":"Dependencias Federales",
+    "cities":[]
+  },{
+    "name":"Distrito Capital",
+    "cities":[{
+      "name":"Caracas",
+      "latitude":10.48801,
+      "longitude":-66.87919
+    }]
+  },{
+    "name":"Estado Amazonas",
+    "cities":[{
+      "name":"Puerto Ayacucho",
+      "latitude":5.66389,
+      "longitude":-67.62361
+    }]
+  },{
+    "name":"Estado Anzoategui",
+    "cities":[{
+      "name":"Anaco",
+      "latitude":9.43889,
+      "longitude":-64.47278
+    },{
+      "name":"Barcelona",
+      "latitude":10.13333,
+      "longitude":-64.7
+    },{
+      "name":"Cantaura",
+      "latitude":9.30571,
+      "longitude":-64.35841
+    },{
+      "name":"El Tigre",
+      "latitude":8.88752,
+      "longitude":-64.24544
+    },{
+      "name":"Puerto La Cruz",
+      "latitude":10.21667,
+      "longitude":-64.61667
+    },{
+      "name":"San Jose de Guanipa",
+      "latitude":8.88724,
+      "longitude":-64.16512
+    }]
+  },{
+    "name":"Estado Apure",
+    "cities":[{
+      "name":"Guasdualito",
+      "latitude":7.24241,
+      "longitude":-70.73236
+    },{
+      "name":"San Fernando Apure",
+      "latitude":7.88782,
+      "longitude":-67.47236
+    }]
+  },{
+    "name":"Estado Aragua",
+    "cities":[{
+      "name":"Cagua",
+      "latitude":10.18634,
+      "longitude":-67.45935
+    },{
+      "name":"El Limon",
+      "latitude":10.30589,
+      "longitude":-67.63212
+    },{
+      "name":"La Victoria",
+      "latitude":10.21844,
+      "longitude":-67.33017
+    },{
+      "name":"Las Tejerias",
+      "latitude":10.25237,
+      "longitude":-67.18472
+    },{
+      "name":"Maracay",
+      "latitude":10.24694,
+      "longitude":-67.59583
+    },{
+      "name":"Palo Negro",
+      "latitude":10.17389,
+      "longitude":-67.54194
+    },{
+      "name":"San Mateo",
+      "latitude":10.21302,
+      "longitude":-67.42365
+    },{
+      "name":"Turmero",
+      "latitude":10.22388,
+      "longitude":-67.47288
+    },{
+      "name":"Villa de Cura",
+      "latitude":10.03863,
+      "longitude":-67.48938
+    }]
+  },{
+    "name":"Estado Barinas",
+    "cities":[{
+      "name":"Alto Barinas",
+      "latitude":8.5931,
+      "longitude":-70.2261
+    },{
+      "name":"Barinas",
+      "latitude":8.62261,
+      "longitude":-70.20749
+    },{
+      "name":"Barinitas",
+      "latitude":8.76222,
+      "longitude":-70.41111
+    }]
+  },{
+    "name":"Estado Bolivar",
+    "cities":[{
+      "name":"Ciudad Bolivar",
+      "latitude":8.12923,
+      "longitude":-63.54086
+    },{
+      "name":"Ciudad Guayana",
+      "latitude":8.35122,
+      "longitude":-62.64102
+    },{
+      "name":"Santa Elena de Uairen",
+      "latitude":4.60226,
+      "longitude":-61.11025
+    },{
+      "name":"Upata",
+      "latitude":8.00861,
+      "longitude":-62.39889
+    }]
+  },{
+    "name":"Estado Carabobo",
+    "cities":[{
+      "name":"Guacara",
+      "latitude":10.22609,
+      "longitude":-67.877
+    },{
+      "name":"Guigue",
+      "latitude":10.08528,
+      "longitude":-67.77917
+    },{
+      "name":"Mariara",
+      "latitude":10.29644,
+      "longitude":-67.71813
+    },{
+      "name":"Moron",
+      "latitude":10.48889,
+      "longitude":-68.20028
+    },{
+      "name":"Puerto Cabello",
+      "latitude":10.47306,
+      "longitude":-68.0125
+    },{
+      "name":"San Joaquin",
+      "latitude":10.263,
+      "longitude":-67.7858
+    },{
+      "name":"Tacarigua",
+      "latitude":10.08621,
+      "longitude":-67.91982
+    },{
+      "name":"Valencia",
+      "latitude":10.16202,
+      "longitude":-68.00765
+    }]
+  },{
+    "name":"Estado Cojedes",
+    "cities":[{
+      "name":"San Carlos",
+      "latitude":9.66124,
+      "longitude":-68.58268
+    },{
+      "name":"Tinaquillo",
+      "latitude":9.91861,
+      "longitude":-68.30472
+    }]
+  },{
+    "name":"Estado Falcon",
+    "cities":[{
+      "name":"Chichiriviche",
+      "latitude":10.9333,
+      "longitude":-68.27716
+    },{
+      "name":"Coro",
+      "latitude":11.4045,
+      "longitude":-69.67344
+    },{
+      "name":"Punta Cardon",
+      "latitude":11.65806,
+      "longitude":-70.215
+    },{
+      "name":"Punto Fijo",
+      "latitude":11.6956,
+      "longitude":-70.19957
+    },{
+      "name":"Tucacas",
+      "latitude":10.7906,
+      "longitude":-68.32577
+    }]
+  },{
+    "name":"Estado Guarico",
+    "cities":[{
+      "name":"Altagracia de Orituco",
+      "latitude":9.86005,
+      "longitude":-66.38139
+    },{
+      "name":"Calabozo",
+      "latitude":8.92416,
+      "longitude":-67.42929
+    },{
+      "name":"San Juan de los Morros",
+      "latitude":9.91152,
+      "longitude":-67.35381
+    },{
+      "name":"Valle de La Pascua",
+      "latitude":9.21554,
+      "longitude":-66.00734
+    },{
+      "name":"Zaraza",
+      "latitude":9.35029,
+      "longitude":-65.32452
+    }]
+  },{
+    "name":"Estado Lara",
+    "cities":[{
+      "name":"Barquisimeto",
+      "latitude":10.07389,
+      "longitude":-69.32278
+    },{
+      "name":"Carora",
+      "latitude":10.17554,
+      "longitude":-70.08274
+    },{
+      "name":"El Tocuyo",
+      "latitude":9.78734,
+      "longitude":-69.7937
+    },{
+      "name":"Los Rastrojos",
+      "latitude":10.02588,
+      "longitude":-69.24166
+    },{
+      "name":"Quibor",
+      "latitude":9.92866,
+      "longitude":-69.6201
+    }]
+  },{
+    "name":"Estado Merida",
+    "cities":[{
+      "name":"Ejido",
+      "latitude":8.54665,
+      "longitude":-71.24087
+    },{
+      "name":"El Vigia",
+      "latitude":8.61366,
+      "longitude":-71.65284
+    },{
+      "name":"Merida",
+      "latitude":8.59524,
+      "longitude":-71.1434
+    },{
+      "name":"Mucumpiz",
+      "latitude":8.41667,
+      "longitude":-71.13333
+    }]
+  },{
+    "name":"Estado Miranda",
+    "cities":[{
+      "name":"Baruta",
+      "latitude":10.43398,
+      "longitude":-66.87662
+    },{
+      "name":"Carrizal",
+      "latitude":10.34985,
+      "longitude":-66.98632
+    },{
+      "name":"Caucaguita",
+      "latitude":10.35782,
+      "longitude":-66.80252
+    },{
+      "name":"Caucaguito",
+      "latitude":10.48666,
+      "longitude":-66.73799
+    },{
+      "name":"Chacao",
+      "latitude":10.49598,
+      "longitude":-66.85347
+    },{
+      "name":"Charallave",
+      "latitude":10.24247,
+      "longitude":-66.85723
+    },{
+      "name":"Cua",
+      "latitude":10.15892,
+      "longitude":-66.88575
+    },{
+      "name":"El Cafetal",
+      "latitude":10.46941,
+      "longitude":-66.83063
+    },{
+      "name":"El Hatillo",
+      "latitude":10.42994,
+      "longitude":-66.8161
+    },{
+      "name":"Guarenas",
+      "latitude":10.46736,
+      "longitude":-66.60663
+    },{
+      "name":"Guatire",
+      "latitude":10.4762,
+      "longitude":-66.54266
+    },{
+      "name":"La Dolorita",
+      "latitude":10.4883,
+      "longitude":-66.78608
+    },{
+      "name":"Los Dos Caminos",
+      "latitude":10.49389,
+      "longitude":-66.82863
+    },{
+      "name":"Los Teques",
+      "latitude":10.34447,
+      "longitude":-67.04325
+    },{
+      "name":"Ocumare del Tuy",
+      "latitude":10.11649,
+      "longitude":-66.77609
+    },{
+      "name":"Petare",
+      "latitude":10.47226,
+      "longitude":-66.80155
+    },{
+      "name":"San Antonio de Los Altos",
+      "latitude":10.38854,
+      "longitude":-66.95179
+    },{
+      "name":"Santa Teresa",
+      "latitude":10.23409,
+      "longitude":-66.66308
+    }]
+  },{
+    "name":"Estado Monagas",
+    "cities":[{
+      "name":"Maturin",
+      "latitude":9.74569,
+      "longitude":-63.18323
+    }]
+  },{
+    "name":"Estado Nueva Esparta",
+    "cities":[{
+      "name":"Juan Griego",
+      "latitude":11.08172,
+      "longitude":-63.96549
+    },{
+      "name":"La Asuncion",
+      "latitude":11.03333,
+      "longitude":-63.86278
+    },{
+      "name":"Porlamar",
+      "latitude":10.95796,
+      "longitude":-63.84906
+    }]
+  },{
+    "name":"Estado Portuguesa",
+    "cities":[{
+      "name":"Acarigua",
+      "latitude":9.55451,
+      "longitude":-69.19564
+    },{
+      "name":"Araure",
+      "latitude":9.56009,
+      "longitude":-69.21475
+    },{
+      "name":"Guanare",
+      "latitude":9.04183,
+      "longitude":-69.74206
+    },{
+      "name":"Villa Bruzual",
+      "latitude":9.33278,
+      "longitude":-69.12083
+    }]
+  },{
+    "name":"Estado Sucre",
+    "cities":[{
+      "name":"Carupano",
+      "latitude":10.66781,
+      "longitude":-63.25849
+    },{
+      "name":"Cumana",
+      "latitude":10.45397,
+      "longitude":-64.18256
+    },{
+      "name":"Gueiria",
+      "latitude":10.57806,
+      "longitude":-62.29772
+    }]
+  },{
+    "name":"Estado Tachira",
+    "cities":[{
+      "name":"La Fria",
+      "latitude":8.21523,
+      "longitude":-72.24888
+    },{
+      "name":"Rubio",
+      "latitude":7.70131,
+      "longitude":-72.35569
+    },{
+      "name":"San Antonio del Tachira",
+      "latitude":7.81454,
+      "longitude":-72.4431
+    },{
+      "name":"San Cristobal",
+      "latitude":7.76694,
+      "longitude":-72.225
+    },{
+      "name":"San Juan de Colon",
+      "latitude":8.03125,
+      "longitude":-72.26053
+    },{
+      "name":"Tariba",
+      "latitude":7.8188,
+      "longitude":-72.22427
+    }]
+  },{
+    "name":"Estado Trujillo",
+    "cities":[{
+      "name":"Trujillo",
+      "latitude":9.37084,
+      "longitude":-70.43472
+    },{
+      "name":"Valera",
+      "latitude":9.31778,
+      "longitude":-70.60361
+    }]
+  },{
+    "name":"Estado Vargas",
+    "cities":[{
+      "name":"Caraballeda",
+      "latitude":10.61119,
+      "longitude":-66.85215
+    },{
+      "name":"Catia La Mar",
+      "latitude":10.60383,
+      "longitude":-67.03034
+    },{
+      "name":"La Guaira",
+      "latitude":10.59901,
+      "longitude":-66.9346
+    },{
+      "name":"Maiquetia",
+      "latitude":10.59621,
+      "longitude":-66.95485
+    }]
+  },{
+    "name":"Estado Yaracuy",
+    "cities":[{
+      "name":"Chivacoa",
+      "latitude":10.16028,
+      "longitude":-68.895
+    },{
+      "name":"Nirgua",
+      "latitude":10.15526,
+      "longitude":-68.5663
+    },{
+      "name":"San Felipe",
+      "latitude":10.33991,
+      "longitude":-68.74247
+    },{
+      "name":"Yaritagua",
+      "latitude":10.08,
+      "longitude":-69.12611
+    }]
+  },{
+    "name":"Estado Zulia",
+    "cities":[{
+      "name":"Cabimas",
+      "latitude":10.38828,
+      "longitude":-71.43992
+    },{
+      "name":"La Villa del Rosario",
+      "latitude":10.3258,
+      "longitude":-72.31343
+    },{
+      "name":"Lagunillas",
+      "latitude":10.13008,
+      "longitude":-71.25946
+    },{
+      "name":"Machiques",
+      "latitude":10.06444,
+      "longitude":-72.545
+    },{
+      "name":"Maracaibo",
+      "latitude":10.63167,
+      "longitude":-71.64056
+    },{
+      "name":"San Carlos del Zulia",
+      "latitude":9.00003,
+      "longitude":-71.91352
+    },{
+      "name":"Santa Rita",
+      "latitude":10.53642,
+      "longitude":-71.51104
+    }]
+  },{
+    "name":"Territorio Federal Delta Amacuro",
+    "cities":[{
+      "name":"Tucupita",
+      "latitude":9.06222,
+      "longitude":-62.05102
+    }]
+  }]
+}

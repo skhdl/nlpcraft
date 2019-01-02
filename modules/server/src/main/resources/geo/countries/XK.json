@@ -1,0 +1,275 @@
+{
+  "name":"Kosovo",
+  "regions":[{
+    "name":"Hani i Elezit",
+    "cities":[{
+      "name":"Hani i Elezit",
+      "latitude":42.15,
+      "longitude":21.29667
+    }]
+  },{
+    "name":"Kamenica",
+    "cities":[{
+      "name":"Kamenica",
+      "latitude":42.57806,
+      "longitude":21.58028
+    }]
+  },{
+    "name":"Komuna e Decanit",
+    "cities":[{
+      "name":"Decan",
+      "latitude":42.54018,
+      "longitude":20.28793
+    },{
+      "name":"Isniq",
+      "latitude":42.5575,
+      "longitude":20.30278
+    },{
+      "name":"Strellc i Eperm",
+      "latitude":42.57843,
+      "longitude":20.29398
+    }]
+  },{
+    "name":"Komuna e Dragashit",
+    "cities":[{
+      "name":"Dragash",
+      "latitude":42.0265,
+      "longitude":20.65333
+    }]
+  },{
+    "name":"Komuna e Drenasit",
+    "cities":[{
+      "name":"Glogovac",
+      "latitude":42.62833,
+      "longitude":20.89389
+    }]
+  },{
+    "name":"Komuna e Ferizajt",
+    "cities":[{
+      "name":"Ferizaj",
+      "latitude":42.37056,
+      "longitude":21.15528
+    }]
+  },{
+    "name":"Komuna e Gjakoves",
+    "cities":[{
+      "name":"Gjakove",
+      "latitude":42.38028,
+      "longitude":20.43083
+    }]
+  },{
+    "name":"Komuna e Gjilanit",
+    "cities":[{
+      "name":"Gjilan",
+      "latitude":42.46045,
+      "longitude":21.46986
+    }]
+  },{
+    "name":"Komuna e Gracanices",
+    "cities":[{
+      "name":"Glanica",
+      "latitude":42.54933,
+      "longitude":21.06336
+    }]
+  },{
+    "name":"Komuna e Istogut",
+    "cities":[{
+      "name":"Istok",
+      "latitude":42.78083,
+      "longitude":20.4875
+    }]
+  },{
+    "name":"Komuna e Junikut",
+    "cities":[{
+      "name":"Junik",
+      "latitude":42.47583,
+      "longitude":20.27722
+    }]
+  },{
+    "name":"Komuna e Kacanikut",
+    "cities":[{
+      "name":"Kacanik",
+      "latitude":42.23194,
+      "longitude":21.25944
+    }]
+  },{
+    "name":"Komuna e Klines",
+    "cities":[{
+      "name":"Klina",
+      "latitude":42.62167,
+      "longitude":20.57778
+    }]
+  },{
+    "name":"Komuna e Kllokotit",
+    "cities":[{
+      "name":"Klokot",
+      "latitude":42.37139,
+      "longitude":21.37444
+    }]
+  },{
+    "name":"Komuna e Leposaviqit",
+    "cities":[{
+      "name":"Leposaviq",
+      "latitude":43.10389,
+      "longitude":20.80278
+    }]
+  },{
+    "name":"Komuna e Malisheves",
+    "cities":[{
+      "name":"Llazice",
+      "latitude":42.55528,
+      "longitude":20.76333
+    },{
+      "name":"Malisevo",
+      "latitude":42.48222,
+      "longitude":20.74583
+    }]
+  },{
+    "name":"Komuna e Mamushes",
+    "cities":[{
+      "name":"Mamusa",
+      "latitude":42.33083,
+      "longitude":20.72694
+    }]
+  },{
+    "name":"Komuna e Mitrovices",
+    "cities":[{
+      "name":"Mitrovice",
+      "latitude":42.88333,
+      "longitude":20.86667
+    }]
+  },{
+    "name":"Komuna e Obiliqit",
+    "cities":[{
+      "name":"Obiliq",
+      "latitude":42.68694,
+      "longitude":21.07028
+    }]
+  },{
+    "name":"Komuna e Parteshit",
+    "cities":[{
+      "name":"Partesh",
+      "latitude":42.40194,
+      "longitude":21.43361
+    }]
+  },{
+    "name":"Komuna e Pejes",
+    "cities":[{
+      "name":"Peje",
+      "latitude":42.65913,
+      "longitude":20.28828
+    }]
+  },{
+    "name":"Komuna e Prishtines",
+    "cities":[{
+      "name":"Pristina",
+      "latitude":42.67272,
+      "longitude":21.16688
+    }]
+  },{
+    "name":"Komuna e Ranillugut",
+    "cities":[{
+      "name":"Ranilug",
+      "latitude":42.49222,
+      "longitude":21.59889
+    }]
+  },{
+    "name":"Komuna e Shtimes",
+    "cities":[{
+      "name":"Shtime",
+      "latitude":42.43306,
+      "longitude":21.03972
+    }]
+  },{
+    "name":"Komuna e Skenderajt",
+    "cities":[{
+      "name":"Srbica",
+      "latitude":42.74667,
+      "longitude":20.78861
+    }]
+  },{
+    "name":"Komuna e Therandes",
+    "cities":[{
+      "name":"Suva Reka",
+      "latitude":42.35861,
+      "longitude":20.825
+    }]
+  },{
+    "name":"Komuna e Vitise",
+    "cities":[{
+      "name":"Vitina",
+      "latitude":42.32139,
+      "longitude":21.35833
+    }]
+  },{
+    "name":"Komuna e Zubin Potokut",
+    "cities":[{
+      "name":"Zubin Potok",
+      "latitude":42.91444,
+      "longitude":20.68972
+    }]
+  },{
+    "name":"Kosovo Polje",
+    "cities":[{
+      "name":"Kosovo Polje",
+      "latitude":42.66394,
+      "longitude":21.09611
+    }]
+  },{
+    "name":"Lipjan",
+    "cities":[{
+      "name":"Lipljan",
+      "latitude":42.52167,
+      "longitude":21.12583
+    }]
+  },{
+    "name":"Novo Brdo",
+    "cities":[{
+      "name":"Novo Brdo",
+      "latitude":42.6159,
+      "longitude":21.43405
+    }]
+  },{
+    "name":"Opstina Strpce",
+    "cities":[{
+      "name":"Strpce",
+      "latitude":42.23944,
+      "longitude":21.02722
+    }]
+  },{
+    "name":"Opstina Zvecan",
+    "cities":[{
+      "name":"Zvecan",
+      "latitude":42.9075,
+      "longitude":20.84028
+    }]
+  },{
+    "name":"Orahovac",
+    "cities":[{
+      "name":"Orahovac",
+      "latitude":42.39944,
+      "longitude":20.65472
+    }]
+  },{
+    "name":"Podujevo",
+    "cities":[{
+      "name":"Podujeva",
+      "latitude":42.91056,
+      "longitude":21.19306
+    }]
+  },{
+    "name":"Prizren",
+    "cities":[{
+      "name":"Prizren",
+      "latitude":42.21389,
+      "longitude":20.73972
+    }]
+  },{
+    "name":"Vushtrri",
+    "cities":[{
+      "name":"Vushtrri",
+      "latitude":42.82306,
+      "longitude":20.9675
+    }]
+  }]
+}

@@ -1,0 +1,66 @@
+{
+  "name":"French Polynesia",
+  "regions":[{
+    "name":"French Polynesia",
+    "cities":[{
+      "name":"Afaahiti",
+      "latitude":-17.75,
+      "longitude":-149.28333
+    }]
+  },{
+    "name":"Iles Australes",
+    "cities":[]
+  },{
+    "name":"Iles Marquises",
+    "cities":[{
+      "name":"Taiohae",
+      "latitude":-8.91093,
+      "longitude":-140.09972
+    }]
+  },{
+    "name":"Iles Sous-le-Vent",
+    "cities":[{
+      "name":"Uturoa",
+      "latitude":-16.72891,
+      "longitude":-151.44482
+    }]
+  },{
+    "name":"Iles Tuamotu-Gambier",
+    "cities":[]
+  },{
+    "name":"Iles du Vent",
+    "cities":[{
+      "name":"Arue",
+      "latitude":-17.51667,
+      "longitude":-149.5
+    },{
+      "name":"Faaa",
+      "latitude":-17.55,
+      "longitude":-149.6
+    },{
+      "name":"Mahina",
+      "latitude":-17.50648,
+      "longitude":-149.48899
+    },{
+      "name":"Paea",
+      "latitude":-17.68333,
+      "longitude":-149.58333
+    },{
+      "name":"Papao",
+      "latitude":-17.75,
+      "longitude":-149.55
+    },{
+      "name":"Papeete",
+      "latitude":-17.53733,
+      "longitude":-149.5665
+    },{
+      "name":"Pirae",
+      "latitude":-17.51667,
+      "longitude":-149.53333
+    },{
+      "name":"Punaauia",
+      "latitude":-17.63333,
+      "longitude":-149.6
+    }]
+  }]
+}

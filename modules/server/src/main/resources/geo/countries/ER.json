@@ -1,0 +1,62 @@
+{
+  "name":"Eritrea",
+  "regions":[{
+    "name":"Anseba Region",
+    "cities":[{
+      "name":"Keren",
+      "latitude":15.77792,
+      "longitude":38.45107
+    }]
+  },{
+    "name":"Debub Region",
+    "cities":[{
+      "name":"Adi Keyh",
+      "latitude":14.84444,
+      "longitude":39.37722
+    },{
+      "name":"Dekemhare",
+      "latitude":15.07,
+      "longitude":39.0475
+    },{
+      "name":"Mendefera",
+      "latitude":14.88722,
+      "longitude":38.81528
+    }]
+  },{
+    "name":"Gash-Barka Region",
+    "cities":[{
+      "name":"Akordat",
+      "latitude":15.54798,
+      "longitude":37.88291
+    },{
+      "name":"Barentu",
+      "latitude":15.10582,
+      "longitude":37.59067
+    }]
+  },{
+    "name":"Maekel Region",
+    "cities":[{
+      "name":"Asmara",
+      "latitude":15.33805,
+      "longitude":38.93184
+    }]
+  },{
+    "name":"Northern Red Sea Region",
+    "cities":[{
+      "name":"Massawa",
+      "latitude":15.60811,
+      "longitude":39.47455
+    }]
+  },{
+    "name":"Southern Red Sea Region",
+    "cities":[{
+      "name":"Assab",
+      "latitude":13.00917,
+      "longitude":42.73944
+    },{
+      "name":"Edd",
+      "latitude":13.93088,
+      "longitude":41.6938
+    }]
+  }]
+}

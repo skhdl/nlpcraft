@@ -1,0 +1,25 @@
+{
+  "name":"Saint Helena",
+  "regions":[{
+    "name":"Ascension",
+    "cities":[{
+      "name":"Georgetown",
+      "latitude":-7.93333,
+      "longitude":-14.41667
+    }]
+  },{
+    "name":"Saint Helena",
+    "cities":[{
+      "name":"Jamestown",
+      "latitude":-15.93872,
+      "longitude":-5.71675
+    }]
+  },{
+    "name":"Tristan da Cunha",
+    "cities":[{
+      "name":"Edinburgh of the Seven Seas",
+      "latitude":-37.06757,
+      "longitude":-12.31155
+    }]
+  }]
+}

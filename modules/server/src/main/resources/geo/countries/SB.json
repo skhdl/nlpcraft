@@ -1,0 +1,63 @@
+{
+  "name":"Solomon Islands",
+  "regions":[{
+    "name":"Central Province",
+    "cities":[{
+      "name":"Tulaghi",
+      "latitude":-9.09958,
+      "longitude":160.14759
+    }]
+  },{
+    "name":"Choiseul",
+    "cities":[{
+      "name":"Taroa",
+      "latitude":-9.22389,
+      "longitude":161.2013
+    }]
+  },{
+    "name":"Guadalcanal Province",
+    "cities":[{
+      "name":"Honiara",
+      "latitude":-9.43333,
+      "longitude":159.95
+    }]
+  },{
+    "name":"Isabel Province",
+    "cities":[{
+      "name":"Buala",
+      "latitude":-8.14497,
+      "longitude":159.59212
+    }]
+  },{
+    "name":"Makira-Ulawa Province",
+    "cities":[{
+      "name":"Kirakira",
+      "latitude":-10.45442,
+      "longitude":161.92045
+    }]
+  },{
+    "name":"Malaita Province",
+    "cities":[{
+      "name":"Auki",
+      "latitude":-8.76761,
+      "longitude":160.70335
+    }]
+  },{
+    "name":"Rennell and Bellona",
+    "cities":[]
+  },{
+    "name":"Temotu Province",
+    "cities":[{
+      "name":"Lata",
+      "latitude":-10.71667,
+      "longitude":165.83333
+    }]
+  },{
+    "name":"Western Province",
+    "cities":[{
+      "name":"Gizo",
+      "latitude":-8.10303,
+      "longitude":156.84186
+    }]
+  }]
+}

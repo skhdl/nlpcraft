@@ -1,0 +1,40 @@
+{
+  "name":"Micronesia",
+  "regions":[{
+    "name":"State of Chuuk",
+    "cities":[{
+      "name":"Weno Town",
+      "latitude":7.45154,
+      "longitude":151.8468
+    }]
+  },{
+    "name":"State of Kosrae",
+    "cities":[{
+      "name":"Tofol",
+      "latitude":5.32479,
+      "longitude":163.00781
+    }]
+  },{
+    "name":"State of Pohnpei",
+    "cities":[{
+      "name":"Kolonia",
+      "latitude":6.964,
+      "longitude":158.2062
+    },{
+      "name":"Kolonia Town",
+      "latitude":6.964,
+      "longitude":158.206
+    },{
+      "name":"Palikir-National Government Center",
+      "latitude":6.92477,
+      "longitude":158.16109
+    }]
+  },{
+    "name":"State of Yap",
+    "cities":[{
+      "name":"Colonia",
+      "latitude":9.51638,
+      "longitude":138.12167
+    }]
+  }]
+}

@@ -1,0 +1,81 @@
+{
+  "name":"Saint Lucia",
+  "regions":[{
+    "name":"Quarter of Anse-la-Raye",
+    "cities":[{
+      "name":"Anse La Raye",
+      "latitude":13.93333,
+      "longitude":-61.03333
+    }]
+  },{
+    "name":"Quarter of Castries",
+    "cities":[{
+      "name":"Bisee",
+      "latitude":14.01667,
+      "longitude":-60.96667
+    },{
+      "name":"Castries",
+      "latitude":13.9957,
+      "longitude":-61.00614
+    }]
+  },{
+    "name":"Quarter of Choiseul",
+    "cities":[{
+      "name":"Choiseul",
+      "latitude":13.77273,
+      "longitude":-61.04931
+    }]
+  },{
+    "name":"Quarter of Dauphin",
+    "cities":[]
+  },{
+    "name":"Quarter of Dennery",
+    "cities":[{
+      "name":"Dennery",
+      "latitude":13.89958,
+      "longitude":-60.88786
+    }]
+  },{
+    "name":"Quarter of Gros-Islet",
+    "cities":[{
+      "name":"Gros Islet",
+      "latitude":14.06667,
+      "longitude":-60.95
+    }]
+  },{
+    "name":"Quarter of Laborie",
+    "cities":[{
+      "name":"Laborie",
+      "latitude":13.75,
+      "longitude":-60.98333
+    }]
+  },{
+    "name":"Quarter of Micoud",
+    "cities":[{
+      "name":"Micoud",
+      "latitude":13.81667,
+      "longitude":-60.9
+    }]
+  },{
+    "name":"Quarter of Praslin",
+    "cities":[{
+      "name":"Praslin",
+      "latitude":13.86667,
+      "longitude":-60.9
+    }]
+  },{
+    "name":"Quarter of Soufriere",
+    "cities":[{
+      "name":"Soufriere",
+      "latitude":13.85616,
+      "longitude":-61.0566
+    }]
+  },{
+    "name":"Quarter of Vieux-Fort",
+    "cities":[{
+      "name":"Vieux Fort",
+      "latitude":13.71667,
+      "longitude":-60.95
+    }]
+  }]
+}

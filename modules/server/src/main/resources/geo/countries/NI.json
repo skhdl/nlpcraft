@@ -1,0 +1,355 @@
+{
+  "name":"Nicaragua",
+  "regions":[{
+    "name":"Departamento de Boaco",
+    "cities":[{
+      "name":"Boaco",
+      "latitude":12.47224,
+      "longitude":-85.6586
+    },{
+      "name":"Camoapa",
+      "latitude":12.38386,
+      "longitude":-85.51157
+    },{
+      "name":"San Lorenzo",
+      "latitude":12.37781,
+      "longitude":-85.66741
+    }]
+  },{
+    "name":"Departamento de Carazo",
+    "cities":[{
+      "name":"Diriamba",
+      "latitude":11.85842,
+      "longitude":-86.23878
+    },{
+      "name":"Dolores",
+      "latitude":11.85621,
+      "longitude":-86.21575
+    },{
+      "name":"Jinotepe",
+      "latitude":11.84962,
+      "longitude":-86.19903
+    },{
+      "name":"San Marcos",
+      "latitude":11.90949,
+      "longitude":-86.20351
+    },{
+      "name":"Santa Teresa",
+      "latitude":11.74321,
+      "longitude":-86.21413
+    }]
+  },{
+    "name":"Departamento de Chinandega",
+    "cities":[{
+      "name":"Chichigalpa",
+      "latitude":12.57758,
+      "longitude":-87.02705
+    },{
+      "name":"Chinandega",
+      "latitude":12.62937,
+      "longitude":-87.13105
+    },{
+      "name":"Corinto",
+      "latitude":12.48199,
+      "longitude":-87.17336
+    },{
+      "name":"El Realejo",
+      "latitude":12.54307,
+      "longitude":-87.16466
+    },{
+      "name":"El Viejo",
+      "latitude":12.6633,
+      "longitude":-87.16722
+    },{
+      "name":"Posoltega",
+      "latitude":12.54481,
+      "longitude":-86.97992
+    },{
+      "name":"Puerto Morazan",
+      "latitude":12.85042,
+      "longitude":-87.17167
+    },{
+      "name":"Somotillo",
+      "latitude":13.04328,
+      "longitude":-86.90645
+    }]
+  },{
+    "name":"Departamento de Chontales",
+    "cities":[{
+      "name":"Acoyapa",
+      "latitude":11.97028,
+      "longitude":-85.17113
+    },{
+      "name":"El Ayote",
+      "latitude":12.19046,
+      "longitude":-85.28737
+    },{
+      "name":"Juigalpa",
+      "latitude":12.10629,
+      "longitude":-85.36452
+    },{
+      "name":"Santo Domingo",
+      "latitude":12.26356,
+      "longitude":-85.08078
+    },{
+      "name":"Santo Tomas",
+      "latitude":12.06938,
+      "longitude":-85.09059
+    },{
+      "name":"Villa Sandino",
+      "latitude":12.0483,
+      "longitude":-84.99362
+    }]
+  },{
+    "name":"Departamento de Esteli",
+    "cities":[{
+      "name":"Condega",
+      "latitude":13.36502,
+      "longitude":-86.39846
+    },{
+      "name":"Esteli",
+      "latitude":13.09185,
+      "longitude":-86.35384
+    }]
+  },{
+    "name":"Departamento de Granada",
+    "cities":[{
+      "name":"Diriomo",
+      "latitude":11.87612,
+      "longitude":-86.05184
+    },{
+      "name":"Granada",
+      "latitude":11.92988,
+      "longitude":-85.95602
+    },{
+      "name":"Nandaime",
+      "latitude":11.75696,
+      "longitude":-86.05286
+    }]
+  },{
+    "name":"Departamento de Jinotega",
+    "cities":[{
+      "name":"Jinotega",
+      "latitude":13.09171,
+      "longitude":-86.00177
+    },{
+      "name":"San Rafael del Norte",
+      "latitude":13.21248,
+      "longitude":-86.11059
+    }]
+  },{
+    "name":"Departamento de Leon",
+    "cities":[{
+      "name":"El Sauce",
+      "latitude":12.88687,
+      "longitude":-86.53903
+    },{
+      "name":"La Paz Centro",
+      "latitude":12.34,
+      "longitude":-86.67528
+    },{
+      "name":"Larreynaga",
+      "latitude":12.67692,
+      "longitude":-86.57193
+    },{
+      "name":"Leon",
+      "latitude":12.43787,
+      "longitude":-86.87804
+    },{
+      "name":"Nagarote",
+      "latitude":12.26593,
+      "longitude":-86.56474
+    },{
+      "name":"Telica",
+      "latitude":12.522,
+      "longitude":-86.85938
+    }]
+  },{
+    "name":"Departamento de Madriz",
+    "cities":[{
+      "name":"Somoto",
+      "latitude":13.48082,
+      "longitude":-86.58208
+    }]
+  },{
+    "name":"Departamento de Managua",
+    "cities":[{
+      "name":"Carlos Fonseca Amador",
+      "latitude":11.98009,
+      "longitude":-86.50571
+    },{
+      "name":"Ciudad Sandino",
+      "latitude":12.15889,
+      "longitude":-86.34417
+    },{
+      "name":"El Crucero",
+      "latitude":11.99008,
+      "longitude":-86.30954
+    },{
+      "name":"Managua",
+      "latitude":12.13282,
+      "longitude":-86.2504
+    },{
+      "name":"San Rafael del Sur",
+      "latitude":11.84854,
+      "longitude":-86.43839
+    },{
+      "name":"Tipitapa",
+      "latitude":12.19732,
+      "longitude":-86.09706
+    }]
+  },{
+    "name":"Departamento de Masaya",
+    "cities":[{
+      "name":"La Concepcion",
+      "latitude":11.93711,
+      "longitude":-86.18976
+    },{
+      "name":"Masatepe",
+      "latitude":11.9184,
+      "longitude":-86.14467
+    },{
+      "name":"Masaya",
+      "latitude":11.97444,
+      "longitude":-86.09417
+    },{
+      "name":"Nandasmo",
+      "latitude":11.92411,
+      "longitude":-86.12072
+    },{
+      "name":"Nindiri",
+      "latitude":12.00386,
+      "longitude":-86.12128
+    },{
+      "name":"Niquinohomo",
+      "latitude":11.90518,
+      "longitude":-86.09446
+    },{
+      "name":"Ticuantepe",
+      "latitude":12.02263,
+      "longitude":-86.20493
+    },{
+      "name":"Tisma",
+      "latitude":12.08194,
+      "longitude":-86.01739
+    }]
+  },{
+    "name":"Departamento de Matagalpa",
+    "cities":[{
+      "name":"Ciudad Dario",
+      "latitude":12.73143,
+      "longitude":-86.12402
+    },{
+      "name":"Matagalpa",
+      "latitude":12.92559,
+      "longitude":-85.91747
+    },{
+      "name":"Matiguas",
+      "latitude":12.83734,
+      "longitude":-85.46218
+    },{
+      "name":"Rio Blanco",
+      "latitude":12.93435,
+      "longitude":-85.22354
+    }]
+  },{
+    "name":"Departamento de Nueva Segovia",
+    "cities":[{
+      "name":"Jalapa",
+      "latitude":13.92222,
+      "longitude":-86.12346
+    },{
+      "name":"Ocotal",
+      "latitude":13.63208,
+      "longitude":-86.47516
+    },{
+      "name":"Quilali",
+      "latitude":13.56695,
+      "longitude":-86.026
+    },{
+      "name":"Wiwili",
+      "latitude":13.62679,
+      "longitude":-85.8254
+    }]
+  },{
+    "name":"Departamento de Rio San Juan",
+    "cities":[{
+      "name":"San Carlos",
+      "latitude":11.1236,
+      "longitude":-84.77795
+    }]
+  },{
+    "name":"Departamento de Rivas",
+    "cities":[{
+      "name":"Belen",
+      "latitude":11.50299,
+      "longitude":-85.88934
+    },{
+      "name":"Potosi",
+      "latitude":11.49416,
+      "longitude":-85.8568
+    },{
+      "name":"Rivas",
+      "latitude":11.43716,
+      "longitude":-85.82632
+    },{
+      "name":"San Jorge",
+      "latitude":11.45584,
+      "longitude":-85.80308
+    },{
+      "name":"San Juan del Sur",
+      "latitude":11.25292,
+      "longitude":-85.87049
+    }]
+  },{
+    "name":"Region Autonoma Atlantico Norte",
+    "cities":[{
+      "name":"Bilwi",
+      "latitude":14.03507,
+      "longitude":-83.38882
+    },{
+      "name":"Bonanza",
+      "latitude":14.02885,
+      "longitude":-84.59103
+    },{
+      "name":"Siuna",
+      "latitude":13.73321,
+      "longitude":-84.77725
+    },{
+      "name":"Waslala",
+      "latitude":13.23333,
+      "longitude":-85.38333
+    },{
+      "name":"Waspam",
+      "latitude":14.74189,
+      "longitude":-83.9717
+    }]
+  },{
+    "name":"Region Autonoma Atlantico Sur",
+    "cities":[{
+      "name":"Bluefields",
+      "latitude":12.01366,
+      "longitude":-83.76353
+    },{
+      "name":"Bocana de Paiwas",
+      "latitude":12.78571,
+      "longitude":-85.12269
+    },{
+      "name":"Corn Island",
+      "latitude":12.16943,
+      "longitude":-83.04176
+    },{
+      "name":"Laguna de Perlas",
+      "latitude":12.34294,
+      "longitude":-83.67123
+    },{
+      "name":"Nueva Guinea",
+      "latitude":11.68758,
+      "longitude":-84.45616
+    },{
+      "name":"Rama",
+      "latitude":12.15965,
+      "longitude":-84.21952
+    }]
+  }]
+}

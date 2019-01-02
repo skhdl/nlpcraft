@@ -1,0 +1,46 @@
+{
+  "name":"Vanuatu",
+  "regions":[{
+    "name":"Malampa Province",
+    "cities":[{
+      "name":"Lakatoro",
+      "latitude":-16.09992,
+      "longitude":167.41636
+    }]
+  },{
+    "name":"Penama Province",
+    "cities":[{
+      "name":"Saratamata",
+      "latitude":-15.29031,
+      "longitude":167.96679
+    }]
+  },{
+    "name":"Sanma Province",
+    "cities":[{
+      "name":"Luganville",
+      "latitude":-15.51989,
+      "longitude":167.16235
+    }]
+  },{
+    "name":"Shefa Province",
+    "cities":[{
+      "name":"Port-Vila",
+      "latitude":-17.73381,
+      "longitude":168.32188
+    }]
+  },{
+    "name":"Tafea Province",
+    "cities":[{
+      "name":"Isangel",
+      "latitude":-19.55,
+      "longitude":169.26667
+    }]
+  },{
+    "name":"Torba Province",
+    "cities":[{
+      "name":"Sola",
+      "latitude":-13.88333,
+      "longitude":167.55
+    }]
+  }]
+}

@@ -1,0 +1,41 @@
+{
+  "name":"Bermuda",
+  "regions":[{
+    "name":"Devonshire Parish",
+    "cities":[]
+  },{
+    "name":"Hamilton",
+    "cities":[{
+      "name":"Hamilton",
+      "latitude":32.29528,
+      "longitude":-64.78107
+    }]
+  },{
+    "name":"Hamilton Parish",
+    "cities":[]
+  },{
+    "name":"Paget Parish",
+    "cities":[]
+  },{
+    "name":"Pembroke Parish",
+    "cities":[]
+  },{
+    "name":"Saint George",
+    "cities":[]
+  },{
+    "name":"Saint Georges Parish",
+    "cities":[]
+  },{
+    "name":"Sandys Parish",
+    "cities":[]
+  },{
+    "name":"Smiths Parish",
+    "cities":[]
+  },{
+    "name":"Southampton Parish",
+    "cities":[]
+  },{
+    "name":"Warwick Parish",
+    "cities":[]
+  }]
+}

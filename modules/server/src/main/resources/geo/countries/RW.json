@@ -1,0 +1,67 @@
+{
+  "name":"Rwanda",
+  "regions":[{
+    "name":"Eastern Province",
+    "cities":[{
+      "name":"Kibungo",
+      "latitude":-2.1597,
+      "longitude":30.5427
+    },{
+      "name":"Rwamagana",
+      "latitude":-1.9487,
+      "longitude":30.4347
+    }]
+  },{
+    "name":"Kigali Province",
+    "cities":[{
+      "name":"Kigali",
+      "latitude":-1.94995,
+      "longitude":30.05885
+    }]
+  },{
+    "name":"Northern Province",
+    "cities":[{
+      "name":"Byumba",
+      "latitude":-1.5763,
+      "longitude":30.0675
+    },{
+      "name":"Musanze",
+      "latitude":-1.49984,
+      "longitude":29.63497
+    }]
+  },{
+    "name":"Southern Province",
+    "cities":[{
+      "name":"Butare",
+      "latitude":-2.59667,
+      "longitude":29.73944
+    },{
+      "name":"Gitarama",
+      "latitude":-2.07444,
+      "longitude":29.75667
+    },{
+      "name":"Nyanza",
+      "latitude":-2.35187,
+      "longitude":29.75089
+    },{
+      "name":"Nzega",
+      "latitude":-2.479,
+      "longitude":29.5564
+    }]
+  },{
+    "name":"Western Province",
+    "cities":[{
+      "name":"Cyangugu",
+      "latitude":-2.4846,
+      "longitude":28.9075
+    },{
+      "name":"Gisenyi",
+      "latitude":-1.70278,
+      "longitude":29.25639
+    },{
+      "name":"Kibuye",
+      "latitude":-2.06028,
+      "longitude":29.34778
+    }]
+  }]
+}

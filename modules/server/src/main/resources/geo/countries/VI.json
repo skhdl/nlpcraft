@@ -1,0 +1,25 @@
+{
+  "name":"U.S. Virgin Islands",
+  "regions":[{
+    "name":"Saint Croix Island",
+    "cities":[{
+      "name":"Saint Croix",
+      "latitude":17.72751,
+      "longitude":-64.74698
+    }]
+  },{
+    "name":"Saint John Island",
+    "cities":[{
+      "name":"Cruz Bay",
+      "latitude":18.33134,
+      "longitude":-64.79375
+    }]
+  },{
+    "name":"Saint Thomas Island",
+    "cities":[{
+      "name":"Charlotte Amalie",
+      "latitude":18.3419,
+      "longitude":-64.9307
+    }]
+  }]
+}

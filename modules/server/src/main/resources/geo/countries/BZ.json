@@ -1,0 +1,58 @@
+{
+  "name":"Belize",
+  "regions":[{
+    "name":"Belize District",
+    "cities":[{
+      "name":"Belize City",
+      "latitude":17.49952,
+      "longitude":-88.19756
+    },{
+      "name":"San Pedro",
+      "latitude":17.91598,
+      "longitude":-87.9659
+    }]
+  },{
+    "name":"Cayo District",
+    "cities":[{
+      "name":"Belmopan",
+      "latitude":17.25,
+      "longitude":-88.76667
+    },{
+      "name":"Benque Viejo del Carmen",
+      "latitude":17.075,
+      "longitude":-89.13917
+    },{
+      "name":"San Ignacio",
+      "latitude":17.1576,
+      "longitude":-89.07964
+    }]
+  },{
+    "name":"Corozal District",
+    "cities":[{
+      "name":"Corozal",
+      "latitude":18.39375,
+      "longitude":-88.38849
+    }]
+  },{
+    "name":"Orange Walk District",
+    "cities":[{
+      "name":"Orange Walk",
+      "latitude":18.08124,
+      "longitude":-88.56328
+    }]
+  },{
+    "name":"Stann Creek District",
+    "cities":[{
+      "name":"Dangriga",
+      "latitude":16.96921,
+      "longitude":-88.23206
+    }]
+  },{
+    "name":"Toledo District",
+    "cities":[{
+      "name":"Punta Gorda",
+      "latitude":16.09835,
+      "longitude":-88.8097
+    }]
+  }]
+}

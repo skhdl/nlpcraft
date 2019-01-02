@@ -1,0 +1,52 @@
+{
+  "name":"Tuvalu",
+  "regions":[{
+    "name":"Funafuti",
+    "cities":[{
+      "name":"Funafuti",
+      "latitude":-8.52425,
+      "longitude":179.19417
+    }]
+  },{
+    "name":"Nanumanga",
+    "cities":[{
+      "name":"Toga Village",
+      "latitude":-6.28764,
+      "longitude":176.31472
+    }]
+  },{
+    "name":"Nanumea",
+    "cities":[]
+  },{
+    "name":"Niutao",
+    "cities":[{
+      "name":"Kulia Village",
+      "latitude":-6.10819,
+      "longitude":177.33393
+    }]
+  },{
+    "name":"Nui",
+    "cities":[{
+      "name":"Tanrake Village",
+      "latitude":-7.24562,
+      "longitude":177.14511
+    }]
+  },{
+    "name":"Nukufetau",
+    "cities":[{
+      "name":"Savave Village",
+      "latitude":-8.02731,
+      "longitude":178.31351
+    }]
+  },{
+    "name":"Nukulaelae",
+    "cities":[]
+  },{
+    "name":"Vaitupu",
+    "cities":[{
+      "name":"Asau Village",
+      "latitude":-7.49026,
+      "longitude":178.68016
+    }]
+  }]
+}

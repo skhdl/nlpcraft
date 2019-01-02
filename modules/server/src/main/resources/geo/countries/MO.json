@@ -1,0 +1,14 @@
+{
+  "name":"Macao",
+  "regions":[{
+    "name":"Concelho das Ilhas",
+    "cities":[]
+  },{
+    "name":"Concelho de Macau",
+    "cities":[{
+      "name":"Macau",
+      "latitude":22.20056,
+      "longitude":113.54611
+    }]
+  }]
+}

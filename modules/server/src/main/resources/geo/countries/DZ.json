@@ -1,0 +1,1156 @@
+{
+  "name":"Algeria",
+  "regions":[{
+    "name":"Adrar",
+    "cities":[{
+      "name":"Adrar",
+      "latitude":27.87429,
+      "longitude":-0.29388
+    },{
+      "name":"Aoulef",
+      "latitude":26.96667,
+      "longitude":1.08333
+    },{
+      "name":"Reggane",
+      "latitude":26.71576,
+      "longitude":0.1714
+    },{
+      "name":"Timimoun",
+      "latitude":29.26388,
+      "longitude":0.23098
+    }]
+  },{
+    "name":"Annaba",
+    "cities":[{
+      "name":"Annaba",
+      "latitude":36.9,
+      "longitude":7.76667
+    },{
+      "name":"Berrahal",
+      "latitude":36.83528,
+      "longitude":7.45333
+    },{
+      "name":"Drean",
+      "latitude":36.68482,
+      "longitude":7.75111
+    },{
+      "name":"El Hadjar",
+      "latitude":36.80377,
+      "longitude":7.73684
+    }]
+  },{
+    "name":"El Bayadh",
+    "cities":[{
+      "name":"Brezina",
+      "latitude":33.09892,
+      "longitude":1.26082
+    },{
+      "name":"El Abiodh Sidi Cheikh",
+      "latitude":32.893,
+      "longitude":0.54839
+    },{
+      "name":"El Bayadh",
+      "latitude":33.68318,
+      "longitude":1.01927
+    }]
+  },{
+    "name":"El Oued",
+    "cities":[{
+      "name":"Debila",
+      "latitude":33.51667,
+      "longitude":6.95
+    },{
+      "name":"El Oued",
+      "latitude":33.35608,
+      "longitude":6.86319
+    },{
+      "name":"Reguiba",
+      "latitude":33.56391,
+      "longitude":6.70326
+    },{
+      "name":"Robbah",
+      "latitude":33.27966,
+      "longitude":6.90984
+    }]
+  },{
+    "name":"El Tarf",
+    "cities":[{
+      "name":"Ben Mehidi",
+      "latitude":36.76967,
+      "longitude":7.9064
+    },{
+      "name":"Besbes",
+      "latitude":36.70222,
+      "longitude":7.84722
+    },{
+      "name":"El Kala",
+      "latitude":36.89556,
+      "longitude":8.44333
+    },{
+      "name":"El Tarf",
+      "latitude":36.7672,
+      "longitude":8.31377
+    }]
+  },{
+    "name":"Illizi",
+    "cities":[{
+      "name":"Illizi",
+      "latitude":26.48333,
+      "longitude":8.46667
+    }]
+  },{
+    "name":"Oran",
+    "cities":[{
+      "name":"Ain el Bya",
+      "latitude":35.80389,
+      "longitude":-0.30178
+    },{
+      "name":"Ain el Turk",
+      "latitude":35.74381,
+      "longitude":-0.7693
+    },{
+      "name":"Bir el Djir",
+      "latitude":35.72,
+      "longitude":-0.545
+    },{
+      "name":"Bou Tlelis",
+      "latitude":35.57272,
+      "longitude":-0.8996
+    },{
+      "name":"Es Senia",
+      "latitude":35.64779,
+      "longitude":-0.62397
+    },{
+      "name":"Mers el Kebir",
+      "latitude":35.7279,
+      "longitude":-0.7081
+    },{
+      "name":"Oran",
+      "latitude":35.69111,
+      "longitude":-0.64167
+    },{
+      "name":"Sidi ech Chahmi",
+      "latitude":35.65903,
+      "longitude":-0.52168
+    }]
+  },{
+    "name":"Oum el Bouaghi",
+    "cities":[{
+      "name":"Ain Beida",
+      "latitude":35.79639,
+      "longitude":7.39278
+    },{
+      "name":"Ain Fakroun",
+      "latitude":35.97108,
+      "longitude":6.87374
+    },{
+      "name":"Ain Kercha",
+      "latitude":35.92472,
+      "longitude":6.69528
+    },{
+      "name":"El Aouinet",
+      "latitude":35.86691,
+      "longitude":7.88672
+    },{
+      "name":"Meskiana",
+      "latitude":35.63058,
+      "longitude":7.66606
+    },{
+      "name":"Oum el Bouaghi",
+      "latitude":35.87541,
+      "longitude":7.11353
+    }]
+  },{
+    "name":"Wilaya d Alger",
+    "cities":[{
+      "name":"Ain Taya",
+      "latitude":36.79333,
+      "longitude":3.28694
+    },{
+      "name":"Algiers",
+      "latitude":36.7525,
+      "longitude":3.04197
+    },{
+      "name":"Bab Ezzouar",
+      "latitude":36.72615,
+      "longitude":3.18291
+    },{
+      "name":"Birkhadem",
+      "latitude":36.71499,
+      "longitude":3.05002
+    },{
+      "name":"Bordj el Kiffan",
+      "latitude":36.74871,
+      "longitude":3.19248
+    },{
+      "name":"Dar el Beida",
+      "latitude":36.71333,
+      "longitude":3.2125
+    },{
+      "name":"Rouiba",
+      "latitude":36.73829,
+      "longitude":3.28079
+    }]
+  },{
+    "name":"Wilaya de Ain Defla",
+    "cities":[{
+      "name":"Ain Defla",
+      "latitude":36.26406,
+      "longitude":1.9679
+    },{
+      "name":"El Abadia",
+      "latitude":36.26951,
+      "longitude":1.68609
+    },{
+      "name":"El Attaf",
+      "latitude":36.22393,
+      "longitude":1.67187
+    },{
+      "name":"Khemis Miliana",
+      "latitude":36.26104,
+      "longitude":2.22015
+    },{
+      "name":"Theniet el Had",
+      "latitude":35.87111,
+      "longitude":2.02806
+    }]
+  },{
+    "name":"Wilaya de Ain Temouchent",
+    "cities":[{
+      "name":"Ain Temouchent",
+      "latitude":35.29749,
+      "longitude":-1.14037
+    },{
+      "name":"Beni Saf",
+      "latitude":35.30099,
+      "longitude":-1.38226
+    },{
+      "name":"El Amria",
+      "latitude":35.52439,
+      "longitude":-1.01577
+    },{
+      "name":"El Malah",
+      "latitude":35.39138,
+      "longitude":-1.09238
+    },{
+      "name":"Hammam Bou Hadjar",
+      "latitude":35.37889,
+      "longitude":-0.96778
+    }]
+  },{
+    "name":"Wilaya de Batna",
+    "cities":[{
+      "name":"Ain Touta",
+      "latitude":35.37675,
+      "longitude":5.90001
+    },{
+      "name":"Arris",
+      "latitude":35.25881,
+      "longitude":6.34706
+    },{
+      "name":"Barika",
+      "latitude":35.38901,
+      "longitude":5.36584
+    },{
+      "name":"Batna",
+      "latitude":35.55597,
+      "longitude":6.17414
+    },{
+      "name":"Larbaa",
+      "latitude":36.56471,
+      "longitude":3.15434
+    },{
+      "name":"Merouana",
+      "latitude":35.63106,
+      "longitude":5.91186
+    },{
+      "name":"Ras el Aioun",
+      "latitude":35.67384,
+      "longitude":5.6453
+    },{
+      "name":"Tazoult-Lambese",
+      "latitude":35.48171,
+      "longitude":6.26074
+    }]
+  },{
+    "name":"Wilaya de Bechar",
+    "cities":[{
+      "name":"Bechar",
+      "latitude":31.61667,
+      "longitude":-2.21667
+    }]
+  },{
+    "name":"Wilaya de Bejaia",
+    "cities":[{
+      "name":"Akbou",
+      "latitude":36.4575,
+      "longitude":4.53494
+    },{
+      "name":"Amizour",
+      "latitude":36.64022,
+      "longitude":4.90131
+    },{
+      "name":"Barbacha",
+      "latitude":36.56667,
+      "longitude":4.96667
+    },{
+      "name":"Bejaia",
+      "latitude":36.75587,
+      "longitude":5.08433
+    },{
+      "name":"El Kseur",
+      "latitude":36.67942,
+      "longitude":4.8555
+    },{
+      "name":"Feraoun",
+      "latitude":36.5604,
+      "longitude":4.85454
+    },{
+      "name":"Seddouk",
+      "latitude":36.54722,
+      "longitude":4.68611
+    },{
+      "name":"el hed",
+      "latitude":36.65,
+      "longitude":4.77361
+    }]
+  },{
+    "name":"Wilaya de Biskra",
+    "cities":[{
+      "name":"Biskra",
+      "latitude":34.85038,
+      "longitude":5.72805
+    },{
+      "name":"Oumache",
+      "latitude":34.69292,
+      "longitude":5.68092
+    },{
+      "name":"Sidi Khaled",
+      "latitude":34.387,
+      "longitude":4.98785
+    },{
+      "name":"Sidi Okba",
+      "latitude":34.74512,
+      "longitude":5.89833
+    },{
+      "name":"Tolga",
+      "latitude":34.72224,
+      "longitude":5.37845
+    },{
+      "name":"Zeribet el Oued",
+      "latitude":34.68284,
+      "longitude":6.51109
+    }]
+  },{
+    "name":"Wilaya de Blida",
+    "cities":[{
+      "name":"Beni Mered",
+      "latitude":36.52389,
+      "longitude":2.86131
+    },{
+      "name":"Blida",
+      "latitude":36.47004,
+      "longitude":2.8277
+    },{
+      "name":"Bou Arfa",
+      "latitude":36.46298,
+      "longitude":2.81464
+    },{
+      "name":"Boufarik",
+      "latitude":36.57412,
+      "longitude":2.91214
+    },{
+      "name":"Bougara",
+      "latitude":36.54178,
+      "longitude":3.081
+    },{
+      "name":"Bouinan",
+      "latitude":36.53167,
+      "longitude":2.99194
+    },{
+      "name":"Chebli",
+      "latitude":36.57722,
+      "longitude":3.00917
+    },{
+      "name":"Chiffa",
+      "latitude":36.46293,
+      "longitude":2.73873
+    },{
+      "name":"Meftah",
+      "latitude":36.6204,
+      "longitude":3.22248
+    },{
+      "name":"Sidi Moussa",
+      "latitude":36.60637,
+      "longitude":3.08783
+    },{
+      "name":"Souma",
+      "latitude":36.51833,
+      "longitude":2.90528
+    }]
+  },{
+    "name":"Wilaya de Bordj Bou Arreridj",
+    "cities":[{
+      "name":"Bordj Bou Arreridj",
+      "latitude":36.07322,
+      "longitude":4.76108
+    },{
+      "name":"Bordj Ghdir",
+      "latitude":35.90111,
+      "longitude":4.89806
+    },{
+      "name":"Bordj Zemoura",
+      "latitude":36.27462,
+      "longitude":4.85668
+    },{
+      "name":"El Achir",
+      "latitude":36.06386,
+      "longitude":4.62744
+    },{
+      "name":"Mansourah",
+      "latitude":36.08725,
+      "longitude":4.45192
+    },{
+      "name":"Melouza",
+      "latitude":35.97999,
+      "longitude":4.18665
+    },{
+      "name":"Ras el Oued",
+      "latitude":35.9441,
+      "longitude":5.03107
+    }]
+  },{
+    "name":"Wilaya de Bouira",
+    "cities":[{
+      "name":"Ain Bessem",
+      "latitude":36.29333,
+      "longitude":3.67319
+    },{
+      "name":"Bouira",
+      "latitude":36.37489,
+      "longitude":3.902
+    },{
+      "name":"Chorfa",
+      "latitude":36.36505,
+      "longitude":4.32636
+    },{
+      "name":"Draa el Mizan",
+      "latitude":36.53628,
+      "longitude":3.8334
+    },{
+      "name":"Lakhdaria",
+      "latitude":36.56463,
+      "longitude":3.5933
+    },{
+      "name":"Sour el Ghozlane",
+      "latitude":36.14766,
+      "longitude":3.69123
+    }]
+  },{
+    "name":"Wilaya de Boumerdes",
+    "cities":[{
+      "name":"Arbatache",
+      "latitude":36.63773,
+      "longitude":3.37127
+    },{
+      "name":"Beni Amrane",
+      "latitude":36.66774,
+      "longitude":3.59115
+    },{
+      "name":"Boudouaou",
+      "latitude":36.72735,
+      "longitude":3.40995
+    },{
+      "name":"Boumerdas",
+      "latitude":36.76639,
+      "longitude":3.47717
+    },{
+      "name":"Chabet el Ameur",
+      "latitude":36.63709,
+      "longitude":3.69474
+    },{
+      "name":"Dellys",
+      "latitude":36.91716,
+      "longitude":3.91311
+    },{
+      "name":"Draa Ben Khedda",
+      "latitude":36.73436,
+      "longitude":3.96223
+    },{
+      "name":"Isser",
+      "latitude":36.71859,
+      "longitude":3.66924
+    },{
+      "name":"Khemis el Khechna",
+      "latitude":36.64997,
+      "longitude":3.3308
+    },{
+      "name":"Makouda",
+      "latitude":36.78567,
+      "longitude":4.06273
+    },{
+      "name":"Naciria",
+      "latitude":36.74625,
+      "longitude":3.83163
+    },{
+      "name":"Ouled Moussa",
+      "latitude":36.68394,
+      "longitude":3.36661
+    },{
+      "name":"Reghaia",
+      "latitude":36.73587,
+      "longitude":3.34018
+    },{
+      "name":"Tadmait",
+      "latitude":36.74413,
+      "longitude":3.90045
+    },{
+      "name":"Thenia",
+      "latitude":36.72544,
+      "longitude":3.55665
+    },{
+      "name":"Tizi Gheniff",
+      "latitude":36.58839,
+      "longitude":3.77445
+    }]
+  },{
+    "name":"Wilaya de Chlef",
+    "cities":[{
+      "name":"Abou el Hassan",
+      "latitude":36.41657,
+      "longitude":1.19616
+    },{
+      "name":"Boukadir",
+      "latitude":36.06629,
+      "longitude":1.12602
+    },{
+      "name":"Chlef",
+      "latitude":36.16525,
+      "longitude":1.33452
+    },{
+      "name":"Ech Chettia",
+      "latitude":36.19591,
+      "longitude":1.25538
+    },{
+      "name":"Oued Fodda",
+      "latitude":36.18503,
+      "longitude":1.53299
+    },{
+      "name":"Oued Sly",
+      "latitude":36.10124,
+      "longitude":1.19949
+    },{
+      "name":"Sidi Akkacha",
+      "latitude":36.46472,
+      "longitude":1.30258
+    }]
+  },{
+    "name":"Wilaya de Constantine",
+    "cities":[{
+      "name":"Ain Abid",
+      "latitude":36.23194,
+      "longitude":6.94333
+    },{
+      "name":"Ain Smara",
+      "latitude":36.2674,
+      "longitude":6.50135
+    },{
+      "name":"Constantine",
+      "latitude":36.365,
+      "longitude":6.61472
+    },{
+      "name":"Didouche Mourad",
+      "latitude":36.4525,
+      "longitude":6.63639
+    },{
+      "name":"El Khroub",
+      "latitude":36.26333,
+      "longitude":6.69361
+    },{
+      "name":"Hamma Bouziane",
+      "latitude":36.41205,
+      "longitude":6.59603
+    }]
+  },{
+    "name":"Wilaya de Djelfa",
+    "cities":[{
+      "name":"Ain Oussera",
+      "latitude":35.45139,
+      "longitude":2.90583
+    },{
+      "name":"Ain el Bell",
+      "latitude":34.3438,
+      "longitude":3.22475
+    },{
+      "name":"Birine",
+      "latitude":35.635,
+      "longitude":3.225
+    },{
+      "name":"Charef",
+      "latitude":34.62098,
+      "longitude":2.79503
+    },{
+      "name":"Dar Chioukh",
+      "latitude":34.89638,
+      "longitude":3.48543
+    },{
+      "name":"Djelfa",
+      "latitude":34.67279,
+      "longitude":3.263
+    },{
+      "name":"El Idrissia",
+      "latitude":34.44542,
+      "longitude":2.52749
+    },{
+      "name":"Messaad",
+      "latitude":34.15429,
+      "longitude":3.50309
+    }]
+  },{
+    "name":"Wilaya de Ghardaia",
+    "cities":[{
+      "name":"Berriane",
+      "latitude":32.82648,
+      "longitude":3.7669
+    },{
+      "name":"Ghardaia",
+      "latitude":32.49094,
+      "longitude":3.67347
+    },{
+      "name":"Metlili Chaamba",
+      "latitude":32.26667,
+      "longitude":3.63333
+    }]
+  },{
+    "name":"Wilaya de Guelma",
+    "cities":[{
+      "name":"Boumahra Ahmed",
+      "latitude":36.45833,
+      "longitude":7.51389
+    },{
+      "name":"Guelma",
+      "latitude":36.46214,
+      "longitude":7.42608
+    },{
+      "name":"Heliopolis",
+      "latitude":36.50361,
+      "longitude":7.44278
+    }]
+  },{
+    "name":"Wilaya de Jijel",
+    "cities":[{
+      "name":"Jijel",
+      "latitude":36.82055,
+      "longitude":5.76671
+    }]
+  },{
+    "name":"Wilaya de Khenchela",
+    "cities":[{
+      "name":"Khenchela",
+      "latitude":35.43583,
+      "longitude":7.14333
+    }]
+  },{
+    "name":"Wilaya de Laghouat",
+    "cities":[{
+      "name":"Aflou",
+      "latitude":34.1128,
+      "longitude":2.10228
+    },{
+      "name":"Laghouat",
+      "latitude":33.8,
+      "longitude":2.86514
+    }]
+  },{
+    "name":"Wilaya de MSila",
+    "cities":[{
+      "name":"Ain el Melh",
+      "latitude":34.84146,
+      "longitude":4.16383
+    },{
+      "name":"MSila",
+      "latitude":35.70583,
+      "longitude":4.54194
+    },{
+      "name":"Sidi Aissa",
+      "latitude":35.88548,
+      "longitude":3.77236
+    },{
+      "name":"`Ain el Hadjel",
+      "latitude":35.67003,
+      "longitude":3.88153
+    }]
+  },{
+    "name":"Wilaya de Mascara",
+    "cities":[{
+      "name":"Bou Hanifia el Hamamat",
+      "latitude":35.31473,
+      "longitude":-0.05037
+    },{
+      "name":"Mascara",
+      "latitude":35.39664,
+      "longitude":0.14027
+    },{
+      "name":"Oued el Abtal",
+      "latitude":35.45595,
+      "longitude":0.68778
+    },{
+      "name":"Sig",
+      "latitude":35.52832,
+      "longitude":-0.19369
+    }]
+  },{
+    "name":"Wilaya de Medea",
+    "cities":[{
+      "name":"Ain Boucif",
+      "latitude":35.89123,
+      "longitude":3.1585
+    },{
+      "name":"Berrouaghia",
+      "latitude":36.13516,
+      "longitude":2.91085
+    },{
+      "name":"Ksar el Boukhari",
+      "latitude":35.88889,
+      "longitude":2.74905
+    },{
+      "name":"Medea",
+      "latitude":36.26417,
+      "longitude":2.75393
+    }]
+  },{
+    "name":"Wilaya de Mila",
+    "cities":[{
+      "name":"Chelghoum el Aid",
+      "latitude":36.16286,
+      "longitude":6.16651
+    },{
+      "name":"Mila",
+      "latitude":36.45028,
+      "longitude":6.26444
+    },{
+      "name":"Rouached",
+      "latitude":36.45774,
+      "longitude":6.04267
+    },{
+      "name":"Sidi Merouane",
+      "latitude":36.52056,
+      "longitude":6.26111
+    },{
+      "name":"Telerghma",
+      "latitude":36.11653,
+      "longitude":6.35434
+    }]
+  },{
+    "name":"Wilaya de Mostaganem",
+    "cities":[{
+      "name":"Mostaganem",
+      "latitude":35.93115,
+      "longitude":0.08918
+    }]
+  },{
+    "name":"Wilaya de Naama",
+    "cities":[{
+      "name":"Ain Sefra",
+      "latitude":32.75,
+      "longitude":-0.58333
+    },{
+      "name":"Naama",
+      "latitude":33.26667,
+      "longitude":-0.31667
+    }]
+  },{
+    "name":"Wilaya de Ouargla",
+    "cities":[{
+      "name":"Djamaa",
+      "latitude":33.53388,
+      "longitude":5.99306
+    },{
+      "name":"El Hadjira",
+      "latitude":32.61336,
+      "longitude":5.51259
+    },{
+      "name":"Hassi Messaoud",
+      "latitude":31.68041,
+      "longitude":6.07286
+    },{
+      "name":"Megarine",
+      "latitude":33.19195,
+      "longitude":6.08695
+    },{
+      "name":"Ouargla",
+      "latitude":31.94932,
+      "longitude":5.32502
+    },{
+      "name":"Rouissat",
+      "latitude":31.92427,
+      "longitude":5.35018
+    },{
+      "name":"Sidi Amrane",
+      "latitude":33.49885,
+      "longitude":6.00803
+    },{
+      "name":"Tebesbest",
+      "latitude":33.11667,
+      "longitude":6.08333
+    },{
+      "name":"Touggourt",
+      "latitude":33.10527,
+      "longitude":6.05796
+    }]
+  },{
+    "name":"Wilaya de Relizane",
+    "cities":[{
+      "name":"Ain Merane",
+      "latitude":36.16277,
+      "longitude":0.97037
+    },{
+      "name":"Ammi Moussa",
+      "latitude":35.86781,
+      "longitude":1.11143
+    },{
+      "name":"Djidiouia",
+      "latitude":35.92989,
+      "longitude":0.82871
+    },{
+      "name":"Mazouna",
+      "latitude":36.12232,
+      "longitude":0.89865
+    },{
+      "name":"Oued Rhiou",
+      "latitude":35.96124,
+      "longitude":0.91896
+    },{
+      "name":"Relizane",
+      "latitude":35.73734,
+      "longitude":0.55599
+    },{
+      "name":"Zemoura",
+      "latitude":35.72251,
+      "longitude":0.75509
+    }]
+  },{
+    "name":"Wilaya de Saida",
+    "cities":[{
+      "name":"Ain el Hadjar",
+      "latitude":34.75846,
+      "longitude":0.14528
+    },{
+      "name":"Saida",
+      "latitude":34.83034,
+      "longitude":0.15171
+    }]
+  },{
+    "name":"Wilaya de Setif",
+    "cities":[{
+      "name":"Ain Arnat",
+      "latitude":36.18683,
+      "longitude":5.31347
+    },{
+      "name":"BABOR-VILLE",
+      "latitude":36.48994,
+      "longitude":5.5393
+    },{
+      "name":"Bougaa",
+      "latitude":36.33293,
+      "longitude":5.08843
+    },{
+      "name":"El Eulma",
+      "latitude":36.15281,
+      "longitude":5.69016
+    },{
+      "name":"Salah Bey",
+      "latitude":35.8545,
+      "longitude":5.29053
+    },{
+      "name":"Setif",
+      "latitude":36.19112,
+      "longitude":5.41373
+    }]
+  },{
+    "name":"Wilaya de Sidi Bel Abbes",
+    "cities":[{
+      "name":"Ain el Berd",
+      "latitude":35.36395,
+      "longitude":-0.51278
+    },{
+      "name":"Sfizef",
+      "latitude":35.23464,
+      "longitude":-0.24435
+    },{
+      "name":"Sidi Bel Abbes",
+      "latitude":35.18994,
+      "longitude":-0.63085
+    }]
+  },{
+    "name":"Wilaya de Skikda",
+    "cities":[{
+      "name":"Azzaba",
+      "latitude":36.73944,
+      "longitude":7.10528
+    },{
+      "name":"Kerkera",
+      "latitude":36.92917,
+      "longitude":6.58556
+    },{
+      "name":"Skikda",
+      "latitude":36.87617,
+      "longitude":6.90921
+    },{
+      "name":"Tamalous",
+      "latitude":36.83763,
+      "longitude":6.64018
+    }]
+  },{
+    "name":"Wilaya de Souk Ahras",
+    "cities":[{
+      "name":"Sedrata",
+      "latitude":36.12868,
+      "longitude":7.53376
+    },{
+      "name":"Souk Ahras",
+      "latitude":36.28639,
+      "longitude":7.95111
+    }]
+  },{
+    "name":"Wilaya de Tamanghasset",
+    "cities":[{
+      "name":"I-n-Salah",
+      "latitude":27.19351,
+      "longitude":2.46069
+    },{
+      "name":"Tamanrasset",
+      "latitude":22.785,
+      "longitude":5.52278
+    }]
+  },{
+    "name":"Wilaya de Tebessa",
+    "cities":[{
+      "name":"Bir el Ater",
+      "latitude":34.74488,
+      "longitude":8.06024
+    },{
+      "name":"Cheria",
+      "latitude":35.27306,
+      "longitude":7.75194
+    },{
+      "name":"Hammamet",
+      "latitude":35.44862,
+      "longitude":7.95184
+    },{
+      "name":"Tebessa",
+      "latitude":35.40417,
+      "longitude":8.12417
+    }]
+  },{
+    "name":"Wilaya de Tiaret",
+    "cities":[{
+      "name":"Ain Deheb",
+      "latitude":34.84218,
+      "longitude":1.54698
+    },{
+      "name":"Frenda",
+      "latitude":35.06544,
+      "longitude":1.04945
+    },{
+      "name":"Ksar Chellala",
+      "latitude":35.21222,
+      "longitude":2.31889
+    },{
+      "name":"Mehdia",
+      "latitude":35.43058,
+      "longitude":1.75714
+    },{
+      "name":"Sougueur",
+      "latitude":35.18568,
+      "longitude":1.49612
+    },{
+      "name":"Tiaret",
+      "latitude":35.37103,
+      "longitude":1.31699
+    }]
+  },{
+    "name":"Wilaya de Tindouf",
+    "cities":[{
+      "name":"Tindouf",
+      "latitude":27.67111,
+      "longitude":-8.14744
+    }]
+  },{
+    "name":"Wilaya de Tipaza",
+    "cities":[{
+      "name":"Ain Benian",
+      "latitude":36.80277,
+      "longitude":2.92185
+    },{
+      "name":"Baraki",
+      "latitude":36.66655,
+      "longitude":3.09606
+    },{
+      "name":"Bou Ismail",
+      "latitude":36.64262,
+      "longitude":2.69007
+    },{
+      "name":"Cheraga",
+      "latitude":36.76775,
+      "longitude":2.95924
+    },{
+      "name":"Douera",
+      "latitude":36.67,
+      "longitude":2.94444
+    },{
+      "name":"El Affroun",
+      "latitude":36.4701,
+      "longitude":2.62528
+    },{
+      "name":"Hadjout",
+      "latitude":36.51257,
+      "longitude":2.41382
+    },{
+      "name":"Kolea",
+      "latitude":36.63888,
+      "longitude":2.76845
+    },{
+      "name":"Mouzaia",
+      "latitude":36.46695,
+      "longitude":2.68991
+    },{
+      "name":"Oued el Alleug",
+      "latitude":36.55528,
+      "longitude":2.79028
+    },{
+      "name":"Saoula",
+      "latitude":36.70456,
+      "longitude":3.02462
+    },{
+      "name":"Tipasa",
+      "latitude":36.58972,
+      "longitude":2.4475
+    },{
+      "name":"Zeralda",
+      "latitude":36.71169,
+      "longitude":2.84244
+    }]
+  },{
+    "name":"Wilaya de Tissemsilt",
+    "cities":[{
+      "name":"Tissemsilt",
+      "latitude":35.60722,
+      "longitude":1.81081
+    }]
+  },{
+    "name":"Wilaya de Tizi Ouzou",
+    "cities":[{
+      "name":"Ain el Hammam",
+      "latitude":36.56471,
+      "longitude":4.30619
+    },{
+      "name":"Arhribs",
+      "latitude":36.79361,
+      "longitude":4.31158
+    },{
+      "name":"Azazga",
+      "latitude":36.74472,
+      "longitude":4.37222
+    },{
+      "name":"Beni Douala",
+      "latitude":36.61954,
+      "longitude":4.08282
+    },{
+      "name":"Boghni",
+      "latitude":36.54222,
+      "longitude":3.95306
+    },{
+      "name":"Boudjima",
+      "latitude":36.80218,
+      "longitude":4.15187
+    },{
+      "name":"Chemini",
+      "latitude":36.6,
+      "longitude":4.61667
+    },{
+      "name":"Freha",
+      "latitude":36.75234,
+      "longitude":4.3155
+    },{
+      "name":"Ighram",
+      "latitude":36.46295,
+      "longitude":4.50532
+    },{
+      "name":"LArbaa Nait Irathen",
+      "latitude":36.63112,
+      "longitude":4.19864
+    },{
+      "name":"Mekla",
+      "latitude":36.68178,
+      "longitude":4.26378
+    },{
+      "name":"Timizart",
+      "latitude":36.8,
+      "longitude":4.26667
+    },{
+      "name":"Tirmitine",
+      "latitude":36.65393,
+      "longitude":3.98143
+    },{
+      "name":"Tizi Ouzou",
+      "latitude":36.71182,
+      "longitude":4.04591
+    },{
+      "name":"Tizi Rached",
+      "latitude":36.67176,
+      "longitude":4.19176
+    },{
+      "name":"Tizi-n-Tleta",
+      "latitude":36.54569,
+      "longitude":4.05712
+    }]
+  },{
+    "name":"Wilaya de Tlemcen",
+    "cities":[{
+      "name":"Beni Mester",
+      "latitude":34.87045,
+      "longitude":-1.42319
+    },{
+      "name":"Bensekrane",
+      "latitude":35.07465,
+      "longitude":-1.22431
+    },{
+      "name":"Chetouane",
+      "latitude":34.92129,
+      "longitude":-1.29512
+    },{
+      "name":"Hennaya",
+      "latitude":34.95139,
+      "longitude":-1.36806
+    },{
+      "name":"Mansoura",
+      "latitude":34.86158,
+      "longitude":-1.33935
+    },{
+      "name":"Nedroma",
+      "latitude":35.01361,
+      "longitude":-1.74799
+    },{
+      "name":"Ouled Mimoun",
+      "latitude":34.90472,
+      "longitude":-1.03394
+    },{
+      "name":"Remchi",
+      "latitude":35.06196,
+      "longitude":-1.43362
+    },{
+      "name":"Sebdou",
+      "latitude":34.63703,
+      "longitude":-1.33143
+    },{
+      "name":"Sidi Abdelli",
+      "latitude":35.06937,
+      "longitude":-1.13706
+    },{
+      "name":"Tlemcen",
+      "latitude":34.87833,
+      "longitude":-1.315
+    }]
+  }]
+}

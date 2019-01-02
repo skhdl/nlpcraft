@@ -1,0 +1,50 @@
+{
+  "name":"Saint Vincent and the Grenadines",
+  "regions":[{
+    "name":"Grenadines",
+    "cities":[{
+      "name":"Port Elizabeth",
+      "latitude":13.01667,
+      "longitude":-61.23333
+    }]
+  },{
+    "name":"Parish of Charlotte",
+    "cities":[{
+      "name":"Georgetown",
+      "latitude":13.2879,
+      "longitude":-61.1302
+    }]
+  },{
+    "name":"Parish of Saint Andrew",
+    "cities":[{
+      "name":"Layou",
+      "latitude":13.2,
+      "longitude":-61.26667
+    }]
+  },{
+    "name":"Parish of Saint David",
+    "cities":[{
+      "name":"Chateaubelair",
+      "latitude":13.28333,
+      "longitude":-61.25
+    }]
+  },{
+    "name":"Parish of Saint George",
+    "cities":[{
+      "name":"Kingstown",
+      "latitude":13.15872,
+      "longitude":-61.22475
+    },{
+      "name":"Kingstown Park",
+      "latitude":13.15833,
+      "longitude":-61.235
+    }]
+  },{
+    "name":"Parish of Saint Patrick",
+    "cities":[{
+      "name":"Barrouallie",
+      "latitude":13.23333,
+      "longitude":-61.26667
+    }]
+  }]
+}

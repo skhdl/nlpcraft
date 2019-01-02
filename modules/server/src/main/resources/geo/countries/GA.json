@@ -1,0 +1,111 @@
+{
+  "name":"Gabon",
+  "regions":[{
+    "name":"Estuaire",
+    "cities":[{
+      "name":"Libreville",
+      "latitude":0.39241,
+      "longitude":9.45356
+    },{
+      "name":"Ntoum",
+      "latitude":0.39051,
+      "longitude":9.76096
+    }]
+  },{
+    "name":"Province de l Ogooue-Ivindo",
+    "cities":[{
+      "name":"Booue",
+      "latitude":-0.09207,
+      "longitude":11.93846
+    },{
+      "name":"Makokou",
+      "latitude":0.57381,
+      "longitude":12.86419
+    }]
+  },{
+    "name":"Province de l Ogooue-Lolo",
+    "cities":[{
+      "name":"Koulamoutou",
+      "latitude":-1.13032,
+      "longitude":12.47359
+    },{
+      "name":"Lastoursville",
+      "latitude":-0.81742,
+      "longitude":12.70818
+    }]
+  },{
+    "name":"Province de l Ogooue-Maritime",
+    "cities":[{
+      "name":"Gamba",
+      "latitude":-2.65,
+      "longitude":10.0
+    },{
+      "name":"Port-Gentil",
+      "latitude":-0.71933,
+      "longitude":8.78151
+    }]
+  },{
+    "name":"Province de la Ngounie",
+    "cities":[{
+      "name":"Fougamou",
+      "latitude":-1.21544,
+      "longitude":10.58378
+    },{
+      "name":"Mouila",
+      "latitude":-1.86846,
+      "longitude":11.05594
+    },{
+      "name":"Ndende",
+      "latitude":-2.40077,
+      "longitude":11.35813
+    }]
+  },{
+    "name":"Province de la Nyanga",
+    "cities":[{
+      "name":"Tchibanga",
+      "latitude":-2.85,
+      "longitude":11.03333
+    }]
+  },{
+    "name":"Province du Haut-Ogooue",
+    "cities":[{
+      "name":"Franceville",
+      "latitude":-1.63333,
+      "longitude":13.58357
+    },{
+      "name":"Moanda",
+      "latitude":-1.55746,
+      "longitude":13.21775
+    },{
+      "name":"Mounana",
+      "latitude":-1.4085,
+      "longitude":13.15857
+    },{
+      "name":"Okondja",
+      "latitude":-0.65487,
+      "longitude":13.67533
+    }]
+  },{
+    "name":"Province du Moyen-Ogooue",
+    "cities":[{
+      "name":"Lambarene",
+      "latitude":-0.7001,
+      "longitude":10.24055
+    },{
+      "name":"Ndjole",
+      "latitude":-0.17827,
+      "longitude":10.76488
+    }]
+  },{
+    "name":"Province du Woleu-Ntem",
+    "cities":[{
+      "name":"Bitam",
+      "latitude":2.07597,
+      "longitude":11.50065
+    },{
+      "name":"Oyem",
+      "latitude":1.5995,
+      "longitude":11.57933
+    }]
+  }]
+}

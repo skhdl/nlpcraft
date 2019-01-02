@@ -1,0 +1,123 @@
+{
+  "name":"Burundi",
+  "regions":[{
+    "name":"Bubanza Province",
+    "cities":[{
+      "name":"Bubanza",
+      "latitude":-3.0804,
+      "longitude":29.391
+    }]
+  },{
+    "name":"Bujumbura Mairie Province",
+    "cities":[{
+      "name":"Bujumbura",
+      "latitude":-3.3822,
+      "longitude":29.3644
+    }]
+  },{
+    "name":"Bujumbura Rural Province",
+    "cities":[]
+  },{
+    "name":"Bururi Province",
+    "cities":[{
+      "name":"Bururi",
+      "latitude":-3.94877,
+      "longitude":29.62438
+    },{
+      "name":"Rumonge",
+      "latitude":-3.9736,
+      "longitude":29.4386
+    }]
+  },{
+    "name":"Cankuzo Province",
+    "cities":[{
+      "name":"Cankuzo",
+      "latitude":-3.2186,
+      "longitude":30.5528
+    }]
+  },{
+    "name":"Cibitoke Province",
+    "cities":[{
+      "name":"Cibitoke",
+      "latitude":-2.8869,
+      "longitude":29.1248
+    }]
+  },{
+    "name":"Gitega Province",
+    "cities":[{
+      "name":"Gitega",
+      "latitude":-3.4264,
+      "longitude":29.9308
+    }]
+  },{
+    "name":"Karuzi Province",
+    "cities":[{
+      "name":"Karuzi",
+      "latitude":-3.10608,
+      "longitude":30.17351
+    }]
+  },{
+    "name":"Kayanza Province",
+    "cities":[{
+      "name":"Kayanza",
+      "latitude":-2.9221,
+      "longitude":29.6293
+    }]
+  },{
+    "name":"Kirundo Province",
+    "cities":[{
+      "name":"Kirundo",
+      "latitude":-2.5845,
+      "longitude":30.0959
+    }]
+  },{
+    "name":"Makamba Province",
+    "cities":[{
+      "name":"Makamba",
+      "latitude":-4.1348,
+      "longitude":29.804
+    }]
+  },{
+    "name":"Muramvya Province",
+    "cities":[{
+      "name":"Muramvya",
+      "latitude":-3.2682,
+      "longitude":29.6079
+    }]
+  },{
+    "name":"Muyinga Province",
+    "cities":[{
+      "name":"Muyinga",
+      "latitude":-2.8451,
+      "longitude":30.3414
+    }]
+  },{
+    "name":"Ngozi Province",
+    "cities":[{
+      "name":"Ngozi",
+      "latitude":-2.9075,
+      "longitude":29.8306
+    }]
+  },{
+    "name":"Province de Mwaro",
+    "cities":[{
+      "name":"Mwaro",
+      "latitude":-3.5272,
+      "longitude":29.7034
+    }]
+  },{
+    "name":"Rutana Province",
+    "cities":[{
+      "name":"Rutana",
+      "latitude":-3.9279,
+      "longitude":29.992
+    }]
+  },{
+    "name":"Ruyigi Province",
+    "cities":[{
+      "name":"Ruyigi",
+      "latitude":-3.47639,
+      "longitude":30.24861
+    }]
+  }]
+}

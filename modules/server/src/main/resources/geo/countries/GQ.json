@@ -1,0 +1,69 @@
+{
+  "name":"Equatorial Guinea",
+  "regions":[{
+    "name":"Provincia de Annobon",
+    "cities":[{
+      "name":"Pale",
+      "latitude":-1.40139,
+      "longitude":5.6325
+    }]
+  },{
+    "name":"Provincia de Bioko Norte",
+    "cities":[{
+      "name":"Malabo",
+      "latitude":3.75,
+      "longitude":8.78333
+    },{
+      "name":"Rebola",
+      "latitude":3.71667,
+      "longitude":8.83333
+    }]
+  },{
+    "name":"Provincia de Bioko Sur",
+    "cities":[{
+      "name":"Luba",
+      "latitude":3.45683,
+      "longitude":8.55465
+    }]
+  },{
+    "name":"Provincia de Centro Sur",
+    "cities":[{
+      "name":"Evinayong",
+      "latitude":1.43677,
+      "longitude":10.55124
+    }]
+  },{
+    "name":"Provincia de Kie-Ntem",
+    "cities":[{
+      "name":"Ebebiyin",
+      "latitude":2.15106,
+      "longitude":11.33528
+    },{
+      "name":"Mikomeseng",
+      "latitude":2.13609,
+      "longitude":10.61322
+    }]
+  },{
+    "name":"Provincia de Litoral",
+    "cities":[{
+      "name":"Bata",
+      "latitude":1.86391,
+      "longitude":9.76582
+    }]
+  },{
+    "name":"Provincia de Wele-Nzas",
+    "cities":[{
+      "name":"Aconibe",
+      "latitude":1.29683,
+      "longitude":10.93691
+    },{
+      "name":"Anisoc",
+      "latitude":1.8658,
+      "longitude":10.76892
+    },{
+      "name":"Mongomo",
+      "latitude":1.62742,
+      "longitude":11.31346
+    }]
+  }]
+}

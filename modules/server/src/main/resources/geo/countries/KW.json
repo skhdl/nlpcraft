@@ -1,0 +1,113 @@
+{
+  "name":"Kuwait",
+  "regions":[{
+    "name":"Al Asimah Governorate",
+    "cities":[{
+      "name":"Ad Dasmah",
+      "latitude":29.365,
+      "longitude":48.00139
+    },{
+      "name":"Ar Rabiyah",
+      "latitude":29.295,
+      "longitude":47.93306
+    },{
+      "name":"Ash Shamiyah",
+      "latitude":29.34722,
+      "longitude":47.96167
+    },{
+      "name":"Az Zawr",
+      "latitude":29.4425,
+      "longitude":48.27472
+    },{
+      "name":"Kuwait City",
+      "latitude":29.36972,
+      "longitude":47.97833
+    }]
+  },{
+    "name":"Kuwait",
+    "cities":[{
+      "name":"Bayan",
+      "latitude":29.3032,
+      "longitude":48.04881
+    }]
+  },{
+    "name":"Muhafazat Hawalli",
+    "cities":[{
+      "name":"Ar Rumaythiyah",
+      "latitude":29.31167,
+      "longitude":48.07417
+    },{
+      "name":"As Salimiyah",
+      "latitude":29.33389,
+      "longitude":48.07611
+    },{
+      "name":"Hawalli",
+      "latitude":29.33278,
+      "longitude":48.02861
+    },{
+      "name":"Salwa",
+      "latitude":29.29583,
+      "longitude":48.07861
+    }]
+  },{
+    "name":"Muhafazat Mubarak al Kabir",
+    "cities":[{
+      "name":"Mubarak al Kabir",
+      "latitude":29.18979,
+      "longitude":48.08716
+    },{
+      "name":"Sabah as Salim",
+      "latitude":29.25722,
+      "longitude":48.05722
+    }]
+  },{
+    "name":"Muhafazat al Ahmadi",
+    "cities":[{
+      "name":"Al Ahmadi",
+      "latitude":29.07694,
+      "longitude":48.08389
+    },{
+      "name":"Al Fahahil",
+      "latitude":29.0825,
+      "longitude":48.13028
+    },{
+      "name":"Al Fintas",
+      "latitude":29.17389,
+      "longitude":48.12111
+    },{
+      "name":"Al Mahbulah",
+      "latitude":29.145,
+      "longitude":48.13028
+    },{
+      "name":"Al Manqaf",
+      "latitude":29.09611,
+      "longitude":48.13278
+    },{
+      "name":"Al Wafrah",
+      "latitude":28.63917,
+      "longitude":47.93056
+    },{
+      "name":"Ar Riqqah",
+      "latitude":29.14583,
+      "longitude":48.09472
+    }]
+  },{
+    "name":"Muhafazat al Farwaniyah",
+    "cities":[{
+      "name":"Al Farwaniyah",
+      "latitude":29.2775,
+      "longitude":47.95861
+    },{
+      "name":"Janub as Surrah",
+      "latitude":29.26917,
+      "longitude":47.97806
+    }]
+  },{
+    "name":"Muhafazat al Jahra",
+    "cities":[{
+      "name":"Al Jahra",
+      "latitude":29.3375,
+      "longitude":47.65806
+    }]
+  }]
+}

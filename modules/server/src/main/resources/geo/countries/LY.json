@@ -1,0 +1,265 @@
+{
+  "name":"Libya",
+  "regions":[{
+    "name":"Al Jufrah",
+    "cities":[{
+      "name":"Hun",
+      "latitude":29.12684,
+      "longitude":15.94772
+    },{
+      "name":"Waddan",
+      "latitude":29.1614,
+      "longitude":16.13904
+    }]
+  },{
+    "name":"Al Kufrah",
+    "cities":[{
+      "name":"Al Jawf",
+      "latitude":24.1989,
+      "longitude":23.29093
+    },{
+      "name":"At Taj",
+      "latitude":24.20487,
+      "longitude":23.2857
+    }]
+  },{
+    "name":"Al Marj",
+    "cities":[{
+      "name":"Al Abyar",
+      "latitude":32.19,
+      "longitude":20.59653
+    },{
+      "name":"Al Marj",
+      "latitude":32.48798,
+      "longitude":20.83174
+    },{
+      "name":"Tukrah",
+      "latitude":32.53414,
+      "longitude":20.57911
+    }]
+  },{
+    "name":"Al Marqab",
+    "cities":[{
+      "name":"Al Khums",
+      "latitude":32.64861,
+      "longitude":14.26191
+    },{
+      "name":"Masallatah",
+      "latitude":32.61667,
+      "longitude":14.0
+    },{
+      "name":"Tarhuna",
+      "latitude":32.43502,
+      "longitude":13.6332
+    }]
+  },{
+    "name":"Darnah",
+    "cities":[{
+      "name":"Al Qubbah",
+      "latitude":32.76162,
+      "longitude":22.24237
+    },{
+      "name":"Darnah",
+      "latitude":32.76704,
+      "longitude":22.63669
+    }]
+  },{
+    "name":"Libya",
+    "cities":[{
+      "name":"Giado",
+      "latitude":31.95815,
+      "longitude":12.02034
+    }]
+  },{
+    "name":"Murzuq",
+    "cities":[{
+      "name":"Murzuq",
+      "latitude":25.91552,
+      "longitude":13.91839
+    }]
+  },{
+    "name":"Sha`biyat Banghazi",
+    "cities":[{
+      "name":"Benghazi",
+      "latitude":32.11486,
+      "longitude":20.06859
+    },{
+      "name":"Suluq",
+      "latitude":31.66818,
+      "longitude":20.25205
+    }]
+  },{
+    "name":"Sha`biyat Ghat",
+    "cities":[{
+      "name":"Ghat",
+      "latitude":24.96472,
+      "longitude":10.17278
+    }]
+  },{
+    "name":"Sha`biyat Misratah",
+    "cities":[{
+      "name":"Bani Walid",
+      "latitude":31.75662,
+      "longitude":13.99422
+    },{
+      "name":"Misratah",
+      "latitude":32.37535,
+      "longitude":15.09254
+    },{
+      "name":"Zliten",
+      "latitude":32.46738,
+      "longitude":14.56874
+    }]
+  },{
+    "name":"Sha`biyat Nalut",
+    "cities":[{
+      "name":"Ghadamis",
+      "latitude":30.13366,
+      "longitude":9.50072
+    },{
+      "name":"Nalut",
+      "latitude":31.86848,
+      "longitude":10.9812
+    }]
+  },{
+    "name":"Sha`biyat Sabha",
+    "cities":[{
+      "name":"Al Jadid",
+      "latitude":27.05,
+      "longitude":14.4
+    },{
+      "name":"Sabha",
+      "latitude":27.03766,
+      "longitude":14.42832
+    }]
+  },{
+    "name":"Sha`biyat Wadi al Hayat",
+    "cities":[{
+      "name":"Awbari",
+      "latitude":26.59206,
+      "longitude":12.78049
+    }]
+  },{
+    "name":"Sha`biyat Wadi ash Shati",
+    "cities":[{
+      "name":"Brak",
+      "latitude":27.54956,
+      "longitude":14.27138
+    },{
+      "name":"Idri",
+      "latitude":27.5,
+      "longitude":13.26667
+    }]
+  },{
+    "name":"Sha`biyat al Butnan",
+    "cities":[{
+      "name":"Bardiyah",
+      "latitude":31.75615,
+      "longitude":25.08653
+    },{
+      "name":"Tobruk",
+      "latitude":32.08361,
+      "longitude":23.97639
+    }]
+  },{
+    "name":"Sha`biyat al Jabal al Akhdar",
+    "cities":[{
+      "name":"Al Bayda",
+      "latitude":32.76272,
+      "longitude":21.75506
+    }]
+  },{
+    "name":"Sha`biyat al Jabal al Gharbi",
+    "cities":[{
+      "name":"Az Zintan",
+      "latitude":31.92231,
+      "longitude":12.25195
+    },{
+      "name":"Gharyan",
+      "latitude":32.17222,
+      "longitude":13.02028
+    },{
+      "name":"Mizdah",
+      "latitude":31.44514,
+      "longitude":12.98013
+    },{
+      "name":"Yafran",
+      "latitude":32.06329,
+      "longitude":12.52859
+    }]
+  },{
+    "name":"Sha`biyat al Jafarah",
+    "cities":[{
+      "name":"Al Aziziyah",
+      "latitude":32.53194,
+      "longitude":13.0175
+    }]
+  },{
+    "name":"Sha`biyat al Wahat",
+    "cities":[{
+      "name":"Ajdabiya",
+      "latitude":30.75545,
+      "longitude":20.22626
+    },{
+      "name":"Al Burayqah",
+      "latitude":30.40624,
+      "longitude":19.57386
+    },{
+      "name":"Awjilah",
+      "latitude":29.10806,
+      "longitude":21.28694
+    },{
+      "name":"Az Zuwaytinah",
+      "latitude":30.9522,
+      "longitude":20.12022
+    }]
+  },{
+    "name":"Sha`biyat an Nuqat al Khams",
+    "cities":[{
+      "name":"Zaltan",
+      "latitude":32.94701,
+      "longitude":11.86647
+    },{
+      "name":"Zuwarah",
+      "latitude":32.9312,
+      "longitude":12.08199
+    }]
+  },{
+    "name":"Sha`biyat az Zawiyah",
+    "cities":[{
+      "name":"Az Zawiyah",
+      "latitude":32.7571,
+      "longitude":12.72764
+    },{
+      "name":"Sabratah",
+      "latitude":32.79335,
+      "longitude":12.48845
+    },{
+      "name":"Surman",
+      "latitude":32.75668,
+      "longitude":12.57159
+    },{
+      "name":"Zawiya",
+      "latitude":32.75222,
+      "longitude":12.72778
+    }]
+  },{
+    "name":"Surt",
+    "cities":[{
+      "name":"Sirte",
+      "latitude":31.20892,
+      "longitude":16.58866
+    }]
+  },{
+    "name":"Tripoli District",
+    "cities":[{
+      "name":"Tagiura",
+      "latitude":32.88167,
+      "longitude":13.35056
+    },{
+      "name":"Tripoli",
+      "latitude":32.87519,
+      "longitude":13.18746
+    }]
+  }]
+}

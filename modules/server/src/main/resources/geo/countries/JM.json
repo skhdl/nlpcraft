@@ -1,0 +1,178 @@
+{
+  "name":"Jamaica",
+  "regions":[{
+    "name":"Parish of Clarendon",
+    "cities":[{
+      "name":"Hayes",
+      "latitude":17.87569,
+      "longitude":-77.23711
+    },{
+      "name":"Lionel Town",
+      "latitude":17.81007,
+      "longitude":-77.24061
+    },{
+      "name":"May Pen",
+      "latitude":17.96454,
+      "longitude":-77.24515
+    }]
+  },{
+    "name":"Parish of Hanover",
+    "cities":[{
+      "name":"Lucea",
+      "latitude":18.45095,
+      "longitude":-78.17356
+    }]
+  },{
+    "name":"Parish of Kingston",
+    "cities":[{
+      "name":"Kingston",
+      "latitude":17.99702,
+      "longitude":-76.79358
+    }]
+  },{
+    "name":"Parish of Manchester",
+    "cities":[{
+      "name":"Mandeville",
+      "latitude":18.04168,
+      "longitude":-77.50714
+    },{
+      "name":"Porus",
+      "latitude":18.03535,
+      "longitude":-77.41166
+    }]
+  },{
+    "name":"Parish of Portland",
+    "cities":[{
+      "name":"Port Antonio",
+      "latitude":18.17998,
+      "longitude":-76.46121
+    }]
+  },{
+    "name":"Parish of Saint Andrew",
+    "cities":[{
+      "name":"Constant Spring",
+      "latitude":18.05078,
+      "longitude":-76.79372
+    },{
+      "name":"Half Way Tree",
+      "latitude":18.01248,
+      "longitude":-76.79928
+    },{
+      "name":"New Kingston",
+      "latitude":18.00747,
+      "longitude":-76.78319
+    },{
+      "name":"Stony Hill",
+      "latitude":18.07537,
+      "longitude":-76.79109
+    }]
+  },{
+    "name":"Parish of Saint Ann",
+    "cities":[{
+      "name":"Ocho Rios",
+      "latitude":18.4025,
+      "longitude":-77.1048
+    },{
+      "name":"Runaway Bay",
+      "latitude":18.45962,
+      "longitude":-77.3357
+    },{
+      "name":"Saint Anns Bay",
+      "latitude":18.43581,
+      "longitude":-77.20098
+    }]
+  },{
+    "name":"Parish of Saint Catherine",
+    "cities":[{
+      "name":"Bog Walk",
+      "latitude":18.10205,
+      "longitude":-77.00541
+    },{
+      "name":"Ewarton",
+      "latitude":18.18084,
+      "longitude":-77.07664
+    },{
+      "name":"Linstead",
+      "latitude":18.13683,
+      "longitude":-77.03171
+    },{
+      "name":"Old Harbour",
+      "latitude":17.94144,
+      "longitude":-77.10898
+    },{
+      "name":"Old Harbour Bay",
+      "latitude":17.90918,
+      "longitude":-77.09718
+    },{
+      "name":"Point Hill",
+      "latitude":18.08988,
+      "longitude":-77.10759
+    },{
+      "name":"Portmore",
+      "latitude":17.97024,
+      "longitude":-76.86722
+    },{
+      "name":"Spanish Town",
+      "latitude":17.99107,
+      "longitude":-76.95742
+    }]
+  },{
+    "name":"Parish of Saint Elizabeth",
+    "cities":[{
+      "name":"Black River",
+      "latitude":18.02636,
+      "longitude":-77.84873
+    },{
+      "name":"Bull Savanna",
+      "latitude":17.88678,
+      "longitude":-77.59022
+    },{
+      "name":"Santa Cruz",
+      "latitude":18.05336,
+      "longitude":-77.69836
+    }]
+  },{
+    "name":"Parish of Saint James",
+    "cities":[{
+      "name":"Montego Bay",
+      "latitude":18.47116,
+      "longitude":-77.91883
+    }]
+  },{
+    "name":"Parish of Saint Mary",
+    "cities":[{
+      "name":"Annotto Bay",
+      "latitude":18.2717,
+      "longitude":-76.76523
+    },{
+      "name":"Port Maria",
+      "latitude":18.36849,
+      "longitude":-76.88946
+    }]
+  },{
+    "name":"Parish of Saint Thomas",
+    "cities":[{
+      "name":"Morant Bay",
+      "latitude":17.88145,
+      "longitude":-76.40927
+    },{
+      "name":"Yallahs",
+      "latitude":17.8748,
+      "longitude":-76.56245
+    }]
+  },{
+    "name":"Parish of Trelawny",
+    "cities":[{
+      "name":"Falmouth",
+      "latitude":18.49358,
+      "longitude":-77.65587
+    }]
+  },{
+    "name":"Parish of Westmoreland",
+    "cities":[{
+      "name":"Savanna-la-Mar",
+      "latitude":18.21895,
+      "longitude":-78.1332
+    }]
+  }]
+}

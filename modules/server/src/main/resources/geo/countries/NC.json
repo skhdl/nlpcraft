@@ -1,0 +1,45 @@
+{
+  "name":"New Caledonia",
+  "regions":[{
+    "name":"Province Nord",
+    "cities":[{
+      "name":"Kone",
+      "latitude":-21.05951,
+      "longitude":164.86582
+    }]
+  },{
+    "name":"Province Sud",
+    "cities":[{
+      "name":"Dumbea",
+      "latitude":-22.15,
+      "longitude":166.45
+    },{
+      "name":"La Foa",
+      "latitude":-21.71079,
+      "longitude":165.82764
+    },{
+      "name":"Mont-Dore",
+      "latitude":-22.28333,
+      "longitude":166.58333
+    },{
+      "name":"Noumea",
+      "latitude":-22.27631,
+      "longitude":166.4572
+    },{
+      "name":"Paita",
+      "latitude":-22.13333,
+      "longitude":166.36667
+    }]
+  },{
+    "name":"Province des iles Loyaute",
+    "cities":[{
+      "name":"Tadine",
+      "latitude":-21.55,
+      "longitude":167.88333
+    },{
+      "name":"We",
+      "latitude":-20.91687,
+      "longitude":167.26461
+    }]
+  }]
+}

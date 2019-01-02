@@ -1,0 +1,52 @@
+{
+  "name":"Antigua and Barbuda",
+  "regions":[{
+    "name":"Barbuda",
+    "cities":[{
+      "name":"Codrington",
+      "latitude":17.63333,
+      "longitude":-61.83333
+    }]
+  },{
+    "name":"Parish of Saint George",
+    "cities":[{
+      "name":"Piggotts",
+      "latitude":17.11667,
+      "longitude":-61.8
+    }]
+  },{
+    "name":"Parish of Saint John",
+    "cities":[{
+      "name":"Saint Johns",
+      "latitude":17.11717,
+      "longitude":-61.84573
+    }]
+  },{
+    "name":"Parish of Saint Mary",
+    "cities":[{
+      "name":"Bolands",
+      "latitude":17.06565,
+      "longitude":-61.87466
+    }]
+  },{
+    "name":"Parish of Saint Paul",
+    "cities":[{
+      "name":"Falmouth",
+      "latitude":17.02741,
+      "longitude":-61.78136
+    }]
+  },{
+    "name":"Parish of Saint Peter",
+    "cities":[{
+      "name":"Parham",
+      "latitude":17.09682,
+      "longitude":-61.77046
+    }]
+  },{
+    "name":"Parish of Saint Philip",
+    "cities":[]
+  },{
+    "name":"Redonda",
+    "cities":[]
+  }]
+}

@@ -1,0 +1,15 @@
+{
+  "name":"British Virgin Islands",
+  "regions":[{
+    "name":"British Virgin Islands",
+    "cities":[{
+      "name":"Road Town",
+      "latitude":18.41667,
+      "longitude":-64.61667
+    },{
+      "name":"Tortola",
+      "latitude":18.43882,
+      "longitude":-64.60382
+    }]
+  }]
+}

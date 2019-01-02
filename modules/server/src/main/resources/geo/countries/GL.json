@@ -1,0 +1,32 @@
+{
+  "name":"Greenland",
+  "regions":[{
+    "name":"Kujalleq",
+    "cities":[{
+      "name":"Qaqortoq",
+      "latitude":60.71667,
+      "longitude":-46.03333
+    }]
+  },{
+    "name":"Qaasuitsup",
+    "cities":[{
+      "name":"Ilulissat",
+      "latitude":69.21667,
+      "longitude":-51.1
+    }]
+  },{
+    "name":"Qeqqata",
+    "cities":[{
+      "name":"Sisimiut",
+      "latitude":66.93946,
+      "longitude":-53.6735
+    }]
+  },{
+    "name":"Sermersooq",
+    "cities":[{
+      "name":"Nuuk",
+      "latitude":64.18347,
+      "longitude":-51.72157
+    }]
+  }]
+}

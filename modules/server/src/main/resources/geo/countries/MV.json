@@ -1,0 +1,149 @@
+{
+  "name":"Maldives",
+  "regions":[{
+    "name":"Alifu Atholhu",
+    "cities":[]
+  },{
+    "name":"Baa Atholhu",
+    "cities":[{
+      "name":"Eydhafushi",
+      "latitude":5.10327,
+      "longitude":73.07078
+    }]
+  },{
+    "name":"Dhaalu Atholhu",
+    "cities":[{
+      "name":"Kudahuvadhoo",
+      "latitude":2.67075,
+      "longitude":72.89437
+    }]
+  },{
+    "name":"Dhekunu Sarahahdhu",
+    "cities":[{
+      "name":"Hithadhoo",
+      "latitude":-0.6,
+      "longitude":73.08333
+    }]
+  },{
+    "name":"Faafu Atholhu",
+    "cities":[]
+  },{
+    "name":"Gaafu Alifu Atholhu",
+    "cities":[{
+      "name":"Viligili",
+      "latitude":0.75906,
+      "longitude":73.43296
+    }]
+  },{
+    "name":"Gaafu Dhaalu Atholhu",
+    "cities":[{
+      "name":"Thinadhoo",
+      "latitude":0.53333,
+      "longitude":72.93333
+    }]
+  },{
+    "name":"Gnaviyani Atholhu",
+    "cities":[{
+      "name":"Fuvahmulah",
+      "latitude":-0.29878,
+      "longitude":73.42403
+    }]
+  },{
+    "name":"Haa Alifu Atholhu",
+    "cities":[]
+  },{
+    "name":"Haa Dhaalu Atholhu",
+    "cities":[{
+      "name":"Kulhudhuffushi",
+      "latitude":6.62207,
+      "longitude":73.06998
+    }]
+  },{
+    "name":"Kaafu Atoll",
+    "cities":[]
+  },{
+    "name":"Laamu Atholhu",
+    "cities":[{
+      "name":"Fonadhoo",
+      "latitude":1.83243,
+      "longitude":73.50257
+    }]
+  },{
+    "name":"Lhaviyani Atholhu",
+    "cities":[{
+      "name":"Naifaru",
+      "latitude":5.44438,
+      "longitude":73.36571
+    }]
+  },{
+    "name":"Maale",
+    "cities":[{
+      "name":"Male",
+      "latitude":4.1748,
+      "longitude":73.50888
+    }]
+  },{
+    "name":"Mathi Dhekunu Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Mathi Uthuru Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Medhu Dhekunu Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Medhu Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Medhu Uthuru Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Meemu Atholhu",
+    "cities":[{
+      "name":"Muli",
+      "latitude":2.91667,
+      "longitude":73.56667
+    }]
+  },{
+    "name":"Noonu Atoll",
+    "cities":[{
+      "name":"Manadhoo",
+      "latitude":5.76687,
+      "longitude":73.4136
+    }]
+  },{
+    "name":"Raa Atholhu",
+    "cities":[{
+      "name":"Ugoofaaru",
+      "latitude":5.66812,
+      "longitude":73.03017
+    }]
+  },{
+    "name":"Seenu Atholhu",
+    "cities":[]
+  },{
+    "name":"Shaviyani Atholhu",
+    "cities":[{
+      "name":"Funadhoo",
+      "latitude":6.15091,
+      "longitude":73.29013
+    }]
+  },{
+    "name":"Thaa Atholhu",
+    "cities":[{
+      "name":"Veymandoo",
+      "latitude":2.18772,
+      "longitude":73.09556
+    }]
+  },{
+    "name":"Uthuru Sarahahdhu",
+    "cities":[]
+  },{
+    "name":"Vaavu Atholhu",
+    "cities":[{
+      "name":"Felidhoo",
+      "latitude":3.47182,
+      "longitude":73.54699
+    }]
+  }]
+}

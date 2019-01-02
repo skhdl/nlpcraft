@@ -1,0 +1,102 @@
+{
+  "name":"Saint Kitts and Nevis",
+  "regions":[{
+    "name":"Christ Church Nichola Town",
+    "cities":[{
+      "name":"Nicola Town",
+      "latitude":17.36667,
+      "longitude":-62.75
+    }]
+  },{
+    "name":"Saint Anne Sandy Point",
+    "cities":[{
+      "name":"Sandy Point Town",
+      "latitude":17.35,
+      "longitude":-62.83333
+    }]
+  },{
+    "name":"Saint George Basseterre",
+    "cities":[{
+      "name":"Basseterre",
+      "latitude":17.29484,
+      "longitude":-62.7261
+    }]
+  },{
+    "name":"Saint George Gingerland",
+    "cities":[{
+      "name":"Market Shop",
+      "latitude":17.11667,
+      "longitude":-62.56667
+    }]
+  },{
+    "name":"Saint James Windward",
+    "cities":[{
+      "name":"Newcastle",
+      "latitude":17.2,
+      "longitude":-62.58333
+    }]
+  },{
+    "name":"Saint John Capesterre",
+    "cities":[{
+      "name":"Dieppe Bay Town",
+      "latitude":17.41297,
+      "longitude":-62.81528
+    }]
+  },{
+    "name":"Saint John Figtree",
+    "cities":[{
+      "name":"Fig Tree",
+      "latitude":17.11667,
+      "longitude":-62.6
+    }]
+  },{
+    "name":"Saint Mary Cayon",
+    "cities":[{
+      "name":"Cayon",
+      "latitude":17.35,
+      "longitude":-62.73333
+    }]
+  },{
+    "name":"Saint Paul Capesterre",
+    "cities":[{
+      "name":"Saint Pauls",
+      "latitude":17.4,
+      "longitude":-62.81667
+    }]
+  },{
+    "name":"Saint Paul Charlestown",
+    "cities":[{
+      "name":"Charlestown",
+      "latitude":17.13333,
+      "longitude":-62.61667
+    }]
+  },{
+    "name":"Saint Peter Basseterre",
+    "cities":[{
+      "name":"Monkey Hill",
+      "latitude":17.31667,
+      "longitude":-62.71667
+    }]
+  },{
+    "name":"Saint Thomas Lowland",
+    "cities":[{
+      "name":"Cotton Ground",
+      "latitude":17.16667,
+      "longitude":-62.61667
+    }]
+  },{
+    "name":"Saint Thomas Middle Island",
+    "cities":[{
+      "name":"Middle Island",
+      "latitude":17.31667,
+      "longitude":-62.81667
+    }]
+  },{
+    "name":"Trinity Palmetto Point",
+    "cities":[{
+      "name":"Trinity",
+      "latitude":17.3,
+      "longitude":-62.76667
+    }]
+  }]
+}

@@ -1,0 +1,111 @@
+{
+  "name":"Seychelles",
+  "regions":[{
+    "name":"Anse Boileau",
+    "cities":[{
+      "name":"Anse Boileau",
+      "latitude":-4.71667,
+      "longitude":55.48333
+    }]
+  },{
+    "name":"Anse Etoile",
+    "cities":[]
+  },{
+    "name":"Anse Royale",
+    "cities":[{
+      "name":"Anse Royale",
+      "latitude":-4.73333,
+      "longitude":55.51667
+    }]
+  },{
+    "name":"Anse aux Pins",
+    "cities":[]
+  },{
+    "name":"Au Cap",
+    "cities":[]
+  },{
+    "name":"Baie Lazare",
+    "cities":[]
+  },{
+    "name":"Baie Sainte Anne",
+    "cities":[]
+  },{
+    "name":"Beau Vallon",
+    "cities":[{
+      "name":"Beau Vallon",
+      "latitude":-4.62091,
+      "longitude":55.43015
+    }]
+  },{
+    "name":"Bel Air",
+    "cities":[]
+  },{
+    "name":"Bel Ombre",
+    "cities":[{
+      "name":"Bel Ombre",
+      "latitude":-4.61667,
+      "longitude":55.41667
+    }]
+  },{
+    "name":"Cascade",
+    "cities":[{
+      "name":"Cascade",
+      "latitude":-4.66667,
+      "longitude":55.5
+    }]
+  },{
+    "name":"English River",
+    "cities":[{
+      "name":"Victoria",
+      "latitude":-4.61667,
+      "longitude":55.45
+    }]
+  },{
+    "name":"Glacis",
+    "cities":[]
+  },{
+    "name":"Grand Anse Mahe",
+    "cities":[]
+  },{
+    "name":"Grand Anse Praslin",
+    "cities":[]
+  },{
+    "name":"Inner Islands",
+    "cities":[]
+  },{
+    "name":"Les Mamelles",
+    "cities":[]
+  },{
+    "name":"Mont Buxton",
+    "cities":[]
+  },{
+    "name":"Mont Fleuri",
+    "cities":[]
+  },{
+    "name":"Plaisance",
+    "cities":[]
+  },{
+    "name":"Pointe Larue",
+    "cities":[]
+  },{
+    "name":"Port Glaud",
+    "cities":[{
+      "name":"Port Glaud",
+      "latitude":-4.66667,
+      "longitude":55.41667
+    }]
+  },{
+    "name":"Roche Caiman",
+    "cities":[]
+  },{
+    "name":"Saint Louis",
+    "cities":[]
+  },{
+    "name":"Takamaka",
+    "cities":[{
+      "name":"Takamaka",
+      "latitude":-4.76667,
+      "longitude":55.5
+    }]
+  }]
+}

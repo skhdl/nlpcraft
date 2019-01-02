@@ -1,0 +1,36 @@
+{
+  "name":"Brunei",
+  "regions":[{
+    "name":"Belait District",
+    "cities":[{
+      "name":"Kuala Belait",
+      "latitude":4.58361,
+      "longitude":114.2312
+    },{
+      "name":"Seria",
+      "latitude":4.60637,
+      "longitude":114.32476
+    }]
+  },{
+    "name":"Brunei and Muara District",
+    "cities":[{
+      "name":"Bandar Seri Begawan",
+      "latitude":4.94029,
+      "longitude":114.94806
+    }]
+  },{
+    "name":"Temburong District",
+    "cities":[{
+      "name":"Bangar",
+      "latitude":4.71667,
+      "longitude":115.06667
+    }]
+  },{
+    "name":"Tutong District",
+    "cities":[{
+      "name":"Tutong",
+      "latitude":4.8,
+      "longitude":114.65
+    }]
+  }]
+}

@@ -1,0 +1,121 @@
+{
+  "name":"Liberia",
+  "regions":[{
+    "name":"Bomi County",
+    "cities":[{
+      "name":"Tubmanburg",
+      "latitude":6.87083,
+      "longitude":-10.81722
+    }]
+  },{
+    "name":"Bong County",
+    "cities":[{
+      "name":"Gbarnga",
+      "latitude":6.99556,
+      "longitude":-9.47222
+    }]
+  },{
+    "name":"Gbarpolu County",
+    "cities":[{
+      "name":"Bopolu",
+      "latitude":7.06667,
+      "longitude":-10.4875
+    }]
+  },{
+    "name":"Grand Bassa County",
+    "cities":[{
+      "name":"Buchanan",
+      "latitude":5.88083,
+      "longitude":-10.04667
+    }]
+  },{
+    "name":"Grand Cape Mount County",
+    "cities":[{
+      "name":"Robertsport",
+      "latitude":6.75333,
+      "longitude":-11.36861
+    }]
+  },{
+    "name":"Grand Gedeh County",
+    "cities":[{
+      "name":"Zwedru",
+      "latitude":6.06667,
+      "longitude":-8.12806
+    }]
+  },{
+    "name":"Grand Kru County",
+    "cities":[{
+      "name":"Barclayville",
+      "latitude":4.67972,
+      "longitude":-8.23389
+    }]
+  },{
+    "name":"Lofa County",
+    "cities":[{
+      "name":"Voinjama",
+      "latitude":8.42194,
+      "longitude":-9.74778
+    }]
+  },{
+    "name":"Margibi County",
+    "cities":[{
+      "name":"Kakata",
+      "latitude":6.53,
+      "longitude":-10.35167
+    }]
+  },{
+    "name":"Maryland County",
+    "cities":[{
+      "name":"Harper",
+      "latitude":4.375,
+      "longitude":-7.71694
+    }]
+  },{
+    "name":"Montserrado County",
+    "cities":[{
+      "name":"Bensonville",
+      "latitude":6.44611,
+      "longitude":-10.6125
+    },{
+      "name":"Monrovia",
+      "latitude":6.30054,
+      "longitude":-10.7969
+    }]
+  },{
+    "name":"Nimba County",
+    "cities":[{
+      "name":"Ganta",
+      "latitude":7.30222,
+      "longitude":-8.53083
+    },{
+      "name":"New Yekepa",
+      "latitude":7.57944,
+      "longitude":-8.53778
+    },{
+      "name":"Sanniquellie",
+      "latitude":7.36222,
+      "longitude":-8.70611
+    }]
+  },{
+    "name":"River Cess County",
+    "cities":[{
+      "name":"River Cess",
+      "latitude":5.46,
+      "longitude":-9.58278
+    }]
+  },{
+    "name":"River Gee County",
+    "cities":[{
+      "name":"Fish Town",
+      "latitude":5.19639,
+      "longitude":-7.87556
+    }]
+  },{
+    "name":"Sinoe County",
+    "cities":[{
+      "name":"Greenville",
+      "latitude":5.01111,
+      "longitude":-9.03889
+    }]
+  }]
+}

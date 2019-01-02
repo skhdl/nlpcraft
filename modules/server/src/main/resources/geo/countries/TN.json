@@ -1,0 +1,556 @@
+{
+  "name":"Tunisia",
+  "regions":[{
+    "name":"Gafsa Governorate",
+    "cities":[{
+      "name":"Al Metlaoui",
+      "latitude":34.32081,
+      "longitude":8.40158
+    },{
+      "name":"Ar Rudayyif",
+      "latitude":34.3827,
+      "longitude":8.15549
+    },{
+      "name":"As Sanad",
+      "latitude":34.4628,
+      "longitude":9.26404
+    },{
+      "name":"Gafsa",
+      "latitude":34.425,
+      "longitude":8.78417
+    }]
+  },{
+    "name":"Gouvernorat de Beja",
+    "cities":[{
+      "name":"Beja",
+      "latitude":36.72564,
+      "longitude":9.18169
+    },{
+      "name":"Majaz al Bab",
+      "latitude":36.64964,
+      "longitude":9.61231
+    },{
+      "name":"Tabursuq",
+      "latitude":36.45692,
+      "longitude":9.24751
+    },{
+      "name":"Tastur",
+      "latitude":36.5513,
+      "longitude":9.44307
+    }]
+  },{
+    "name":"Gouvernorat de Ben Arous",
+    "cities":[{
+      "name":"Ben Arous",
+      "latitude":36.75306,
+      "longitude":10.21889
+    }]
+  },{
+    "name":"Gouvernorat de Bizerte",
+    "cities":[{
+      "name":"Al Matlin",
+      "latitude":37.24516,
+      "longitude":10.05
+    },{
+      "name":"Al `Aliyah",
+      "latitude":37.1691,
+      "longitude":10.03478
+    },{
+      "name":"Bizerte",
+      "latitude":37.27442,
+      "longitude":9.87391
+    },{
+      "name":"Dawwar Tinjah",
+      "latitude":37.16667,
+      "longitude":9.75
+    },{
+      "name":"Ghar al Milh",
+      "latitude":37.16939,
+      "longitude":10.19064
+    },{
+      "name":"Mateur",
+      "latitude":37.04045,
+      "longitude":9.66557
+    },{
+      "name":"Menzel Abderhaman",
+      "latitude":37.23737,
+      "longitude":9.86313
+    },{
+      "name":"Menzel Bourguiba",
+      "latitude":37.15368,
+      "longitude":9.78594
+    },{
+      "name":"Menzel Jemil",
+      "latitude":37.23618,
+      "longitude":9.91448
+    },{
+      "name":"Rafraf",
+      "latitude":37.19043,
+      "longitude":10.18365
+    },{
+      "name":"Sejenane",
+      "latitude":37.05722,
+      "longitude":9.23806
+    }]
+  },{
+    "name":"Gouvernorat de Gabes",
+    "cities":[{
+      "name":"El Hamma",
+      "latitude":33.89152,
+      "longitude":9.79629
+    },{
+      "name":"Gabes",
+      "latitude":33.88146,
+      "longitude":10.0982
+    }]
+  },{
+    "name":"Gouvernorat de Jendouba",
+    "cities":[{
+      "name":"Jendouba",
+      "latitude":36.50114,
+      "longitude":8.78024
+    },{
+      "name":"Tabarka",
+      "latitude":36.95442,
+      "longitude":8.75801
+    }]
+  },{
+    "name":"Gouvernorat de Kairouan",
+    "cities":[{
+      "name":"Haffouz",
+      "latitude":35.63235,
+      "longitude":9.67624
+    },{
+      "name":"Kairouan",
+      "latitude":35.6781,
+      "longitude":10.09633
+    },{
+      "name":"Sbikha",
+      "latitude":35.93325,
+      "longitude":10.02081
+    }]
+  },{
+    "name":"Gouvernorat de Kasserine",
+    "cities":[{
+      "name":"Kasserine",
+      "latitude":35.16758,
+      "longitude":8.83651
+    },{
+      "name":"Sbiba",
+      "latitude":35.54332,
+      "longitude":9.0737
+    },{
+      "name":"Thala",
+      "latitude":35.57244,
+      "longitude":8.67031
+    }]
+  },{
+    "name":"Gouvernorat de Kebili",
+    "cities":[{
+      "name":"Douz",
+      "latitude":33.46632,
+      "longitude":9.0203
+    },{
+      "name":"El Golaa",
+      "latitude":33.48485,
+      "longitude":9.00678
+    },{
+      "name":"Jemna",
+      "latitude":33.57778,
+      "longitude":9.01472
+    },{
+      "name":"Kebili",
+      "latitude":33.70439,
+      "longitude":8.96903
+    }]
+  },{
+    "name":"Gouvernorat de Kef",
+    "cities":[{
+      "name":"As Sars",
+      "latitude":36.0764,
+      "longitude":9.02118
+    },{
+      "name":"El Kef",
+      "latitude":36.17424,
+      "longitude":8.70486
+    },{
+      "name":"El Ksour",
+      "latitude":35.89607,
+      "longitude":8.88493
+    },{
+      "name":"Sakiet Sidi Youssef",
+      "latitude":36.22292,
+      "longitude":8.35547
+    },{
+      "name":"Tajerouine",
+      "latitude":35.89174,
+      "longitude":8.55276
+    }]
+  },{
+    "name":"Gouvernorat de Mahdia",
+    "cities":[{
+      "name":"Chebba",
+      "latitude":35.23722,
+      "longitude":11.115
+    },{
+      "name":"El Jem",
+      "latitude":35.3,
+      "longitude":10.71667
+    },{
+      "name":"Ksour Essaf",
+      "latitude":35.41808,
+      "longitude":10.99475
+    },{
+      "name":"Mahdia",
+      "latitude":35.50472,
+      "longitude":11.06222
+    },{
+      "name":"Mellouleche",
+      "latitude":35.16617,
+      "longitude":11.03504
+    },{
+      "name":"Shurban",
+      "latitude":35.28581,
+      "longitude":10.3858
+    },{
+      "name":"Sidi `Ulwan",
+      "latitude":35.37505,
+      "longitude":10.93899
+    },{
+      "name":"Zouila",
+      "latitude":35.50056,
+      "longitude":11.06056
+    }]
+  },{
+    "name":"Gouvernorat de Medenine",
+    "cities":[{
+      "name":"Bin Qirdan",
+      "latitude":33.13783,
+      "longitude":11.21965
+    },{
+      "name":"Houmt Souk",
+      "latitude":33.87576,
+      "longitude":10.85745
+    },{
+      "name":"Medenine",
+      "latitude":33.35495,
+      "longitude":10.50548
+    },{
+      "name":"Midoun",
+      "latitude":33.80813,
+      "longitude":10.99228
+    },{
+      "name":"Zarzis",
+      "latitude":33.50398,
+      "longitude":11.11216
+    }]
+  },{
+    "name":"Gouvernorat de Monastir",
+    "cities":[{
+      "name":"Al Baqalitah",
+      "latitude":35.61739,
+      "longitude":10.99466
+    },{
+      "name":"Al Wardanin",
+      "latitude":35.70915,
+      "longitude":10.67397
+    },{
+      "name":"As Sayyadah",
+      "latitude":35.66887,
+      "longitude":10.89246
+    },{
+      "name":"Banbalah",
+      "latitude":35.7,
+      "longitude":10.8
+    },{
+      "name":"Bani Hassan",
+      "latitude":35.5672,
+      "longitude":10.80869
+    },{
+      "name":"Jammal",
+      "latitude":35.62231,
+      "longitude":10.75696
+    },{
+      "name":"Lamtah",
+      "latitude":35.66667,
+      "longitude":10.88333
+    },{
+      "name":"Manzil Kamil",
+      "latitude":35.62477,
+      "longitude":10.66727
+    },{
+      "name":"Monastir",
+      "latitude":35.77799,
+      "longitude":10.82617
+    },{
+      "name":"Qasr Hallal",
+      "latitude":35.64773,
+      "longitude":10.89046
+    },{
+      "name":"Qusaybat al Madyuni",
+      "latitude":35.68562,
+      "longitude":10.84256
+    },{
+      "name":"Sahline",
+      "latitude":35.75166,
+      "longitude":10.71109
+    },{
+      "name":"Saqanis",
+      "latitude":35.78333,
+      "longitude":10.8
+    },{
+      "name":"Tuzah",
+      "latitude":35.63544,
+      "longitude":10.82732
+    }]
+  },{
+    "name":"Gouvernorat de Nabeul",
+    "cities":[{
+      "name":"Al Hammamat",
+      "latitude":36.4,
+      "longitude":10.61667
+    },{
+      "name":"Bani Khallad",
+      "latitude":36.65038,
+      "longitude":10.59004
+    },{
+      "name":"Beni Khiar",
+      "latitude":36.46917,
+      "longitude":10.78222
+    },{
+      "name":"Bu `Urqub",
+      "latitude":36.53853,
+      "longitude":10.55093
+    },{
+      "name":"Dar Chabanne",
+      "latitude":36.46798,
+      "longitude":10.75167
+    },{
+      "name":"Douane",
+      "latitude":36.44766,
+      "longitude":10.7557
+    },{
+      "name":"El Haouaria",
+      "latitude":37.05002,
+      "longitude":11.01442
+    },{
+      "name":"El Maamoura",
+      "latitude":36.46499,
+      "longitude":10.80612
+    },{
+      "name":"Korba",
+      "latitude":36.57861,
+      "longitude":10.85861
+    },{
+      "name":"Manzil Bu Zalafah",
+      "latitude":36.68312,
+      "longitude":10.58431
+    },{
+      "name":"Nabeul",
+      "latitude":36.45606,
+      "longitude":10.73763
+    },{
+      "name":"Qulaybiyah",
+      "latitude":36.84757,
+      "longitude":11.09386
+    },{
+      "name":"Taklisah",
+      "latitude":36.78333,
+      "longitude":10.63333
+    },{
+      "name":"Zawiyat al Jadidi",
+      "latitude":36.64375,
+      "longitude":10.57428
+    }]
+  },{
+    "name":"Gouvernorat de Sfax",
+    "cities":[{
+      "name":"Al Qarmadah",
+      "latitude":34.75,
+      "longitude":10.78333
+    },{
+      "name":"Jabinyanah",
+      "latitude":35.035,
+      "longitude":10.90809
+    },{
+      "name":"Sfax",
+      "latitude":34.74056,
+      "longitude":10.76028
+    },{
+      "name":"Skhira",
+      "latitude":34.2992,
+      "longitude":10.06999
+    }]
+  },{
+    "name":"Gouvernorat de Sidi Bouzid",
+    "cities":[{
+      "name":"Al Mazzunah",
+      "latitude":34.57758,
+      "longitude":9.84193
+    },{
+      "name":"Ar Riqab",
+      "latitude":34.85932,
+      "longitude":9.78654
+    },{
+      "name":"Bir al Hufayy",
+      "latitude":34.93212,
+      "longitude":9.19321
+    },{
+      "name":"Jilma",
+      "latitude":35.27311,
+      "longitude":9.42385
+    },{
+      "name":"Sidi Bouzid",
+      "latitude":35.03823,
+      "longitude":9.48494
+    }]
+  },{
+    "name":"Gouvernorat de Siliana",
+    "cities":[{
+      "name":"Al Karib",
+      "latitude":36.32802,
+      "longitude":9.13613
+    },{
+      "name":"Bu `Aradah",
+      "latitude":36.35251,
+      "longitude":9.62175
+    },{
+      "name":"Maktar",
+      "latitude":35.85798,
+      "longitude":9.20072
+    },{
+      "name":"Qa`fur",
+      "latitude":36.32045,
+      "longitude":9.32424
+    },{
+      "name":"Siliana",
+      "latitude":36.08497,
+      "longitude":9.37082
+    }]
+  },{
+    "name":"Gouvernorat de Sousse",
+    "cities":[{
+      "name":"Akouda",
+      "latitude":35.8691,
+      "longitude":10.5653
+    },{
+      "name":"Hammam Sousse",
+      "latitude":35.8609,
+      "longitude":10.60313
+    },{
+      "name":"Harqalah",
+      "latitude":36.03027,
+      "longitude":10.50904
+    },{
+      "name":"Masakin",
+      "latitude":35.72917,
+      "longitude":10.58082
+    },{
+      "name":"Port el Kantaoui",
+      "latitude":35.89239,
+      "longitude":10.59434
+    },{
+      "name":"Sidi Bou Ali",
+      "latitude":35.95667,
+      "longitude":10.47306
+    },{
+      "name":"Sousse",
+      "latitude":35.82539,
+      "longitude":10.63699
+    }]
+  },{
+    "name":"Gouvernorat de Tozeur",
+    "cities":[{
+      "name":"Degache",
+      "latitude":33.97606,
+      "longitude":8.2081
+    },{
+      "name":"Nefta",
+      "latitude":33.87309,
+      "longitude":7.87765
+    },{
+      "name":"Tozeur",
+      "latitude":33.91968,
+      "longitude":8.13352
+    }]
+  },{
+    "name":"Gouvernorat de Tunis",
+    "cities":[{
+      "name":"Al Marsa",
+      "latitude":36.87818,
+      "longitude":10.32466
+    },{
+      "name":"Carthage",
+      "latitude":36.86108,
+      "longitude":10.33161
+    },{
+      "name":"Hammam-Lif",
+      "latitude":36.72866,
+      "longitude":10.34163
+    },{
+      "name":"La Goulette",
+      "latitude":36.81806,
+      "longitude":10.305
+    },{
+      "name":"La Mohammedia",
+      "latitude":36.67446,
+      "longitude":10.15633
+    },{
+      "name":"La Sebala du Mornag",
+      "latitude":36.67931,
+      "longitude":10.29195
+    },{
+      "name":"Oued Lill",
+      "latitude":36.83408,
+      "longitude":10.04057
+    },{
+      "name":"Rades",
+      "latitude":36.76806,
+      "longitude":10.27528
+    },{
+      "name":"Tunis",
+      "latitude":36.81897,
+      "longitude":10.16579
+    }]
+  },{
+    "name":"Gouvernorat de Zaghouan",
+    "cities":[{
+      "name":"El Fahs",
+      "latitude":36.37419,
+      "longitude":9.90651
+    },{
+      "name":"Zaghouan",
+      "latitude":36.40291,
+      "longitude":10.14292
+    }]
+  },{
+    "name":"Gouvernorat de l Ariana",
+    "cities":[{
+      "name":"Ariana",
+      "latitude":36.86012,
+      "longitude":10.19337
+    },{
+      "name":"Qalat al Andalus",
+      "latitude":37.0629,
+      "longitude":10.11829
+    }]
+  },{
+    "name":"Manouba",
+    "cities":[{
+      "name":"El Battan",
+      "latitude":36.80368,
+      "longitude":9.84424
+    },{
+      "name":"Manouba",
+      "latitude":36.80803,
+      "longitude":10.0972
+    }]
+  },{
+    "name":"Tataouine",
+    "cities":[{
+      "name":"Tataouine",
+      "latitude":32.92967,
+      "longitude":10.45177
+    }]
+  }]
+}

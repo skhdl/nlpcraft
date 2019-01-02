@@ -1,0 +1,11 @@
+{
+  "name":"Norfolk Island",
+  "regions":[{
+    "name":"Norfolk Island",
+    "cities":[{
+      "name":"Kingston",
+      "latitude":-29.05459,
+      "longitude":167.96628
+    }]
+  }]
+}

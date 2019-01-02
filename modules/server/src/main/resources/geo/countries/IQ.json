@@ -1,0 +1,326 @@
+{
+  "name":"Iraq",
+  "regions":[{
+    "name":"An Najaf",
+    "cities":[{
+      "name":"Al Mishkhab",
+      "latitude":31.80436,
+      "longitude":44.4893
+    },{
+      "name":"An Najaf al Ashraf",
+      "latitude":31.9892,
+      "longitude":44.3291
+    }]
+  },{
+    "name":"Dihok",
+    "cities":[{
+      "name":"Dihok",
+      "latitude":36.86709,
+      "longitude":42.98845
+    },{
+      "name":"Sinah",
+      "latitude":36.80752,
+      "longitude":43.03831
+    },{
+      "name":"Zakhu",
+      "latitude":37.14805,
+      "longitude":42.70355
+    }]
+  },{
+    "name":"Muhafazat Arbil",
+    "cities":[{
+      "name":"Erbil",
+      "latitude":36.19257,
+      "longitude":44.01062
+    },{
+      "name":"Koysinceq",
+      "latitude":36.08289,
+      "longitude":44.62873
+    },{
+      "name":"Rawanduz",
+      "latitude":36.61647,
+      "longitude":44.53014
+    }]
+  },{
+    "name":"Muhafazat Babil",
+    "cities":[{
+      "name":"Al Hillah",
+      "latitude":32.46367,
+      "longitude":44.41963
+    },{
+      "name":"Al Musayyib",
+      "latitude":32.78396,
+      "longitude":44.27662
+    },{
+      "name":"Imam Qasim",
+      "latitude":32.29799,
+      "longitude":44.68282
+    },{
+      "name":"Nahiyat Saddat al Hindiyah",
+      "latitude":32.71557,
+      "longitude":44.27857
+    }]
+  },{
+    "name":"Muhafazat Baghdad",
+    "cities":[{
+      "name":"Abu Ghurayb",
+      "latitude":33.30703,
+      "longitude":44.18694
+    },{
+      "name":"Baghdad",
+      "latitude":33.34058,
+      "longitude":44.40088
+    }]
+  },{
+    "name":"Muhafazat Dhi Qar",
+    "cities":[{
+      "name":"An Nasiriyah",
+      "latitude":31.05799,
+      "longitude":46.25726
+    },{
+      "name":"Ash Shatrah",
+      "latitude":31.40906,
+      "longitude":46.1727
+    },{
+      "name":"Nahiyat al Fuhud",
+      "latitude":30.96972,
+      "longitude":46.72278
+    }]
+  },{
+    "name":"Muhafazat Diyala",
+    "cities":[{
+      "name":"Al Miqdadiyah",
+      "latitude":33.97861,
+      "longitude":44.93694
+    },{
+      "name":"Baqubah",
+      "latitude":33.7466,
+      "longitude":44.64366
+    },{
+      "name":"Khalis",
+      "latitude":33.80809,
+      "longitude":44.53344
+    },{
+      "name":"Kifri",
+      "latitude":34.68963,
+      "longitude":44.96057
+    },{
+      "name":"Mandali",
+      "latitude":33.7481,
+      "longitude":45.55503
+    }]
+  },{
+    "name":"Muhafazat Karbala",
+    "cities":[{
+      "name":"Al Hindiyah",
+      "latitude":32.54217,
+      "longitude":44.22111
+    },{
+      "name":"Karbala",
+      "latitude":32.61603,
+      "longitude":44.02488
+    }]
+  },{
+    "name":"Muhafazat Kirkuk",
+    "cities":[{
+      "name":"Kirkuk",
+      "latitude":35.46806,
+      "longitude":44.39222
+    }]
+  },{
+    "name":"Muhafazat Maysan",
+    "cities":[{
+      "name":"Al Majar al Kabir",
+      "latitude":31.57232,
+      "longitude":47.17529
+    },{
+      "name":"Al `Amarah",
+      "latitude":31.83588,
+      "longitude":47.144
+    },{
+      "name":"`Ali al Gharbi",
+      "latitude":32.46186,
+      "longitude":46.68794
+    }]
+  },{
+    "name":"Muhafazat Ninawa",
+    "cities":[{
+      "name":"Al Mawsil al Jadidah",
+      "latitude":36.33091,
+      "longitude":43.09065
+    },{
+      "name":"Mosul",
+      "latitude":36.335,
+      "longitude":43.11889
+    },{
+      "name":"Qada Talkif",
+      "latitude":36.49109,
+      "longitude":43.12026
+    },{
+      "name":"Qada al Hamdaniyah",
+      "latitude":36.27093,
+      "longitude":43.37758
+    },{
+      "name":"Sinjar",
+      "latitude":36.3209,
+      "longitude":41.87656
+    }]
+  },{
+    "name":"Muhafazat Salah ad Din",
+    "cities":[{
+      "name":"Ad Dujayl",
+      "latitude":33.84667,
+      "longitude":44.23444
+    },{
+      "name":"Balad",
+      "latitude":34.01485,
+      "longitude":44.14574
+    },{
+      "name":"Bayji",
+      "latitude":34.9307,
+      "longitude":43.49311
+    },{
+      "name":"Samarra",
+      "latitude":34.19663,
+      "longitude":43.8739
+    },{
+      "name":"Tikrit",
+      "latitude":34.61581,
+      "longitude":43.67861
+    },{
+      "name":"Tozkhurmato",
+      "latitude":34.88808,
+      "longitude":44.63256
+    }]
+  },{
+    "name":"Muhafazat Wasit",
+    "cities":[{
+      "name":"Al Hayy",
+      "latitude":32.17419,
+      "longitude":46.04345
+    },{
+      "name":"Al Kut",
+      "latitude":32.5128,
+      "longitude":45.81817
+    },{
+      "name":"Al `Aziziyah",
+      "latitude":32.90941,
+      "longitude":45.06359
+    },{
+      "name":"As Suwayrah",
+      "latitude":32.92556,
+      "longitude":44.77583
+    }]
+  },{
+    "name":"Muhafazat al Anbar",
+    "cities":[{
+      "name":"Al Fallujah",
+      "latitude":33.35581,
+      "longitude":43.78612
+    },{
+      "name":"Ar Rutbah",
+      "latitude":33.03718,
+      "longitude":40.28586
+    },{
+      "name":"Hadithah",
+      "latitude":34.13477,
+      "longitude":42.37724
+    },{
+      "name":"Hit",
+      "latitude":33.63664,
+      "longitude":42.82768
+    },{
+      "name":"Ramadi",
+      "latitude":33.42056,
+      "longitude":43.30778
+    },{
+      "name":"Rawah",
+      "latitude":34.47935,
+      "longitude":41.90849
+    },{
+      "name":"`Anat al Qadimah",
+      "latitude":34.46934,
+      "longitude":41.94224
+    }]
+  },{
+    "name":"Muhafazat al Basrah",
+    "cities":[{
+      "name":"Al Basrah",
+      "latitude":30.53302,
+      "longitude":47.79747
+    },{
+      "name":"Al Basrat al Qadimah",
+      "latitude":30.49528,
+      "longitude":47.8169
+    },{
+      "name":"Al Faw",
+      "latitude":29.97421,
+      "longitude":48.47309
+    },{
+      "name":"Al Harithah",
+      "latitude":30.71861,
+      "longitude":47.72083
+    },{
+      "name":"Az Zubayr",
+      "latitude":30.39213,
+      "longitude":47.70174
+    },{
+      "name":"Umm Qasr",
+      "latitude":30.0362,
+      "longitude":47.91951
+    }]
+  },{
+    "name":"Muhafazat al Muthanna",
+    "cities":[{
+      "name":"Ar Rumaythah",
+      "latitude":31.52845,
+      "longitude":45.20377
+    },{
+      "name":"As Samawah",
+      "latitude":31.33198,
+      "longitude":45.2944
+    }]
+  },{
+    "name":"Muhafazat al Qadisiyah",
+    "cities":[{
+      "name":"Ad Diwaniyah",
+      "latitude":31.99289,
+      "longitude":44.92552
+    },{
+      "name":"Ash Shamiyah",
+      "latitude":31.96257,
+      "longitude":44.60075
+    },{
+      "name":"Nahiyat Ghammas",
+      "latitude":31.74311,
+      "longitude":44.6196
+    },{
+      "name":"Nahiyat ash Shinafiyah",
+      "latitude":31.58376,
+      "longitude":44.64675
+    },{
+      "name":"`Afak",
+      "latitude":32.0643,
+      "longitude":45.24743
+    }]
+  },{
+    "name":"Muhafazat as Sulaymaniyah",
+    "cities":[{
+      "name":"As Sulaymaniyah",
+      "latitude":35.56496,
+      "longitude":45.4329
+    },{
+      "name":"Chamchamal",
+      "latitude":35.53356,
+      "longitude":44.8343
+    },{
+      "name":"Halabjah",
+      "latitude":35.17778,
+      "longitude":45.98611
+    },{
+      "name":"Paynjuwayn",
+      "latitude":35.6169,
+      "longitude":45.95338
+    }]
+  }]
+}

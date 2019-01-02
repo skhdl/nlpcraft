@@ -1,0 +1,141 @@
+{
+  "name":"Guam",
+  "regions":[{
+    "name":"Agana Heights Municipality",
+    "cities":[{
+      "name":"Agana Heights Village",
+      "latitude":13.46559,
+      "longitude":144.74795
+    }]
+  },{
+    "name":"Agat Municipality",
+    "cities":[{
+      "name":"Agat Village",
+      "latitude":13.38855,
+      "longitude":144.65852
+    }]
+  },{
+    "name":"Asan-Maina Municipality",
+    "cities":[{
+      "name":"Asan-Maina Village",
+      "latitude":13.47215,
+      "longitude":144.71654
+    }]
+  },{
+    "name":"Barrigada Municipality",
+    "cities":[{
+      "name":"Barrigada Village",
+      "latitude":13.46913,
+      "longitude":144.79901
+    }]
+  },{
+    "name":"Chalan Pago-Ordot Municipality",
+    "cities":[{
+      "name":"Chalan Pago-Ordot Village",
+      "latitude":13.44741,
+      "longitude":144.75902
+    }]
+  },{
+    "name":"Dededo Municipality",
+    "cities":[{
+      "name":"Dededo Village",
+      "latitude":13.51777,
+      "longitude":144.8391
+    }]
+  },{
+    "name":"Hagatna Municipality",
+    "cities":[{
+      "name":"Guam Government House",
+      "latitude":13.47191,
+      "longitude":144.74978
+    },{
+      "name":"Hagatna",
+      "latitude":13.47567,
+      "longitude":144.74886
+    }]
+  },{
+    "name":"Inarajan Municipality",
+    "cities":[{
+      "name":"Inarajan Village",
+      "latitude":13.27363,
+      "longitude":144.74845
+    }]
+  },{
+    "name":"Mangilao Municipality",
+    "cities":[{
+      "name":"Mangilao Village",
+      "latitude":13.44761,
+      "longitude":144.80109
+    }]
+  },{
+    "name":"Merizo Municipality",
+    "cities":[{
+      "name":"Merizo Village",
+      "latitude":13.26584,
+      "longitude":144.66908
+    }]
+  },{
+    "name":"Mongmong-Toto-Maite Municipality",
+    "cities":[{
+      "name":"Mongmong-Toto-Maite Village",
+      "latitude":13.46857,
+      "longitude":144.78214
+    }]
+  },{
+    "name":"Piti Municipality",
+    "cities":[{
+      "name":"Piti Village",
+      "latitude":13.46256,
+      "longitude":144.69331
+    }]
+  },{
+    "name":"Santa Rita Municipality",
+    "cities":[{
+      "name":"Santa Rita Village",
+      "latitude":13.38608,
+      "longitude":144.67226
+    }]
+  },{
+    "name":"Sinajana Municipality",
+    "cities":[{
+      "name":"Sinajana Village",
+      "latitude":13.46334,
+      "longitude":144.75406
+    }]
+  },{
+    "name":"Talofofo Municipality",
+    "cities":[{
+      "name":"Talofofo Village",
+      "latitude":13.35513,
+      "longitude":144.75835
+    }]
+  },{
+    "name":"Tamuning-Tumon-Harmon Municipality",
+    "cities":[{
+      "name":"Tamuning-Tumon-Harmon Village",
+      "latitude":13.48773,
+      "longitude":144.78138
+    }]
+  },{
+    "name":"Umatac Municipality",
+    "cities":[{
+      "name":"Umatac Village",
+      "latitude":13.2976,
+      "longitude":144.6605
+    }]
+  },{
+    "name":"Yigo Municipality",
+    "cities":[{
+      "name":"Yigo Village",
+      "latitude":13.53605,
+      "longitude":144.88855
+    }]
+  },{
+    "name":"Yona Municipality",
+    "cities":[{
+      "name":"Yona Village",
+      "latitude":13.40974,
+      "longitude":144.77697
+    }]
+  }]
+}

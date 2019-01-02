@@ -1,0 +1,492 @@
+{
+  "name":"Ecuador",
+  "regions":[{
+    "name":"Provincia de Bolivar",
+    "cities":[{
+      "name":"Guaranda",
+      "latitude":-1.59263,
+      "longitude":-79.00098
+    },{
+      "name":"San Miguel",
+      "latitude":-1.70884,
+      "longitude":-79.04311
+    }]
+  },{
+    "name":"Provincia de Cotopaxi",
+    "cities":[{
+      "name":"La Mana",
+      "latitude":-0.94094,
+      "longitude":-79.22506
+    },{
+      "name":"Latacunga",
+      "latitude":-0.93521,
+      "longitude":-78.61554
+    },{
+      "name":"Pujili",
+      "latitude":-0.95759,
+      "longitude":-78.69636
+    },{
+      "name":"San Miguel de Salcedo",
+      "latitude":-1.04547,
+      "longitude":-78.59062
+    }]
+  },{
+    "name":"Provincia de El Oro",
+    "cities":[{
+      "name":"Huaquillas",
+      "latitude":-3.47523,
+      "longitude":-80.23084
+    },{
+      "name":"Machala",
+      "latitude":-3.25861,
+      "longitude":-79.96054
+    },{
+      "name":"Pasaje",
+      "latitude":-3.32561,
+      "longitude":-79.80697
+    },{
+      "name":"Pinas",
+      "latitude":-3.68107,
+      "longitude":-79.68083
+    },{
+      "name":"Portovelo",
+      "latitude":-3.72145,
+      "longitude":-79.62187
+    },{
+      "name":"Puerto Bolivar",
+      "latitude":-3.26649,
+      "longitude":-79.99749
+    },{
+      "name":"Santa Rosa",
+      "latitude":-3.44882,
+      "longitude":-79.95952
+    },{
+      "name":"Zaruma",
+      "latitude":-3.69132,
+      "longitude":-79.61174
+    }]
+  },{
+    "name":"Provincia de Esmeraldas",
+    "cities":[{
+      "name":"Esmeraldas",
+      "latitude":0.9592,
+      "longitude":-79.65397
+    },{
+      "name":"Muisne",
+      "latitude":0.61129,
+      "longitude":-80.01863
+    },{
+      "name":"Rosa Zarate",
+      "latitude":0.32721,
+      "longitude":-79.43438
+    },{
+      "name":"San Lorenzo de Esmeraldas",
+      "latitude":1.28626,
+      "longitude":-78.83514
+    },{
+      "name":"Valdez",
+      "latitude":1.24917,
+      "longitude":-78.98306
+    }]
+  },{
+    "name":"Provincia de Francisco de Orellana",
+    "cities":[{
+      "name":"Boca Suno",
+      "latitude":-0.69832,
+      "longitude":-77.14083
+    },{
+      "name":"Puerto Francisco de Orellana",
+      "latitude":-0.46645,
+      "longitude":-76.98719
+    }]
+  },{
+    "name":"Provincia de Galapagos",
+    "cities":[{
+      "name":"Puerto Ayora",
+      "latitude":-0.74018,
+      "longitude":-90.3138
+    },{
+      "name":"Puerto Baquerizo Moreno",
+      "latitude":-0.92322,
+      "longitude":-89.60474
+    }]
+  },{
+    "name":"Provincia de Imbabura",
+    "cities":[{
+      "name":"Atuntaqui",
+      "latitude":0.33247,
+      "longitude":-78.21371
+    },{
+      "name":"Cotacachi",
+      "latitude":0.30107,
+      "longitude":-78.26428
+    },{
+      "name":"Ibarra",
+      "latitude":0.35171,
+      "longitude":-78.12233
+    },{
+      "name":"Otavalo",
+      "latitude":0.23141,
+      "longitude":-78.25978
+    },{
+      "name":"Pimampiro",
+      "latitude":0.39116,
+      "longitude":-77.94068
+    }]
+  },{
+    "name":"Provincia de Loja",
+    "cities":[{
+      "name":"Cariamanga",
+      "latitude":-4.32796,
+      "longitude":-79.55554
+    },{
+      "name":"Catacocha",
+      "latitude":-4.04974,
+      "longitude":-79.64944
+    },{
+      "name":"Catamayo",
+      "latitude":-3.98652,
+      "longitude":-79.35912
+    },{
+      "name":"Celica",
+      "latitude":-4.10266,
+      "longitude":-79.95665
+    },{
+      "name":"Loja",
+      "latitude":-3.99313,
+      "longitude":-79.20422
+    },{
+      "name":"Macara",
+      "latitude":-4.38181,
+      "longitude":-79.9437
+    }]
+  },{
+    "name":"Provincia de Los Rios",
+    "cities":[{
+      "name":"Babahoyo",
+      "latitude":-1.80217,
+      "longitude":-79.53443
+    },{
+      "name":"Catarama",
+      "latitude":-1.57504,
+      "longitude":-79.45998
+    },{
+      "name":"Montalvo",
+      "latitude":-1.79008,
+      "longitude":-79.28759
+    },{
+      "name":"Palenque",
+      "latitude":-1.43795,
+      "longitude":-79.75647
+    },{
+      "name":"Quevedo",
+      "latitude":-1.02863,
+      "longitude":-79.46352
+    },{
+      "name":"Ventanas",
+      "latitude":-1.44158,
+      "longitude":-79.45943
+    },{
+      "name":"Vinces",
+      "latitude":-1.55611,
+      "longitude":-79.75191
+    }]
+  },{
+    "name":"Provincia de Manabi",
+    "cities":[{
+      "name":"Bahia de Caraquez",
+      "latitude":-0.59792,
+      "longitude":-80.42367
+    },{
+      "name":"Calceta",
+      "latitude":-0.84582,
+      "longitude":-80.16389
+    },{
+      "name":"Chone",
+      "latitude":-0.69819,
+      "longitude":-80.09361
+    },{
+      "name":"Jipijapa",
+      "latitude":-1.34872,
+      "longitude":-80.57875
+    },{
+      "name":"Junin",
+      "latitude":-0.92777,
+      "longitude":-80.20583
+    },{
+      "name":"Manta",
+      "latitude":-0.96212,
+      "longitude":-80.71271
+    },{
+      "name":"Montecristi",
+      "latitude":-1.04576,
+      "longitude":-80.65889
+    },{
+      "name":"Pajan",
+      "latitude":-1.55238,
+      "longitude":-80.42958
+    },{
+      "name":"Pedernales",
+      "latitude":0.07166,
+      "longitude":-80.0525
+    },{
+      "name":"Portoviejo",
+      "latitude":-1.05458,
+      "longitude":-80.45445
+    },{
+      "name":"Rocafuerte",
+      "latitude":-0.9236,
+      "longitude":-80.44946
+    },{
+      "name":"Santa Ana",
+      "latitude":-1.20726,
+      "longitude":-80.37132
+    },{
+      "name":"Sucre",
+      "latitude":-1.27974,
+      "longitude":-80.41885
+    },{
+      "name":"Tosagua",
+      "latitude":-0.78679,
+      "longitude":-80.23473
+    }]
+  },{
+    "name":"Provincia de Morona-Santiago",
+    "cities":[{
+      "name":"Macas",
+      "latitude":-2.30868,
+      "longitude":-78.11135
+    },{
+      "name":"Palora",
+      "latitude":-1.70131,
+      "longitude":-77.96516
+    },{
+      "name":"Sucua",
+      "latitude":-2.45866,
+      "longitude":-78.17171
+    }]
+  },{
+    "name":"Provincia de Napo",
+    "cities":[{
+      "name":"Archidona",
+      "latitude":-0.9095,
+      "longitude":-77.80772
+    },{
+      "name":"Tena",
+      "latitude":-0.9938,
+      "longitude":-77.81286
+    }]
+  },{
+    "name":"Provincia de Pichincha",
+    "cities":[{
+      "name":"Cayambe",
+      "latitude":0.04084,
+      "longitude":-78.14524
+    },{
+      "name":"Machachi",
+      "latitude":-0.51011,
+      "longitude":-78.56712
+    },{
+      "name":"Quito",
+      "latitude":-0.22985,
+      "longitude":-78.52495
+    },{
+      "name":"Sangolqui",
+      "latitude":-0.33405,
+      "longitude":-78.45217
+    }]
+  },{
+    "name":"Provincia de Santa Elena",
+    "cities":[{
+      "name":"Salinas",
+      "latitude":-2.21452,
+      "longitude":-80.95151
+    },{
+      "name":"Santa Elena",
+      "latitude":-2.22622,
+      "longitude":-80.85872
+    }]
+  },{
+    "name":"Provincia de Santo Domingo de los Tsachilas",
+    "cities":[{
+      "name":"Santo Domingo de los Colorados",
+      "latitude":-0.25305,
+      "longitude":-79.17536
+    }]
+  },{
+    "name":"Provincia de Sucumbios",
+    "cities":[{
+      "name":"Nueva Loja",
+      "latitude":0.09057,
+      "longitude":-76.88837
+    }]
+  },{
+    "name":"Provincia de Zamora-Chinchipe",
+    "cities":[{
+      "name":"Yantzaza",
+      "latitude":-3.83261,
+      "longitude":-78.76076
+    },{
+      "name":"Zamora",
+      "latitude":-4.06685,
+      "longitude":-78.95488
+    }]
+  },{
+    "name":"Provincia del Azuay",
+    "cities":[{
+      "name":"Cuenca",
+      "latitude":-2.90054,
+      "longitude":-79.00453
+    },{
+      "name":"Gualaceo",
+      "latitude":-2.89264,
+      "longitude":-78.77814
+    }]
+  },{
+    "name":"Provincia del Canar",
+    "cities":[{
+      "name":"Azogues",
+      "latitude":-2.73969,
+      "longitude":-78.8486
+    },{
+      "name":"Canar",
+      "latitude":-2.56062,
+      "longitude":-78.9394
+    },{
+      "name":"La Troncal",
+      "latitude":-2.42355,
+      "longitude":-79.33977
+    }]
+  },{
+    "name":"Provincia del Carchi",
+    "cities":[{
+      "name":"San Gabriel",
+      "latitude":0.59318,
+      "longitude":-77.83078
+    },{
+      "name":"Tulcan",
+      "latitude":0.81187,
+      "longitude":-77.71727
+    }]
+  },{
+    "name":"Provincia del Chimborazo",
+    "cities":[{
+      "name":"Alausi",
+      "latitude":-2.20329,
+      "longitude":-78.84714
+    },{
+      "name":"Guano",
+      "latitude":-1.60789,
+      "longitude":-78.63105
+    },{
+      "name":"Riobamba",
+      "latitude":-1.67098,
+      "longitude":-78.64712
+    }]
+  },{
+    "name":"Provincia del Guayas",
+    "cities":[{
+      "name":"Alfredo Baquerizo Moreno",
+      "latitude":-1.91667,
+      "longitude":-79.51667
+    },{
+      "name":"Balao",
+      "latitude":-2.911,
+      "longitude":-79.81441
+    },{
+      "name":"Balzar",
+      "latitude":-1.36501,
+      "longitude":-79.90494
+    },{
+      "name":"Colimes",
+      "latitude":-1.54553,
+      "longitude":-80.01164
+    },{
+      "name":"Coronel Marcelino Mariduena",
+      "latitude":-2.20924,
+      "longitude":-79.43248
+    },{
+      "name":"El Triunfo",
+      "latitude":-1.93333,
+      "longitude":-79.96667
+    },{
+      "name":"Eloy Alfaro",
+      "latitude":-2.17579,
+      "longitude":-79.85519
+    },{
+      "name":"Guayaquil",
+      "latitude":-2.20584,
+      "longitude":-79.90795
+    },{
+      "name":"La Libertad",
+      "latitude":-2.233,
+      "longitude":-80.91039
+    },{
+      "name":"Lomas de Sargentillo",
+      "latitude":-1.88333,
+      "longitude":-80.08333
+    },{
+      "name":"Naranjal",
+      "latitude":-2.67364,
+      "longitude":-79.6183
+    },{
+      "name":"Naranjito",
+      "latitude":-2.16671,
+      "longitude":-79.4654
+    },{
+      "name":"Palestina",
+      "latitude":-1.93709,
+      "longitude":-79.71396
+    },{
+      "name":"Pedro Carbo",
+      "latitude":-1.81563,
+      "longitude":-80.23308
+    },{
+      "name":"Playas",
+      "latitude":-2.63199,
+      "longitude":-80.38808
+    },{
+      "name":"Samborondon",
+      "latitude":-1.96276,
+      "longitude":-79.72402
+    },{
+      "name":"Santa Lucia",
+      "latitude":-2.18333,
+      "longitude":-80.0
+    },{
+      "name":"Velasco Ibarra",
+      "latitude":-1.04376,
+      "longitude":-79.63837
+    },{
+      "name":"Yaguachi Nuevo",
+      "latitude":-2.0968,
+      "longitude":-79.69485
+    }]
+  },{
+    "name":"Provincia del Pastaza",
+    "cities":[{
+      "name":"Puyo",
+      "latitude":-1.48369,
+      "longitude":-78.00257
+    }]
+  },{
+    "name":"Provincia del Tungurahua",
+    "cities":[{
+      "name":"Ambato",
+      "latitude":-1.24908,
+      "longitude":-78.61675
+    },{
+      "name":"Banos",
+      "latitude":-1.39699,
+      "longitude":-78.42289
+    },{
+      "name":"Pelileo",
+      "latitude":-1.3299,
+      "longitude":-78.5434
+    },{
+      "name":"Pillaro",
+      "latitude":-1.17414,
+      "longitude":-78.54676
+    }]
+  }]
+}

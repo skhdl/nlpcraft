@@ -1,0 +1,251 @@
+{
+  "name":"Mauritius",
+  "regions":[{
+    "name":"Agalega Islands",
+    "cities":[]
+  },{
+    "name":"Black River District",
+    "cities":[{
+      "name":"Petite Riviere",
+      "latitude":-20.19551,
+      "longitude":57.44592
+    },{
+      "name":"Tamarin",
+      "latitude":-20.32556,
+      "longitude":57.37056
+    }]
+  },{
+    "name":"Cargados Carajos",
+    "cities":[{
+      "name":"Cargados Carajos",
+      "latitude":-16.60329,
+      "longitude":59.65851
+    }]
+  },{
+    "name":"Flacq District",
+    "cities":[{
+      "name":"Bel Air",
+      "latitude":-20.25417,
+      "longitude":57.74528
+    },{
+      "name":"Bon Accueil",
+      "latitude":-20.17083,
+      "longitude":57.65639
+    },{
+      "name":"Brisee Verdiere",
+      "latitude":-20.16389,
+      "longitude":57.64667
+    },{
+      "name":"Centre de Flacq",
+      "latitude":-20.18972,
+      "longitude":57.71444
+    },{
+      "name":"Ecroignard",
+      "latitude":-20.22611,
+      "longitude":57.73611
+    },{
+      "name":"Lalmatie",
+      "latitude":-20.18972,
+      "longitude":57.66111
+    },{
+      "name":"Laventure",
+      "latitude":-20.14583,
+      "longitude":57.67667
+    },{
+      "name":"Poste de Flacq",
+      "latitude":-20.16306,
+      "longitude":57.73056
+    },{
+      "name":"Quatre Cocos",
+      "latitude":-20.20778,
+      "longitude":57.7625
+    },{
+      "name":"Sebastopol",
+      "latitude":-20.28889,
+      "longitude":57.6875
+    }]
+  },{
+    "name":"Grand Port District",
+    "cities":[{
+      "name":"Beau Vallon",
+      "latitude":-20.41889,
+      "longitude":57.69528
+    },{
+      "name":"Mahebourg",
+      "latitude":-20.40806,
+      "longitude":57.7
+    },{
+      "name":"New Grove",
+      "latitude":-20.40861,
+      "longitude":57.61361
+    },{
+      "name":"Nouvelle France",
+      "latitude":-20.37056,
+      "longitude":57.56111
+    },{
+      "name":"Plaine Magnien",
+      "latitude":-20.42967,
+      "longitude":57.66968
+    },{
+      "name":"Rose Belle",
+      "latitude":-20.40028,
+      "longitude":57.59667
+    }]
+  },{
+    "name":"Mauritius",
+    "cities":[{
+      "name":"Montagne Blanche",
+      "latitude":-20.28278,
+      "longitude":57.65444
+    }]
+  },{
+    "name":"Moka District",
+    "cities":[{
+      "name":"La Dagotiere",
+      "latitude":-20.24444,
+      "longitude":57.55417
+    },{
+      "name":"Moka",
+      "latitude":-20.21889,
+      "longitude":57.49583
+    },{
+      "name":"Pailles",
+      "latitude":-20.19271,
+      "longitude":57.48826
+    },{
+      "name":"Quartier Militaire",
+      "latitude":-20.24389,
+      "longitude":57.58917
+    },{
+      "name":"Saint Pierre",
+      "latitude":-20.2175,
+      "longitude":57.52083
+    }]
+  },{
+    "name":"Pamplemousses District",
+    "cities":[{
+      "name":"Fond du Sac",
+      "latitude":-20.04306,
+      "longitude":57.57861
+    },{
+      "name":"Grande Pointe aux Piments",
+      "latitude":-20.06278,
+      "longitude":57.51306
+    },{
+      "name":"Le Hochet",
+      "latitude":-20.135,
+      "longitude":57.52111
+    },{
+      "name":"Long Mountain",
+      "latitude":-20.14306,
+      "longitude":57.56222
+    },{
+      "name":"Morcellemont Saint Andre",
+      "latitude":-20.07306,
+      "longitude":57.55806
+    },{
+      "name":"Pamplemousses",
+      "latitude":-20.10389,
+      "longitude":57.57028
+    },{
+      "name":"Plaine des Papayes",
+      "latitude":-20.065,
+      "longitude":57.5725
+    },{
+      "name":"Terre Rouge",
+      "latitude":-20.12611,
+      "longitude":57.52444
+    },{
+      "name":"Triolet",
+      "latitude":-20.05472,
+      "longitude":57.54528
+    }]
+  },{
+    "name":"Plaines Wilhems District",
+    "cities":[{
+      "name":"Curepipe",
+      "latitude":-20.31472,
+      "longitude":57.52028
+    },{
+      "name":"Quatre Bornes",
+      "latitude":-20.26381,
+      "longitude":57.4791
+    },{
+      "name":"Vacoas",
+      "latitude":-20.29806,
+      "longitude":57.47833
+    }]
+  },{
+    "name":"Port Louis District",
+    "cities":[{
+      "name":"Port Louis",
+      "latitude":-20.16194,
+      "longitude":57.49889
+    }]
+  },{
+    "name":"Riviere du Rempart District",
+    "cities":[{
+      "name":"Goodlands",
+      "latitude":-20.035,
+      "longitude":57.64306
+    },{
+      "name":"Grand Baie",
+      "latitude":-20.01816,
+      "longitude":57.58015
+    },{
+      "name":"Grand Gaube",
+      "latitude":-20.00639,
+      "longitude":57.66083
+    },{
+      "name":"Petit Raffray",
+      "latitude":-20.01333,
+      "longitude":57.61194
+    },{
+      "name":"Piton",
+      "latitude":-20.09028,
+      "longitude":57.63028
+    },{
+      "name":"Riviere du Rempart",
+      "latitude":-20.10306,
+      "longitude":57.68472
+    },{
+      "name":"Roches Noire",
+      "latitude":-20.11111,
+      "longitude":57.71222
+    }]
+  },{
+    "name":"Rodrigues",
+    "cities":[{
+      "name":"Port Mathurin",
+      "latitude":-19.68333,
+      "longitude":63.41667
+    }]
+  },{
+    "name":"Savanne District",
+    "cities":[{
+      "name":"Camp Diable",
+      "latitude":-20.46278,
+      "longitude":57.57889
+    },{
+      "name":"Chemin Grenier",
+      "latitude":-20.48722,
+      "longitude":57.46556
+    },{
+      "name":"Grand Bois",
+      "latitude":-20.41889,
+      "longitude":57.54417
+    },{
+      "name":"Riviere des Anguilles",
+      "latitude":-20.48528,
+      "longitude":57.55083
+    },{
+      "name":"Souillac",
+      "latitude":-20.51667,
+      "longitude":57.51667
+    },{
+      "name":"Surinam",
+      "latitude":-20.50972,
+      "longitude":57.50528
+    }]
+  }]
+}

@@ -1,0 +1,67 @@
+{
+  "name":"San Marino",
+  "regions":[{
+    "name":"Castello di Acquaviva",
+    "cities":[{
+      "name":"Acquaviva",
+      "latitude":43.94593,
+      "longitude":12.4185
+    }]
+  },{
+    "name":"Castello di Borgo Maggiore",
+    "cities":[{
+      "name":"Borgo Maggiore",
+      "latitude":43.94193,
+      "longitude":12.44738
+    }]
+  },{
+    "name":"Castello di Domagnano",
+    "cities":[{
+      "name":"Domagnano",
+      "latitude":43.95279,
+      "longitude":12.47008
+    }]
+  },{
+    "name":"Castello di Faetano",
+    "cities":[{
+      "name":"Faetano",
+      "latitude":43.92831,
+      "longitude":12.49798
+    }]
+  },{
+    "name":"Castello di Fiorentino",
+    "cities":[{
+      "name":"Fiorentino",
+      "latitude":43.91001,
+      "longitude":12.45738
+    }]
+  },{
+    "name":"Castello di Montegiardino",
+    "cities":[{
+      "name":"Monte Giardino",
+      "latitude":43.90878,
+      "longitude":12.48201
+    }]
+  },{
+    "name":"Castello di San Marino Citta",
+    "cities":[{
+      "name":"San Marino",
+      "latitude":43.93667,
+      "longitude":12.44639
+    }]
+  },{
+    "name":"Chiesanuova",
+    "cities":[{
+      "name":"Poggio di Chiesanuova",
+      "latitude":43.90451,
+      "longitude":12.42142
+    }]
+  },{
+    "name":"Serravalle",
+    "cities":[{
+      "name":"Serravalle",
+      "latitude":43.96897,
+      "longitude":12.48167
+    }]
+  }]
+}

@@ -1,0 +1,46 @@
+{
+  "name":"Faroe Islands",
+  "regions":[{
+    "name":"Eysturoyar sysla",
+    "cities":[{
+      "name":"Fuglafjordur",
+      "latitude":62.24398,
+      "longitude":-6.81395
+    }]
+  },{
+    "name":"Nordoyar sysla",
+    "cities":[{
+      "name":"Klaksvik",
+      "latitude":62.22655,
+      "longitude":-6.58901
+    }]
+  },{
+    "name":"Sandoyar Sysla",
+    "cities":[{
+      "name":"Sandur",
+      "latitude":61.8425,
+      "longitude":-6.80778
+    }]
+  },{
+    "name":"Streymoyar Sysla",
+    "cities":[{
+      "name":"Torshavn",
+      "latitude":62.00973,
+      "longitude":-6.77164
+    }]
+  },{
+    "name":"Suduroyar sysla",
+    "cities":[{
+      "name":"Tvoroyri",
+      "latitude":61.55557,
+      "longitude":-6.81109
+    }]
+  },{
+    "name":"Vaga Sysla",
+    "cities":[{
+      "name":"Midvagur",
+      "latitude":62.05111,
+      "longitude":-7.19389
+    }]
+  }]
+}

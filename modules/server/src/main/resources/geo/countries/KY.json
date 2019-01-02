@@ -1,0 +1,19 @@
+{
+  "name":"Cayman Islands",
+  "regions":[{
+    "name":"Cayman Islands",
+    "cities":[{
+      "name":"Bodden Town",
+      "latitude":19.27647,
+      "longitude":-81.2542
+    },{
+      "name":"George Town",
+      "latitude":19.2866,
+      "longitude":-81.37436
+    },{
+      "name":"West Bay",
+      "latitude":19.36667,
+      "longitude":-81.41667
+    }]
+  }]
+}

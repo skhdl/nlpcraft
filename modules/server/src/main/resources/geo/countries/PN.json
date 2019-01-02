@@ -1,0 +1,11 @@
+{
+  "name":"Pitcairn",
+  "regions":[{
+    "name":"Pitcairn",
+    "cities":[{
+      "name":"Adamstown",
+      "latitude":-25.06597,
+      "longitude":-130.10147
+    }]
+  }]
+}

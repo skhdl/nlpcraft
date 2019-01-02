@@ -1,0 +1,248 @@
+{
+  "name":"Chad",
+  "regions":[{
+    "name":"Barh el Gazel",
+    "cities":[{
+      "name":"Moussoro",
+      "latitude":13.64084,
+      "longitude":16.49007
+    }]
+  },{
+    "name":"Batha Region",
+    "cities":[{
+      "name":"Ati",
+      "latitude":13.2154,
+      "longitude":18.3353
+    },{
+      "name":"Oum Hadjer",
+      "latitude":13.2954,
+      "longitude":19.6966
+    }]
+  },{
+    "name":"Borkou Region",
+    "cities":[{
+      "name":"Faya-Largeau",
+      "latitude":17.9257,
+      "longitude":19.10428
+    }]
+  },{
+    "name":"Chari-Baguirmi Region",
+    "cities":[{
+      "name":"Bousso",
+      "latitude":10.48473,
+      "longitude":16.71076
+    },{
+      "name":"Dourbali",
+      "latitude":11.80909,
+      "longitude":15.86323
+    },{
+      "name":"Massenya",
+      "latitude":11.4039,
+      "longitude":16.1705
+    },{
+      "name":"NDjamena",
+      "latitude":12.10672,
+      "longitude":15.0444
+    },{
+      "name":"Ngama",
+      "latitude":11.78333,
+      "longitude":17.16667
+    }]
+  },{
+    "name":"Ennedi Region",
+    "cities":[{
+      "name":"Fada",
+      "latitude":17.1832,
+      "longitude":21.58862
+    }]
+  },{
+    "name":"Ennedi-Est",
+    "cities":[]
+  },{
+    "name":"Ennedi-Ouest",
+    "cities":[]
+  },{
+    "name":"Guera Region",
+    "cities":[{
+      "name":"Bitkine",
+      "latitude":11.9801,
+      "longitude":18.2138
+    },{
+      "name":"Melfi",
+      "latitude":11.0598,
+      "longitude":17.9355
+    },{
+      "name":"Mongo",
+      "latitude":12.18441,
+      "longitude":18.69303
+    }]
+  },{
+    "name":"Hadjer-Lamis",
+    "cities":[{
+      "name":"Bokoro",
+      "latitude":12.3807,
+      "longitude":17.0568
+    },{
+      "name":"Massaguet",
+      "latitude":12.47554,
+      "longitude":15.43647
+    },{
+      "name":"Massakory",
+      "latitude":12.996,
+      "longitude":15.72927
+    }]
+  },{
+    "name":"Kanem Region",
+    "cities":[{
+      "name":"Mao",
+      "latitude":14.12116,
+      "longitude":15.3103
+    }]
+  },{
+    "name":"Lac Region",
+    "cities":[{
+      "name":"Bol",
+      "latitude":13.45861,
+      "longitude":14.71472
+    }]
+  },{
+    "name":"Logone Occidental Region",
+    "cities":[{
+      "name":"Beinamar",
+      "latitude":8.6698,
+      "longitude":15.3813
+    },{
+      "name":"Benoy",
+      "latitude":8.98327,
+      "longitude":16.31991
+    },{
+      "name":"Moundou",
+      "latitude":8.56667,
+      "longitude":16.08333
+    }]
+  },{
+    "name":"Logone Oriental Region",
+    "cities":[{
+      "name":"Bebedja",
+      "latitude":8.6761,
+      "longitude":16.566
+    },{
+      "name":"Beboto",
+      "latitude":8.26682,
+      "longitude":16.93898
+    },{
+      "name":"Doba",
+      "latitude":8.65,
+      "longitude":16.85
+    }]
+  },{
+    "name":"Mandoul",
+    "cities":[{
+      "name":"Goundi",
+      "latitude":9.36267,
+      "longitude":17.36597
+    },{
+      "name":"Koumra",
+      "latitude":8.91256,
+      "longitude":17.55392
+    },{
+      "name":"Moissala",
+      "latitude":8.3404,
+      "longitude":17.7663
+    }]
+  },{
+    "name":"Mayo-Kebbi East Region",
+    "cities":[{
+      "name":"Bongor",
+      "latitude":10.28056,
+      "longitude":15.37222
+    },{
+      "name":"Gounou Gaya",
+      "latitude":9.6294,
+      "longitude":15.5132
+    },{
+      "name":"Guelendeng",
+      "latitude":10.91762,
+      "longitude":15.5501
+    }]
+  },{
+    "name":"Mayo-Kebbi West Region",
+    "cities":[{
+      "name":"Mboursou Lere",
+      "latitude":9.7639,
+      "longitude":14.1539
+    },{
+      "name":"Pala",
+      "latitude":9.3642,
+      "longitude":14.9046
+    }]
+  },{
+    "name":"Moyen-Chari Region",
+    "cities":[{
+      "name":"Kyabe",
+      "latitude":9.45149,
+      "longitude":18.94493
+    },{
+      "name":"Sagh",
+      "latitude":9.1429,
+      "longitude":18.3923
+    }]
+  },{
+    "name":"Ouaddai Region",
+    "cities":[{
+      "name":"Abeche",
+      "latitude":13.82916,
+      "longitude":20.8324
+    },{
+      "name":"Adre",
+      "latitude":13.46667,
+      "longitude":22.2
+    }]
+  },{
+    "name":"Salamat Region",
+    "cities":[{
+      "name":"Am Timan",
+      "latitude":11.0297,
+      "longitude":20.2827
+    }]
+  },{
+    "name":"Sila",
+    "cities":[{
+      "name":"Goz Beida",
+      "latitude":12.21667,
+      "longitude":21.41667
+    }]
+  },{
+    "name":"Tandjile Region",
+    "cities":[{
+      "name":"Bere",
+      "latitude":9.3202,
+      "longitude":16.1552
+    },{
+      "name":"Kelo",
+      "latitude":9.30859,
+      "longitude":15.80658
+    },{
+      "name":"Lai",
+      "latitude":9.3952,
+      "longitude":16.2989
+    }]
+  },{
+    "name":"Tibesti Region",
+    "cities":[{
+      "name":"Bardai",
+      "latitude":21.35833,
+      "longitude":17.00056
+    }]
+  },{
+    "name":"Ville de NDjamena",
+    "cities":[]
+  },{
+    "name":"Wadi Fira Region",
+    "cities":[{
+      "name":"Biltine",
+      "latitude":14.53333,
+      "longitude":20.91667
+    }]
+  }]
+}

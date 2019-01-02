@@ -1,0 +1,183 @@
+{
+  "name":"Yemen",
+  "regions":[{
+    "name":"Al Mahrah",
+    "cities":[{
+      "name":"Al Ghayzah",
+      "latitude":16.20787,
+      "longitude":52.17605
+    }]
+  },{
+    "name":"Al Mahwit",
+    "cities":[{
+      "name":"Al Mahwit",
+      "latitude":15.47007,
+      "longitude":43.54481
+    }]
+  },{
+    "name":"Amanat Al Asimah",
+    "cities":[]
+  },{
+    "name":"Ibb",
+    "cities":[{
+      "name":"Dhi as Sufal",
+      "latitude":13.83446,
+      "longitude":44.11469
+    },{
+      "name":"Ibb",
+      "latitude":13.96667,
+      "longitude":44.18333
+    },{
+      "name":"Yarim",
+      "latitude":14.29804,
+      "longitude":44.37795
+    }]
+  },{
+    "name":"Muhafazat Abyan",
+    "cities":[{
+      "name":"Jawf al Maqbabah",
+      "latitude":13.83783,
+      "longitude":45.83488
+    },{
+      "name":"Zinjibar",
+      "latitude":13.12871,
+      "longitude":45.38073
+    }]
+  },{
+    "name":"Muhafazat Dhamar",
+    "cities":[{
+      "name":"Dhamar",
+      "latitude":14.54274,
+      "longitude":44.40514
+    }]
+  },{
+    "name":"Muhafazat Hadramawt",
+    "cities":[{
+      "name":"Al Mukalla",
+      "latitude":14.54248,
+      "longitude":49.12424
+    },{
+      "name":"Hadibu",
+      "latitude":12.64881,
+      "longitude":54.01895
+    }]
+  },{
+    "name":"Muhafazat Hajjah",
+    "cities":[{
+      "name":"Hajjah",
+      "latitude":15.69425,
+      "longitude":43.60582
+    }]
+  },{
+    "name":"Muhafazat Lahij",
+    "cities":[{
+      "name":"Lahij",
+      "latitude":13.05667,
+      "longitude":44.88194
+    }]
+  },{
+    "name":"Muhafazat Marib",
+    "cities":[{
+      "name":"Marib",
+      "latitude":15.46253,
+      "longitude":45.32581
+    }]
+  },{
+    "name":"Muhafazat Raymah",
+    "cities":[{
+      "name":"Al Jabin",
+      "latitude":14.70401,
+      "longitude":43.59904
+    }]
+  },{
+    "name":"Muhafazat Sa`dah",
+    "cities":[{
+      "name":"Sadah",
+      "latitude":16.94021,
+      "longitude":43.76394
+    }]
+  },{
+    "name":"Muhafazat Ta`izz",
+    "cities":[{
+      "name":"Ta`izz",
+      "latitude":13.57952,
+      "longitude":44.02091
+    }]
+  },{
+    "name":"Muhafazat `Adan",
+    "cities":[{
+      "name":"Aden",
+      "latitude":12.77944,
+      "longitude":45.03667
+    }]
+  },{
+    "name":"Muhafazat `Amran",
+    "cities":[{
+      "name":"Amran",
+      "latitude":15.6594,
+      "longitude":43.94385
+    }]
+  },{
+    "name":"Muhafazat ad Dali`",
+    "cities":[{
+      "name":"Dhalie",
+      "latitude":13.69572,
+      "longitude":44.73137
+    }]
+  },{
+    "name":"Muhafazat al Bayda",
+    "cities":[{
+      "name":"Al Bayda",
+      "latitude":13.98523,
+      "longitude":45.57272
+    }]
+  },{
+    "name":"Muhafazat al Hudaydah",
+    "cities":[{
+      "name":"Al Hudaydah",
+      "latitude":14.79781,
+      "longitude":42.95452
+    },{
+      "name":"Bajil",
+      "latitude":15.05835,
+      "longitude":43.28506
+    },{
+      "name":"Bayt al Faqih",
+      "latitude":14.51635,
+      "longitude":43.32446
+    },{
+      "name":"Zabid",
+      "latitude":14.1951,
+      "longitude":43.31518
+    }]
+  },{
+    "name":"Muhafazat al Jawf",
+    "cities":[{
+      "name":"Al Hazm",
+      "latitude":16.16406,
+      "longitude":44.77692
+    }]
+  },{
+    "name":"Sanaa",
+    "cities":[{
+      "name":"Sahar",
+      "latitude":15.31586,
+      "longitude":44.30858
+    },{
+      "name":"Sanaa",
+      "latitude":15.35472,
+      "longitude":44.20667
+    },{
+      "name":"Sayyan",
+      "latitude":15.17177,
+      "longitude":44.32442
+    }]
+  },{
+    "name":"Shabwah",
+    "cities":[{
+      "name":"Ataq",
+      "latitude":14.53766,
+      "longitude":46.83187
+    }]
+  }]
+}

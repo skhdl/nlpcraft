@@ -1,0 +1,11 @@
+{
+  "name":"Saint Martin",
+  "regions":[{
+    "name":"Saint Martin",
+    "cities":[{
+      "name":"Marigot",
+      "latitude":18.06667,
+      "longitude":-63.08333
+    }]
+  }]
+}

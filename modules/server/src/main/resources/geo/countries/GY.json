@@ -1,0 +1,78 @@
+{
+  "name":"Guyana",
+  "regions":[{
+    "name":"Barima-Waini Region",
+    "cities":[{
+      "name":"Mabaruma",
+      "latitude":8.2,
+      "longitude":-59.78333
+    }]
+  },{
+    "name":"Cuyuni-Mazaruni Region",
+    "cities":[{
+      "name":"Bartica",
+      "latitude":6.4,
+      "longitude":-58.61667
+    }]
+  },{
+    "name":"Demerara-Mahaica Region",
+    "cities":[{
+      "name":"Georgetown",
+      "latitude":6.80448,
+      "longitude":-58.15527
+    }]
+  },{
+    "name":"East Berbice-Corentyne Region",
+    "cities":[{
+      "name":"New Amsterdam",
+      "latitude":6.24793,
+      "longitude":-57.5171
+    },{
+      "name":"Skeldon",
+      "latitude":5.88333,
+      "longitude":-57.13333
+    }]
+  },{
+    "name":"Essequibo Islands-West Demerara Region",
+    "cities":[{
+      "name":"Vreed-en-Hoop",
+      "latitude":6.80927,
+      "longitude":-58.19798
+    }]
+  },{
+    "name":"Mahaica-Berbice Region",
+    "cities":[{
+      "name":"Rosignol",
+      "latitude":6.27095,
+      "longitude":-57.53697
+    }]
+  },{
+    "name":"Pomeroon-Supenaam Region",
+    "cities":[{
+      "name":"Anna Regina",
+      "latitude":7.26439,
+      "longitude":-58.50769
+    }]
+  },{
+    "name":"Potaro-Siparuni Region",
+    "cities":[{
+      "name":"Mahdia",
+      "latitude":5.26667,
+      "longitude":-59.15
+    }]
+  },{
+    "name":"Upper Demerara-Berbice Region",
+    "cities":[{
+      "name":"Linden",
+      "latitude":6.00809,
+      "longitude":-58.30714
+    }]
+  },{
+    "name":"Upper Takutu-Upper Essequibo Region",
+    "cities":[{
+      "name":"Lethem",
+      "latitude":3.38333,
+      "longitude":-59.8
+    }]
+  }]
+}

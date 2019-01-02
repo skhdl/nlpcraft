@@ -1,0 +1,11 @@
+{
+  "name":"Anguilla",
+  "regions":[{
+    "name":"Anguilla",
+    "cities":[{
+      "name":"The Valley",
+      "latitude":18.21704,
+      "longitude":-63.05783
+    }]
+  }]
+}

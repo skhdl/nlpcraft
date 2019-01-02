@@ -1,0 +1,11 @@
+{
+  "name":"Niue",
+  "regions":[{
+    "name":"Niue",
+    "cities":[{
+      "name":"Alofi",
+      "latitude":-19.05952,
+      "longitude":-169.91867
+    }]
+  }]
+}

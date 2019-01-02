@@ -1,0 +1,676 @@
+{
+  "name":"Azerbaijan",
+  "regions":[{
+    "name":"Absheron Rayon",
+    "cities":[{
+      "name":"Ceyranbatan",
+      "latitude":40.54194,
+      "longitude":49.66073
+    },{
+      "name":"Khirdalan",
+      "latitude":40.44808,
+      "longitude":49.75502
+    },{
+      "name":"Qobu",
+      "latitude":40.40472,
+      "longitude":49.71306
+    },{
+      "name":"Saray",
+      "latitude":40.53299,
+      "longitude":49.71681
+    }]
+  },{
+    "name":"Aghdam Rayon",
+    "cities":[{
+      "name":"Agdam",
+      "latitude":39.99096,
+      "longitude":46.92736
+    }]
+  },{
+    "name":"Aghdash Rayon",
+    "cities":[{
+      "name":"Agdas",
+      "latitude":40.64699,
+      "longitude":47.4738
+    }]
+  },{
+    "name":"Aghjabadi Rayon",
+    "cities":[{
+      "name":"Agdzhabedy",
+      "latitude":40.05015,
+      "longitude":47.45937
+    },{
+      "name":"Avsar",
+      "latitude":39.97389,
+      "longitude":47.42389
+    }]
+  },{
+    "name":"Aghstafa Rayon",
+    "cities":[{
+      "name":"Aghstafa",
+      "latitude":41.11889,
+      "longitude":45.45389
+    }]
+  },{
+    "name":"Aghsu Rayon",
+    "cities":[{
+      "name":"Aghsu",
+      "latitude":40.57028,
+      "longitude":48.40087
+    }]
+  },{
+    "name":"Ali Bajramly",
+    "cities":[{
+      "name":"Sirvan",
+      "latitude":39.93778,
+      "longitude":48.929
+    }]
+  },{
+    "name":"Astara Rayon",
+    "cities":[{
+      "name":"Astara",
+      "latitude":38.45598,
+      "longitude":48.87498
+    }]
+  },{
+    "name":"Baku City",
+    "cities":[{
+      "name":"Amirdzhan",
+      "latitude":40.42639,
+      "longitude":49.98361
+    },{
+      "name":"Badamdar",
+      "latitude":40.34024,
+      "longitude":49.8045
+    },{
+      "name":"Bakixanov",
+      "latitude":40.41894,
+      "longitude":49.96693
+    },{
+      "name":"Baku",
+      "latitude":40.37767,
+      "longitude":49.89201
+    },{
+      "name":"Balakhani",
+      "latitude":40.46344,
+      "longitude":49.91893
+    },{
+      "name":"Bilajari",
+      "latitude":40.4444,
+      "longitude":49.80566
+    },{
+      "name":"Bilajer",
+      "latitude":40.56441,
+      "longitude":50.04002
+    },{
+      "name":"Binagadi",
+      "latitude":40.46602,
+      "longitude":49.82783
+    },{
+      "name":"Biny Selo",
+      "latitude":40.45076,
+      "longitude":50.08686
+    },{
+      "name":"Buzovna",
+      "latitude":40.51903,
+      "longitude":50.11438
+    },{
+      "name":"Hovsan",
+      "latitude":40.37444,
+      "longitude":50.08528
+    },{
+      "name":"Khodzhi-Gasan",
+      "latitude":40.41293,
+      "longitude":49.76904
+    },{
+      "name":"Lokbatan",
+      "latitude":40.3256,
+      "longitude":49.73376
+    },{
+      "name":"Mardakyany",
+      "latitude":40.49182,
+      "longitude":50.14292
+    },{
+      "name":"Mastaga",
+      "latitude":40.52982,
+      "longitude":50.00616
+    },{
+      "name":"Nardaran",
+      "latitude":40.55611,
+      "longitude":50.00556
+    },{
+      "name":"Pirallahi",
+      "latitude":40.47013,
+      "longitude":50.32476
+    },{
+      "name":"Qaracuxur",
+      "latitude":40.39667,
+      "longitude":49.97361
+    },{
+      "name":"Qobustan",
+      "latitude":40.08238,
+      "longitude":49.41205
+    },{
+      "name":"Ramana",
+      "latitude":40.44222,
+      "longitude":49.98056
+    },{
+      "name":"Sabuncu",
+      "latitude":40.4425,
+      "longitude":49.94806
+    },{
+      "name":"Turkan",
+      "latitude":40.3646,
+      "longitude":50.22075
+    },{
+      "name":"Yeni Suraxani",
+      "latitude":40.43026,
+      "longitude":50.03598
+    },{
+      "name":"Zabrat",
+      "latitude":40.47746,
+      "longitude":49.94174
+    },{
+      "name":"Zyrya",
+      "latitude":40.36613,
+      "longitude":50.29198
+    }]
+  },{
+    "name":"Balakan Rayon",
+    "cities":[{
+      "name":"Belokany",
+      "latitude":41.72626,
+      "longitude":46.40478
+    }]
+  },{
+    "name":"Barda Rayon",
+    "cities":[{
+      "name":"Barda",
+      "latitude":40.37577,
+      "longitude":47.12619
+    }]
+  },{
+    "name":"Beylagan Rayon",
+    "cities":[{
+      "name":"Beyləqan",
+      "latitude":39.77556,
+      "longitude":47.61861
+    },{
+      "name":"Dunyamalilar",
+      "latitude":39.77278,
+      "longitude":47.75889
+    }]
+  },{
+    "name":"Bilasuvar Rayon",
+    "cities":[{
+      "name":"Pushkino",
+      "latitude":39.45833,
+      "longitude":48.545
+    }]
+  },{
+    "name":"Cabrayil Rayonu",
+    "cities":[{
+      "name":"Jebrail",
+      "latitude":39.39917,
+      "longitude":47.02834
+    }]
+  },{
+    "name":"Dashkasan Rayon",
+    "cities":[{
+      "name":"Yukhary-Dashkesan",
+      "latitude":40.52393,
+      "longitude":46.08186
+    }]
+  },{
+    "name":"Davachi Rayon",
+    "cities":[{
+      "name":"Divichibazar",
+      "latitude":41.20117,
+      "longitude":48.98712
+    }]
+  },{
+    "name":"Fizuli Rayon",
+    "cities":[{
+      "name":"Fizuli",
+      "latitude":39.60094,
+      "longitude":47.14529
+    }]
+  },{
+    "name":"Gadabay Rayon",
+    "cities":[{
+      "name":"Kyadabek",
+      "latitude":40.57055,
+      "longitude":45.81229
+    }]
+  },{
+    "name":"Ganja City",
+    "cities":[{
+      "name":"Ganja",
+      "latitude":40.68278,
+      "longitude":46.36056
+    }]
+  },{
+    "name":"Gobustan Rayon",
+    "cities":[{
+      "name":"Qobustan",
+      "latitude":40.5336,
+      "longitude":48.92819
+    }]
+  },{
+    "name":"Goranboy Rayon",
+    "cities":[{
+      "name":"Goranboy",
+      "latitude":40.61028,
+      "longitude":46.78972
+    },{
+      "name":"Qizilhacili",
+      "latitude":40.57362,
+      "longitude":46.849
+    }]
+  },{
+    "name":"Goychay Rayon",
+    "cities":[{
+      "name":"Geoktschai",
+      "latitude":40.65056,
+      "longitude":47.74219
+    }]
+  },{
+    "name":"Goygol Rayon",
+    "cities":[{
+      "name":"Yelenendorf",
+      "latitude":40.58584,
+      "longitude":46.3189
+    }]
+  },{
+    "name":"Hajigabul Rayon",
+    "cities":[{
+      "name":"Haciqabul",
+      "latitude":40.03874,
+      "longitude":48.94286
+    }]
+  },{
+    "name":"Imishli Rayon",
+    "cities":[{
+      "name":"Imishli",
+      "latitude":39.87095,
+      "longitude":48.05995
+    }]
+  },{
+    "name":"Ismayilli Rayon",
+    "cities":[{
+      "name":"Ismayilli",
+      "latitude":40.77897,
+      "longitude":48.16375
+    }]
+  },{
+    "name":"Jalilabad Rayon",
+    "cities":[{
+      "name":"Dzhalilabad",
+      "latitude":39.20963,
+      "longitude":48.49186
+    },{
+      "name":"Prishibinskoye",
+      "latitude":39.11817,
+      "longitude":48.59255
+    }]
+  },{
+    "name":"Kalbacar Rayonu",
+    "cities":[{
+      "name":"Kerbakhiar",
+      "latitude":40.10984,
+      "longitude":46.04446
+    }]
+  },{
+    "name":"Khachmaz Rayon",
+    "cities":[{
+      "name":"Xacmaz",
+      "latitude":41.46426,
+      "longitude":48.80565
+    },{
+      "name":"Xudat",
+      "latitude":41.63052,
+      "longitude":48.68161
+    }]
+  },{
+    "name":"Khizi Rayon",
+    "cities":[{
+      "name":"Khyzy",
+      "latitude":40.90576,
+      "longitude":49.08127
+    }]
+  },{
+    "name":"Kurdamir Rayon",
+    "cities":[{
+      "name":"Kyurdarmir",
+      "latitude":40.34532,
+      "longitude":48.15085
+    }]
+  },{
+    "name":"Lacin Rayonu",
+    "cities":[{
+      "name":"Lacin",
+      "latitude":39.59881,
+      "longitude":46.55045
+    }]
+  },{
+    "name":"Lankaran Rayon",
+    "cities":[{
+      "name":"Lǝnkǝran",
+      "latitude":38.75428,
+      "longitude":48.85062
+    }]
+  },{
+    "name":"Lankaran Sahari",
+    "cities":[]
+  },{
+    "name":"Lerik Rayon",
+    "cities":[{
+      "name":"Lerik",
+      "latitude":38.77388,
+      "longitude":48.41497
+    }]
+  },{
+    "name":"Masally Rayon",
+    "cities":[{
+      "name":"Boradigah",
+      "latitude":38.93014,
+      "longitude":48.7092
+    },{
+      "name":"Masally",
+      "latitude":39.03532,
+      "longitude":48.6654
+    }]
+  },{
+    "name":"Mingacevir City",
+    "cities":[{
+      "name":"Mingelchaur",
+      "latitude":40.76395,
+      "longitude":47.05953
+    }]
+  },{
+    "name":"Naftalan City",
+    "cities":[{
+      "name":"Naftalan",
+      "latitude":40.50821,
+      "longitude":46.8203
+    }]
+  },{
+    "name":"Nakhchivan Autonomous Republic",
+    "cities":[{
+      "name":"Culfa",
+      "latitude":38.9558,
+      "longitude":45.6308
+    },{
+      "name":"Nakhchivan",
+      "latitude":39.20889,
+      "longitude":45.41222
+    },{
+      "name":"Ordubad",
+      "latitude":38.90595,
+      "longitude":46.02341
+    },{
+      "name":"Yayci",
+      "latitude":38.9427,
+      "longitude":45.7319
+    }]
+  },{
+    "name":"Naxcivan Sahari",
+    "cities":[]
+  },{
+    "name":"Neftchala Rayon",
+    "cities":[{
+      "name":"Neftcala",
+      "latitude":39.3768,
+      "longitude":49.247
+    },{
+      "name":"Severo-Vostotchnyi Bank",
+      "latitude":39.41117,
+      "longitude":49.24792
+    }]
+  },{
+    "name":"Oghuz Rayon",
+    "cities":[{
+      "name":"Oguz",
+      "latitude":41.07128,
+      "longitude":47.46528
+    }]
+  },{
+    "name":"Qabala Rayon",
+    "cities":[{
+      "name":"Qutqashen",
+      "latitude":40.98139,
+      "longitude":47.84583
+    }]
+  },{
+    "name":"Qakh Rayon",
+    "cities":[{
+      "name":"Cinarli",
+      "latitude":41.46965,
+      "longitude":46.91582
+    },{
+      "name":"Qax",
+      "latitude":41.41826,
+      "longitude":46.92043
+    }]
+  },{
+    "name":"Qazakh Rayon",
+    "cities":[{
+      "name":"Qazax",
+      "latitude":41.09246,
+      "longitude":45.36561
+    }]
+  },{
+    "name":"Quba Rayon",
+    "cities":[{
+      "name":"Quba",
+      "latitude":41.36108,
+      "longitude":48.51341
+    }]
+  },{
+    "name":"Qubadli Rayon",
+    "cities":[{
+      "name":"Qubadli",
+      "latitude":39.34441,
+      "longitude":46.58183
+    }]
+  },{
+    "name":"Qusar Rayon",
+    "cities":[{
+      "name":"Qusar",
+      "latitude":41.4275,
+      "longitude":48.4302
+    }]
+  },{
+    "name":"Saatly Rayon",
+    "cities":[{
+      "name":"Ahmadbayli",
+      "latitude":39.87867,
+      "longitude":48.39902
+    },{
+      "name":"Saatli",
+      "latitude":39.93214,
+      "longitude":48.36892
+    }]
+  },{
+    "name":"Sabirabad Rayon",
+    "cities":[{
+      "name":"Sabirabad",
+      "latitude":40.00869,
+      "longitude":48.47701
+    }]
+  },{
+    "name":"Salyan Rayon",
+    "cities":[{
+      "name":"Salyan",
+      "latitude":39.59621,
+      "longitude":48.98479
+    }]
+  },{
+    "name":"Samukh Rayon",
+    "cities":[{
+      "name":"Qarayeri",
+      "latitude":40.78825,
+      "longitude":46.3072
+    },{
+      "name":"Samux",
+      "latitude":40.76485,
+      "longitude":46.40868
+    }]
+  },{
+    "name":"Shaki Rayon",
+    "cities":[]
+  },{
+    "name":"Shamakhi Rayon",
+    "cities":[{
+      "name":"Shamakhi",
+      "latitude":40.63141,
+      "longitude":48.64137
+    }]
+  },{
+    "name":"Shamkir Rayon",
+    "cities":[{
+      "name":"Dzagam",
+      "latitude":40.9033,
+      "longitude":45.88564
+    },{
+      "name":"Shamkhor",
+      "latitude":40.82975,
+      "longitude":46.0178
+    }]
+  },{
+    "name":"Siazan Rayon",
+    "cities":[{
+      "name":"Kyzyl-Burun",
+      "latitude":41.07754,
+      "longitude":49.11257
+    }]
+  },{
+    "name":"Sumqayit City",
+    "cities":[{
+      "name":"Corat",
+      "latitude":40.57176,
+      "longitude":49.70509
+    },{
+      "name":"Haci Zeynalabdin",
+      "latitude":40.62333,
+      "longitude":49.55861
+    },{
+      "name":"Sumqayit",
+      "latitude":40.58972,
+      "longitude":49.66861
+    }]
+  },{
+    "name":"Susa Rayonu",
+    "cities":[{
+      "name":"Shushi",
+      "latitude":39.76006,
+      "longitude":46.74989
+    }]
+  },{
+    "name":"Susa Səhəri",
+    "cities":[]
+  },{
+    "name":"Səki Səhəri",
+    "cities":[{
+      "name":"Sheki",
+      "latitude":41.19194,
+      "longitude":47.17056
+    }]
+  },{
+    "name":"Tartar Rayon",
+    "cities":[{
+      "name":"Martakert",
+      "latitude":40.21238,
+      "longitude":46.82086
+    },{
+      "name":"Terter",
+      "latitude":40.34179,
+      "longitude":46.93242
+    }]
+  },{
+    "name":"Tovuz Rayon",
+    "cities":[{
+      "name":"Tovuz",
+      "latitude":40.99249,
+      "longitude":45.62838
+    }]
+  },{
+    "name":"Ujar Rayon",
+    "cities":[{
+      "name":"Ujar",
+      "latitude":40.51902,
+      "longitude":47.65423
+    }]
+  },{
+    "name":"Xankandi Sahari",
+    "cities":[{
+      "name":"Xankǝndi",
+      "latitude":39.8177,
+      "longitude":46.7528
+    }]
+  },{
+    "name":"Xocali Rayonu",
+    "cities":[{
+      "name":"Xocali",
+      "latitude":39.91297,
+      "longitude":46.79028
+    }]
+  },{
+    "name":"Xocavand Rayonu",
+    "cities":[{
+      "name":"Novyy Karanlug",
+      "latitude":39.79546,
+      "longitude":47.10989
+    }]
+  },{
+    "name":"Yardymli Rayon",
+    "cities":[{
+      "name":"Yardimli",
+      "latitude":38.90771,
+      "longitude":48.24052
+    }]
+  },{
+    "name":"Yevlakh City",
+    "cities":[{
+      "name":"Yevlakh",
+      "latitude":40.61832,
+      "longitude":47.15014
+    }]
+  },{
+    "name":"Yevlakh Rayon",
+    "cities":[{
+      "name":"Aran",
+      "latitude":40.62528,
+      "longitude":46.97556
+    }]
+  },{
+    "name":"Zangilan Rayon",
+    "cities":[{
+      "name":"Mincivan",
+      "latitude":39.03058,
+      "longitude":46.7214
+    },{
+      "name":"Zangilan",
+      "latitude":39.0884,
+      "longitude":46.6513
+    }]
+  },{
+    "name":"Zaqatala Rayon",
+    "cities":[{
+      "name":"Aliabad",
+      "latitude":41.4829,
+      "longitude":46.63483
+    },{
+      "name":"Zaqatala",
+      "latitude":41.6316,
+      "longitude":46.64479
+    }]
+  },{
+    "name":"Zardab Rayon",
+    "cities":[{
+      "name":"Zardob",
+      "latitude":40.21991,
+      "longitude":47.70997
+    }]
+  }]
+}

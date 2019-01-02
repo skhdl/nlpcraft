@@ -1,0 +1,15 @@
+{
+  "name":"Curacao",
+  "regions":[{
+    "name":"Curacao",
+    "cities":[{
+      "name":"Sint Michiel Liber",
+      "latitude":12.15,
+      "longitude":-68.98333
+    },{
+      "name":"Willemstad",
+      "latitude":12.1084,
+      "longitude":-68.93354
+    }]
+  }]
+}

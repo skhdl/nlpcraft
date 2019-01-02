@@ -1,0 +1,99 @@
+{
+  "name":"Mauritania",
+  "regions":[{
+    "name":"Adrar",
+    "cities":[{
+      "name":"Atar",
+      "latitude":20.51686,
+      "longitude":-13.04986
+    }]
+  },{
+    "name":"Assaba",
+    "cities":[{
+      "name":"Kiffa",
+      "latitude":16.61659,
+      "longitude":-11.40453
+    }]
+  },{
+    "name":"Brakna",
+    "cities":[{
+      "name":"Aleg",
+      "latitude":17.0481,
+      "longitude":-13.9209
+    }]
+  },{
+    "name":"Dakhlet Nouadhibou",
+    "cities":[{
+      "name":"Nouadhibou",
+      "latitude":20.93098,
+      "longitude":-17.03465
+    }]
+  },{
+    "name":"District de Nouakchott",
+    "cities":[{
+      "name":"Nouakchott",
+      "latitude":18.08581,
+      "longitude":-15.9785
+    }]
+  },{
+    "name":"Gorgol",
+    "cities":[{
+      "name":"Kaedi",
+      "latitude":16.14653,
+      "longitude":-13.50474
+    }]
+  },{
+    "name":"Guidimaka",
+    "cities":[{
+      "name":"Selibabi",
+      "latitude":15.15895,
+      "longitude":-12.1829
+    }]
+  },{
+    "name":"Hodh ech Chargui",
+    "cities":[{
+      "name":"Nema",
+      "latitude":16.6162,
+      "longitude":-7.2535
+    }]
+  },{
+    "name":"Hodh el Gharbi",
+    "cities":[{
+      "name":"Ayoun el Atrous",
+      "latitude":16.6614,
+      "longitude":-9.6149
+    }]
+  },{
+    "name":"Inchiri",
+    "cities":[{
+      "name":"Akjoujt",
+      "latitude":19.69694,
+      "longitude":-14.41639
+    }]
+  },{
+    "name":"Tagant",
+    "cities":[{
+      "name":"Tidjikja",
+      "latitude":18.55644,
+      "longitude":-11.42715
+    }]
+  },{
+    "name":"Tiris Zemmour",
+    "cities":[{
+      "name":"Zouerat",
+      "latitude":22.71873,
+      "longitude":-12.45205
+    }]
+  },{
+    "name":"Wilaya du Trarza",
+    "cities":[{
+      "name":"Rosso",
+      "latitude":16.51378,
+      "longitude":-15.80503
+    },{
+      "name":"Tekane",
+      "latitude":16.57806,
+      "longitude":-15.45972
+    }]
+  }]
+}

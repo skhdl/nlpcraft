@@ -1,0 +1,35 @@
+{
+  "name":"American Samoa",
+  "regions":[{
+    "name":"Eastern District",
+    "cities":[{
+      "name":"Pago Pago",
+      "latitude":-14.27806,
+      "longitude":-170.7025
+    }]
+  },{
+    "name":"Manua District",
+    "cities":[{
+      "name":"Ta`u",
+      "latitude":-14.23361,
+      "longitude":-169.51444
+    }]
+  },{
+    "name":"Rose Atoll",
+    "cities":[]
+  },{
+    "name":"Swains Island",
+    "cities":[{
+      "name":"Taulaga",
+      "latitude":-11.05528,
+      "longitude":-171.08833
+    }]
+  },{
+    "name":"Western District",
+    "cities":[{
+      "name":"Tafuna",
+      "latitude":-14.33583,
+      "longitude":-170.72
+    }]
+  }]
+}

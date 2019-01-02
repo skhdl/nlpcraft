@@ -1,0 +1,329 @@
+{
+  "name":"Costa Rica",
+  "regions":[{
+    "name":"Provincia de Alajuela",
+    "cities":[{
+      "name":"Alajuela",
+      "latitude":10.01625,
+      "longitude":-84.21163
+    },{
+      "name":"Atenas",
+      "latitude":9.97806,
+      "longitude":-84.38032
+    },{
+      "name":"Desamparados",
+      "latitude":9.94727,
+      "longitude":-84.50626
+    },{
+      "name":"Naranjo",
+      "latitude":10.09866,
+      "longitude":-84.37824
+    },{
+      "name":"Orotina",
+      "latitude":9.91197,
+      "longitude":-84.52337
+    },{
+      "name":"Quesada",
+      "latitude":10.32381,
+      "longitude":-84.42714
+    },{
+      "name":"Rio Segundo",
+      "latitude":10.24138,
+      "longitude":-84.27933
+    },{
+      "name":"San Jose",
+      "latitude":10.95173,
+      "longitude":-85.1361
+    },{
+      "name":"San Juan",
+      "latitude":10.10248,
+      "longitude":-84.31694
+    },{
+      "name":"San Rafael",
+      "latitude":9.97454,
+      "longitude":-84.20974
+    },{
+      "name":"San Ramon",
+      "latitude":10.08802,
+      "longitude":-84.47022
+    }]
+  },{
+    "name":"Provincia de Cartago",
+    "cities":[{
+      "name":"Cartago",
+      "latitude":9.86444,
+      "longitude":-83.91944
+    },{
+      "name":"Concepcion",
+      "latitude":9.93333,
+      "longitude":-84.0
+    },{
+      "name":"Cot",
+      "latitude":9.89449,
+      "longitude":-83.87302
+    },{
+      "name":"Paraiso",
+      "latitude":9.83832,
+      "longitude":-83.86556
+    },{
+      "name":"San Diego",
+      "latitude":9.89898,
+      "longitude":-84.00287
+    },{
+      "name":"Tres Rios",
+      "latitude":9.90644,
+      "longitude":-83.9876
+    },{
+      "name":"Turrialba",
+      "latitude":9.90467,
+      "longitude":-83.68352
+    }]
+  },{
+    "name":"Provincia de Guanacaste",
+    "cities":[{
+      "name":"Canas",
+      "latitude":10.4294,
+      "longitude":-85.09311
+    },{
+      "name":"Liberia",
+      "latitude":10.63504,
+      "longitude":-85.43772
+    },{
+      "name":"Nicoya",
+      "latitude":10.14527,
+      "longitude":-85.45243
+    },{
+      "name":"Santa Cruz",
+      "latitude":10.26053,
+      "longitude":-85.5851
+    },{
+      "name":"Tilaran",
+      "latitude":10.47029,
+      "longitude":-84.96709
+    }]
+  },{
+    "name":"Provincia de Heredia",
+    "cities":[{
+      "name":"Colon",
+      "latitude":9.91491,
+      "longitude":-84.2417
+    },{
+      "name":"Heredia",
+      "latitude":10.00236,
+      "longitude":-84.11651
+    },{
+      "name":"Llorente",
+      "latitude":9.99844,
+      "longitude":-84.15448
+    },{
+      "name":"Mercedes",
+      "latitude":10.00696,
+      "longitude":-84.13396
+    },{
+      "name":"San Antonio",
+      "latitude":9.98333,
+      "longitude":-84.18333
+    },{
+      "name":"San Francisco",
+      "latitude":9.99299,
+      "longitude":-84.12934
+    },{
+      "name":"San Josecito",
+      "latitude":10.01667,
+      "longitude":-84.1
+    },{
+      "name":"San Pablo",
+      "latitude":9.99559,
+      "longitude":-84.09656
+    },{
+      "name":"San Rafael",
+      "latitude":10.0132,
+      "longitude":-84.10016
+    },{
+      "name":"Santo Domingo",
+      "latitude":10.06388,
+      "longitude":-84.15499
+    }]
+  },{
+    "name":"Provincia de Limon",
+    "cities":[{
+      "name":"Guacimo",
+      "latitude":10.21044,
+      "longitude":-83.68067
+    },{
+      "name":"Guapiles",
+      "latitude":10.21588,
+      "longitude":-83.78661
+    },{
+      "name":"Limon",
+      "latitude":9.99074,
+      "longitude":-83.03596
+    },{
+      "name":"Pocora",
+      "latitude":10.17185,
+      "longitude":-83.60439
+    },{
+      "name":"Siquirres",
+      "latitude":10.09748,
+      "longitude":-83.50659
+    }]
+  },{
+    "name":"Provincia de Puntarenas",
+    "cities":[{
+      "name":"Buenos Aires",
+      "latitude":9.17189,
+      "longitude":-83.33417
+    },{
+      "name":"Chacarita",
+      "latitude":9.98424,
+      "longitude":-84.77892
+    },{
+      "name":"Corredor",
+      "latitude":8.64002,
+      "longitude":-82.946
+    },{
+      "name":"Esparza",
+      "latitude":9.99447,
+      "longitude":-84.66466
+    },{
+      "name":"Golfito",
+      "latitude":8.63901,
+      "longitude":-83.16603
+    },{
+      "name":"Miramar",
+      "latitude":10.0925,
+      "longitude":-84.72978
+    },{
+      "name":"Puntarenas",
+      "latitude":9.97625,
+      "longitude":-84.83836
+    },{
+      "name":"Quepos",
+      "latitude":9.42357,
+      "longitude":-84.16522
+    }]
+  },{
+    "name":"Provincia de San Jose",
+    "cities":[{
+      "name":"Alajuelita",
+      "latitude":9.90163,
+      "longitude":-84.10042
+    },{
+      "name":"Aserri",
+      "latitude":9.85876,
+      "longitude":-84.0923
+    },{
+      "name":"Calle Blancos",
+      "latitude":9.95,
+      "longitude":-84.06667
+    },{
+      "name":"Colima",
+      "latitude":9.95091,
+      "longitude":-84.08503
+    },{
+      "name":"Curridabat",
+      "latitude":9.91178,
+      "longitude":-84.03407
+    },{
+      "name":"Daniel Flores",
+      "latitude":9.33554,
+      "longitude":-83.6694
+    },{
+      "name":"Escazu",
+      "latitude":9.91887,
+      "longitude":-84.1399
+    },{
+      "name":"Granadilla",
+      "latitude":9.93491,
+      "longitude":-84.01688
+    },{
+      "name":"Guadalupe",
+      "latitude":9.94611,
+      "longitude":-84.05279
+    },{
+      "name":"Ipis",
+      "latitude":9.96746,
+      "longitude":-84.01326
+    },{
+      "name":"Mercedes",
+      "latitude":9.2627,
+      "longitude":-83.58202
+    },{
+      "name":"Patarra",
+      "latitude":9.88071,
+      "longitude":-84.03501
+    },{
+      "name":"Purral",
+      "latitude":9.95808,
+      "longitude":-84.0305
+    },{
+      "name":"Sabanilla",
+      "latitude":9.94522,
+      "longitude":-84.03926
+    },{
+      "name":"Salitrillos",
+      "latitude":9.85259,
+      "longitude":-84.09062
+    },{
+      "name":"San Felipe",
+      "latitude":9.90488,
+      "longitude":-84.10551
+    },{
+      "name":"San Isidro",
+      "latitude":9.3721,
+      "longitude":-83.70399
+    },{
+      "name":"San Jose",
+      "latitude":9.93333,
+      "longitude":-84.08333
+    },{
+      "name":"San Juan",
+      "latitude":9.95974,
+      "longitude":-84.08165
+    },{
+      "name":"San Juan de Dios",
+      "latitude":9.8773,
+      "longitude":-84.0847
+    },{
+      "name":"San Miguel",
+      "latitude":9.87121,
+      "longitude":-84.06084
+    },{
+      "name":"San Pedro",
+      "latitude":9.92829,
+      "longitude":-84.05074
+    },{
+      "name":"San Rafael",
+      "latitude":9.92787,
+      "longitude":-84.13722
+    },{
+      "name":"San Rafael Abajo",
+      "latitude":9.831,
+      "longitude":-84.29008
+    },{
+      "name":"San Rafael Arriba",
+      "latitude":9.87556,
+      "longitude":-84.07661
+    },{
+      "name":"San Vicente",
+      "latitude":9.96016,
+      "longitude":-84.04762
+    },{
+      "name":"San Vicente de Moravia",
+      "latitude":9.96164,
+      "longitude":-84.0488
+    },{
+      "name":"Santa Ana",
+      "latitude":9.9326,
+      "longitude":-84.18254
+    },{
+      "name":"Santiago",
+      "latitude":9.84636,
+      "longitude":-84.31428
+    },{
+      "name":"Tejar",
+      "latitude":9.74622,
+      "longitude":-84.23368
+    }]
+  }]
+}

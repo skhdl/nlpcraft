@@ -1,0 +1,106 @@
+{
+  "name":"South Sudan",
+  "regions":[{
+    "name":"Central Equatoria State",
+    "cities":[{
+      "name":"Juba",
+      "latitude":4.85165,
+      "longitude":31.58247
+    },{
+      "name":"Yei",
+      "latitude":4.09504,
+      "longitude":30.67792
+    }]
+  },{
+    "name":"Eastern Equatoria",
+    "cities":[{
+      "name":"Kapoeta",
+      "latitude":4.77167,
+      "longitude":33.59028
+    },{
+      "name":"Pajok",
+      "latitude":3.86512,
+      "longitude":32.48212
+    },{
+      "name":"Torit",
+      "latitude":4.41177,
+      "longitude":32.57046
+    }]
+  },{
+    "name":"Jonglei",
+    "cities":[{
+      "name":"Bor",
+      "latitude":6.20593,
+      "longitude":31.55633
+    }]
+  },{
+    "name":"Lakes",
+    "cities":[{
+      "name":"Rumbek",
+      "latitude":6.80619,
+      "longitude":29.67742
+    }]
+  },{
+    "name":"Northern Bahr el Ghazal",
+    "cities":[{
+      "name":"Aweil",
+      "latitude":8.76816,
+      "longitude":27.40019
+    }]
+  },{
+    "name":"Unity",
+    "cities":[{
+      "name":"Bentiu",
+      "latitude":9.23333,
+      "longitude":29.83333
+    },{
+      "name":"Ler",
+      "latitude":8.30179,
+      "longitude":30.14179
+    }]
+  },{
+    "name":"Upper Nile",
+    "cities":[{
+      "name":"Malakal",
+      "latitude":9.53342,
+      "longitude":31.66048
+    }]
+  },{
+    "name":"Warrap State",
+    "cities":[{
+      "name":"Gogrial",
+      "latitude":8.53324,
+      "longitude":28.10037
+    },{
+      "name":"Kajok",
+      "latitude":8.30016,
+      "longitude":27.99028
+    },{
+      "name":"Tonj",
+      "latitude":7.27369,
+      "longitude":28.68223
+    }]
+  },{
+    "name":"Western Bahr el Ghazal State",
+    "cities":[{
+      "name":"Wau",
+      "latitude":7.70286,
+      "longitude":27.9953
+    }]
+  },{
+    "name":"Western Equatoria",
+    "cities":[{
+      "name":"Maridi",
+      "latitude":4.91584,
+      "longitude":29.47415
+    },{
+      "name":"Tambura",
+      "latitude":5.6,
+      "longitude":27.46667
+    },{
+      "name":"Yambio",
+      "latitude":4.57213,
+      "longitude":28.39549
+    }]
+  }]
+}

@@ -1,0 +1,445 @@
+{
+  "name":"Palestinian Territory",
+  "regions":[{
+    "name":"Gaza Strip",
+    "cities":[{
+      "name":"Al Burayj",
+      "latitude":31.43944,
+      "longitude":34.40306
+    },{
+      "name":"Al Fukhkhari",
+      "latitude":31.29278,
+      "longitude":34.33061
+    },{
+      "name":"Al Qararah",
+      "latitude":31.37389,
+      "longitude":34.34085
+    },{
+      "name":"An Nusayrat",
+      "latitude":31.44861,
+      "longitude":34.3925
+    },{
+      "name":"Az Zuwaydah",
+      "latitude":31.43954,
+      "longitude":34.38053
+    },{
+      "name":"Bani Suhayla",
+      "latitude":31.34337,
+      "longitude":34.32337
+    },{
+      "name":"Bayt Hanun",
+      "latitude":31.5353,
+      "longitude":34.53579
+    },{
+      "name":"Bayt Lahya",
+      "latitude":31.5464,
+      "longitude":34.49514
+    },{
+      "name":"Dayr al Balah",
+      "latitude":31.41783,
+      "longitude":34.35033
+    },{
+      "name":"Gaza",
+      "latitude":31.5,
+      "longitude":34.46667
+    },{
+      "name":"Jabalya",
+      "latitude":31.5272,
+      "longitude":34.48347
+    },{
+      "name":"Khan Yunis",
+      "latitude":31.34018,
+      "longitude":34.30627
+    },{
+      "name":"Khuza`ah",
+      "latitude":31.30675,
+      "longitude":34.3611
+    },{
+      "name":"Rafah",
+      "latitude":31.287,
+      "longitude":34.25952
+    },{
+      "name":"Shukat as Sufi",
+      "latitude":31.25997,
+      "longitude":34.2826
+    },{
+      "name":"`Abasan al Kabirah",
+      "latitude":31.31913,
+      "longitude":34.34005
+    }]
+  },{
+    "name":"Palestinian Territory",
+    "cities":[{
+      "name":"Ad Dawhah",
+      "latitude":31.69948,
+      "longitude":35.18047
+    },{
+      "name":"Al Mughraqah",
+      "latitude":31.46587,
+      "longitude":34.41208
+    },{
+      "name":"Al `Ubaydiyah",
+      "latitude":31.71697,
+      "longitude":35.29007
+    },{
+      "name":"An Nasr",
+      "latitude":31.28137,
+      "longitude":34.30253
+    },{
+      "name":"Bani Zayd",
+      "latitude":32.03924,
+      "longitude":35.10316
+    },{
+      "name":"Dayr Samit",
+      "latitude":31.52057,
+      "longitude":34.97442
+    },{
+      "name":"`Abasan al Jadidah",
+      "latitude":31.34158,
+      "longitude":34.34592
+    }]
+  },{
+    "name":"West Bank",
+    "cities":[{
+      "name":"Abu Dis",
+      "latitude":31.76215,
+      "longitude":35.26166
+    },{
+      "name":"Al Birah",
+      "latitude":31.91001,
+      "longitude":35.21645
+    },{
+      "name":"Al Khadir",
+      "latitude":31.69405,
+      "longitude":35.16685
+    },{
+      "name":"Al Yamun",
+      "latitude":32.48563,
+      "longitude":35.23011
+    },{
+      "name":"Al `Ayzariyah",
+      "latitude":31.77078,
+      "longitude":35.26916
+    },{
+      "name":"Ar Ram wa Dahiyat al Barid",
+      "latitude":31.84945,
+      "longitude":35.2342
+    },{
+      "name":"As Samu`",
+      "latitude":31.39671,
+      "longitude":35.06611
+    },{
+      "name":"Ash Shuyukh",
+      "latitude":31.57004,
+      "longitude":35.15606
+    },{
+      "name":"Az Zahiriyah",
+      "latitude":31.40967,
+      "longitude":34.97329
+    },{
+      "name":"Az Zaytuniyah",
+      "latitude":31.95402,
+      "longitude":35.1624
+    },{
+      "name":"Bal`a",
+      "latitude":32.33392,
+      "longitude":35.1116
+    },{
+      "name":"Balatah",
+      "latitude":32.21207,
+      "longitude":35.28561
+    },{
+      "name":"Bani Na`im",
+      "latitude":31.51591,
+      "longitude":35.16416
+    },{
+      "name":"Bani Zayd ash Sharqiyah",
+      "latitude":32.04935,
+      "longitude":35.16593
+    },{
+      "name":"Bayt Fajjar",
+      "latitude":31.62443,
+      "longitude":35.15457
+    },{
+      "name":"Bayt Furik",
+      "latitude":32.17689,
+      "longitude":35.33541
+    },{
+      "name":"Bayt Jala",
+      "latitude":31.71545,
+      "longitude":35.18788
+    },{
+      "name":"Bayt Kahil",
+      "latitude":31.57011,
+      "longitude":35.06502
+    },{
+      "name":"Bayt Lid",
+      "latitude":32.26089,
+      "longitude":35.13169
+    },{
+      "name":"Bayt Liqya",
+      "latitude":31.86958,
+      "longitude":35.0654
+    },{
+      "name":"Bayt Sahur",
+      "latitude":31.70095,
+      "longitude":35.22631
+    },{
+      "name":"Bayt Ula",
+      "latitude":31.59618,
+      "longitude":35.0296
+    },{
+      "name":"Bayt Ummar",
+      "latitude":31.62329,
+      "longitude":35.10446
+    },{
+      "name":"Bayt `Awwa",
+      "latitude":31.50911,
+      "longitude":34.94938
+    },{
+      "name":"Bayta al Fawqa",
+      "latitude":32.1426,
+      "longitude":35.28774
+    },{
+      "name":"Baytunya",
+      "latitude":31.8966,
+      "longitude":35.17048
+    },{
+      "name":"Bethlehem",
+      "latitude":31.70487,
+      "longitude":35.20376
+    },{
+      "name":"Biddu",
+      "latitude":31.83478,
+      "longitude":35.14947
+    },{
+      "name":"Bidya",
+      "latitude":32.1146,
+      "longitude":35.08028
+    },{
+      "name":"Bir Zayt",
+      "latitude":31.96959,
+      "longitude":35.19408
+    },{
+      "name":"Birqin",
+      "latitude":32.45461,
+      "longitude":35.26076
+    },{
+      "name":"Dayr Abu Da`if",
+      "latitude":32.45601,
+      "longitude":35.36164
+    },{
+      "name":"Dayr Dibwan",
+      "latitude":31.91112,
+      "longitude":35.26661
+    },{
+      "name":"Dayr al Ghusun",
+      "latitude":32.35244,
+      "longitude":35.07689
+    },{
+      "name":"Dhannabah",
+      "latitude":32.31341,
+      "longitude":35.04144
+    },{
+      "name":"Dura",
+      "latitude":31.50777,
+      "longitude":35.02929
+    },{
+      "name":"East Jerusalem",
+      "latitude":31.78336,
+      "longitude":35.23388
+    },{
+      "name":"Hablah",
+      "latitude":32.16523,
+      "longitude":34.97748
+    },{
+      "name":"Halhul",
+      "latitude":31.58029,
+      "longitude":35.10178
+    },{
+      "name":"Hebron",
+      "latitude":31.52935,
+      "longitude":35.0938
+    },{
+      "name":"Hizma",
+      "latitude":31.83337,
+      "longitude":35.26315
+    },{
+      "name":"Husan",
+      "latitude":31.70931,
+      "longitude":35.13475
+    },{
+      "name":"Huwwarah",
+      "latitude":32.15224,
+      "longitude":35.25673
+    },{
+      "name":"Idhna",
+      "latitude":31.55874,
+      "longitude":34.97436
+    },{
+      "name":"Jaba`",
+      "latitude":32.32409,
+      "longitude":35.22132
+    },{
+      "name":"Jamma`in",
+      "latitude":32.13164,
+      "longitude":35.20404
+    },{
+      "name":"Janin",
+      "latitude":32.45943,
+      "longitude":35.30086
+    },{
+      "name":"Jannatah",
+      "latitude":31.66958,
+      "longitude":35.21961
+    },{
+      "name":"Jericho",
+      "latitude":31.86667,
+      "longitude":35.45
+    },{
+      "name":"Kafr Ra`i",
+      "latitude":32.37398,
+      "longitude":35.15451
+    },{
+      "name":"Kharas",
+      "latitude":31.6148,
+      "longitude":35.04174
+    },{
+      "name":"Kharbatha al Misbah",
+      "latitude":31.88546,
+      "longitude":35.07185
+    },{
+      "name":"Maythalun",
+      "latitude":32.34798,
+      "longitude":35.27446
+    },{
+      "name":"Nablus",
+      "latitude":32.22111,
+      "longitude":35.25444
+    },{
+      "name":"Nahhalin",
+      "latitude":31.68559,
+      "longitude":35.12081
+    },{
+      "name":"Qabalan",
+      "latitude":32.10182,
+      "longitude":35.28938
+    },{
+      "name":"Qabatiyah",
+      "latitude":32.41035,
+      "longitude":35.28087
+    },{
+      "name":"Qaffin",
+      "latitude":32.43274,
+      "longitude":35.08266
+    },{
+      "name":"Qalqilyah",
+      "latitude":32.18966,
+      "longitude":34.97063
+    },{
+      "name":"Qatanah",
+      "latitude":31.83366,
+      "longitude":35.11894
+    },{
+      "name":"Ramallah",
+      "latitude":31.89964,
+      "longitude":35.20422
+    },{
+      "name":"Sa`ir",
+      "latitude":31.57855,
+      "longitude":35.14017
+    },{
+      "name":"Salfit",
+      "latitude":32.0837,
+      "longitude":35.18079
+    },{
+      "name":"Silat al Harithiyah",
+      "latitude":32.50847,
+      "longitude":35.22752
+    },{
+      "name":"Silat az Zahr",
+      "latitude":32.31934,
+      "longitude":35.18418
+    },{
+      "name":"Silwad",
+      "latitude":31.97625,
+      "longitude":35.2613
+    },{
+      "name":"Sinjil",
+      "latitude":32.03334,
+      "longitude":35.26545
+    },{
+      "name":"Surif",
+      "latitude":31.65078,
+      "longitude":35.06439
+    },{
+      "name":"Taffuh",
+      "latitude":31.53855,
+      "longitude":35.04966
+    },{
+      "name":"Tammun",
+      "latitude":32.28347,
+      "longitude":35.38367
+    },{
+      "name":"Tarqumya",
+      "latitude":31.57551,
+      "longitude":35.01223
+    },{
+      "name":"Tubas",
+      "latitude":32.32091,
+      "longitude":35.36989
+    },{
+      "name":"Tulkarm",
+      "latitude":32.31037,
+      "longitude":35.02863
+    },{
+      "name":"Ya`bad",
+      "latitude":32.44566,
+      "longitude":35.16822
+    },{
+      "name":"Yuta",
+      "latitude":31.4459,
+      "longitude":35.09443
+    },{
+      "name":"Za`tarah",
+      "latitude":31.67361,
+      "longitude":35.25662
+    },{
+      "name":"`Anabta",
+      "latitude":32.30792,
+      "longitude":35.11693
+    },{
+      "name":"`Anata",
+      "latitude":31.80924,
+      "longitude":35.25902
+    },{
+      "name":"`Aqraba",
+      "latitude":32.12495,
+      "longitude":35.34547
+    },{
+      "name":"`Arrabah",
+      "latitude":32.40517,
+      "longitude":35.20189
+    },{
+      "name":"`Asirah ash Shamaliyah",
+      "latitude":32.25124,
+      "longitude":35.26716
+    },{
+      "name":"`Attil",
+      "latitude":32.36935,
+      "longitude":35.07189
+    },{
+      "name":"`Awarta",
+      "latitude":32.16108,
+      "longitude":35.28388
+    },{
+      "name":"`Azzun",
+      "latitude":32.17496,
+      "longitude":35.05752
+    },{
+      "name":"`Illar",
+      "latitude":32.37024,
+      "longitude":35.10708
+    }]
+  }]
+}

@@ -1,0 +1,18 @@
+{
+  "name":"Saint Pierre and Miquelon",
+  "regions":[{
+    "name":"Commune de Miquelon-Langlade",
+    "cities":[{
+      "name":"Miquelon",
+      "latitude":47.0975,
+      "longitude":-56.38139
+    }]
+  },{
+    "name":"Commune de Saint-Pierre",
+    "cities":[{
+      "name":"Saint-Pierre",
+      "latitude":46.77914,
+      "longitude":-56.1773
+    }]
+  }]
+}

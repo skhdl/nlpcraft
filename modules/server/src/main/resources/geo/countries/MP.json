@@ -1,0 +1,24 @@
+{
+  "name":"Northern Mariana Islands",
+  "regions":[{
+    "name":"Northern Islands Municipality",
+    "cities":[]
+  },{
+    "name":"Rota Municipality",
+    "cities":[]
+  },{
+    "name":"Saipan Municipality",
+    "cities":[{
+      "name":"Saipan",
+      "latitude":15.21233,
+      "longitude":145.7545
+    }]
+  },{
+    "name":"Tinian Municipality",
+    "cities":[{
+      "name":"San Jose Village",
+      "latitude":14.96823,
+      "longitude":145.61998
+    }]
+  }]
+}

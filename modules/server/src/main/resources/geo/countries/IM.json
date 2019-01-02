@@ -1,0 +1,15 @@
+{
+  "name":"Isle of Man",
+  "regions":[{
+    "name":"Isle of Man",
+    "cities":[{
+      "name":"Douglas",
+      "latitude":54.15,
+      "longitude":-4.48333
+    },{
+      "name":"Ramsey",
+      "latitude":54.32273,
+      "longitude":-4.38526
+    }]
+  }]
+}

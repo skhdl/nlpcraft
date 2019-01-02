@@ -1,0 +1,23 @@
+{
+  "name":"Aruba",
+  "regions":[{
+    "name":"Aruba",
+    "cities":[{
+      "name":"Angochi",
+      "latitude":12.51667,
+      "longitude":-69.95
+    },{
+      "name":"Arasji",
+      "latitude":12.61667,
+      "longitude":-70.06667
+    },{
+      "name":"Babijn",
+      "latitude":12.53333,
+      "longitude":-69.98333
+    },{
+      "name":"Oranjestad",
+      "latitude":12.52398,
+      "longitude":-70.02703
+    }]
+  }]
+}

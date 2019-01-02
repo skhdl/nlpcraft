@@ -1,0 +1,44 @@
+{
+  "name":"Jersey",
+  "regions":[{
+    "name":"Grouville",
+    "cities":[]
+  },{
+    "name":"Saint Brelade",
+    "cities":[]
+  },{
+    "name":"Saint Clement",
+    "cities":[]
+  },{
+    "name":"Saint Helier",
+    "cities":[{
+      "name":"Saint Helier",
+      "latitude":49.18804,
+      "longitude":-2.10491
+    }]
+  },{
+    "name":"Saint John",
+    "cities":[]
+  },{
+    "name":"Saint Lawrence",
+    "cities":[]
+  },{
+    "name":"Saint Martin",
+    "cities":[]
+  },{
+    "name":"Saint Mary",
+    "cities":[]
+  },{
+    "name":"Saint Ouen",
+    "cities":[]
+  },{
+    "name":"Saint Peter",
+    "cities":[]
+  },{
+    "name":"Saint Saviour",
+    "cities":[]
+  },{
+    "name":"Trinity",
+    "cities":[]
+  }]
+}

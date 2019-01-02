@@ -1,0 +1,55 @@
+{
+  "name":"Bahrain",
+  "regions":[{
+    "name":"Capital Governorate",
+    "cities":[{
+      "name":"Jidd Hafs",
+      "latitude":26.21861,
+      "longitude":50.54778
+    },{
+      "name":"Manama",
+      "latitude":26.21536,
+      "longitude":50.5832
+    }]
+  },{
+    "name":"Central Governorate",
+    "cities":[{
+      "name":"Dar Kulayb",
+      "latitude":26.06861,
+      "longitude":50.50389
+    },{
+      "name":"Madinat Hamad",
+      "latitude":26.11528,
+      "longitude":50.50694
+    }]
+  },{
+    "name":"Muharraq Governorate",
+    "cities":[{
+      "name":"Al Hadd",
+      "latitude":26.24556,
+      "longitude":50.65417
+    },{
+      "name":"Al Muharraq",
+      "latitude":26.25722,
+      "longitude":50.61194
+    }]
+  },{
+    "name":"Northern Governorate",
+    "cities":[{
+      "name":"Ar Rifa",
+      "latitude":26.13,
+      "longitude":50.555
+    },{
+      "name":"Madinat `Isa",
+      "latitude":26.17361,
+      "longitude":50.54778
+    },{
+      "name":"Sitrah",
+      "latitude":26.15472,
+      "longitude":50.62056
+    }]
+  },{
+    "name":"Southern Governorate",
+    "cities":[]
+  }]
+}

@@ -1,0 +1,11 @@
+{
+  "name":"Saint Barthelemy",
+  "regions":[{
+    "name":"Saint Barthelemy",
+    "cities":[{
+      "name":"Gustavia",
+      "latitude":17.89618,
+      "longitude":-62.84978
+    }]
+  }]
+}

@@ -1,0 +1,70 @@
+{
+  "name":"Nauru",
+  "regions":[{
+    "name":"Aiwo District",
+    "cities":[]
+  },{
+    "name":"Anabar District",
+    "cities":[{
+      "name":"Anabar",
+      "latitude":-0.50845,
+      "longitude":166.95326
+    }]
+  },{
+    "name":"Anetan District",
+    "cities":[]
+  },{
+    "name":"Anibare District",
+    "cities":[{
+      "name":"Anibare",
+      "latitude":-0.52792,
+      "longitude":166.95249
+    }]
+  },{
+    "name":"Baiti District",
+    "cities":[{
+      "name":"Baiti",
+      "latitude":-0.50803,
+      "longitude":166.92945
+    }]
+  },{
+    "name":"Boe District",
+    "cities":[]
+  },{
+    "name":"Buada District",
+    "cities":[]
+  },{
+    "name":"Denigomodu District",
+    "cities":[]
+  },{
+    "name":"Ewa District",
+    "cities":[]
+  },{
+    "name":"Ijuw District",
+    "cities":[{
+      "name":"Ijuw",
+      "latitude":-0.521,
+      "longitude":166.95813
+    }]
+  },{
+    "name":"Meneng District",
+    "cities":[]
+  },{
+    "name":"Nibok District",
+    "cities":[]
+  },{
+    "name":"Uaboe District",
+    "cities":[{
+      "name":"Uaboe",
+      "latitude":-0.51393,
+      "longitude":166.92384
+    }]
+  },{
+    "name":"Yaren",
+    "cities":[{
+      "name":"Yaren",
+      "latitude":-0.55085,
+      "longitude":166.9252
+    }]
+  }]
+}

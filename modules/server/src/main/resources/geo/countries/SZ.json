@@ -1,0 +1,56 @@
+{
+  "name":"Swaziland",
+  "regions":[{
+    "name":"Hhohho District",
+    "cities":[{
+      "name":"Lobamba",
+      "latitude":-26.46667,
+      "longitude":31.2
+    },{
+      "name":"Mbabane",
+      "latitude":-26.31667,
+      "longitude":31.13333
+    },{
+      "name":"Piggs Peak",
+      "latitude":-25.96667,
+      "longitude":31.25
+    }]
+  },{
+    "name":"Lubombo District",
+    "cities":[{
+      "name":"Big Bend",
+      "latitude":-26.81667,
+      "longitude":31.93333
+    },{
+      "name":"Mhlume",
+      "latitude":-26.03333,
+      "longitude":31.85
+    },{
+      "name":"Siteki",
+      "latitude":-26.45,
+      "longitude":31.95
+    }]
+  },{
+    "name":"Manzini District",
+    "cities":[{
+      "name":"Malkerns",
+      "latitude":-26.56667,
+      "longitude":31.18333
+    },{
+      "name":"Manzini",
+      "latitude":-26.49884,
+      "longitude":31.38004
+    }]
+  },{
+    "name":"Shiselweni District",
+    "cities":[{
+      "name":"Hlatikulu",
+      "latitude":-26.96667,
+      "longitude":31.31667
+    },{
+      "name":"Hluti",
+      "latitude":-27.21667,
+      "longitude":31.61667
+    }]
+  }]
+}

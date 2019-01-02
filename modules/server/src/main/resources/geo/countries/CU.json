@@ -1,0 +1,643 @@
+{
+  "name":"Cuba",
+  "regions":[{
+    "name":"Artemisa Province",
+    "cities":[{
+      "name":"Alquizar",
+      "latitude":22.80583,
+      "longitude":-82.58417
+    },{
+      "name":"Artemisa",
+      "latitude":22.81306,
+      "longitude":-82.76194
+    },{
+      "name":"Bahia Honda",
+      "latitude":22.90361,
+      "longitude":-83.15917
+    },{
+      "name":"Bauta",
+      "latitude":22.98278,
+      "longitude":-82.54639
+    },{
+      "name":"Cabanas",
+      "latitude":22.97581,
+      "longitude":-82.91927
+    },{
+      "name":"Candelaria",
+      "latitude":22.73478,
+      "longitude":-82.95817
+    },{
+      "name":"Guanajay",
+      "latitude":22.92639,
+      "longitude":-82.6875
+    },{
+      "name":"Guira de Melena",
+      "latitude":22.79274,
+      "longitude":-82.50823
+    },{
+      "name":"Mariel",
+      "latitude":22.9875,
+      "longitude":-82.75361
+    },{
+      "name":"San Antonio de los Banos",
+      "latitude":22.89111,
+      "longitude":-82.49917
+    },{
+      "name":"San Cristobal",
+      "latitude":22.71417,
+      "longitude":-83.04806
+    },{
+      "name":"Soroa",
+      "latitude":22.8,
+      "longitude":-83.01667
+    }]
+  },{
+    "name":"Cuba",
+    "cities":[{
+      "name":"Gueines",
+      "latitude":22.83611,
+      "longitude":-82.02806
+    }]
+  },{
+    "name":"Las Tunas",
+    "cities":[{
+      "name":"Amancio",
+      "latitude":20.8225,
+      "longitude":-77.57861
+    },{
+      "name":"Colombia",
+      "latitude":20.98806,
+      "longitude":-77.42972
+    },{
+      "name":"Jesus Menendez",
+      "latitude":21.16,
+      "longitude":-76.47889
+    },{
+      "name":"Jobabo",
+      "latitude":20.90508,
+      "longitude":-77.28819
+    },{
+      "name":"Las Tunas",
+      "latitude":20.96167,
+      "longitude":-76.95111
+    },{
+      "name":"Manati",
+      "latitude":21.31084,
+      "longitude":-76.93955
+    },{
+      "name":"Puerto Padre",
+      "latitude":21.19449,
+      "longitude":-76.60355
+    }]
+  },{
+    "name":"Municipio Especial Isla de la Juventud",
+    "cities":[{
+      "name":"Nueva Gerona",
+      "latitude":21.88333,
+      "longitude":-82.8
+    }]
+  },{
+    "name":"Provincia Granma",
+    "cities":[{
+      "name":"Bartolome Maso",
+      "latitude":20.16303,
+      "longitude":-76.94443
+    },{
+      "name":"Bayamo",
+      "latitude":20.37917,
+      "longitude":-76.64333
+    },{
+      "name":"Campechuela",
+      "latitude":20.23417,
+      "longitude":-77.27889
+    },{
+      "name":"Cauto Cristo",
+      "latitude":20.55639,
+      "longitude":-76.47444
+    },{
+      "name":"Guisa",
+      "latitude":20.25101,
+      "longitude":-76.54152
+    },{
+      "name":"Jiguani",
+      "latitude":20.36667,
+      "longitude":-76.42722
+    },{
+      "name":"Manzanillo",
+      "latitude":20.34333,
+      "longitude":-77.11667
+    },{
+      "name":"Media Luna",
+      "latitude":20.14001,
+      "longitude":-77.43658
+    },{
+      "name":"Niquero",
+      "latitude":20.04478,
+      "longitude":-77.5851
+    },{
+      "name":"Rio Cauto",
+      "latitude":20.56284,
+      "longitude":-76.92122
+    },{
+      "name":"Yara",
+      "latitude":20.2733,
+      "longitude":-76.95399
+    }]
+  },{
+    "name":"Provincia Mayabeque",
+    "cities":[{
+      "name":"Batabano",
+      "latitude":22.71639,
+      "longitude":-82.28806
+    },{
+      "name":"Bejucal",
+      "latitude":22.92861,
+      "longitude":-82.38861
+    },{
+      "name":"Jamaica",
+      "latitude":22.97917,
+      "longitude":-82.17028
+    },{
+      "name":"Jaruco",
+      "latitude":23.04306,
+      "longitude":-82.01083
+    },{
+      "name":"La Salud",
+      "latitude":22.86991,
+      "longitude":-82.42193
+    },{
+      "name":"Madruga",
+      "latitude":22.91139,
+      "longitude":-81.85611
+    },{
+      "name":"Quivican",
+      "latitude":22.82306,
+      "longitude":-82.355
+    },{
+      "name":"San Jose de las Lajas",
+      "latitude":22.96139,
+      "longitude":-82.15111
+    },{
+      "name":"San Nicolas de Bari",
+      "latitude":22.78444,
+      "longitude":-81.91333
+    },{
+      "name":"Santa Cruz del Norte",
+      "latitude":23.15374,
+      "longitude":-81.92611
+    }]
+  },{
+    "name":"Provincia de Camaguey",
+    "cities":[{
+      "name":"Camaguey",
+      "latitude":21.38083,
+      "longitude":-77.91694
+    },{
+      "name":"Esmeralda",
+      "latitude":21.85155,
+      "longitude":-78.12005
+    },{
+      "name":"Florida",
+      "latitude":21.52472,
+      "longitude":-78.22583
+    },{
+      "name":"Guaimaro",
+      "latitude":21.05176,
+      "longitude":-77.35021
+    },{
+      "name":"Jimaguayu",
+      "latitude":21.24278,
+      "longitude":-77.82778
+    },{
+      "name":"Minas",
+      "latitude":21.48833,
+      "longitude":-77.61832
+    },{
+      "name":"Nuevitas",
+      "latitude":21.54528,
+      "longitude":-77.26444
+    },{
+      "name":"Santa Cruz del Sur",
+      "latitude":20.71176,
+      "longitude":-77.9986
+    },{
+      "name":"Sibanicu",
+      "latitude":21.235,
+      "longitude":-77.52639
+    },{
+      "name":"Vertientes",
+      "latitude":21.25528,
+      "longitude":-78.15338
+    }]
+  },{
+    "name":"Provincia de Ciego de Avila",
+    "cities":[{
+      "name":"Baragua",
+      "latitude":21.6883,
+      "longitude":-78.63606
+    },{
+      "name":"Chambas",
+      "latitude":22.18736,
+      "longitude":-78.91569
+    },{
+      "name":"Ciego de Avila",
+      "latitude":21.84,
+      "longitude":-78.76194
+    },{
+      "name":"Ciro Redondo",
+      "latitude":22.01222,
+      "longitude":-78.705
+    },{
+      "name":"Florencia",
+      "latitude":22.14518,
+      "longitude":-78.97764
+    },{
+      "name":"Moron",
+      "latitude":22.10944,
+      "longitude":-78.6275
+    },{
+      "name":"Primero de Enero",
+      "latitude":21.94694,
+      "longitude":-78.42833
+    },{
+      "name":"Venezuela",
+      "latitude":21.73528,
+      "longitude":-78.79639
+    }]
+  },{
+    "name":"Provincia de Cienfuegos",
+    "cities":[{
+      "name":"Abreus",
+      "latitude":22.2775,
+      "longitude":-80.5675
+    },{
+      "name":"Aguada de Pasajeros",
+      "latitude":22.37925,
+      "longitude":-80.84898
+    },{
+      "name":"Cienfuegos",
+      "latitude":22.14957,
+      "longitude":-80.44662
+    },{
+      "name":"Cruces",
+      "latitude":22.34175,
+      "longitude":-80.27028
+    },{
+      "name":"Cumanayagua",
+      "latitude":22.14944,
+      "longitude":-80.20222
+    },{
+      "name":"Palmira",
+      "latitude":22.24167,
+      "longitude":-80.39028
+    },{
+      "name":"Rodas",
+      "latitude":22.33794,
+      "longitude":-80.55538
+    }]
+  },{
+    "name":"Provincia de Guantanamo",
+    "cities":[{
+      "name":"Baracoa",
+      "latitude":20.34659,
+      "longitude":-74.49675
+    },{
+      "name":"Guantanamo",
+      "latitude":20.14444,
+      "longitude":-75.20917
+    },{
+      "name":"Maisi",
+      "latitude":20.24673,
+      "longitude":-74.15181
+    },{
+      "name":"Rio Guayabal de Yateras",
+      "latitude":20.36667,
+      "longitude":-75.01667
+    }]
+  },{
+    "name":"Provincia de Holguin",
+    "cities":[{
+      "name":"Baguanos",
+      "latitude":20.75167,
+      "longitude":-76.02694
+    },{
+      "name":"Banes",
+      "latitude":20.9625,
+      "longitude":-75.71861
+    },{
+      "name":"Cacocum",
+      "latitude":20.73668,
+      "longitude":-76.32646
+    },{
+      "name":"Cueto",
+      "latitude":20.64511,
+      "longitude":-75.9402
+    },{
+      "name":"Gibara",
+      "latitude":21.10972,
+      "longitude":-76.13167
+    },{
+      "name":"Holguin",
+      "latitude":20.88722,
+      "longitude":-76.26306
+    },{
+      "name":"Jobabo",
+      "latitude":20.96917,
+      "longitude":-76.29944
+    },{
+      "name":"Moa",
+      "latitude":20.65694,
+      "longitude":-74.94028
+    },{
+      "name":"Sagua de Tanamo",
+      "latitude":20.58194,
+      "longitude":-75.24139
+    },{
+      "name":"Urbano Noris",
+      "latitude":20.60101,
+      "longitude":-76.13188
+    }]
+  },{
+    "name":"Provincia de La Habana",
+    "cities":[{
+      "name":"Alamar",
+      "latitude":23.15833,
+      "longitude":-82.27694
+    },{
+      "name":"Arroyo Naranjo",
+      "latitude":23.03611,
+      "longitude":-82.37167
+    },{
+      "name":"Arroyo Naranjo",
+      "latitude":23.0144,
+      "longitude":-82.3031
+    },{
+      "name":"Boyeros",
+      "latitude":23.0072,
+      "longitude":-82.4017
+    },{
+      "name":"Centro Habana",
+      "latitude":23.13833,
+      "longitude":-82.36417
+    },{
+      "name":"Cerro",
+      "latitude":23.10861,
+      "longitude":-82.37778
+    },{
+      "name":"Diez de Octubre",
+      "latitude":23.0881,
+      "longitude":-82.3597
+    },{
+      "name":"Guanabacoa",
+      "latitude":23.12389,
+      "longitude":-82.30028
+    },{
+      "name":"Habana del Este",
+      "latitude":23.15917,
+      "longitude":-82.33056
+    },{
+      "name":"Havana",
+      "latitude":23.13302,
+      "longitude":-82.38304
+    },{
+      "name":"La Habana Vieja",
+      "latitude":23.13028,
+      "longitude":-82.35306
+    },{
+      "name":"Regla",
+      "latitude":23.125,
+      "longitude":-82.33194
+    },{
+      "name":"San Miguel del Padron",
+      "latitude":23.06639,
+      "longitude":-82.29472
+    },{
+      "name":"Santiago de las Vegas",
+      "latitude":22.97,
+      "longitude":-82.38694
+    }]
+  },{
+    "name":"Provincia de Matanzas",
+    "cities":[{
+      "name":"Alacranes",
+      "latitude":22.76512,
+      "longitude":-81.56929
+    },{
+      "name":"Bolondron",
+      "latitude":22.76333,
+      "longitude":-81.44694
+    },{
+      "name":"Calimete",
+      "latitude":22.53166,
+      "longitude":-80.9045
+    },{
+      "name":"Cardenas",
+      "latitude":23.0375,
+      "longitude":-81.20472
+    },{
+      "name":"Colon",
+      "latitude":22.71917,
+      "longitude":-80.90583
+    },{
+      "name":"Jaguey Grande",
+      "latitude":22.52694,
+      "longitude":-81.12861
+    },{
+      "name":"Jovellanos",
+      "latitude":22.80444,
+      "longitude":-81.19444
+    },{
+      "name":"Los Arabos",
+      "latitude":22.72806,
+      "longitude":-80.72139
+    },{
+      "name":"Marti",
+      "latitude":22.9437,
+      "longitude":-80.91966
+    },{
+      "name":"Matanzas",
+      "latitude":23.04111,
+      "longitude":-81.5775
+    },{
+      "name":"Pedro Betancourt",
+      "latitude":22.72467,
+      "longitude":-81.28852
+    },{
+      "name":"Perico",
+      "latitude":22.76917,
+      "longitude":-81.01889
+    },{
+      "name":"Union de Reyes",
+      "latitude":22.79528,
+      "longitude":-81.5375
+    },{
+      "name":"Varadero",
+      "latitude":23.15678,
+      "longitude":-81.24441
+    }]
+  },{
+    "name":"Provincia de Pinar del Rio",
+    "cities":[{
+      "name":"Consolacion del Sur",
+      "latitude":22.50528,
+      "longitude":-83.51095
+    },{
+      "name":"Guane",
+      "latitude":22.2025,
+      "longitude":-84.0875
+    },{
+      "name":"Los Palacios",
+      "latitude":22.58722,
+      "longitude":-83.24861
+    },{
+      "name":"Mantua",
+      "latitude":22.28259,
+      "longitude":-84.28173
+    },{
+      "name":"Minas de Matahambre",
+      "latitude":22.5875,
+      "longitude":-83.945
+    },{
+      "name":"Pinar del Rio",
+      "latitude":22.4175,
+      "longitude":-83.69806
+    },{
+      "name":"San Luis",
+      "latitude":22.2903,
+      "longitude":-83.76561
+    },{
+      "name":"Vinales",
+      "latitude":22.61243,
+      "longitude":-83.71136
+    }]
+  },{
+    "name":"Provincia de Sancti Spiritus",
+    "cities":[{
+      "name":"Cabaiguan",
+      "latitude":22.07889,
+      "longitude":-79.49917
+    },{
+      "name":"Condado",
+      "latitude":21.87667,
+      "longitude":-79.84028
+    },{
+      "name":"Fomento",
+      "latitude":22.1001,
+      "longitude":-79.71913
+    },{
+      "name":"Guayos",
+      "latitude":22.0506,
+      "longitude":-79.46184
+    },{
+      "name":"Jatibonico",
+      "latitude":21.941,
+      "longitude":-79.17484
+    },{
+      "name":"La Sierpe",
+      "latitude":21.75722,
+      "longitude":-79.24306
+    },{
+      "name":"Sancti Spiritus",
+      "latitude":21.92972,
+      "longitude":-79.4425
+    },{
+      "name":"Topes de Collantes",
+      "latitude":21.91361,
+      "longitude":-80.02194
+    },{
+      "name":"Trinidad",
+      "latitude":21.80194,
+      "longitude":-79.98417
+    },{
+      "name":"Yaguajay",
+      "latitude":22.32722,
+      "longitude":-79.23778
+    },{
+      "name":"Zaza del Medio",
+      "latitude":21.99431,
+      "longitude":-79.36931
+    }]
+  },{
+    "name":"Provincia de Santiago de Cuba",
+    "cities":[{
+      "name":"Contramaestre",
+      "latitude":20.29778,
+      "longitude":-76.24139
+    },{
+      "name":"Palma Soriano",
+      "latitude":20.21238,
+      "longitude":-75.99843
+    },{
+      "name":"San Luis",
+      "latitude":20.1875,
+      "longitude":-75.85083
+    },{
+      "name":"Santiago de Cuba",
+      "latitude":20.02472,
+      "longitude":-75.82194
+    }]
+  },{
+    "name":"Provincia de Villa Clara",
+    "cities":[{
+      "name":"Caibarien",
+      "latitude":22.52056,
+      "longitude":-79.46694
+    },{
+      "name":"Calabazar de Sagua",
+      "latitude":22.64178,
+      "longitude":-79.89539
+    },{
+      "name":"Camajuani",
+      "latitude":22.48333,
+      "longitude":-79.75
+    },{
+      "name":"Cifuentes",
+      "latitude":22.645,
+      "longitude":-80.04611
+    },{
+      "name":"Corralillo",
+      "latitude":22.98194,
+      "longitude":-80.58556
+    },{
+      "name":"Encrucijada",
+      "latitude":22.61611,
+      "longitude":-79.86458
+    },{
+      "name":"Esperanza",
+      "latitude":22.4439,
+      "longitude":-80.09609
+    },{
+      "name":"Manicaragua",
+      "latitude":22.14944,
+      "longitude":-79.97361
+    },{
+      "name":"Placetas",
+      "latitude":22.31194,
+      "longitude":-79.65333
+    },{
+      "name":"Quemado de Guines",
+      "latitude":22.78528,
+      "longitude":-80.25361
+    },{
+      "name":"Ranchuelo",
+      "latitude":22.37485,
+      "longitude":-80.14983
+    },{
+      "name":"Remedios",
+      "latitude":22.49303,
+      "longitude":-79.54488
+    },{
+      "name":"Sagua la Grande",
+      "latitude":22.80667,
+      "longitude":-80.07556
+    },{
+      "name":"Santa Clara",
+      "latitude":22.4,
+      "longitude":-79.96667
+    },{
+      "name":"Santo Domingo",
+      "latitude":22.58667,
+      "longitude":-80.24361
+    }]
+  }]
+}

@@ -1,0 +1,15 @@
+{
+  "name":"Sint Maarten",
+  "regions":[{
+    "name":"Sint Maarten",
+    "cities":[{
+      "name":"Cul de Sac",
+      "latitude":18.03868,
+      "longitude":-63.06542
+    },{
+      "name":"Philipsburg",
+      "latitude":18.026,
+      "longitude":-63.04582
+    }]
+  }]
+}

@@ -1,0 +1,300 @@
+{
+  "name":"Jordan",
+  "regions":[{
+    "name":"Al Karak",
+    "cities":[{
+      "name":"Al Mazar",
+      "latitude":31.06556,
+      "longitude":35.69611
+    },{
+      "name":"At Tayyibah",
+      "latitude":31.05672,
+      "longitude":35.60168
+    },{
+      "name":"Karak City",
+      "latitude":31.16368,
+      "longitude":35.76204
+    },{
+      "name":"Safi",
+      "latitude":31.03608,
+      "longitude":35.46544
+    },{
+      "name":"`Ayy",
+      "latitude":31.13333,
+      "longitude":35.64083
+    },{
+      "name":"`Izra",
+      "latitude":31.15889,
+      "longitude":35.69278
+    }]
+  },{
+    "name":"Al Mafraq",
+    "cities":[{
+      "name":"Mafraq",
+      "latitude":32.34289,
+      "longitude":36.20804
+    },{
+      "name":"Sabha",
+      "latitude":32.32965,
+      "longitude":36.50098
+    }]
+  },{
+    "name":"Irbid",
+    "cities":[{
+      "name":"Al Hamra",
+      "latitude":32.44061,
+      "longitude":36.15121
+    },{
+      "name":"Al Kittah",
+      "latitude":32.27685,
+      "longitude":35.84114
+    },{
+      "name":"Ar Ramtha",
+      "latitude":32.55917,
+      "longitude":36.00694
+    },{
+      "name":"Ash Shajarah",
+      "latitude":32.64456,
+      "longitude":35.94097
+    },{
+      "name":"At Tayyibah",
+      "latitude":32.54167,
+      "longitude":35.71694
+    },{
+      "name":"At Turrah",
+      "latitude":32.64139,
+      "longitude":35.99194
+    },{
+      "name":"Aydun",
+      "latitude":32.50722,
+      "longitude":35.8575
+    },{
+      "name":"Balila",
+      "latitude":32.38806,
+      "longitude":35.93505
+    },{
+      "name":"Bayt Yafa",
+      "latitude":32.51737,
+      "longitude":35.7883
+    },{
+      "name":"Dayr Yusuf",
+      "latitude":32.49116,
+      "longitude":35.79873
+    },{
+      "name":"Hakama",
+      "latitude":32.59445,
+      "longitude":35.88411
+    },{
+      "name":"Halawah",
+      "latitude":32.38464,
+      "longitude":35.66147
+    },{
+      "name":"Hatim",
+      "latitude":32.64519,
+      "longitude":35.77722
+    },{
+      "name":"Irbid",
+      "latitude":32.55556,
+      "longitude":35.85
+    },{
+      "name":"Judita",
+      "latitude":32.40792,
+      "longitude":35.70802
+    },{
+      "name":"Kafr Abil",
+      "latitude":32.41755,
+      "longitude":35.66938
+    },{
+      "name":"Kafr Asad",
+      "latitude":32.59828,
+      "longitude":35.7124
+    },{
+      "name":"Kafr Sawm",
+      "latitude":32.68333,
+      "longitude":35.8
+    },{
+      "name":"Kharja",
+      "latitude":32.65873,
+      "longitude":35.88697
+    },{
+      "name":"Kitim",
+      "latitude":32.43832,
+      "longitude":35.89563
+    },{
+      "name":"Kurayyimah",
+      "latitude":32.27639,
+      "longitude":35.59938
+    },{
+      "name":"Malka",
+      "latitude":32.67381,
+      "longitude":35.75013
+    },{
+      "name":"Qumaym",
+      "latitude":32.57134,
+      "longitude":35.73269
+    },{
+      "name":"Raymun",
+      "latitude":32.28339,
+      "longitude":35.82532
+    },{
+      "name":"Saham",
+      "latitude":32.69833,
+      "longitude":35.77611
+    },{
+      "name":"Sakhrah",
+      "latitude":32.36805,
+      "longitude":35.84656
+    },{
+      "name":"Sakib",
+      "latitude":32.2833,
+      "longitude":35.80946
+    },{
+      "name":"Sal",
+      "latitude":32.56944,
+      "longitude":35.91194
+    },{
+      "name":"Samma",
+      "latitude":32.57103,
+      "longitude":35.69025
+    },{
+      "name":"Suf",
+      "latitude":32.31372,
+      "longitude":35.83713
+    },{
+      "name":"Tibnah",
+      "latitude":32.47555,
+      "longitude":35.72844
+    },{
+      "name":"Waqqas",
+      "latitude":32.5427,
+      "longitude":35.60533
+    },{
+      "name":"`Anjarah",
+      "latitude":32.3063,
+      "longitude":35.75653
+    },{
+      "name":"`Ayn Janna",
+      "latitude":32.33529,
+      "longitude":35.76189
+    }]
+  },{
+    "name":"Jerash",
+    "cities":[{
+      "name":"Jarash",
+      "latitude":32.28082,
+      "longitude":35.89929
+    }]
+  },{
+    "name":"Muhafazat Ma`an",
+    "cities":[{
+      "name":"Al Quwayrah",
+      "latitude":29.80045,
+      "longitude":35.3116
+    },{
+      "name":"Maan",
+      "latitude":30.19624,
+      "longitude":35.73405
+    },{
+      "name":"Petra",
+      "latitude":30.32221,
+      "longitude":35.47933
+    },{
+      "name":"Qir Moav",
+      "latitude":31.18248,
+      "longitude":35.69999
+    }]
+  },{
+    "name":"Muhafazat Madaba",
+    "cities":[{
+      "name":"Madaba",
+      "latitude":31.71667,
+      "longitude":35.8
+    }]
+  },{
+    "name":"Muhafazat `Ajlun",
+    "cities":[{
+      "name":"Ajlun",
+      "latitude":32.33385,
+      "longitude":35.75238
+    }]
+  },{
+    "name":"Muhafazat `Amman",
+    "cities":[{
+      "name":"Al Azraq ash Shamali",
+      "latitude":31.8801,
+      "longitude":36.83113
+    },{
+      "name":"Al Bunayyat ash Shamaliyah",
+      "latitude":31.89299,
+      "longitude":35.89314
+    },{
+      "name":"Al Jubayhah",
+      "latitude":32.02581,
+      "longitude":35.86458
+    },{
+      "name":"Al Quwaysimah",
+      "latitude":31.9167,
+      "longitude":35.95
+    },{
+      "name":"Amman",
+      "latitude":31.95522,
+      "longitude":35.94503
+    },{
+      "name":"Jawa",
+      "latitude":31.85247,
+      "longitude":35.93928
+    },{
+      "name":"Sahab",
+      "latitude":31.87207,
+      "longitude":36.00501
+    },{
+      "name":"Umm as Summaq",
+      "latitude":31.88542,
+      "longitude":35.8543
+    },{
+      "name":"Wadi as Sir",
+      "latitude":31.95126,
+      "longitude":35.81979
+    }]
+  },{
+    "name":"Muhafazat al Balqa",
+    "cities":[{
+      "name":"Al Karamah",
+      "latitude":31.95222,
+      "longitude":35.57917
+    },{
+      "name":"As Salt",
+      "latitude":32.03917,
+      "longitude":35.72722
+    }]
+  },{
+    "name":"Muhafazat al `Aqabah",
+    "cities":[{
+      "name":"Aqaba",
+      "latitude":29.52667,
+      "longitude":35.00778
+    }]
+  },{
+    "name":"Muhafazat at Tafilah",
+    "cities":[{
+      "name":"At Tafilah",
+      "latitude":30.83752,
+      "longitude":35.60442
+    },{
+      "name":"Busayra",
+      "latitude":30.7376,
+      "longitude":35.60775
+    }]
+  },{
+    "name":"Muhafazat az Zarqa",
+    "cities":[{
+      "name":"Russeifa",
+      "latitude":32.01778,
+      "longitude":36.04639
+    },{
+      "name":"Zarqa",
+      "latitude":32.07275,
+      "longitude":36.08796
+    }]
+  }]
+}

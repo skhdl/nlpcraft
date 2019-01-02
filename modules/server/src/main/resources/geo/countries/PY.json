@@ -1,0 +1,302 @@
+{
+  "name":"Paraguay",
+  "regions":[{
+    "name":"Asuncion",
+    "cities":[{
+      "name":"Asuncion",
+      "latitude":-25.30066,
+      "longitude":-57.63591
+    }]
+  },{
+    "name":"Departamento Central",
+    "cities":[{
+      "name":"Aregua",
+      "latitude":-25.3125,
+      "longitude":-57.38472
+    },{
+      "name":"Capiata",
+      "latitude":-25.3552,
+      "longitude":-57.44545
+    },{
+      "name":"Colonia Mariano Roque Alonso",
+      "latitude":-25.16667,
+      "longitude":-57.55
+    },{
+      "name":"Fernando de la Mora",
+      "latitude":-25.32308,
+      "longitude":-57.54021
+    },{
+      "name":"Guarambare",
+      "latitude":-25.48333,
+      "longitude":-57.46667
+    },{
+      "name":"Ita",
+      "latitude":-25.48333,
+      "longitude":-57.35
+    },{
+      "name":"Itaugua",
+      "latitude":-25.38333,
+      "longitude":-57.33333
+    },{
+      "name":"Lambare",
+      "latitude":-25.34682,
+      "longitude":-57.60647
+    },{
+      "name":"Limpio",
+      "latitude":-25.16611,
+      "longitude":-57.48562
+    },{
+      "name":"Nemby",
+      "latitude":-25.3949,
+      "longitude":-57.53574
+    },{
+      "name":"San Antonio",
+      "latitude":-25.42126,
+      "longitude":-57.54725
+    },{
+      "name":"San Lorenzo",
+      "latitude":-25.33968,
+      "longitude":-57.50879
+    },{
+      "name":"Villa Elisa",
+      "latitude":-25.3676,
+      "longitude":-57.59274
+    },{
+      "name":"Ypacarai",
+      "latitude":-25.40514,
+      "longitude":-57.28546
+    }]
+  },{
+    "name":"Departamento de Alto Paraguay",
+    "cities":[{
+      "name":"Fuerte Olimpo",
+      "latitude":-21.04153,
+      "longitude":-57.87377
+    }]
+  },{
+    "name":"Departamento de Boqueron",
+    "cities":[{
+      "name":"Colonia Menno",
+      "latitude":-22.36667,
+      "longitude":-59.81667
+    },{
+      "name":"Filadelfia",
+      "latitude":-22.35,
+      "longitude":-60.03333
+    }]
+  },{
+    "name":"Departamento de Caaguazu",
+    "cities":[{
+      "name":"Caaguazu",
+      "latitude":-25.45,
+      "longitude":-56.01667
+    },{
+      "name":"Colonia General Alfredo Stroessner",
+      "latitude":-25.36667,
+      "longitude":-55.7
+    },{
+      "name":"Coronel Oviedo",
+      "latitude":-25.44444,
+      "longitude":-56.44028
+    },{
+      "name":"Repatriacion",
+      "latitude":-25.53333,
+      "longitude":-55.95
+    },{
+      "name":"San Jose",
+      "latitude":-25.53333,
+      "longitude":-56.73333
+    }]
+  },{
+    "name":"Departamento de Caazapa",
+    "cities":[{
+      "name":"Caazapa",
+      "latitude":-26.19583,
+      "longitude":-56.36806
+    },{
+      "name":"San Juan Nepomuceno",
+      "latitude":-26.1,
+      "longitude":-55.96667
+    }]
+  },{
+    "name":"Departamento de Canindeyu",
+    "cities":[{
+      "name":"Salto del Guaira",
+      "latitude":-24.0625,
+      "longitude":-54.30694
+    },{
+      "name":"San Isidro de Curuguaty",
+      "latitude":-24.51667,
+      "longitude":-55.7
+    }]
+  },{
+    "name":"Departamento de Concepcion",
+    "cities":[{
+      "name":"Concepcion",
+      "latitude":-23.40556,
+      "longitude":-57.44028
+    },{
+      "name":"Horqueta",
+      "latitude":-23.34278,
+      "longitude":-57.05972
+    }]
+  },{
+    "name":"Departamento de Itapua",
+    "cities":[{
+      "name":"Arquitecto Tomas Romero Pereira",
+      "latitude":-26.48333,
+      "longitude":-55.25
+    },{
+      "name":"Encarnacion",
+      "latitude":-27.33056,
+      "longitude":-55.86667
+    },{
+      "name":"Hohenau",
+      "latitude":-27.08333,
+      "longitude":-55.75
+    },{
+      "name":"Obligado",
+      "latitude":-27.03333,
+      "longitude":-55.63333
+    },{
+      "name":"San Pedro del Parana",
+      "latitude":-26.83333,
+      "longitude":-56.2
+    }]
+  },{
+    "name":"Departamento de Misiones",
+    "cities":[{
+      "name":"Ayolas",
+      "latitude":-27.4,
+      "longitude":-56.9
+    },{
+      "name":"San Juan Bautista",
+      "latitude":-26.66944,
+      "longitude":-57.14583
+    },{
+      "name":"Santa Rosa",
+      "latitude":-26.86667,
+      "longitude":-56.85
+    }]
+  },{
+    "name":"Departamento de Neembucu",
+    "cities":[{
+      "name":"Pilar",
+      "latitude":-26.86879,
+      "longitude":-58.29346
+    }]
+  },{
+    "name":"Departamento de Paraguari",
+    "cities":[{
+      "name":"Carapegua",
+      "latitude":-25.8,
+      "longitude":-57.23333
+    },{
+      "name":"Paraguari",
+      "latitude":-25.62083,
+      "longitude":-57.14722
+    },{
+      "name":"Quiindy",
+      "latitude":-25.96667,
+      "longitude":-57.26667
+    },{
+      "name":"Yaguaron",
+      "latitude":-25.6,
+      "longitude":-57.3
+    }]
+  },{
+    "name":"Departamento de Presidente Hayes",
+    "cities":[{
+      "name":"Benjamin Aceval",
+      "latitude":-24.96667,
+      "longitude":-57.56667
+    },{
+      "name":"Nanawa",
+      "latitude":-25.26667,
+      "longitude":-57.66667
+    },{
+      "name":"Villa Hayes",
+      "latitude":-25.09306,
+      "longitude":-57.52361
+    }]
+  },{
+    "name":"Departamento de San Pedro",
+    "cities":[{
+      "name":"Lima",
+      "latitude":-23.9,
+      "longitude":-56.33333
+    },{
+      "name":"Puerto Rosario",
+      "latitude":-24.45,
+      "longitude":-57.08333
+    },{
+      "name":"San Pedro de Ycuamandiyu",
+      "latitude":-24.09167,
+      "longitude":-57.07639
+    }]
+  },{
+    "name":"Departamento de la Cordillera",
+    "cities":[{
+      "name":"Caacupe",
+      "latitude":-25.38611,
+      "longitude":-57.14028
+    },{
+      "name":"Emboscada",
+      "latitude":-25.15,
+      "longitude":-57.35
+    },{
+      "name":"Eusebio Ayala",
+      "latitude":-25.4,
+      "longitude":-56.96667
+    },{
+      "name":"Piribebuy",
+      "latitude":-25.48333,
+      "longitude":-57.05
+    },{
+      "name":"Tobati",
+      "latitude":-25.25,
+      "longitude":-57.06667
+    }]
+  },{
+    "name":"Departamento del Alto Parana",
+    "cities":[{
+      "name":"Ciudad del Este",
+      "latitude":-25.50972,
+      "longitude":-54.61111
+    },{
+      "name":"Doctor Juan Leon Mallorquin",
+      "latitude":-25.4,
+      "longitude":-55.26667
+    },{
+      "name":"Presidente Franco",
+      "latitude":-25.53333,
+      "longitude":-54.61667
+    },{
+      "name":"Santa Rita",
+      "latitude":-25.78333,
+      "longitude":-55.06667
+    }]
+  },{
+    "name":"Departamento del Amambay",
+    "cities":[{
+      "name":"Bella Vista",
+      "latitude":-22.13333,
+      "longitude":-56.51667
+    },{
+      "name":"Capitan Bado",
+      "latitude":-23.26667,
+      "longitude":-55.53333
+    },{
+      "name":"Pedro Juan Caballero",
+      "latitude":-22.54722,
+      "longitude":-55.73333
+    }]
+  },{
+    "name":"Departamento del Guaira",
+    "cities":[{
+      "name":"Villarrica",
+      "latitude":-25.78056,
+      "longitude":-56.44861
+    }]
+  }]
+}

@@ -1,0 +1,26 @@
+{
+  "name":"Singapore",
+  "regions":[{
+    "name":"Central Singapore Community Development Council",
+    "cities":[]
+  },{
+    "name":"North East Community Development Region",
+    "cities":[]
+  },{
+    "name":"North West Community Development Council",
+    "cities":[]
+  },{
+    "name":"Singapore",
+    "cities":[{
+      "name":"Singapore",
+      "latitude":1.28967,
+      "longitude":103.85007
+    }]
+  },{
+    "name":"South East Community Development Council",
+    "cities":[]
+  },{
+    "name":"South West Community Development Council",
+    "cities":[]
+  }]
+}

@@ -1,0 +1,88 @@
+{
+  "name":"Lebanon",
+  "regions":[{
+    "name":"Beyrouth",
+    "cities":[{
+      "name":"Beirut",
+      "latitude":33.88894,
+      "longitude":35.49442
+    },{
+      "name":"Ras Bayrut",
+      "latitude":33.9,
+      "longitude":35.48333
+    }]
+  },{
+    "name":"Mohafazat Aakkar",
+    "cities":[{
+      "name":"Halba",
+      "latitude":34.54278,
+      "longitude":36.07972
+    }]
+  },{
+    "name":"Mohafazat Baalbek-Hermel",
+    "cities":[{
+      "name":"Baalbek",
+      "latitude":34.00583,
+      "longitude":36.21806
+    }]
+  },{
+    "name":"Mohafazat Beqaa",
+    "cities":[{
+      "name":"Zahle",
+      "latitude":33.84675,
+      "longitude":35.90203
+    }]
+  },{
+    "name":"Mohafazat Liban-Nord",
+    "cities":[{
+      "name":"Batroun",
+      "latitude":34.25528,
+      "longitude":35.65806
+    },{
+      "name":"Bcharre",
+      "latitude":34.25083,
+      "longitude":36.01056
+    },{
+      "name":"Tripoli",
+      "latitude":34.43667,
+      "longitude":35.84972
+    }]
+  },{
+    "name":"Mohafazat Liban-Sud",
+    "cities":[{
+      "name":"Sidon",
+      "latitude":33.55993,
+      "longitude":35.37564
+    },{
+      "name":"Tyre",
+      "latitude":33.27333,
+      "longitude":35.19389
+    }]
+  },{
+    "name":"Mohafazat Mont-Liban",
+    "cities":[{
+      "name":"Baabda",
+      "latitude":33.83389,
+      "longitude":35.54417
+    },{
+      "name":"Djounie",
+      "latitude":33.98083,
+      "longitude":35.61778
+    },{
+      "name":"Jbail",
+      "latitude":34.12111,
+      "longitude":35.64806
+    }]
+  },{
+    "name":"Mohafazat Nabatiye",
+    "cities":[{
+      "name":"Habbouch",
+      "latitude":33.40729,
+      "longitude":35.48169
+    },{
+      "name":"Nabatiye et Tahta",
+      "latitude":33.37889,
+      "longitude":35.48389
+    }]
+  }]
+}

@@ -1,0 +1,560 @@
+{
+  "name":"Dominican Republic",
+  "regions":[{
+    "name":"Distrito Nacional",
+    "cities":[{
+      "name":"Bella Vista",
+      "latitude":18.45,
+      "longitude":-69.93333
+    },{
+      "name":"Ciudad Nueva",
+      "latitude":18.46667,
+      "longitude":-69.9
+    },{
+      "name":"Cristo Rey",
+      "latitude":18.5,
+      "longitude":-69.93333
+    },{
+      "name":"Ensanche Luperon",
+      "latitude":18.5,
+      "longitude":-69.9
+    },{
+      "name":"La Agustina",
+      "latitude":18.5,
+      "longitude":-69.93333
+    },{
+      "name":"La Julia",
+      "latitude":18.46667,
+      "longitude":-69.93333
+    },{
+      "name":"San Carlos",
+      "latitude":18.48333,
+      "longitude":-69.9
+    },{
+      "name":"Santo Domingo",
+      "latitude":18.50012,
+      "longitude":-69.98857
+    },{
+      "name":"Villa Consuelo",
+      "latitude":18.48333,
+      "longitude":-69.9
+    },{
+      "name":"Villa Francisca",
+      "latitude":18.46667,
+      "longitude":-69.9
+    }]
+  },{
+    "name":"Provincia Duarte",
+    "cities":[{
+      "name":"Castillo",
+      "latitude":19.20824,
+      "longitude":-70.02726
+    },{
+      "name":"Las Guaranas",
+      "latitude":19.1931,
+      "longitude":-70.20835
+    },{
+      "name":"Pimentel",
+      "latitude":19.18416,
+      "longitude":-70.10884
+    },{
+      "name":"San Francisco de Macoris",
+      "latitude":19.30099,
+      "longitude":-70.25259
+    },{
+      "name":"Villa Riva",
+      "latitude":19.18068,
+      "longitude":-69.91319
+    }]
+  },{
+    "name":"Provincia Espaillat",
+    "cities":[{
+      "name":"Gaspar Hernandez",
+      "latitude":19.6289,
+      "longitude":-70.28112
+    },{
+      "name":"Moca",
+      "latitude":19.39352,
+      "longitude":-70.52598
+    },{
+      "name":"San Victor Arriba",
+      "latitude":19.47741,
+      "longitude":-70.53585
+    },{
+      "name":"Veragua Arriba",
+      "latitude":19.58333,
+      "longitude":-70.33333
+    }]
+  },{
+    "name":"Provincia Maria Trinidad Sanchez",
+    "cities":[{
+      "name":"El Factor",
+      "latitude":19.31834,
+      "longitude":-69.88827
+    },{
+      "name":"Nagua",
+      "latitude":19.3832,
+      "longitude":-69.8474
+    },{
+      "name":"Rio San Juan",
+      "latitude":19.64385,
+      "longitude":-70.07635
+    }]
+  },{
+    "name":"Provincia Sanchez Ramirez",
+    "cities":[{
+      "name":"Cotui",
+      "latitude":19.05272,
+      "longitude":-70.14939
+    },{
+      "name":"Fantino",
+      "latitude":19.12148,
+      "longitude":-70.29972
+    }]
+  },{
+    "name":"Provincia de Azua",
+    "cities":[{
+      "name":"Azua de Compostela",
+      "latitude":18.45319,
+      "longitude":-70.7349
+    },{
+      "name":"Estebania",
+      "latitude":18.4577,
+      "longitude":-70.6435
+    },{
+      "name":"Padre Las Casas",
+      "latitude":18.73172,
+      "longitude":-70.93916
+    },{
+      "name":"Peralta",
+      "latitude":18.58164,
+      "longitude":-70.77029
+    },{
+      "name":"Sabana Yegua",
+      "latitude":18.71667,
+      "longitude":-71.01667
+    },{
+      "name":"Yayas de Viajama",
+      "latitude":18.6071,
+      "longitude":-70.92753
+    }]
+  },{
+    "name":"Provincia de Baoruco",
+    "cities":[{
+      "name":"Galvan",
+      "latitude":18.50228,
+      "longitude":-71.34271
+    },{
+      "name":"Neiba",
+      "latitude":18.48138,
+      "longitude":-71.41965
+    },{
+      "name":"Tamayo",
+      "latitude":18.3947,
+      "longitude":-71.2029
+    },{
+      "name":"Villa Jaragua",
+      "latitude":18.49077,
+      "longitude":-71.48377
+    }]
+  },{
+    "name":"Provincia de Barahona",
+    "cities":[{
+      "name":"Cabral",
+      "latitude":18.25,
+      "longitude":-71.21667
+    },{
+      "name":"Enriquillo",
+      "latitude":17.9,
+      "longitude":-71.23333
+    },{
+      "name":"Paraiso",
+      "latitude":17.99172,
+      "longitude":-71.16526
+    },{
+      "name":"Santa Cruz de Barahona",
+      "latitude":18.20854,
+      "longitude":-71.10077
+    },{
+      "name":"Vicente Noble",
+      "latitude":18.38443,
+      "longitude":-71.1801
+    }]
+  },{
+    "name":"Provincia de Dajabon",
+    "cities":[{
+      "name":"Dajabon",
+      "latitude":19.54878,
+      "longitude":-71.70829
+    },{
+      "name":"Loma de Cabrera",
+      "latitude":19.43333,
+      "longitude":-71.6
+    }]
+  },{
+    "name":"Provincia de El Seibo",
+    "cities":[{
+      "name":"Miches",
+      "latitude":18.98364,
+      "longitude":-69.0476
+    },{
+      "name":"Santa Cruz de El Seibo",
+      "latitude":18.76559,
+      "longitude":-69.03886
+    }]
+  },{
+    "name":"Provincia de Elias Pina",
+    "cities":[{
+      "name":"Comendador",
+      "latitude":18.8775,
+      "longitude":-71.70278
+    }]
+  },{
+    "name":"Provincia de Hato Mayor",
+    "cities":[{
+      "name":"El Valle",
+      "latitude":18.97567,
+      "longitude":-69.37827
+    },{
+      "name":"Hato Mayor del Rey",
+      "latitude":18.76278,
+      "longitude":-69.25681
+    },{
+      "name":"Sabana de La Mar",
+      "latitude":19.05934,
+      "longitude":-69.38843
+    }]
+  },{
+    "name":"Provincia de Hermanas Mirabal",
+    "cities":[{
+      "name":"Salcedo",
+      "latitude":19.37762,
+      "longitude":-70.41762
+    },{
+      "name":"Salsipuedes",
+      "latitude":19.40552,
+      "longitude":-70.37985
+    },{
+      "name":"Tenares",
+      "latitude":19.37439,
+      "longitude":-70.35087
+    }]
+  },{
+    "name":"Provincia de Independencia",
+    "cities":[{
+      "name":"Duverge",
+      "latitude":18.37839,
+      "longitude":-71.52469
+    },{
+      "name":"Jimani",
+      "latitude":18.49169,
+      "longitude":-71.85022
+    },{
+      "name":"La Descubierta",
+      "latitude":18.57053,
+      "longitude":-71.72967
+    }]
+  },{
+    "name":"Provincia de La Altagracia",
+    "cities":[{
+      "name":"Otra Banda",
+      "latitude":18.65016,
+      "longitude":-68.66281
+    },{
+      "name":"Salvaleon de Higuey",
+      "latitude":18.61501,
+      "longitude":-68.70798
+    },{
+      "name":"San Rafael del Yuma",
+      "latitude":18.42993,
+      "longitude":-68.6739
+    }]
+  },{
+    "name":"Provincia de La Romana",
+    "cities":[{
+      "name":"Guaymate",
+      "latitude":18.58793,
+      "longitude":-68.97867
+    },{
+      "name":"La Romana",
+      "latitude":18.42734,
+      "longitude":-68.97285
+    }]
+  },{
+    "name":"Provincia de La Vega",
+    "cities":[{
+      "name":"Concepcion de La Vega",
+      "latitude":19.22207,
+      "longitude":-70.52956
+    },{
+      "name":"Constanza",
+      "latitude":18.90919,
+      "longitude":-70.74499
+    },{
+      "name":"Jarabacoa",
+      "latitude":19.12178,
+      "longitude":-70.64218
+    },{
+      "name":"Jima Abajo",
+      "latitude":19.13292,
+      "longitude":-70.37607
+    },{
+      "name":"Rincon",
+      "latitude":19.11938,
+      "longitude":-70.40632
+    }]
+  },{
+    "name":"Provincia de Monsenor Nouel",
+    "cities":[{
+      "name":"Bonao",
+      "latitude":18.93687,
+      "longitude":-70.40923
+    },{
+      "name":"Piedra Blanca",
+      "latitude":18.84431,
+      "longitude":-70.31688
+    }]
+  },{
+    "name":"Provincia de Monte Cristi",
+    "cities":[{
+      "name":"Las Matas de Santa Cruz",
+      "latitude":19.67119,
+      "longitude":-71.50471
+    },{
+      "name":"San Fernando de Monte Cristi",
+      "latitude":19.84826,
+      "longitude":-71.64597
+    },{
+      "name":"Villa Vasquez",
+      "latitude":19.7411,
+      "longitude":-71.4464
+    }]
+  },{
+    "name":"Provincia de Monte Plata",
+    "cities":[{
+      "name":"Bayaguana",
+      "latitude":18.75639,
+      "longitude":-69.63616
+    },{
+      "name":"Esperalvillo",
+      "latitude":18.81509,
+      "longitude":-70.03557
+    },{
+      "name":"Monte Plata",
+      "latitude":18.807,
+      "longitude":-69.78399
+    },{
+      "name":"Sabana Grande de Boya",
+      "latitude":18.94498,
+      "longitude":-69.79331
+    },{
+      "name":"Yamasa",
+      "latitude":18.77014,
+      "longitude":-70.02508
+    }]
+  },{
+    "name":"Provincia de Pedernales",
+    "cities":[{
+      "name":"Pedernales",
+      "latitude":18.03838,
+      "longitude":-71.74403
+    }]
+  },{
+    "name":"Provincia de Peravia",
+    "cities":[{
+      "name":"Bani",
+      "latitude":18.27964,
+      "longitude":-70.33184
+    },{
+      "name":"Nizao",
+      "latitude":18.24697,
+      "longitude":-70.21053
+    },{
+      "name":"Paya",
+      "latitude":18.26196,
+      "longitude":-70.2956
+    }]
+  },{
+    "name":"Provincia de Puerto Plata",
+    "cities":[{
+      "name":"Imbert",
+      "latitude":19.75371,
+      "longitude":-70.82906
+    },{
+      "name":"Puerto Plata",
+      "latitude":19.79344,
+      "longitude":-70.6884
+    },{
+      "name":"Rio Grande",
+      "latitude":19.66667,
+      "longitude":-70.76667
+    },{
+      "name":"Sosua",
+      "latitude":19.76667,
+      "longitude":-70.51667
+    }]
+  },{
+    "name":"Provincia de San Cristobal",
+    "cities":[{
+      "name":"Bajos de Haina",
+      "latitude":18.41538,
+      "longitude":-70.03317
+    },{
+      "name":"Cambita Garabitos",
+      "latitude":18.4533,
+      "longitude":-70.1978
+    },{
+      "name":"San Cristobal",
+      "latitude":18.41667,
+      "longitude":-70.1
+    },{
+      "name":"San Gregorio de Nigua",
+      "latitude":18.38333,
+      "longitude":-70.08333
+    },{
+      "name":"Villa Altagracia",
+      "latitude":18.67297,
+      "longitude":-70.17095
+    },{
+      "name":"Yaguate",
+      "latitude":18.3353,
+      "longitude":-70.18113
+    }]
+  },{
+    "name":"Provincia de San Jose de Ocoa",
+    "cities":[{
+      "name":"San Jose de Ocoa",
+      "latitude":18.54661,
+      "longitude":-70.50631
+    }]
+  },{
+    "name":"Provincia de San Juan",
+    "cities":[{
+      "name":"Cercado Abajo",
+      "latitude":18.72681,
+      "longitude":-71.51742
+    },{
+      "name":"Juan de Herrera",
+      "latitude":18.87402,
+      "longitude":-71.2383
+    },{
+      "name":"Las Matas de Farfan",
+      "latitude":18.87309,
+      "longitude":-71.51656
+    },{
+      "name":"Punta Cana",
+      "latitude":18.58182,
+      "longitude":-68.40431
+    },{
+      "name":"San Juan de la Maguana",
+      "latitude":18.80588,
+      "longitude":-71.22991
+    },{
+      "name":"Vallejuelo",
+      "latitude":18.65354,
+      "longitude":-71.33431
+    }]
+  },{
+    "name":"Provincia de San Pedro de Macoris",
+    "cities":[{
+      "name":"Los Llanos",
+      "latitude":18.62035,
+      "longitude":-69.49581
+    },{
+      "name":"Quisqueya",
+      "latitude":18.55542,
+      "longitude":-69.40814
+    },{
+      "name":"San Pedro de Macoris",
+      "latitude":18.46156,
+      "longitude":-69.29718
+    }]
+  },{
+    "name":"Provincia de Santiago",
+    "cities":[{
+      "name":"Licey al Medio",
+      "latitude":19.43333,
+      "longitude":-70.6
+    },{
+      "name":"Sabana Iglesia",
+      "latitude":19.32114,
+      "longitude":-70.75992
+    },{
+      "name":"San Jose de Las Matas",
+      "latitude":19.33915,
+      "longitude":-70.93819
+    },{
+      "name":"Santiago de los Caballeros",
+      "latitude":19.4517,
+      "longitude":-70.69703
+    },{
+      "name":"Tamboril",
+      "latitude":19.48538,
+      "longitude":-70.61104
+    },{
+      "name":"Villa Bisono",
+      "latitude":19.56378,
+      "longitude":-70.87582
+    },{
+      "name":"Villa Gonzalez",
+      "latitude":19.54057,
+      "longitude":-70.78853
+    }]
+  },{
+    "name":"Provincia de Santiago Rodriguez",
+    "cities":[{
+      "name":"Moncion",
+      "latitude":19.41084,
+      "longitude":-71.15257
+    },{
+      "name":"Sabaneta",
+      "latitude":19.47793,
+      "longitude":-71.34125
+    }]
+  },{
+    "name":"Provincia de Santo Domingo",
+    "cities":[{
+      "name":"Boca Chica",
+      "latitude":18.45174,
+      "longitude":-69.60914
+    },{
+      "name":"Santo Domingo Este",
+      "latitude":18.48847,
+      "longitude":-69.85707
+    },{
+      "name":"Santo Domingo Oeste",
+      "latitude":18.5,
+      "longitude":-70.0
+    }]
+  },{
+    "name":"Provincia de Valverde",
+    "cities":[{
+      "name":"Esperanza",
+      "latitude":19.5847,
+      "longitude":-70.98489
+    },{
+      "name":"Laguna Salada",
+      "latitude":19.64827,
+      "longitude":-71.09446
+    },{
+      "name":"Mao",
+      "latitude":19.55186,
+      "longitude":-71.07813
+    }]
+  },{
+    "name":"Samana Province",
+    "cities":[{
+      "name":"Las Terrenas",
+      "latitude":19.31102,
+      "longitude":-69.5428
+    },{
+      "name":"Samana",
+      "latitude":19.20561,
+      "longitude":-69.33685
+    },{
+      "name":"Sanchez",
+      "latitude":19.2281,
+      "longitude":-69.6137
+    }]
+  }]
+}

@@ -1,0 +1,53 @@
+{
+  "name":"Andorra",
+  "regions":[{
+    "name":"Canillo",
+    "cities":[{
+      "name":"Canillo",
+      "latitude":42.5676,
+      "longitude":1.59756
+    }]
+  },{
+    "name":"Parroquia dAndorra la Vella",
+    "cities":[{
+      "name":"Andorra la Vella",
+      "latitude":42.50779,
+      "longitude":1.52109
+    }]
+  },{
+    "name":"Parroquia dEncamp",
+    "cities":[{
+      "name":"Encamp",
+      "latitude":42.53474,
+      "longitude":1.58014
+    }]
+  },{
+    "name":"Parroquia dEscaldes-Engordany",
+    "cities":[{
+      "name":"les Escaldes",
+      "latitude":42.50729,
+      "longitude":1.53414
+    }]
+  },{
+    "name":"Parroquia dOrdino",
+    "cities":[{
+      "name":"Ordino",
+      "latitude":42.55623,
+      "longitude":1.53319
+    }]
+  },{
+    "name":"Parroquia de Sant Julia de Loria",
+    "cities":[{
+      "name":"Sant Julia de Loria",
+      "latitude":42.46372,
+      "longitude":1.49129
+    }]
+  },{
+    "name":"Parroquia de la Massana",
+    "cities":[{
+      "name":"la Massana",
+      "latitude":42.54499,
+      "longitude":1.51483
+    }]
+  }]
+}

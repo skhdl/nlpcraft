@@ -1,0 +1,149 @@
+{
+  "name":"Oman",
+  "regions":[{
+    "name":"Ash Sharqiyah South",
+    "cities":[{
+      "name":"Sur",
+      "latitude":22.56667,
+      "longitude":59.52889
+    }]
+  },{
+    "name":"Az Zahirah",
+    "cities":[{
+      "name":"Yanqul",
+      "latitude":23.59051,
+      "longitude":56.55008
+    },{
+      "name":"`Ibri",
+      "latitude":23.22573,
+      "longitude":56.51572
+    }]
+  },{
+    "name":"Muhafazat Janub al Batinah",
+    "cities":[{
+      "name":"Barka",
+      "latitude":23.70739,
+      "longitude":57.88908
+    },{
+      "name":"Bayt al `Awabi",
+      "latitude":23.30324,
+      "longitude":57.52459
+    },{
+      "name":"Rustaq",
+      "latitude":23.39083,
+      "longitude":57.42444
+    }]
+  },{
+    "name":"Muhafazat Masqat",
+    "cities":[{
+      "name":"As Sib al Jadidah",
+      "latitude":23.67027,
+      "longitude":58.18911
+    },{
+      "name":"Bawshar",
+      "latitude":23.55563,
+      "longitude":58.3989
+    },{
+      "name":"Muscat",
+      "latitude":23.61387,
+      "longitude":58.5922
+    }]
+  },{
+    "name":"Muhafazat Shamal al Batinah",
+    "cities":[{
+      "name":"Al Khaburah",
+      "latitude":23.98864,
+      "longitude":57.09838
+    },{
+      "name":"Al Liwa",
+      "latitude":24.53611,
+      "longitude":56.56556
+    },{
+      "name":"Al Sohar",
+      "latitude":24.3643,
+      "longitude":56.74681
+    },{
+      "name":"As Suwayq",
+      "latitude":23.84944,
+      "longitude":57.43861
+    },{
+      "name":"Saham",
+      "latitude":24.17222,
+      "longitude":56.88861
+    },{
+      "name":"Shinas",
+      "latitude":24.74333,
+      "longitude":56.46583
+    }]
+  },{
+    "name":"Muhafazat Shamal ash Sharqiyah",
+    "cities":[{
+      "name":"Al Qabil",
+      "latitude":22.571,
+      "longitude":58.69472
+    },{
+      "name":"Badiyah",
+      "latitude":22.45,
+      "longitude":58.8
+    },{
+      "name":"Ibra",
+      "latitude":22.69057,
+      "longitude":58.53337
+    }]
+  },{
+    "name":"Muhafazat Zufar",
+    "cities":[{
+      "name":"Salalah",
+      "latitude":17.01505,
+      "longitude":54.09237
+    }]
+  },{
+    "name":"Muhafazat ad Dakhiliyah",
+    "cities":[{
+      "name":"Adam",
+      "latitude":22.3756,
+      "longitude":57.52334
+    },{
+      "name":"Bahla",
+      "latitude":22.97339,
+      "longitude":57.29958
+    },{
+      "name":"Bidbid",
+      "latitude":23.40786,
+      "longitude":58.1283
+    },{
+      "name":"Izki",
+      "latitude":22.93333,
+      "longitude":57.76667
+    },{
+      "name":"Nizwa",
+      "latitude":22.93333,
+      "longitude":57.53333
+    },{
+      "name":"Sufalat Samail",
+      "latitude":23.31667,
+      "longitude":58.01667
+    }]
+  },{
+    "name":"Muhafazat al Buraymi",
+    "cities":[{
+      "name":"Al Buraymi",
+      "latitude":24.25088,
+      "longitude":55.79312
+    }]
+  },{
+    "name":"Muhafazat al Wusta",
+    "cities":[{
+      "name":"Hayma",
+      "latitude":19.95931,
+      "longitude":56.27575
+    }]
+  },{
+    "name":"Musandam",
+    "cities":[{
+      "name":"Khasab",
+      "latitude":26.17993,
+      "longitude":56.24774
+    }]
+  }]
+}

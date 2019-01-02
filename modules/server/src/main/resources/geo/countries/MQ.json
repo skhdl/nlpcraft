@@ -1,0 +1,79 @@
+{
+  "name":"Martinique",
+  "regions":[{
+    "name":"Martinique",
+    "cities":[{
+      "name":"Ducos",
+      "latitude":14.57529,
+      "longitude":-60.97453
+    },{
+      "name":"Fort-de-France",
+      "latitude":14.60892,
+      "longitude":-61.07334
+    },{
+      "name":"La Trinite",
+      "latitude":14.73758,
+      "longitude":-60.96286
+    },{
+      "name":"Le Francois",
+      "latitude":14.61557,
+      "longitude":-60.90308
+    },{
+      "name":"Le Gros-Morne",
+      "latitude":14.7,
+      "longitude":-61.0
+    },{
+      "name":"Le Lamentin",
+      "latitude":14.608,
+      "longitude":-61.00933
+    },{
+      "name":"Le Lorrain",
+      "latitude":14.83292,
+      "longitude":-61.05667
+    },{
+      "name":"Le Marin",
+      "latitude":14.47212,
+      "longitude":-60.86973
+    },{
+      "name":"Le Morne-Rouge",
+      "latitude":14.76667,
+      "longitude":-61.13333
+    },{
+      "name":"Le Robert",
+      "latitude":14.67751,
+      "longitude":-60.94228
+    },{
+      "name":"Le Vauclin",
+      "latitude":14.54524,
+      "longitude":-60.83883
+    },{
+      "name":"Les Trois-Ilets",
+      "latitude":14.539,
+      "longitude":-61.03608
+    },{
+      "name":"Petite Riviere Salee",
+      "latitude":14.75,
+      "longitude":-60.96667
+    },{
+      "name":"Riviere-Pilote",
+      "latitude":14.47746,
+      "longitude":-60.9035
+    },{
+      "name":"Saint-Esprit",
+      "latitude":14.55,
+      "longitude":-60.93333
+    },{
+      "name":"Saint-Joseph",
+      "latitude":14.66792,
+      "longitude":-61.04558
+    },{
+      "name":"Sainte-Luce",
+      "latitude":14.46733,
+      "longitude":-60.92708
+    },{
+      "name":"Sainte-Marie",
+      "latitude":14.78392,
+      "longitude":-60.99274
+    }]
+  }]
+}

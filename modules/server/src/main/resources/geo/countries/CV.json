@@ -1,0 +1,166 @@
+{
+  "name":"Cape Verde",
+  "regions":[{
+    "name":"Concelho da Boa Vista",
+    "cities":[{
+      "name":"Vila de Sal Rei",
+      "latitude":16.18333,
+      "longitude":-22.91667
+    }]
+  },{
+    "name":"Concelho da Brava",
+    "cities":[{
+      "name":"Vila Nova Sintra",
+      "latitude":14.86667,
+      "longitude":-24.71667
+    }]
+  },{
+    "name":"Concelho da Praia",
+    "cities":[{
+      "name":"Praia",
+      "latitude":14.93152,
+      "longitude":-23.51254
+    }]
+  },{
+    "name":"Concelho da Ribeira Brava",
+    "cities":[{
+      "name":"Vila da Ribeira Brava",
+      "latitude":16.61667,
+      "longitude":-24.3
+    }]
+  },{
+    "name":"Concelho da Ribeira Grande",
+    "cities":[{
+      "name":"Ribeira Grande",
+      "latitude":17.18561,
+      "longitude":-25.07243
+    }]
+  },{
+    "name":"Concelho de Ribeira Grande de Santiago",
+    "cities":[{
+      "name":"Cidade Velha",
+      "latitude":14.91667,
+      "longitude":-23.61667
+    }]
+  },{
+    "name":"Concelho de Santa Catarina",
+    "cities":[{
+      "name":"Assomada",
+      "latitude":15.1,
+      "longitude":-23.68333
+    }]
+  },{
+    "name":"Concelho de Santa Catarina do Fogo",
+    "cities":[{
+      "name":"Cova Figueira",
+      "latitude":14.89054,
+      "longitude":-24.29343
+    }]
+  },{
+    "name":"Concelho de Santa Cruz",
+    "cities":[{
+      "name":"Pedra Badejo",
+      "latitude":15.13493,
+      "longitude":-23.53216
+    },{
+      "name":"Santa Cruz",
+      "latitude":15.13333,
+      "longitude":-23.56667
+    }]
+  },{
+    "name":"Concelho de Sao Domingos",
+    "cities":[{
+      "name":"Sao Domingos",
+      "latitude":15.02438,
+      "longitude":-23.5625
+    }]
+  },{
+    "name":"Concelho de Sao Lourenco dos Orgaos",
+    "cities":[{
+      "name":"Joao Teves",
+      "latitude":15.06457,
+      "longitude":-23.58969
+    }]
+  },{
+    "name":"Concelho de Sao Miguel",
+    "cities":[{
+      "name":"Calheta",
+      "latitude":15.18613,
+      "longitude":-23.59228
+    }]
+  },{
+    "name":"Concelho de Sao Salvador do Mundo",
+    "cities":[{
+      "name":"Picos",
+      "latitude":15.0836,
+      "longitude":-23.63236
+    }]
+  },{
+    "name":"Concelho de Sao Vicente",
+    "cities":[{
+      "name":"Mindelo",
+      "latitude":16.89014,
+      "longitude":-24.98042
+    }]
+  },{
+    "name":"Concelho do Maio",
+    "cities":[{
+      "name":"Vila do Maio",
+      "latitude":15.13333,
+      "longitude":-23.21667
+    }]
+  },{
+    "name":"Concelho do Paul",
+    "cities":[{
+      "name":"Pombas",
+      "latitude":17.15026,
+      "longitude":-25.02007
+    }]
+  },{
+    "name":"Concelho do Porto Novo",
+    "cities":[{
+      "name":"Porto Novo",
+      "latitude":17.01969,
+      "longitude":-25.06471
+    }]
+  },{
+    "name":"Concelho do Sao Filipe",
+    "cities":[{
+      "name":"Sao Filipe",
+      "latitude":14.8961,
+      "longitude":-24.49556
+    }]
+  },{
+    "name":"Concelho do Tarrafal",
+    "cities":[{
+      "name":"Tarrafal",
+      "latitude":15.27591,
+      "longitude":-23.75381
+    }]
+  },{
+    "name":"Concelho do Tarrafal de Sao Nicolau",
+    "cities":[{
+      "name":"Tarrafal de Sao Nicolau",
+      "latitude":16.56667,
+      "longitude":-24.36667
+    }]
+  },{
+    "name":"Concelho dos Mosteiros",
+    "cities":[{
+      "name":"Porto dos Mosteiros",
+      "latitude":15.03333,
+      "longitude":-24.33333
+    }]
+  },{
+    "name":"Sal Municipality",
+    "cities":[{
+      "name":"Espargos",
+      "latitude":16.75524,
+      "longitude":-22.9446
+    },{
+      "name":"Santa Maria",
+      "latitude":16.6,
+      "longitude":-22.9
+    }]
+  }]
+}

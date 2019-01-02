@@ -1,0 +1,50 @@
+{
+  "name":"Fiji",
+  "regions":[{
+    "name":"Central Division",
+    "cities":[{
+      "name":"Suva",
+      "latitude":-18.14161,
+      "longitude":178.44149
+    }]
+  },{
+    "name":"Eastern Division",
+    "cities":[{
+      "name":"Levuka",
+      "latitude":-18.06667,
+      "longitude":179.31667
+    }]
+  },{
+    "name":"Kadavu Province",
+    "cities":[]
+  },{
+    "name":"Northern Division",
+    "cities":[{
+      "name":"Lambasa",
+      "latitude":-16.41667,
+      "longitude":179.38333
+    }]
+  },{
+    "name":"Rotuma",
+    "cities":[{
+      "name":"Ahau",
+      "latitude":-12.5,
+      "longitude":177.05
+    }]
+  },{
+    "name":"Western Division",
+    "cities":[{
+      "name":"Ba",
+      "latitude":-17.5343,
+      "longitude":177.67407
+    },{
+      "name":"Lautoka",
+      "latitude":-17.61667,
+      "longitude":177.46667
+    },{
+      "name":"Nadi",
+      "latitude":-17.8,
+      "longitude":177.41667
+    }]
+  }]
+}

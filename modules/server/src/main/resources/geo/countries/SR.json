@@ -1,0 +1,74 @@
+{
+  "name":"Suriname",
+  "regions":[{
+    "name":"Distrikt Brokopondo",
+    "cities":[{
+      "name":"Brokopondo",
+      "latitude":5.06667,
+      "longitude":-54.96667
+    }]
+  },{
+    "name":"Distrikt Commewijne",
+    "cities":[{
+      "name":"Nieuw Amsterdam",
+      "latitude":5.88333,
+      "longitude":-55.08333
+    }]
+  },{
+    "name":"Distrikt Coronie",
+    "cities":[{
+      "name":"Totness",
+      "latitude":5.88333,
+      "longitude":-56.31667
+    }]
+  },{
+    "name":"Distrikt Marowijne",
+    "cities":[{
+      "name":"Albina",
+      "latitude":5.5,
+      "longitude":-54.05
+    },{
+      "name":"Moengo",
+      "latitude":5.61667,
+      "longitude":-54.4
+    }]
+  },{
+    "name":"Distrikt Nickerie",
+    "cities":[{
+      "name":"Nieuw Nickerie",
+      "latitude":5.95,
+      "longitude":-56.98333
+    }]
+  },{
+    "name":"Distrikt Para",
+    "cities":[{
+      "name":"Onverwacht",
+      "latitude":5.58333,
+      "longitude":-55.18333
+    }]
+  },{
+    "name":"Distrikt Paramaribo",
+    "cities":[{
+      "name":"Paramaribo",
+      "latitude":5.86638,
+      "longitude":-55.16682
+    }]
+  },{
+    "name":"Distrikt Saramacca",
+    "cities":[{
+      "name":"Groningen",
+      "latitude":5.8,
+      "longitude":-55.46667
+    }]
+  },{
+    "name":"Distrikt Sipaliwini",
+    "cities":[]
+  },{
+    "name":"Distrikt Wanica",
+    "cities":[{
+      "name":"Lelydorp",
+      "latitude":5.7,
+      "longitude":-55.23333
+    }]
+  }]
+}

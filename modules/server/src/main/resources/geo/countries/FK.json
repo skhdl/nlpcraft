@@ -1,0 +1,11 @@
+{
+  "name":"Falkland Islands",
+  "regions":[{
+    "name":"Falkland Islands",
+    "cities":[{
+      "name":"Stanley",
+      "latitude":-51.7,
+      "longitude":-57.85
+    }]
+  }]
+}

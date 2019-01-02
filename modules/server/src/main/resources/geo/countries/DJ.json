@@ -1,0 +1,50 @@
+{
+  "name":"Djibouti",
+  "regions":[{
+    "name":"Ali Sabieh Region",
+    "cities":[{
+      "name":"Ali Sabieh",
+      "latitude":11.15583,
+      "longitude":42.7125
+    },{
+      "name":"Danan",
+      "latitude":11.18333,
+      "longitude":42.93333
+    }]
+  },{
+    "name":"Arta Region",
+    "cities":[{
+      "name":"`Arta",
+      "latitude":11.52222,
+      "longitude":42.84194
+    }]
+  },{
+    "name":"Dikhil",
+    "cities":[{
+      "name":"Dikhil",
+      "latitude":11.10861,
+      "longitude":42.37389
+    }]
+  },{
+    "name":"Djibouti Region",
+    "cities":[{
+      "name":"Djibouti",
+      "latitude":11.58901,
+      "longitude":43.14503
+    }]
+  },{
+    "name":"Obock",
+    "cities":[{
+      "name":"Obock",
+      "latitude":11.96306,
+      "longitude":43.29056
+    }]
+  },{
+    "name":"Tadjourah",
+    "cities":[{
+      "name":"Tadjoura",
+      "latitude":11.78528,
+      "longitude":42.88444
+    }]
+  }]
+}

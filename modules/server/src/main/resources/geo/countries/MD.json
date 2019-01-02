@@ -1,0 +1,347 @@
+{
+  "name":"Moldova",
+  "regions":[{
+    "name":"Gagauzia",
+    "cities":[{
+      "name":"Ceadir-Lunga",
+      "latitude":46.055,
+      "longitude":28.83028
+    },{
+      "name":"Comrat",
+      "latitude":46.30028,
+      "longitude":28.65722
+    },{
+      "name":"Vulcanesti",
+      "latitude":45.68417,
+      "longitude":28.40278
+    }]
+  },{
+    "name":"Municipiul Balti",
+    "cities":[{
+      "name":"Balti",
+      "latitude":47.76167,
+      "longitude":27.92889
+    }]
+  },{
+    "name":"Municipiul Bender",
+    "cities":[{
+      "name":"Bender",
+      "latitude":46.83056,
+      "longitude":29.47111
+    }]
+  },{
+    "name":"Municipiul Chisinau",
+    "cities":[{
+      "name":"Chisinau",
+      "latitude":47.00556,
+      "longitude":28.8575
+    },{
+      "name":"Ciorescu",
+      "latitude":47.12944,
+      "longitude":28.88556
+    },{
+      "name":"Cricova",
+      "latitude":47.13889,
+      "longitude":28.86194
+    },{
+      "name":"Singera",
+      "latitude":46.91306,
+      "longitude":28.9775
+    },{
+      "name":"Stauceni",
+      "latitude":47.0875,
+      "longitude":28.87028
+    },{
+      "name":"Vadul lui Voda",
+      "latitude":47.09167,
+      "longitude":29.07556
+    }]
+  },{
+    "name":"Raionul Anenii Noi",
+    "cities":[{
+      "name":"Anenii Noi",
+      "latitude":46.87889,
+      "longitude":29.22472
+    }]
+  },{
+    "name":"Raionul Basarabeasca",
+    "cities":[{
+      "name":"Basarabeasca",
+      "latitude":46.33111,
+      "longitude":28.97278
+    }]
+  },{
+    "name":"Raionul Briceni",
+    "cities":[{
+      "name":"Briceni",
+      "latitude":48.36278,
+      "longitude":27.085
+    }]
+  },{
+    "name":"Raionul Cahul",
+    "cities":[{
+      "name":"Cahul",
+      "latitude":45.9075,
+      "longitude":28.19444
+    }]
+  },{
+    "name":"Raionul Calarasi",
+    "cities":[{
+      "name":"Calarasi",
+      "latitude":47.25444,
+      "longitude":28.30806
+    }]
+  },{
+    "name":"Raionul Cantemir",
+    "cities":[{
+      "name":"Cantemir",
+      "latitude":46.27806,
+      "longitude":28.20083
+    }]
+  },{
+    "name":"Raionul Causeni",
+    "cities":[{
+      "name":"Causeni",
+      "latitude":46.64417,
+      "longitude":29.41389
+    },{
+      "name":"Chitcani",
+      "latitude":46.78296,
+      "longitude":29.61682
+    }]
+  },{
+    "name":"Raionul Cimislia",
+    "cities":[{
+      "name":"Cimislia",
+      "latitude":46.52,
+      "longitude":28.78417
+    }]
+  },{
+    "name":"Raionul Criuleni",
+    "cities":[{
+      "name":"Criuleni",
+      "latitude":47.21444,
+      "longitude":29.16139
+    }]
+  },{
+    "name":"Raionul Donduseni",
+    "cities":[{
+      "name":"Briceni",
+      "latitude":48.35722,
+      "longitude":27.70361
+    },{
+      "name":"Donduseni",
+      "latitude":48.24268,
+      "longitude":27.6101
+    }]
+  },{
+    "name":"Raionul Drochia",
+    "cities":[{
+      "name":"Drochia",
+      "latitude":48.035,
+      "longitude":27.81611
+    }]
+  },{
+    "name":"Raionul Dubasari",
+    "cities":[{
+      "name":"Cocieri",
+      "latitude":47.3075,
+      "longitude":29.11028
+    }]
+  },{
+    "name":"Raionul Edinet",
+    "cities":[{
+      "name":"Edinet",
+      "latitude":48.16806,
+      "longitude":27.305
+    }]
+  },{
+    "name":"Raionul Falesti",
+    "cities":[{
+      "name":"Falesti",
+      "latitude":47.57361,
+      "longitude":27.70917
+    }]
+  },{
+    "name":"Raionul Floresti",
+    "cities":[{
+      "name":"Floresti",
+      "latitude":47.89333,
+      "longitude":28.30139
+    }]
+  },{
+    "name":"Raionul Glodeni",
+    "cities":[{
+      "name":"Glodeni",
+      "latitude":47.77083,
+      "longitude":27.51444
+    }]
+  },{
+    "name":"Raionul Hincesti",
+    "cities":[{
+      "name":"Dancu",
+      "latitude":46.76278,
+      "longitude":28.21
+    },{
+      "name":"Hincesti",
+      "latitude":46.82583,
+      "longitude":28.59361
+    }]
+  },{
+    "name":"Raionul Ialoveni",
+    "cities":[{
+      "name":"Ialoveni",
+      "latitude":46.94306,
+      "longitude":28.77778
+    }]
+  },{
+    "name":"Raionul Leova",
+    "cities":[{
+      "name":"Iargara",
+      "latitude":46.4275,
+      "longitude":28.43667
+    },{
+      "name":"Leova",
+      "latitude":46.47861,
+      "longitude":28.25528
+    }]
+  },{
+    "name":"Raionul Nisporeni",
+    "cities":[{
+      "name":"Nisporeni",
+      "latitude":47.08139,
+      "longitude":28.17833
+    }]
+  },{
+    "name":"Raionul Ocnita",
+    "cities":[{
+      "name":"Ocnita",
+      "latitude":48.38528,
+      "longitude":27.43917
+    },{
+      "name":"Otaci",
+      "latitude":48.43,
+      "longitude":27.79389
+    }]
+  },{
+    "name":"Raionul Orhei",
+    "cities":[{
+      "name":"Orhei",
+      "latitude":47.38306,
+      "longitude":28.82306
+    }]
+  },{
+    "name":"Raionul Rezina",
+    "cities":[{
+      "name":"Rezina",
+      "latitude":47.74917,
+      "longitude":28.96222
+    }]
+  },{
+    "name":"Raionul Riscani",
+    "cities":[{
+      "name":"Riscani",
+      "latitude":47.95722,
+      "longitude":27.55389
+    }]
+  },{
+    "name":"Raionul Singerei",
+    "cities":[{
+      "name":"Bilicenii Vechi",
+      "latitude":47.65639,
+      "longitude":28.04722
+    },{
+      "name":"Singerei",
+      "latitude":47.64056,
+      "longitude":28.14194
+    }]
+  },{
+    "name":"Raionul Soldanesti",
+    "cities":[{
+      "name":"Soldanesti",
+      "latitude":47.81528,
+      "longitude":28.79667
+    }]
+  },{
+    "name":"Raionul Soroca",
+    "cities":[{
+      "name":"Soroca",
+      "latitude":48.15583,
+      "longitude":28.2975
+    }]
+  },{
+    "name":"Raionul Stefan Voda",
+    "cities":[{
+      "name":"Stefan Voda",
+      "latitude":46.51528,
+      "longitude":29.66306
+    }]
+  },{
+    "name":"Raionul Straseni",
+    "cities":[{
+      "name":"Straseni",
+      "latitude":47.14139,
+      "longitude":28.61028
+    }]
+  },{
+    "name":"Raionul Taraclia",
+    "cities":[{
+      "name":"Taraclia",
+      "latitude":45.9,
+      "longitude":28.66889
+    }]
+  },{
+    "name":"Raionul Telenesti",
+    "cities":[{
+      "name":"Mindresti",
+      "latitude":47.50722,
+      "longitude":28.27694
+    },{
+      "name":"Telenesti",
+      "latitude":47.49972,
+      "longitude":28.36556
+    }]
+  },{
+    "name":"Raionul Ungheni",
+    "cities":[{
+      "name":"Ungheni",
+      "latitude":47.20417,
+      "longitude":27.79583
+    }]
+  },{
+    "name":"Unitatea Teritoriala din Stinga Nistrului",
+    "cities":[{
+      "name":"Camenca",
+      "latitude":48.03194,
+      "longitude":28.69778
+    },{
+      "name":"Dnestrovsc",
+      "latitude":46.62222,
+      "longitude":29.91333
+    },{
+      "name":"Dubasari",
+      "latitude":47.26306,
+      "longitude":29.16083
+    },{
+      "name":"Grigoriopol",
+      "latitude":47.15361,
+      "longitude":29.29639
+    },{
+      "name":"Pervomaisc",
+      "latitude":46.73389,
+      "longitude":29.95861
+    },{
+      "name":"Ribnita",
+      "latitude":47.76639,
+      "longitude":29.00111
+    },{
+      "name":"Slobozia",
+      "latitude":46.72806,
+      "longitude":29.70778
+    },{
+      "name":"Tiraspol",
+      "latitude":46.84028,
+      "longitude":29.64333
+    }]
+  }]
+}

@@ -1,0 +1,184 @@
+{
+  "name":"Cambodia",
+  "regions":[{
+    "name":"Banteay Meanchey",
+    "cities":[{
+      "name":"Paoy Pet",
+      "latitude":13.65611,
+      "longitude":102.5625
+    },{
+      "name":"Sisophon",
+      "latitude":13.58588,
+      "longitude":102.97369
+    }]
+  },{
+    "name":"Battambang",
+    "cities":[{
+      "name":"Battambang",
+      "latitude":13.10271,
+      "longitude":103.19822
+    }]
+  },{
+    "name":"Kampong Cham",
+    "cities":[{
+      "name":"Kampong Cham",
+      "latitude":11.99339,
+      "longitude":105.4635
+    }]
+  },{
+    "name":"Kampong Chhnang",
+    "cities":[{
+      "name":"Kampong Chhnang",
+      "latitude":12.25,
+      "longitude":104.66667
+    }]
+  },{
+    "name":"Kampong Speu",
+    "cities":[{
+      "name":"Kampong Speu",
+      "latitude":11.45332,
+      "longitude":104.52085
+    }]
+  },{
+    "name":"Kampong Thom",
+    "cities":[{
+      "name":"Kampong Thom",
+      "latitude":12.71112,
+      "longitude":104.88873
+    }]
+  },{
+    "name":"Kampot",
+    "cities":[{
+      "name":"Kampot",
+      "latitude":10.61041,
+      "longitude":104.18145
+    }]
+  },{
+    "name":"Kandal",
+    "cities":[{
+      "name":"Ta Khmau",
+      "latitude":11.48333,
+      "longitude":104.95
+    }]
+  },{
+    "name":"Kep",
+    "cities":[{
+      "name":"Krong Kep",
+      "latitude":10.4829,
+      "longitude":104.31672
+    }]
+  },{
+    "name":"Koh Kong",
+    "cities":[{
+      "name":"Koh Kong",
+      "latitude":11.61531,
+      "longitude":102.9838
+    }]
+  },{
+    "name":"Kratie",
+    "cities":[{
+      "name":"Kratie",
+      "latitude":12.48811,
+      "longitude":106.01879
+    }]
+  },{
+    "name":"Mondolkiri",
+    "cities":[{
+      "name":"Senmonourom",
+      "latitude":12.45583,
+      "longitude":107.18811
+    }]
+  },{
+    "name":"Otar Meanchey",
+    "cities":[{
+      "name":"Samraong",
+      "latitude":14.18175,
+      "longitude":103.51761
+    }]
+  },{
+    "name":"Pailin",
+    "cities":[{
+      "name":"Pailin",
+      "latitude":12.84895,
+      "longitude":102.60928
+    }]
+  },{
+    "name":"Phnom Penh",
+    "cities":[{
+      "name":"Phnom Penh",
+      "latitude":11.56245,
+      "longitude":104.91601
+    }]
+  },{
+    "name":"Preah Vihear",
+    "cities":[{
+      "name":"Tbeng Meanchey",
+      "latitude":13.80732,
+      "longitude":104.98046
+    }]
+  },{
+    "name":"Prey Veng",
+    "cities":[{
+      "name":"Prey Veng",
+      "latitude":11.48682,
+      "longitude":105.32533
+    }]
+  },{
+    "name":"Pursat",
+    "cities":[{
+      "name":"Pursat",
+      "latitude":12.53878,
+      "longitude":103.9192
+    }]
+  },{
+    "name":"Ratanakiri",
+    "cities":[{
+      "name":"Ban Lung",
+      "latitude":13.73939,
+      "longitude":106.98727
+    },{
+      "name":"Lumphat",
+      "latitude":13.48784,
+      "longitude":106.98158
+    }]
+  },{
+    "name":"Siem Reap",
+    "cities":[{
+      "name":"Siem Reap",
+      "latitude":13.36179,
+      "longitude":103.86056
+    }]
+  },{
+    "name":"Sihanoukville",
+    "cities":[{
+      "name":"Sihanoukville",
+      "latitude":10.60932,
+      "longitude":103.52958
+    }]
+  },{
+    "name":"Stung Treng",
+    "cities":[{
+      "name":"Stung Treng",
+      "latitude":13.52586,
+      "longitude":105.9683
+    }]
+  },{
+    "name":"Svay Rieng",
+    "cities":[{
+      "name":"Svay Rieng",
+      "latitude":11.08785,
+      "longitude":105.79935
+    }]
+  },{
+    "name":"Takeo",
+    "cities":[{
+      "name":"Phumi Veal Sre",
+      "latitude":10.98081,
+      "longitude":104.77828
+    },{
+      "name":"Takeo",
+      "latitude":10.99081,
+      "longitude":104.78498
+    }]
+  }]
+}
