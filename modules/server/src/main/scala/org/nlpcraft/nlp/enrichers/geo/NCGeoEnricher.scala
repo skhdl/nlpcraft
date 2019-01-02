@@ -27,11 +27,13 @@
 package org.nlpcraft.nlp.enrichers.geo
 
 import org.nlpcraft._
+import org.nlpcraft.json.NCJson
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.enrichers.NCNlpEnricher
 import org.nlpcraft.nlp.enrichers.geo._
 import org.nlpcraft.nlp.enrichers.geo.NCGeoLocationKind._
 import org.nlpcraft.nlp.pos.NCPennTreebank
+import org.nlpcraft.nlp.wordnet.NCWordNetManager
 
 import scala.collection._
 
@@ -56,18 +58,19 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
     // Common word exceptions configuration folder.
     private final val EXCEPTIONS_PATH = "geo/exceptions"
 
+    // TODO: implement
     @throws[NCE]
-    private[geo] final val LOCATIONS: Map[String, Set[NCGeoEntry]] = NCGeoManager.getModel.synonyms
+    private[geo] final val LOCATIONS: Map[String, Set[NCGeoEntry]] = Map.empty /*NCGeoManager.getModel.synonyms*/
 
     // GEO names matched with common english words and user defined exception GEO names.
     // Note that 'ignore case' parameter set as false because DLGeoLocationKind definition (CITY ect)
     @throws[NCE]
     // TODO: refactor... incomprehensible!
-    private final val COMMONS: Map[Kind, Set[String]]  =
+    private final val COMMONS: Map[NCGeoLocationKind, Set[String]]  =
         G.getFilesResources(EXCEPTIONS_PATH).
             flatMap(f ⇒
-                Json.extractResource[immutable.Map[String, immutable.Set[String]]](f, ignoreCase = false).
-                    map(p ⇒ Kind.withName(p._1.toUpperCase) → p._2)
+                NCJson.extractResource[immutable.Map[String, immutable.Set[String]]](f, ignoreCase = false).
+                    map(p ⇒ NCGeoLocationKind.withName(p._1.toUpperCase) → p._2)
             ).groupBy(_._1).map(p ⇒ p._1 → p._2.flatMap(_._2).toSet).map(p ⇒ p._1 → p._2.map(_.toLowerCase))
 
     // JSON extractor for largest cities.
@@ -76,14 +79,12 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
     private def glue(s: String*): String = s.map(_.toLowerCase).mkString("|")
 
     private final val TOP_USA: Set[String] =
-        Json.extractResource[List[TopCity]](US_TOP_PATH, ignoreCase = true).
+        NCJson.extractResource[List[TopCity]](US_TOP_PATH, ignoreCase = true).
             map(city ⇒ glue(city.name, city.region)).toSet
 
     private final val TOP_WORLD: Set[String] =
-        Json.extractResource[List[TopCity]](WORLD_TOP_PATH, ignoreCase = true).
+        NCJson.extractResource[List[TopCity]](WORLD_TOP_PATH, ignoreCase = true).
             map(city ⇒ glue(city.name, city.region)).toSet
-
-    logger.trace("... done with large cities.")
 
     private def isConflictName(name: String): Boolean =
         US_CONFLICT_STATES.contains(name.toLowerCase) && name.exists(_.isLower)
@@ -216,7 +217,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                                 if (NCPennTreebank.JJS_POS.contains(tok.pos)) {
                                     var endLoop = false
 
-                                    for (noun ← WordNet.getNNsForJJ(tok.normText); if !endLoop) {
+                                    for (noun ← NCWordNetManager.getNNsForJJ(tok.normText); if !endLoop) {
                                         def onResult(locs: Set[NCGeoEntry]): Unit = {
                                             addAll(locs)
                                             endLoop = true
@@ -332,11 +333,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         // Also added tokens with very short GEO names (with length is 1)
         excls ++= ns.getNotes("nlp:geo").filter(note ⇒ getName(getKind(note), note).length == 1)
 
-        def removeNote(n: NCNlpSentenceNote, reason: String) {
+        def removeNote(n: NCNlpSentenceNote):Unit =
             ns.removeNote(n.id)
-
-            logger.trace(s"GEO collapsed [geo=${note2String(n)}, reason=$reason]")
-        }
 
         // Check that city is inside country or region.
         // When true - remove larger location note and replace with
@@ -349,8 +347,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                     first.tokenIndexes ++ second.tokenIndexes, first.wordIndexes ++ second.wordIndexes
                 )
 
-                removeNote(second, "nested")
-                removeNote(first, "nested")
+                removeNote(second)
+                removeNote(first)
 
                 // GEO names matched with common words shouldn't be excluded if they specified by valid GEO parents.
                 excls -= first
@@ -397,7 +395,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         enlarge(false)
         enlarge(true)
 
-        excls.foreach(e ⇒ removeNote(e, "common word"))
+        excls.foreach(e ⇒ removeNote(e))
 
         // Calculate a weight to rank locations.
         // ------------------------------------
@@ -474,8 +472,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                     flatMap(hsByKind ⇒ Seq(hsByKind.head) ++ hsByKind.tail.filter(_.weight == hsByKind.head.weight)).
                     toSeq
 
-                remainHs.foreach(p ⇒ logger.trace(s"GEO winner [geo=${note2String(p.note)}, weight=${p.weight}]"))
-                sorted.diff(remainHs).foreach(p ⇒ removeNote(p.note, s"weight: ${p.weight}"))
+                sorted.diff(remainHs).foreach(p ⇒ removeNote(p.note))
             }
         }
     }

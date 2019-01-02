@@ -24,6 +24,7 @@
 #       /_/
 #
 #!/bin/bash
+
 sudo -u postgres psql
 create user nlpcraft with password 'nlpcraft';
 create database nlpcraft owner nlpcraft;
