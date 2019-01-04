@@ -27,21 +27,18 @@
 package org.nlpcraft.nlp.wordnet
 
 import org.nlpcraft._
-import net.didion.jwnl.JWNL
-import net.didion.jwnl.data.POS._
-import net.didion.jwnl.data.{IndexWord, POS, PointerType, Synset}
-import net.didion.jwnl.dictionary.{Dictionary, MorphologicalProcessor}
+import net.sf.extjwnl.data.POS._
+import net.sf.extjwnl.data.{IndexWord, POS, PointerType, Synset}
+import net.sf.extjwnl.dictionary.MorphologicalProcessor
+import net.sf.extjwnl.dictionary.Dictionary
+import scala.collection.JavaConverters._
 
 /**
   * WordNet manager.
   */
 object NCWordNetManager extends NCLifecycle("WordNet manager") {
-    // Properties file for WordNet.
-    private final val WORLDNET_PROPS = "wordnet/wn_file_properties.xml"
-    
     @volatile private var dic: Dictionary = _
     @volatile private var morph: MorphologicalProcessor = _
-    
     
     private def pennPos2WordNet(pennPos: String): Option[POS] =
         pennPos.head match {
@@ -61,7 +58,7 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
         val word = dic.getIndexWord(initPos, str)
         
         if (word != null) {
-            val senses = word.getSenses
+            val senses = word.getSenses.asScala
             
             senses.length match {
                 case 0 ⇒ Seq.empty[String]
@@ -76,16 +73,19 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
     
     // Does processing for one synset.
     private def process(synset: Synset, initPos: POS, tgtPos: POS) = {
-        val typ = if (initPos == ADJECTIVE) PointerType.DERIVED else PointerType.NOMINALIZATION
+        // TODO: What is analogue for 'NOMINALIZATION'
+        // TODO: Is 'DERIVATION'  analogue 'DERIVED'
+        // val typ = if (initPos == ADJECTIVE) PointerType.DERIVED else PointerType.NOMINALIZATION
+        val typ = if (initPos == ADJECTIVE) PointerType.DERIVATION else PointerType.DERIVATION
         
-        synset.getPointers(typ).flatMap(p ⇒ {
+        synset.getPointers(typ).asScala.flatMap(p ⇒ {
             val trg = p.getTargetSynset
             
             if (trg.getPOS == tgtPos)
-                trg.getWords.map(p ⇒ normalize(p.getLemma))
+                trg.getWords.asScala.map(p ⇒ normalize(p.getLemma))
             else
                 Seq.empty
-        }).toSeq
+        })
     }
     
     /**
@@ -95,9 +95,7 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
     override def start(): NCLifecycle = {
         ensureStopped()
         
-        JWNL.initialize(G.getStream(WORLDNET_PROPS))
-        
-        dic = Dictionary.getInstance()
+        dic =  Dictionary.getDefaultResourceInstance
         morph = dic.getMorphologicalProcessor
         
         super.start()
@@ -182,7 +180,7 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
                                 map(dic.getSynsetAt(wnPos, _)).
                                 filter(_.getPOS == wnPos).
                                 map(
-                                    _.getWords.
+                                    _.getWords.asScala.
                                         map(_.getLemma.toLowerCase).
                                         filter(_ != lemma).
                                         map(normalize).toSeq

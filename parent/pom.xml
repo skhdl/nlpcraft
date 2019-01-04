@@ -73,7 +73,8 @@ under the License.
         <twillio.ver>7.14.1</twillio.ver>
         <zeroturnaround.ver>1.12</zeroturnaround.ver>
         <google.ver>1.22.0</google.ver>
-        <wordnet.ver>1.3.3</wordnet.ver>
+        <extjwnl.ver>2.0.0</extjwnl.ver>
+        <extjwnl.data.wn31.ver>1.2</extjwnl.data.wn31.ver>
         <maven.jar.plugin.ver>3.0.0</maven.jar.plugin.ver>
         <maven.compiler.plugin.ver>3.6.1</maven.compiler.plugin.ver>
         <maven.enforcer.plugin.ver>1.4.1</maven.enforcer.plugin.ver>
