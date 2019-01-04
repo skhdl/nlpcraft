@@ -59,7 +59,6 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
         
         if (word != null)
             word.getSenses.asScala.flatMap(synset ⇒
-                // TODO: PointerType?
                 synset.getPointers(PointerType.DERIVATION).asScala.flatMap(p ⇒ {
                     val trg = p.getTargetSynset
 
