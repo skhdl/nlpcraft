@@ -106,9 +106,14 @@ under the License.
             <version>${c3p0.ver}</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jwordnet</groupId>
-            <artifactId>jwnl</artifactId>
-            <version>${wordnet.ver}</version>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl</artifactId>
+            <version>${extjwnl.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl-data-wn31</artifactId>
+            <version>${extjwnl.data.wn31.ver}</version>
         </dependency>
         <dependency>
             <groupId>org.scalaz</groupId>
