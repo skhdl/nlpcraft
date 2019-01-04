@@ -28,7 +28,7 @@ package org.nlpcraft.nlp.wordnet
 
 import org.nlpcraft._
 import net.sf.extjwnl.data.POS._
-import net.sf.extjwnl.data.{IndexWord, POS, PointerType, Synset}
+import net.sf.extjwnl.data.{IndexWord, POS, PointerType}
 import net.sf.extjwnl.dictionary.MorphologicalProcessor
 import net.sf.extjwnl.dictionary.Dictionary
 import scala.collection.JavaConverters._
@@ -58,23 +58,21 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
         val word = dic.getIndexWord(initPos, str)
         
         if (word != null)
-            word.getSenses.asScala.flatMap(process(_, initPos, targetPos)).distinct
+            word.getSenses.asScala.flatMap(synset ⇒
+                // TODO: PointerType?
+                synset.getPointers(PointerType.DERIVATION).asScala.flatMap(p ⇒ {
+                    val trg = p.getTargetSynset
+
+                    if (trg.getPOS == targetPos)
+                        trg.getWords.asScala.map(p ⇒ normalize(p.getLemma))
+                    else
+                        Seq.empty
+                })
+            ).distinct
         else
             Seq.empty[String]
     }
-    
-    // Does processing for one synset.
-    private def process(synset: Synset, initPos: POS, tgtPos: POS) =
-        // TODO: PointerType?
-        synset.getPointers(PointerType.DERIVATION).asScala.flatMap(p ⇒ {
-            val trg = p.getTargetSynset
-            
-            if (trg.getPOS == tgtPos)
-                trg.getWords.asScala.map(p ⇒ normalize(p.getLemma))
-            else
-                Seq.empty
-        })
-    
+
     /**
       * Starts manager.
       */
