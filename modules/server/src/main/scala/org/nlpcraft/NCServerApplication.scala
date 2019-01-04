@@ -29,9 +29,11 @@ package org.nlpcraft
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.geo.NCGeoManager
 import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
+import org.nlpcraft.nlp.dict.NCDictionaryManager
 import org.nlpcraft.nlp.enrichers.{NCNlpEnricher, NCNlpEnricherManager}
 import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.nlp.opennlp.NCNlpManager
@@ -55,6 +57,8 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCTxManager.start()
         NCDbManager.start()
         NCWordNetManager.start()
+        NCDictionaryManager.start()
+        NCGeoManager.start()
         NCNlpManager.start()
         NCNumericManager.start()
         NCNlpEnricherManager.start()
@@ -86,6 +90,8 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCNlpEnricherManager.stop()
         NCNumericManager.stop()
         NCNlpManager.stop()
+        NCGeoManager.stop()
+        NCDictionaryManager.stop()
         NCWordNetManager.stop()
         NCDbManager.stop()
         NCTxManager.stop()

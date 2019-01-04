@@ -27,7 +27,7 @@
 package org.nlpcraft.nlp.enrichers.geo
 
 import org.nlpcraft._
-import org.nlpcraft.geo.{NCGeoLocationKind, NCGeoLocationKind ⇒ _, _}
+import org.nlpcraft.geo._
 import org.nlpcraft.json.NCJson
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.enrichers.NCNlpEnricher
@@ -58,9 +58,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
     // Common word exceptions configuration folder.
     private final val EXCEPTIONS_PATH = "geo/exceptions"
 
-    // TODO: implement
     @throws[NCE]
-    private[geo] final val LOCATIONS: Map[String, Set[NCGeoEntry]] = Map.empty /*NCGeoManager.getModel.synonyms*/
+    private[geo] final val LOCATIONS: Map[String, Set[NCGeoEntry]] = NCGeoManager.getModel.synonyms
 
     // GEO names matched with common english words and user defined exception GEO names.
     // Note that 'ignore case' parameter set as false because DLGeoLocationKind definition (CITY ect)
