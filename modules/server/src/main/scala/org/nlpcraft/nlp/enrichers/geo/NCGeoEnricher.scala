@@ -27,11 +27,11 @@
 package org.nlpcraft.nlp.enrichers.geo
 
 import org.nlpcraft._
+import org.nlpcraft.geo.{NCGeoLocationKind, NCGeoLocationKind ⇒ _, _}
 import org.nlpcraft.json.NCJson
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.enrichers.NCNlpEnricher
-import org.nlpcraft.nlp.enrichers.geo._
-import org.nlpcraft.nlp.enrichers.geo.NCGeoLocationKind._
+import org.nlpcraft.geo.NCGeoLocationKind._
 import org.nlpcraft.nlp.pos.NCPennTreebank
 import org.nlpcraft.nlp.wordnet.NCWordNetManager
 

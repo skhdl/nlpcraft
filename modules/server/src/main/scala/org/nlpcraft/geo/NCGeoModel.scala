@@ -24,7 +24,7 @@
  *        /_/
  */
 
-package org.nlpcraft.nlp.enrichers.geo
+package org.nlpcraft.geo
 
 // GEO model which contains common GEO data.
 case class NCGeoModel(
