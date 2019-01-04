@@ -57,28 +57,16 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
     private def convert(str: String, initPos: POS, targetPos: POS): Seq[String] = {
         val word = dic.getIndexWord(initPos, str)
         
-        if (word != null) {
-            val senses = word.getSenses.asScala
-            
-            senses.length match {
-                case 0 ⇒ Seq.empty[String]
-                case 1 ⇒ process(senses.head, initPos, targetPos)
-                // Go over all of them and try to match.
-                case _ ⇒ senses.flatMap(process(_, initPos, targetPos)).distinct
-            }
-        }
+        if (word != null)
+            word.getSenses.asScala.flatMap(process(_, initPos, targetPos)).distinct
         else
             Seq.empty[String]
     }
     
     // Does processing for one synset.
-    private def process(synset: Synset, initPos: POS, tgtPos: POS) = {
-        // TODO: What is analogue for 'NOMINALIZATION'
-        // TODO: Is 'DERIVATION'  analogue 'DERIVED'
-        // val typ = if (initPos == ADJECTIVE) PointerType.DERIVED else PointerType.NOMINALIZATION
-        val typ = if (initPos == ADJECTIVE) PointerType.DERIVATION else PointerType.DERIVATION
-        
-        synset.getPointers(typ).asScala.flatMap(p ⇒ {
+    private def process(synset: Synset, initPos: POS, tgtPos: POS) =
+        // TODO: PointerType?
+        synset.getPointers(PointerType.DERIVATION).asScala.flatMap(p ⇒ {
             val trg = p.getTargetSynset
             
             if (trg.getPOS == tgtPos)
@@ -86,7 +74,6 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
             else
                 Seq.empty
         })
-    }
     
     /**
       * Starts manager.
@@ -97,7 +84,7 @@ object NCWordNetManager extends NCLifecycle("WordNet manager") {
         
         dic =  Dictionary.getDefaultResourceInstance
         morph = dic.getMorphologicalProcessor
-        
+
         super.start()
     }
     
