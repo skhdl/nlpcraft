@@ -135,9 +135,6 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
         cacheFull = read("date/full.txt.gz")
         cacheParts = read("date/parts.txt.gz")
 
-        logger.trace(s"Fully cached dates: ${cacheFull.size}")
-        logger.trace(s"Partially cached dates: ${cacheParts.size}")
-
         super.start()
     }
 
