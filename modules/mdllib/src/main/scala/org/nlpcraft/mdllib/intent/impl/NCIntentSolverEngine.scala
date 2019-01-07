@@ -33,13 +33,12 @@ package org.nlpcraft.mdllib.intent.impl
 
 import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList, Set ⇒ JSet}
 
+import com.typesafe.scalalogging.LazyLogging
+import org.apache.commons.lang3.tuple.Pair
+import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.mdllib.intent.NCIntentSolver._
 import org.nlpcraft.mdllib.utils.NCTokenUtils._
-import org.nlpcraft.mdllib._
-import org.nlpcraft._
-import com.typesafe.scalalogging.LazyLogging
-import org.apache.commons.lang3.tuple.Pair
 import org.nlpcraft.mdllib.{NCSentence, NCToken, NCVariant}
 
 import scala.collection.JavaConversions._
@@ -225,72 +224,75 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 })
             )
         }
-    
-        val results = mutable.ArrayBuffer.empty[NCIntentSolverResult]
-    
-        if (matches.nonEmpty) {
-            // Retain only matches with minimal number of term nouns (including zero)
-            // and out of those pick only the ones with maximum weight.
-            val weightedMatches = {
-                val minTermNouns = matches.minBy(_.intentMatch.termNouns.size).intentMatch.termNouns.size
-                val maxWeight = matches.maxBy(_.intentMatch.weight).intentMatch.weight
 
-                matches.
-                    // Retain only ones with minimal number of term nouns.
-                    filter(_.intentMatch.termNouns.lengthCompare(minTermNouns) == 0).
-                    // Retain only the ones with maximum weight.
-                    filter(_.intentMatch.weight == maxWeight)
-            }
+        val sorted =
+            matches.sortWith((m1: MatchHolder, m2: MatchHolder) ⇒
+                // 1. First with minimal term nouns count.
+                m1.intentMatch.termNouns.size.compareTo(m2.intentMatch.termNouns.size) match {
+                    case x1 if x1 < 0 ⇒ true
+                    case x1 if x1 > 0 ⇒ false
+                    case x1 ⇒
+                        require(x1 == 0)
 
-            val cnt = weightedMatches.size
+                        // 2. First with exact match (Note that false is before true when sorting)
+                        m1.intentMatch.exactMatch.compareTo(m2.intentMatch.exactMatch) match {
+                            case x2 if x2 < 0 ⇒ false
+                            case x2 if x2 > 0 ⇒ true
 
-            // Got to have at least one match here.
-            require(cnt >= 1)
-            
-            // If there are more than one match - pick one from the most fitting
-            // variant based on the variant's natural order.
-            val theMatch = weightedMatches.maxBy(_.variant)
+                            case x2 ⇒
+                                require(x2 == 0)
 
-            results += NCIntentSolverResult(
-                theMatch.intentMatch.intent.getId,
-                theMatch.callback,
-                new JArrayList(theMatch.intentMatch.tokGrps.map(lst ⇒ new JArrayList(lst.map(_.tok)))),
-                new JArrayList(theMatch.intentMatch.termNouns),
-                theMatch.intentMatch.exactMatch,
-                theMatch.variant
+                                // 3. First with maximum weight.
+                                m1.intentMatch.weight.compare(m2.intentMatch.weight) match {
+                                    case x3 if x3 < 0 ⇒ false
+                                    case x3 if x3 > 0 ⇒ true
+                                    case x3 ⇒
+                                        require(x3 == 0)
+
+                                        // 4. First with minimum variant.
+                                        m1.variant.compareTo(m2.variant) match {
+                                            case x4 if x4 < 0 ⇒ true
+                                            case x4 if x4 > 0 ⇒ false
+                                            // Default, no matter, any value.
+                                            case x4 ⇒
+                                                require(x4 == 0)
+
+                                                true
+                                        }
+                                }
+                        }
+                }
             )
 
-            if (!IS_PROBE_SILENT) {
-                val tbl = NCAsciiTable("Pick", "Variant", "Matching Intent")
-                
-                if (cnt > 1) {
-                    matches.foreach(m ⇒ {
-                        val pick = m == theMatch
+        if (!IS_PROBE_SILENT) {
+            if (sorted.nonEmpty) {
+                val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Term nouns count / Exact match / Weight / Variant)")
 
-                        tbl += (
-                            if (pick) " ⇒" else "",
-                            s"#${m.variantIdx}",
-                            if (pick) mkPickTokens(m.intentMatch) else m.intentMatch.intent
-                        )
-                    })
-
-                    tbl.trace(logger, Some(s"Multiple matching intents found, best one picked :"))
-                }
-                else {
+                sorted.foreach(m ⇒
                     tbl += (
-                        " ⇒",
-                        s"#${theMatch.variantIdx}",
-                        mkPickTokens(theMatch.intentMatch)
+                        s"#${m.variantIdx}",
+                        m.intentMatch.intent.getId,
+                        mkPickTokens(m.intentMatch),
+                        Seq(m.intentMatch.termNouns.size, m.intentMatch.exactMatch, m.intentMatch.weight, m.variant)
                     )
-                    
-                    tbl.trace(logger, Some(s"Found matching intent:"))
-                }
-            }
-        }
-        else if (!IS_PROBE_SILENT)
-            logger.trace("No matching intent found.")
+                )
 
-        results
+                tbl.trace(logger, Some(s"Found matching intents:"))
+            }
+            else
+                logger.trace("No matching intent found.")
+        }
+
+        sorted.map(m ⇒
+            NCIntentSolverResult(
+                m.intentMatch.intent.getId,
+                m.callback,
+                new JArrayList(m.intentMatch.tokGrps.map(lst ⇒ new JArrayList(lst.map(_.tok)))),
+                new JArrayList(m.intentMatch.termNouns),
+                m.intentMatch.exactMatch,
+                m.variant
+            )
+        )
     }
     
     /**

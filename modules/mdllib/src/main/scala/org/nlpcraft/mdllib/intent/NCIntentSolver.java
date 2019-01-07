@@ -1554,13 +1554,10 @@ public class NCIntentSolver {
         String list = String.join(", ", words);
 
         int lastIdx = list.lastIndexOf(',');
-
-        if (list.indexOf(',') == lastIdx)
-            list = list.replace(", ", " and "); // "A, B" ⇒ "A and B"
-        else
-            list = list.substring(0, lastIdx) + ", and" + list.substring(lastIdx); // "A, B, C" ⇒ "A, B, and C"
-
-        return list;
+        
+        return list.indexOf(',') == lastIdx ?
+            list.replace(", ", " and ") :  // "A, B" ⇒ "A and B"
+            list.substring(0, lastIdx) + ", and" + list.substring(lastIdx); // "A, B, C" ⇒ "A, B, and C"
     }
     
     /**
@@ -1569,7 +1566,7 @@ public class NCIntentSolver {
      * @param res
      * @return
      */
-    private static Map<String, Object> mkMetadata(Map<String, Object> existedMeta, NCIntentSolverResult res) {
+    private static Map<String, Object> cloneMetadata(Map<String, Object> existedMeta, NCIntentSolverResult res) {
         Map<String, Object> meta = new HashMap<>();
         
         meta.put("intentId", res.intentId());
@@ -1647,34 +1644,32 @@ public class NCIntentSolver {
                 if (qryRes.getVariant() == null) // Don't override if user already set it.
                     qryRes.setVariant(varFn.get());
     
-                qryRes.setMetadata(mkMetadata(qryRes.getMetadata(), res));
+                qryRes.setMetadata(cloneMetadata(qryRes.getMetadata(), res));
+    
+                log.trace("Intent result processed OK: {}", res);
 
                 return qryRes;
             }
             catch (NCIntentSkip e) {
-                // No-op - just skipping this result.
-                String msg = e.getLocalizedMessage();
-
-                if (msg != null)
-                    log.warn("Selected intent skipped due to: " + msg);
+                log.trace("Attempt to try another intent match (if any) due to user skipping the current one: {}", res);
             }
             catch (NCCuration e) {
                 errCur = e;
 
-                if (e.getVariant() == null) // Don't override if user already set it.
-                    e.setVariant(varFn.get());
+                if (errCur.getVariant() == null) // Don't override if user already set it.
+                    errCur.setVariant(varFn.get());
     
-                errCur.setMetadata(mkMetadata(errCur.getMetadata(), res));
+                errCur.setMetadata(cloneMetadata(errCur.getMetadata(), res));
 
                 break;
             }
             catch (NCRejection e) {
                 errRej = e;
 
-                if (e.getVariant() == null) // Don't override if user already set it.
-                    e.setVariant(varFn.get());
+                if (errRej.getVariant() == null) // Don't override if user already set it.
+                    errRej.setVariant(varFn.get());
     
-                errRej.setMetadata(mkMetadata(errRej.getMetadata(), res));
+                errRej.setMetadata(cloneMetadata(errRej.getMetadata(), res));
 
                 break;
             }
@@ -1683,7 +1678,7 @@ public class NCIntentSolver {
         if (termRes != null && termRes.termNouns() != null && !termRes.termNouns().isEmpty()) {
             NCQueryResult res = NCQueryResult.ask(String.format("Please provide %s.", mkHumanList(termRes.termNouns())));
             
-            res.setMetadata(mkMetadata(null, termRes));
+            res.setMetadata(cloneMetadata(null, termRes));
             
             return res;
         }
@@ -1693,6 +1688,8 @@ public class NCIntentSolver {
     
         if (errRej != null)
             throw errRej;
+    
+        log.trace("Not found any result.");
     
         return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
     }

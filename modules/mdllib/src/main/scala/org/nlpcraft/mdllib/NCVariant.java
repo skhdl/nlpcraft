@@ -83,7 +83,7 @@ public class NCVariant implements Serializable, Comparable<NCVariant> {
                 tokCnt++;
             }
 
-        avgWordsPerTok = wordCnt > 0 ? tokCnt / wordCnt : 0;
+        avgWordsPerTok = wordCnt > 0 ? (float)tokCnt / wordCnt : 0;
     }
 
     @Override
