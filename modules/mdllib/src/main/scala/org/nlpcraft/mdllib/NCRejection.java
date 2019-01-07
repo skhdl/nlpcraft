@@ -34,6 +34,7 @@ package org.nlpcraft.mdllib;
 import org.nlpcraft.mdllib.intent.*;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +50,7 @@ import java.util.Map;
  */
 public class NCRejection extends RuntimeException {
     /** */
-    private NCVariant var;
+    private List<NCVariant> vars;
     
     /** */
     private Map<String, Object> metadata;
@@ -80,6 +81,7 @@ public class NCRejection extends RuntimeException {
     }
 
     /**
+     * TODO: javadoc
      * Creates new rejection exception with given message and cause.
      *
      * @param msg Rejection message. Although minimal HTML markup is supported it will only be rendered
@@ -87,15 +89,17 @@ public class NCRejection extends RuntimeException {
      *      assistants may not support that. For cross-platform compatibility it is recommended to stick
      *      with a simple text.
      * @param cause Cause of this exception.
-     * @param var Optional sentence variant this curation refers to.
+     * @param vars Optional sentence variant this curation refers to.
      */
-    public NCRejection(String msg, Throwable cause, NCVariant var) {
+    public NCRejection(String msg, Throwable cause, List<NCVariant> vars) {
         super(msg, cause);
 
-        this.var = var;
+        this.vars = vars;
     }
 
     /**
+     * TODO: javadoc
+     *
      * Sets optional sentence variant this curation refers to.
      * <br><br>
      * Note that in general a user input can have more than one possible
@@ -103,22 +107,24 @@ public class NCRejection extends RuntimeException {
      * is optional but improves the self-learning capabilities of the system when provided. Note also that
      * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
      *
-     * @param var Sentence variant to set.
+     * @param vars Sentence variant to set.
      * @return This instance of chaining calls.
      */
-    public NCRejection setVariant(NCVariant var) {
-        this.var = var;
+    public NCRejection setVariants(List<NCVariant> vars) {
+        this.vars = vars;
 
         return this;
     }
 
     /**
+     * TODO: javadoc
+     *
      * Gets optional sentence variant associated with this curation.
      *
      * @return Sentence variant associated with this curation or {@code null}.
      */
-    public NCVariant getVariant() {
-        return var;
+    public List<NCVariant> getVariants() {
+        return vars;
     }
     
     

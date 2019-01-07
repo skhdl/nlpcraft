@@ -121,7 +121,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         tokGrps: List[List[UseToken]],
         weight: Weight,
         intent: INTENT,
-        termNouns: List[String],
         exactMatch: Boolean
     )
     
@@ -198,14 +197,14 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
 
         if (!IS_PROBE_SILENT) {
             if (sorted.nonEmpty) {
-                val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Term nouns count / Exact match / Weight / Variant)")
+                val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Weight / Variant)")
 
                 sorted.foreach(m ⇒
                     tbl += (
                         s"#${m.variantIdx}",
                         m.intentMatch.intent.getId,
                         mkPickTokens(m.intentMatch),
-                        Seq(m.intentMatch.termNouns.size, m.intentMatch.exactMatch, m.intentMatch.weight, m.variant)
+                        Seq(m.intentMatch.weight, m.variant)
                     )
                 )
 
@@ -335,11 +334,12 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         }
         else {
             val exactMatch = !senToks.exists(tok ⇒ !tok.used && !isFreeWord(tok.tok))
-
+            
             intentWeight.addWeight(
+                // Weight should be greater, comparing reversed.
                 new Weight(
-                    missedTermNouns.size,
-                    if (exactMatch) 0 else 1
+                    -missedTermNouns.size,
+                    if (exactMatch) 1 else 0
                 ),
                 0
             )
@@ -349,7 +349,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     tokGrps = intentGrps.toList,
                     weight = intentWeight,
                     intent = intent,
-                    termNouns = missedTermNouns,
                     exactMatch = exactMatch
                 )
             )

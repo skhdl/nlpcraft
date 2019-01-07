@@ -1595,9 +1595,8 @@ public class NCIntentSolver {
         if (intents.isEmpty())
             log.warn("Intent solver has no registered intents (ignoring).");
 
-        final List<NCIntentSolverResult> results;
-        
-        final NCSentence sen = ctx.getSentence();
+        List<NCIntentSolverResult> results;
+        NCSentence sen = ctx.getSentence();
 
         try {
             results = NCIntentSolverEngine.solve(sen, ctx.getConversationContext().getTokens(), intents);
@@ -1618,9 +1617,12 @@ public class NCIntentSolver {
         
         NCCuration errCur = null;
         NCRejection errRej = null;
+        List<NCVariant> vars = new ArrayList<>();
     
         for (NCIntentSolverResult res : results) {
             termRes = res;
+            
+            vars.add(termRes.variant());
 
             Supplier<NCVariant> varFn = () -> {
                 if (res.variant() != null)
@@ -1656,8 +1658,8 @@ public class NCIntentSolver {
             catch (NCCuration e) {
                 errCur = e;
 
-                if (errCur.getVariant() == null) // Don't override if user already set it.
-                    errCur.setVariant(varFn.get());
+                if (errCur.getVariants() == null) // Don't override if user already set it.
+                    errCur.setVariants(Collections.singletonList(varFn.get()));
     
                 errCur.setMetadata(cloneMetadata(errCur.getMetadata(), res));
 
@@ -1666,8 +1668,8 @@ public class NCIntentSolver {
             catch (NCRejection e) {
                 errRej = e;
 
-                if (errRej.getVariant() == null) // Don't override if user already set it.
-                    errRej.setVariant(varFn.get());
+                if (errRej.getVariants() == null) // Don't override if user already set it.
+                    errRej.setVariants(Collections.singletonList(varFn.get()));
     
                 errRej.setMetadata(cloneMetadata(errRej.getMetadata(), res));
 
@@ -1690,7 +1692,25 @@ public class NCIntentSolver {
             throw errRej;
     
         log.trace("Not found any result.");
+        
+        if (notFound != null) {
+            try {
+                return notFound.get();
+            }
+            catch (NCCuration e) {
+                if (e.getVariants() == null) // Don't override if user already set it.
+                    e.setVariants(vars);
+                
+                throw e;
+            }
+            catch (NCRejection e) {
+                if (e.getVariants() == null) // Don't override if user already set it.
+                    e.setVariants(vars);
     
-        return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
+                throw e;
+            }
+        }
+        
+        return DFLT_NOT_FOUND.get();
     }
 }

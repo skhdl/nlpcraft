@@ -393,7 +393,7 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
         cacheable: Boolean,
         test: Boolean
     ): Unit = {
-        var toks: Seq[NCToken] = null
+        var toks: Seq[Seq[NCToken]] = null
     
         if (!IS_PROBE_SILENT)
             logger.info(s"New sentence received: ${nlpSen.text}")
@@ -469,20 +469,25 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
                 addOptional(msg, "resMetadata", resMeta.asInstanceOf[Option[Serializable]])
             }
             
-            if (toks != null)
-                msg += "tokens" → toks.map(tok ⇒
-                    new NCTokenImpl(
-                        tok.getServerRequestId,
-                        tok.getId,
-                        tok.getGroup,
-                        tok.getType,
-                        tok.getParentId,
-                        tok.getValue,
-                        tok.getMetadata,
-                        null
+            if (toks != null) {
+                val tokens = toks.map(seq ⇒
+                    seq.map(tok ⇒
+                        new NCTokenImpl(
+                            tok.getServerRequestId,
+                            tok.getId,
+                            tok.getGroup,
+                            tok.getType,
+                            tok.getParentId,
+                            tok.getValue,
+                            tok.getMetadata,
+                            null
+                        )
                     )
-                ).asInstanceOf[java.io.Serializable]
-            
+                )
+
+                msg += "tokens" → tokens.asInstanceOf[java.io.Serializable]
+            }
+
             origTokens match {
                 case Some(x) ⇒ msg += "origTokens" → x.asInstanceOf[java.io.Serializable]
                 case None ⇒ // No-op.
@@ -642,7 +647,7 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
                             conv.addItem(unitedSen, `var`)
 
                             // Optional selected variants.
-                            toks = `var`.getTokens.asScala
+                            toks = Seq(`var`.getTokens.asScala)
                         }
 
                         res
@@ -653,8 +658,8 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
                         val json = explainSentence(qryCtx)
 
                         // Optional selected variants.
-                        if (e.getVariant != null)
-                            toks = e.getVariant.getTokens.asScala
+                        if (e.getVariants != null)
+                            toks = e.getVariants.asScala.map(_.getTokens.asScala)
 
                         respond(
                             // Passing request JSON explanation in the payload for curation.
@@ -673,8 +678,8 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
                             logger.info(s"Rejection cause:", e.getCause)
 
                         // Optional selected variants.
-                        if (e.getVariant != null)
-                            toks = e.getVariant.getTokens.asScala
+                        if (e.getVariants != null)
+                            toks = e.getVariants.asScala.map(_.getTokens.asScala)
 
                         respond(
                             None,

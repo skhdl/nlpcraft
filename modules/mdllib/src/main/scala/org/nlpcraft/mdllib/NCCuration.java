@@ -33,7 +33,9 @@ package org.nlpcraft.mdllib;
 
 import org.nlpcraft.mdllib.intent.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,7 +54,7 @@ import java.util.Map;
  */
 public class NCCuration extends RuntimeException {
     /** */
-    private NCVariant var;
+    private List<NCVariant> vars;
     
     /** */
     private Map<String, Object> metadata;
@@ -77,21 +79,25 @@ public class NCCuration extends RuntimeException {
     }
 
     /**
+     * TODO: javadoc
+     *
      * Creates curation exception with given error message and cause.
      *
      * @param msg Curation message. Although minimal HTML markup is supported it will only be rendered
      *      by the webapp or by compatible user REST applications. Other client devices like voice-based
      *      assistants may not support that. For cross-platform compatibility it is recommended to stick
      *      with a simple text.
-     * @param var Optional sentence variant this curation refers to.
+     * @param vars Optional sentence variant this curation refers to.
      */
-    public NCCuration(String msg, NCVariant var) {
+    public NCCuration(String msg, List<NCVariant> vars) {
         super(msg);
 
-        this.var = var;
+        this.vars = vars;
     }
 
     /**
+     * TODO: javadoc
+     *
      * Sets optional sentence variant this curation refers to.
      * <br><br>
      * Note that in general a user input can have more than one possible
@@ -99,22 +105,24 @@ public class NCCuration extends RuntimeException {
      * is optional but improves the self-learning capabilities of the system when provided. Note also that
      * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
      *
-     * @param var Sentence variant to set.
+     * @param vars Sentence variant to set.
      * @return This instance of chaining calls.
      */
-    public NCCuration setVariant(NCVariant var) {
-        this.var = var;
+    public NCCuration setVariants(List<NCVariant> vars) {
+        this.vars = vars;
 
         return this;
     }
 
     /**
+     * TODO: javadoc
+     *
      * Gets optional sentence variant associated with this curation.
      *
      * @return Sentence variant associated with this curation or {@code null}.
      */
-    public NCVariant getVariant() {
-        return var;
+    public List<NCVariant> getVariants() {
+        return vars;
     }
     
     
