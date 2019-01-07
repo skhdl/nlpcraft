@@ -485,6 +485,7 @@ object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebu
                     )
                 )
 
+                // TODO: change probe server side logic. Now it is Seq[Seq[NCToken]] but was Seq[NCToken]
                 msg += "tokens" → tokens.asInstanceOf[java.io.Serializable]
             }
 
