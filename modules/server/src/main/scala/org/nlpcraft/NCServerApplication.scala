@@ -49,6 +49,7 @@ import org.nlpcraft.nlp.wordnet.NCWordNetManager
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.probe.NCProbeManager
+import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.tx.NCTxManager
@@ -64,6 +65,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCPluginManager.start()
         NCTxManager.start()
         NCDbManager.start()
+        NCProcessLogManager.start()
         NCWordNetManager.start()
         NCDictionaryManager.start()
         NCSpellCheckManager.start()
@@ -107,6 +109,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCSpellCheckManager.stop()
         NCDictionaryManager.stop()
         NCWordNetManager.stop()
+        NCProcessLogManager.stop()
         NCDbManager.stop()
         NCTxManager.stop()
         NCPluginManager.stop()

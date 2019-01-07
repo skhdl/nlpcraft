@@ -42,12 +42,21 @@ import org.nlpcraft.tx.NCTxManager
 
 import scala.util.control.Exception._
 import org.nlpcraft.apicodes.NCApiStatusCode._
+import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
+import org.nlpcraft.proclog.NCProcessLogManager
+import org.nlpcraft.user.NCUserManager
+
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Query state machine.
   */
 object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft {
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
+    
+    private final val MAX_WORDS = 100
     
     /**
       * Starts this component.
@@ -80,7 +89,83 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     ): String = {
         ensureStarted()
         
-        ""
+        val rcvTstamp = System.currentTimeMillis()
+        
+        // Check user.
+        val usr = NCUserManager.getUser(usrId) match {
+            case Some(x) ⇒ x
+            case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
+        }
+    
+        // Check data source.
+        val ds = NCDsManager.getDataSource(dsId) match {
+            case Some(x) ⇒ x
+            case None ⇒ throw new NCE(s"Unknown data source ID: $dsId")
+        }
+        
+        // Check input length.
+        if (txt.split(" ").length > MAX_WORDS)
+            throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
+        
+        val srvReqId = G.genGuid()
+    
+        NCTxManager.startTx {
+            catching(wrapIE) {
+                // Enlist for tracking.
+                cache += srvReqId → NCQueryStateMdo(
+                    srvReqId,
+                    isTest,
+                    dsId = dsId,
+                    modelId = ds.modelId,
+                    userId = usrId,
+                    email = usr.email,
+                    status = QRY_ENLISTED, // Initial status.
+                    origText = txt,
+                    createTstamp = rcvTstamp,
+                    updateTstamp = rcvTstamp
+                )
+            }
+
+            // Add processing log.
+            NCProcessLogManager.newEntry(
+                usrId,
+                srvReqId,
+                txt,
+                dsId,
+                ds.modelId,
+                QRY_ENLISTED,
+                isTest,
+                rcvTstamp
+            )
+        }
+    
+        // TODO: enrich
+        // TODO: send to the probe
+        val fut = Future {
+            val nlpSen = NCNlpEnricherManager.enrich(txt)
+            
+            
+        }
+        
+        fut onFailure {
+            case e: Throwable ⇒
+                logger.error(s"System error processing query: ${e.getLocalizedMessage}")
+                
+                setErrorResult(srvReqId, "Processing failed due to a system error.")
+                
+        }
+        
+        srvReqId
+    }
+    
+    /**
+      *
+      * @param srvReqId
+      * @param errMsg
+      */
+    @throws[NCE]
+    def setErrorResult(srvReqId: String, errMsg: String): Unit = {
+        ensureStarted()
     }
     
     /**
@@ -159,69 +244,5 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @throws[NCE]
     def pending(): Unit = {
         ensureStarted()
-    }
-    
-    /**
-      * Enlists given server request into state machine.
-      * 
-      * @param srvReqId Server request ID.
-      * @param usrAgent User agent string.
-      * @param dsId Data source ID.
-      * @param modelId Data source model ID.
-      * @param usrId User ID.
-      * @param txt Text.
-      * @param test Test flag.
-      */
-    @throws[NCE]
-    private def enlist(
-        srvReqId: String,
-        usrAgent: String,
-        dsId: Long,
-        modelId: String,
-        usrId: Long,
-        txt: String,
-        test: Boolean
-    ): Unit = {
-        ensureStarted()
-        
-        catching(wrapIE) {
-            NCTxManager.startTx {
-                NCPsql.sql {
-                    NCDbManager.getUser(usrId) match {
-                        case Some(usr) ⇒
-                            val email = usr.email
-                            
-                            val now = System.currentTimeMillis()
-                            
-                            val mdo = NCQueryStateMdo(
-                                srvReqId,
-                                test,
-                                dsId = dsId,
-                                modelId = modelId,
-                                userId = usrId,
-                                email = email,
-                                status = QRY_ENLISTED, // Initial status.
-                                origText = txt,
-                                createTstamp = now,
-                                updateTstamp = now
-                            )
-                            
-                            cache += srvReqId → mdo
-                            
-                            // Add processing log.
-                            NCDbManager.addProcessingLog(
-                                usrId,
-                                srvReqId,
-                                txt,
-                                dsId,
-                                QRY_ENLISTED,
-                                test
-                            )
-                        
-                        case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                    }
-                }
-            }
-        }
     }
 }

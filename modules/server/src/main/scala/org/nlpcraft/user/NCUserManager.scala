@@ -221,6 +221,19 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             }
         }
     }
+    
+    /**
+      * Gets user ID associated with active access token, if any.
+      *
+      * @param acsTkn Access token.
+      * @return
+      */
+    @throws[NCE]
+    def getUserForAccessToken(acsTkn: String): Option[NCUserMdo] = {
+        ensureStarted()
+        
+        getUserIdForAccessToken(acsTkn).flatMap(getUser)
+    }
 
     /**
       * Checks if given access token is valid.

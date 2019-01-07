@@ -151,14 +151,14 @@ CREATE INDEX submit_cache_idx_2 ON submit_cache(model_id);
 DROP TABLE IF EXISTS proc_log CASCADE;
 CREATE TABLE proc_log (
     -- Common part.
-    id SERIAL PRIMARY KEY,
-    srv_req_id VARCHAR(64),
+    srv_req_id VARCHAR(64) PRIMARY KEY,
     orig_txt VARCHAR(1024),
     user_id BIGINT,
     ds_id BIGINT,
+    model_id VARCHAR(64),
     status VARCHAR(32),
     -- Ask and result timestamps.
-    recv_tstamp TIMESTAMP NOT NULL DEFAULT current_timestamp, -- Initial receive timestamp.
+    recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
     -- Optional curation part.
     curate_txt VARCHAR(1024) NULL, -- Last curate text, NULL if there was no curation.
@@ -168,7 +168,7 @@ CREATE TABLE proc_log (
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
     error TEXT NULL,
     cache_id BIGINT NULL,
-    -- All-optional probe information for this request.
+    -- Probe information for this request.
     probe_token VARCHAR(256) NULL,
     probe_id VARCHAR(512) NULL,
     probe_guid VARCHAR(512) NULL,

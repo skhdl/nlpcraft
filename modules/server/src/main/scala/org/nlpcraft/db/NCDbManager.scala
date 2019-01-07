@@ -32,7 +32,6 @@
 package org.nlpcraft.db
 
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
@@ -44,7 +43,7 @@ import scala.util.control.Exception._
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
   * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
-object NCDbManager extends NCLifecycle("Database manager") with NCIgniteNlpCraft {
+object NCDbManager extends NCLifecycle("Database manager") {
     // Relative database schema path.
     private final val SCHEMA_PATH = "sql/schema.sql"
     
@@ -473,7 +472,9 @@ object NCDbManager extends NCLifecycle("Database manager") with NCIgniteNlpCraft
       * @param srvReqId Server request ID.
       * @param origTxt Original text.
       * @param dsId Data source ID.
+      * @param mdlId Data source model ID.
       * @param test Test flag.
+      * @param rcvTstamp Receive timestamp.
       */
     @throws[NCE]
     def addProcessingLog(
@@ -481,31 +482,37 @@ object NCDbManager extends NCLifecycle("Database manager") with NCIgniteNlpCraft
         srvReqId: String,
         origTxt: String,
         dsId: Long,
+        mdlId: String,
         status: NCApiStatusCode,
-        test: Boolean
+        test: Boolean,
+        rcvTstamp: Long
     ): Unit = {
         ensureStarted()
         
         NCPsql.insertSingle(
             """
               |INSERT
-              |  INTO history (
+              |  INTO proc_log (
               |     user_id,
               |     srv_req_id,
               |     orig_txt,
               |     ds_id,
+              |     model_id,
               |     status,
-              |     is_test
+              |     is_test,
+              |     recv_tstamp
               | )
               | VALUES (
-              |     ?, ?, ?, ?, ?, ?
+              |     ?, ?, ?, ?, ?, ?, ?, ?
               | )""".stripMargin,
             usrId,
             srvReqId,
             origTxt,
             dsId,
+            mdlId,
             status.toString,
-            test
+            test,
+            rcvTstamp
         )
     }
 }

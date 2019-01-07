@@ -40,14 +40,11 @@ import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.user.NCUserManager
-import org.nlpcraft.{NCE, NCLifecycle}
-import org.nlpcraft.NCConfigurable
+import org.nlpcraft.{NCConfigurable, NCE, NCException, NCLifecycle}
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import org.nlpcraft.db.NCDbManager
-import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
 import org.nlpcraft.query.NCQueryManager
@@ -85,12 +82,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
-            case e : AuthFailure ⇒ complete(Unauthorized, e.getLocalizedMessage)
-            case e : AdminRequired ⇒ complete(Forbidden, e.getLocalizedMessage)
+            case e: AuthFailure ⇒ complete(Unauthorized, e.getLocalizedMessage)
+            case e: AdminRequired ⇒ complete(Forbidden, e.getLocalizedMessage)
+            case e: NCException ⇒ complete(BadRequest, e.getLocalizedMessage)
+                
             case e: Throwable ⇒
                 val errMsg = e.getLocalizedMessage
                 
-                logger.error(s"REST error (${e.getClass.getSimpleName}) => $errMsg")
+                logger.error(s"Unexpected error (${e.getClass.getSimpleName}) => $errMsg")
                 
                 complete(InternalServerError, errMsg)
         }
@@ -111,14 +110,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     private def authenticateAsAdmin(acsTkn: String): Unit =
-        NCUserManager.getUserIdForAccessToken(acsTkn) match {
+        NCUserManager.getUserForAccessToken(acsTkn) match {
             case None ⇒ throw AuthFailure()
-            case Some(usrId) ⇒ NCPsql.sql {
-                NCDbManager.getUser(usrId) match {
-                    case None ⇒ throw AuthFailure()
-                    case Some(usr) ⇒ if (!usr.isAdmin) throw AdminRequired()
-                }
-            }
+            case Some(usr) ⇒ if (!usr.isAdmin) throw AdminRequired()
         }
     
     /**

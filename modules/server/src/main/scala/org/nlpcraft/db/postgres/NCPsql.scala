@@ -371,7 +371,7 @@ object NCPsql extends LazyLogging {
       * of given transaction.
       *
       * Notes:
-      * - nesting of 'sql' blocks is supported only within the same thread.
+      * - nesting of `sql` blocks is supported only within the same thread.
       *
       * @param isoLvl Isolation level. 'TRANSACTION_READ_COMMITTED' by default.
       * @param tx Optional ongoing transaction or `null`.
