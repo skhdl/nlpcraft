@@ -121,6 +121,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         tokGrps: List[List[UseToken]],
         weight: Weight,
         intent: INTENT,
+        termNouns: List[String],
         exactMatch: Boolean
     )
     
@@ -349,6 +350,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     tokGrps = intentGrps.toList,
                     weight = intentWeight,
                     intent = intent,
+                    termNouns = missedTermNouns,
                     exactMatch = exactMatch
                 )
             )
