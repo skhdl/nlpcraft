@@ -41,6 +41,7 @@ import org.nlpcraft.mdllib.intent.NCIntentSolver._
 import org.nlpcraft.mdllib.utils.NCTokenUtils._
 import org.nlpcraft.mdllib.{NCSentence, NCToken, NCVariant}
 
+import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
@@ -48,92 +49,40 @@ import scala.collection.mutable
   * TODO: add description.
   */
 object NCIntentSolverEngine extends NCDebug with LazyLogging {
-    /**
-      * Immutable compound 4-part weight.
-      *
-      * @param weights
-      */
-    private class Weight(private val weights: Array[Int]) extends Ordered[Weight] {
-        require(weights.length == 4)
-    
-        private lazy val hash = weights(3) * 17 + (weights(2) * 31 + (weights(1) * 47 + weights(0)))
-    
+    private class Weight extends java.util.ArrayList[Int] with Ordered[Weight] {
         /**
           *
-          * @param w0 1st (most) important weight.
-          * @param w1 2nd important weight.
-          * @param w2 3rd important weight.
-          * @param w3 4th (least) important weight.
+          * @param weights Weights values from most to least important.
           */
-        def this(w0: Int, w1: Int, w2: Int, w3: Int) {
-            this(Array(w0, w1, w2, w3))
+        def this(weights: Int*) = {
+            this()
+
+            addAll(weights.asJava)
         }
-    
-        /**
-          * 
-          */
-        def this() {
-            this(Array(0, 0, 0, 0))
-        }
-    
-        /**
-          * 
-          * @param idx
-          * @return
-          */
-        def apply(idx: Int): Int = weights(idx)
-    
+
+        def addWeight(weight: Weight, idx: Int): Unit = addAll(idx, weight)
+
         /**
           * 
           * @param that
           * @return
           */
-        def +(that: Weight): Weight = new Weight(
-            weights(0) + that(0),
-            weights(1) + that(1),
-            weights(2) + that(2),
-            weights(3) + that(3)
-        )
+        def ++=(that: Weight): Weight = {
+            require(size() == that.size())
 
-        override def compare(that: Weight): Int =
-            if (weights(0) < that(0))
-                -1
-            else if (weights(0) > that(0))
-                1
-            else {
-                if (weights(1) < that(1))
-                    -1
-                else if (weights(1) > that(1))
-                    1
-                else {
-                    if (weights(2) < that(2))
-                        -1
-                    else if (weights(2) > that(2))
-                        1
-                    else {
-                        if (weights(3) < that(3))
-                            -1
-                        else if (weights(3) > that(3))
-                            1
-                        else
-                            0
-                    }
-                }
-            }
-    
-        override def hashCode(): Int = hash
-    
-        override def equals(obj: Any): Boolean =
-            obj match {
-                case that: Weight ⇒
-                    that(0) == weights(0) &&
-                    that(1) == weights(1) &&
-                    that(2) == weights(2) &&
-                    that(3) == weights(3)
-                case _ ⇒ false
-            }
-    
-        override def toString: String = s"[${weights(0)},${weights(1)},${weights(2)},${weights(3)}]"
+            new Weight(this.zip(that).map { case (i1, i2) ⇒ i1 + i2 } :_*)
+        }
+
+        override def compare(that: Weight): Int = {
+            require(size() == that.size())
+
+            var res = 0
+
+            for ((i1, i2) ← this.zip(that) if res == 0)
+               res = Integer.compare(i1, i2)
+
+            res
+        }
     }
     
     /**
@@ -227,39 +176,22 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
 
         val sorted =
             matches.sortWith((m1: MatchHolder, m2: MatchHolder) ⇒
-                // 1. First with minimal term nouns count.
-                m1.intentMatch.termNouns.size.compareTo(m2.intentMatch.termNouns.size) match {
-                    case x1 if x1 < 0 ⇒ true
-                    case x1 if x1 > 0 ⇒ false
+                // 1. First with maximum weight.
+                m1.intentMatch.weight.compare(m2.intentMatch.weight) match {
+                    case x1 if x1 < 0 ⇒ false
+                    case x1 if x1 > 0 ⇒ true
                     case x1 ⇒
                         require(x1 == 0)
 
-                        // 2. First with exact match (Note that false is before true when sorting)
-                        m1.intentMatch.exactMatch.compareTo(m2.intentMatch.exactMatch) match {
-                            case x2 if x2 < 0 ⇒ false
-                            case x2 if x2 > 0 ⇒ true
-
+                        // 2. First with minimum variant.
+                        m1.variant.compareTo(m2.variant) match {
+                            case x2 if x2 < 0 ⇒ true
+                            case x2 if x2 > 0 ⇒ false
+                            // Default, no matter, any value.
                             case x2 ⇒
                                 require(x2 == 0)
 
-                                // 3. First with maximum weight.
-                                m1.intentMatch.weight.compare(m2.intentMatch.weight) match {
-                                    case x3 if x3 < 0 ⇒ false
-                                    case x3 if x3 > 0 ⇒ true
-                                    case x3 ⇒
-                                        require(x3 == 0)
-
-                                        // 4. First with minimum variant.
-                                        m1.variant.compareTo(m2.variant) match {
-                                            case x4 if x4 < 0 ⇒ true
-                                            case x4 if x4 > 0 ⇒ false
-                                            // Default, no matter, any value.
-                                            case x4 ⇒
-                                                require(x4 == 0)
-
-                                                true
-                                        }
-                                }
+                                true
                         }
                 }
             )
@@ -343,7 +275,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         convToks: Set[UseToken],
         varIdx: Int): Option[IntentMatch] = {
         var missedTermNouns = List.empty[String]
-        var intentWeight = new Weight()
+        val intentWeight = new Weight()
         val intentGrps = mutable.ListBuffer.empty[List[UseToken]]
         var abort = false
         
@@ -362,7 +294,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     else {
                         // Term is found.
                         // Add its weight and grab its tokens.
-                        intentWeight += termMatch.weight
+                        intentWeight ++= termMatch.weight
                         intentGrps += termMatch.toks
                         
                         lastTermMatch = termMatch
@@ -401,14 +333,27 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
             // 3. All tokens came from history.
             None
         }
-        else
-            Some(IntentMatch(
-                intentGrps.toList,
-                intentWeight,
-                intent,
-                missedTermNouns,
-                !senToks.exists(tok ⇒ !tok.used && !isFreeWord(tok.tok))
-            ))
+        else {
+            val exactMatch = !senToks.exists(tok ⇒ !tok.used && !isFreeWord(tok.tok))
+
+            intentWeight.addWeight(
+                new Weight(
+                    missedTermNouns.size,
+                    if (exactMatch) 0 else 1
+                ),
+                0
+            )
+
+            Some(
+                IntentMatch(
+                    tokGrps = intentGrps.toList,
+                    weight = intentWeight,
+                    intent = intent,
+                    termNouns = missedTermNouns,
+                    exactMatch = exactMatch
+                )
+            )
+        }
     }
     
     /**
@@ -431,7 +376,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
             solveItem(item, senToks, convToks) match {
                 case Some(t) ⇒
                     termToks = termToks ::: t._1
-                    termWeight += t._2
+                    termWeight ++= t._2
                     
                 case None ⇒
                     abort = true
