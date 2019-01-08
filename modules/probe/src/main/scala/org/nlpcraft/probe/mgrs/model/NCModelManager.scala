@@ -36,7 +36,7 @@ import java.util.{Collection ⇒ JCollection, Set ⇒ JSet}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
+import org.nlpcraft.makro.{NCMacroParser => MacroParser}
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._
@@ -65,15 +65,15 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         "BOOLEAN",
         "DATE"
     )
-    
+
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
     // Model usage keyed by model IDs.
     private val usages = mutable.HashMap.empty[String, NCModelUsage]
-    
+
     // Access mutex.
     private final val mux = new Object()
-    
+
     /**
       *
       * @param elementId Element ID.
@@ -83,7 +83,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         elementId: String,
         synonym: NCSynonym
     )
-    
+
     /**
       * Tokenizes model element ID or synonym value name that act as **implicit**
       * synonyms. It tries to mimic Stanford's PTBTokenizer which is unavailable on the probe itself.
@@ -98,41 +98,41 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         var i = 0
         val toks = ArrayBuffer.empty[String]
         var f = false
-        
+
         def addToken(): Unit = {
             val x = tokBuf.toString.trim
-    
+
             if (x.nonEmpty)
                 toks += x
-    
+
             tokBuf = new StringBuilder()
         }
-        
+
         while (i < len) {
             val ch = s.charAt(i)
-            
+
             if (!ch.isLetterOrDigit) {
                 if ((group && !f) || !group)
                     addToken()
-                
+
                 f = true
             }
             else {
                 if (f)
                     addToken()
-                
+
                 f = false
             }
-            
+
             tokBuf += ch
-        
+
             i += 1
         }
-    
+
         addToken()
-    
+
         var isPrevTick = false
-        
+
         // Fix special case of handling "'s" by CoreNLP.
         val x = for (tok ← toks.filter(_.nonEmpty)) yield {
             if (tok.toLowerCase == "s" && isPrevTick) {
@@ -148,41 +148,41 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 Some(tok)
             }
         }
-        
+
         x.flatten
     }
-    
+
     /**
       * @param provider Model provider.
       * @param id Model ID.
       */
     private def addNewModel(provider: NCModelProvider, id: String): Boolean = {
         require(Thread.holdsLock(mux))
-    
+
         if (id == null)
             false
         else {
             val mdl = provider.makeModel(id)
-            
+
             if (mdl != null) {
                 try {
                     checkModelConfig(mdl)
-                    
+
                     val parser = new MacroParser
                     val macros = mdl.getMacros
 
                     // Initialize macro parser.
                     if (macros != null)
                         macros.asScala.foreach(t ⇒ parser.addMacro(t._1, t._2))
-                    
+
                     val dec = verifyAndDecorate(mdl, parser)
                     val usage = makeModelUsage(mdl, parser)
-                    
+
                     mdl.initialize(new NCProbeContext {
                         override def reloadModel(modelId: String): Unit = new Thread() {
                             override def run(): Unit =reload(modelId)
                         }.start()
-                        
+
                         override lazy val getId: String = config.getId
                         override lazy val getToken: String = config.getToken
                         override lazy val getUpLink: String = config.getUpLink
@@ -190,7 +190,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                         override lazy val getEmail: String = config.getEmail
                         override lazy val getJarsFolder: String = config.getJarsFolder
                     })
-                    
+
                     models += id → dec
                     usages += id → usage
                 }
@@ -204,7 +204,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 false
         }
     }
-    
+
     /**
       * Starts this component.
       */
@@ -214,40 +214,40 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             for (provider ← NCDeployManager.getProviders)
                 for (ds ← NCDeployManager.getDescriptors)
                     addNewModel(provider, ds.getId)
-            
+
             val tbl = NCAsciiTable("Model ID", "Name", "Ver.", "Elements", "Synonyms")
-            
+
             models.values.foreach(m ⇒ {
                 val ds = m.model.getDescriptor
                 val synCnt = m.synonyms.values.flatMap(_.values).flatten.size
-                
+
                 tbl += (ds.getId, ds.getName, ds.getVersion, m.elements.keySet.size, synCnt)
             })
-            
+
             tbl.info(logger, Some(s"Models deployed: ${models.size}\n"))
-            
+
             if (models.isEmpty && config.getJarsFolder == null)
                 throw new NCException("No models deployed and no JAR folder specified.")
         }
-        
+
         super.start()
     }
-    
+
     /**
       *
       * @param mdl
       */
     private def discardModel(mdl: NCModel): Unit = {
         require(Thread.holdsLock(mux))
-        
+
         ignoring(classOf[Throwable]) {
             // Ack.
             logger.info(s"Model discarded: ${mdl.getDescriptor.getId}")
-            
+
             mdl.discard()
         }
     }
-    
+
     /**
       * Stops this component.
       */
@@ -255,10 +255,10 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         mux.synchronized {
             models.values.foreach(m ⇒ discardModel(m.model))
         }
-        
+
         super.stop()
     }
-    
+
     /**
       *
       * @param fix Prefix and suffix.
@@ -275,13 +275,13 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def chunkSplit(s: String): Seq[NCSynonymChunk] = {
         val x = s.trim()
-        
+
         if (startsAndEnds("///", x))
             Seq(mkChunk(x)) // Defensively grab entire string in case of regex.
         else
             x.split(" ").map(_.trim).filter(_.nonEmpty).map(mkChunk)
     }
-    
+
     /**
       *
       * @param chunk Synonym chunk.
@@ -290,11 +290,11 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def mkChunk(chunk: String): NCSynonymChunk = {
         def stripBody(s: String): String = s.slice(3, s.length - 3)
-    
+
         // Regex synonym.
         if (startsAndEnds("///", chunk)) {
             val ptrn = stripBody(chunk)
-            
+
             if (ptrn.length > 0)
                 try
                     NCSynonymChunk(kind = REGEX, origText = chunk, regex = Pattern.compile(ptrn))
@@ -307,7 +307,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         // POS tag synonym.
         else if (startsAndEnds("```", chunk)) {
             val tag = stripBody(chunk).toUpperCase
-            
+
             if (NCPennTreebank.contains(tag))
                 NCSynonymChunk(kind = POS, origText = chunk, posTag = tag)
             else
@@ -317,7 +317,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         else
             NCSynonymChunk(kind = TEXT, origText = chunk, wordStem = NCNlpManager.stem(chunk))
     }
-    
+
     /**
       *
       * @param ds
@@ -326,24 +326,24 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     private def checkModelDescriptor(ds: NCModelDescriptor): Unit = {
         if (ds == null)
             throw new NCE(s"Model descriptor is not provided.")
-        
+
         val id = ds.getId
         val name = ds.getName
         val ver = ds.getVersion
-        
+
         if (id == null)
             throw new NCE(s"Model descriptor ID is not provided.")
         if (name == null)
             throw new NCE(s"Model descriptor name is not provided.")
         if (ver == null)
             throw new NCE(s"Model descriptor version is not provided.")
-        
+
         if (name.length > 64)
             throw new NCE(s"Model descriptor name is too long (64 chars max): $name")
         if (ver.length > 16)
             throw new NCE(s"Model descriptor version is too long (16 chars max): $name")
     }
-    
+
     /**
       *
       * @param adds Additional stopword stems.
@@ -352,14 +352,14 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def checkStopwordsDups(adds: Set[String], excls: Set[String]): Unit = {
         val cross = adds.intersect(excls)
-    
+
         if (cross.nonEmpty)
             throw new NCE(s"Duplicate stems in additional and excluded stopwords: '${cross.mkString(",")}'")
     }
-    
+
     /**
       * Verifies given model and makes a decorator optimized for model enricher.
-      * 
+      *
       * @param mdl Model to verify and decorate.
       * @param parser Initialized macro parser.
       * @return Model decorator.
@@ -367,20 +367,20 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def verifyAndDecorate(mdl: NCModel, parser: MacroParser): NCModelDecorator = {
         checkModelDescriptor(mdl.getDescriptor)
-    
+
         for (elm ← mdl.getElements)
             checkElement(mdl, elm)
-    
+
         checkElementIdsDups(mdl)
         checkCyclicDependencies(mdl)
         checkTriviaDups(mdl, parser)
-    
+
         val addStopWords = checkAndStemmatize(mdl.getAdditionalStopWords, "Additional stopword")
         val exclStopWords = checkAndStemmatize(mdl.getExcludedStopWords, "Excluded stopword")
         val suspWords = checkAndStemmatize(mdl.getSuspiciousWords, "Suspicious word")
-    
+
         checkStopwordsDups(addStopWords, exclStopWords)
-        
+
         val syns = mutable.HashSet.empty[SynonymHolder]
         val exclSyns = mutable.HashSet.empty[SynonymHolder]
 
@@ -390,7 +390,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         // Process and check elements.
         for (elm ← mdl.getElements) {
             val elmId = elm.getId
-    
+
             def addSynonym(
                 col: mutable.HashSet[SynonymHolder],
                 isElementId: Boolean,
@@ -444,27 +444,13 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 }
 
                 if (mdl.isPermutateSynonyms && !isElementId && chunks.forall(_.wordStem != null))
-                    // Permutes and drops duplicated.
-                    // For a given multi-word synonym we allow a single word move left or right only one position per permutation
-                    // (i.e. only one word jiggles per permutation).
-                    // E.g. for "A B C D" synonym we'll have only the following permutations:
-                    // "A, B, C, D"
-                    // "A, B, D, C"
-                    // "A, C, B, D"
-                    // "B, A, C, D"
-                    // "B, A, D, C"
-                    chunks.
-                        zipWithIndex.
-                        permutations.
-                        filter(perm ⇒ perm.zipWithIndex.forall { case ((_, idx1), idx2) ⇒ Math.abs(idx1 - idx2) <= 1 }).
-                        map(_.unzip._1).
-                        map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
+                    simplePermute(chunks).map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
                 else
                     add(chunks, true)
             }
 
             def chunk0(s: String, group:Boolean): Seq[NCSynonymChunk] = chunkSplit(tokenize(s, group).mkString(" "))
-    
+
             // Add element ID as a synonyms (Duplications ignored)
             val idChunks = Seq(chunk0(elmId, true), chunk0(elmId, false), chunkSplit(elmId))
 
@@ -544,9 +530,9 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
 
             exclChunks.distinct.foreach(ch ⇒ addSynonym(exclSyns, false, false, null, ch))
         }
-        
+
         var foundDups = false
-        
+
         // Check for synonym dups across all elements.
         for (
             ((syn, isDirect), holders) ←
@@ -559,10 +545,10 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 ).mkString("(", ",", ")")}, " +
                 s"synonym=$syn" +
                 s"]")
-            
+
             foundDups = true
         }
-        
+
         if (foundDups) {
             if (!mdl.isDupSynonymsAllowed)
                 throw new NCException("Duplicated synonyms detected. Check warnings messages.")
@@ -572,7 +558,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         }
 
         /**
-          * 
+          *
           * @param set
           * @return
           */
@@ -591,7 +577,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                             }
                     )
                 }
-    
+
         NCModelDecorator(
             model = mdl,
             triviaStems = generateTrivia(mdl, parser),
@@ -603,9 +589,48 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             elements = mdl.getElements.map(elm ⇒ (elm.getId, elm)).toMap
         )
     }
-    
+
     /**
-      * 
+      * Permutes and drops duplicated.
+      * For a given multi-word synonym we allow a single word move left or right only one position per permutation
+      * (i.e. only one word jiggles per permutation).
+      * E.g. for "A B C D" synonym we'll have only the following permutations:
+      * "A, B, C, D"
+      * "A, B, D, C"
+      * "A, C, B, D"
+      * "B, A, C, D"
+      *
+      * @param seq Initial sequence.
+      * @return Permutations.
+      */
+    private def simplePermute[T](seq: Seq[T]): Seq[Seq[T]] =
+        seq.length match {
+            case 0 ⇒ Seq.empty
+            case 1 ⇒ Seq(seq)
+            case n ⇒
+                def permute(idx1: Int, idx2: Int): Seq[T] =
+                    seq.zipWithIndex.map { case (ch, idx) ⇒
+                        if (idx == idx1)
+                            seq(idx2)
+                        else if (idx == idx2)
+                            seq(idx1)
+                        else
+                            ch
+                    }
+
+                Seq(seq)++
+                    seq.zipWithIndex.flatMap { case (ch, i) ⇒
+                        if (i == 0)
+                            Seq(permute(0, 1))
+                        else if (i == n - 1)
+                            Seq(permute(n - 2, n - 1))
+                        else
+                            Seq(permute(i - 1, i), permute(i, i + 1))
+                    }.distinct
+        }
+
+    /**
+      *
       * @param jc
       * @param name
       * @return
@@ -616,7 +641,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 throw new NCE(s"$name cannot have whitespace: '$word'")
             else
                 NCNlpManager.stem(word)
-    
+
     /**
       * Checks cyclic child-parent dependencies.
       *
@@ -627,22 +652,22 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         for (elm ← mdl.getElements) {
             if (elm.getParentId != null) {
                 val seen = mutable.ArrayBuffer.empty[String]
-                
+
                 var parentId: String = null
                 var x = elm
-                
+
                 do {
                     parentId = x.getParentId
-                    
+
                     if (parentId != null) {
                         if (seen.contains(parentId))
                             throw new NCE(s"Cycling parent dependency starting at model element '${x.getId}'.")
                         else {
                             seen += parentId
-                            
+
                             x = mdl.getElements.find(_.getId == parentId) getOrElse {
                                 throw new NCE(s"Unknown parent ID '$parentId' for model element '${x.getId}'.")
-                                
+
                                 null
                             }
                         }
@@ -651,7 +676,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 while (parentId != null)
             }
         }
-    
+
     /**
       *
       * @param mdl Model.
@@ -660,21 +685,21 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def checkTriviaDups(mdl: NCModel, parser: MacroParser): Unit = {
         val trivia = mdl.getTrivia
-        
+
         if (trivia.nonEmpty) {
             val grps = ArrayBuffer.empty[List[String]]
-            
+
             // Expand trivia inputs.
             trivia.foreach(grp ⇒ {
                 val ins = ArrayBuffer.empty[String]
-                
+
                 for (in ← grp.getInputs)
                     ins ++= parser.expand(in).map(NCNlpManager.stem)
-                
+
                 if (ins.nonEmpty)
                     grps += ins.toList
             })
-            
+
             // Check for input dups in different groups.
             for (grp ← grps; in ← grp) {
                 for (g ← grps if g != grp)
@@ -683,7 +708,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             }
         }
     }
-    
+
     /**
       *
       * @param mdl Model.
@@ -691,14 +716,14 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def checkElementIdsDups(mdl: NCModel): Unit = {
         val ids = mutable.HashSet.empty[String]
-        
+
         for (id ← mdl.getElements.toList.map(_.getId))
             if (ids.contains(id))
                 throw new NCE(s"Duplicate model element ID '$id'.")
             else
                 ids += id
     }
-    
+
     /**
       * Verifies model element in isolation.
       *
@@ -713,29 +738,29 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             throw new NCE(s"Model element ID cannot be empty.'")
         else {
             val elmId = elm.getId
-            
+
             if (elmId.toLowerCase.startsWith("nlp:"))
                 throw new NCE(s"Model element '$elmId' type cannot start with 'nlp:'.")
-            
+
             if (hasWhitespace(elmId))
                 throw new NCE(s"Model element ID '$elmId' cannot have whitespaces.")
-            
+
             if (elm.getType == null)
                 throw new NCE(s"Type is not provided for model element '$elmId'.")
             else if (!ELM_TYPES.contains(elm.getType))
                 throw new NCE(s"Unknown type '${elm.getType}' for model element '$elmId'.")
         }
     }
-    
+
     /**
       * Checks whether or not given string has any whitespaces.
-      * 
+      *
       * @param s String to check.
       * @return
       */
     private def hasWhitespace(s: String): Boolean =
         s.exists(_.isWhitespace)
-    
+
     /**
       * Checks if synonym is dynamic.
       *
@@ -743,7 +768,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
       */
     private def isDynamic(syn: String): Boolean =
         syn.startsWith("%") && syn.endsWith("%")
-    
+
     /**
       * Makes usage holder.
       *
@@ -753,7 +778,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
     @throws[NCE]
     private def makeModelUsage(mdl: NCModel, parser: MacroParser): NCModelUsage = {
         val elements = mutable.HashSet.empty[NCElementUsage]
-        
+
         // Process elements.
         for (elm ← mdl.getElements.asScala) {
             val exampleSyns = nlv(elm.getSynonyms) // Take un-processed synonyms in their original form.
@@ -761,7 +786,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 .filter(!isDynamic(_))
                 .take(3)
                 .map(parser.expand(_).head)
-            
+
             elements += NCElementUsage(
                 id = elm.getId,
                 group = elm.getGroup,
@@ -770,7 +795,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 synonyms = exampleSyns
             )
         }
-        
+
         NCModelUsage(
             id = mdl.getDescriptor.getId,
             name = mdl.getDescriptor.getName,
@@ -785,18 +810,18 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             elements = elements.toList
         )
     }
-    
+
     /**
       *
       * @param mdl Model.
       */
     private def checkModelConfig(mdl: NCModel): Unit = {
-        def checkInt(v: Int, name: String, min: Int = 0, max: Int = Integer.MAX_VALUE): Unit = 
+        def checkInt(v: Int, name: String, min: Int = 0, max: Int = Integer.MAX_VALUE): Unit =
             if (v < min)
                 throw new NCE(s"Invalid model configuration value '$name' [value=$v, min=$min]")
             else if (v > max)
                 throw new NCE(s"Invalid model configuration value '$name' [value=$v, max=$min]")
-    
+
         checkInt(mdl.getMaxUnknownWords, "maxUnknownWords")
         checkInt(mdl.getMaxFreeWords, "maxFreeWords")
         checkInt(mdl.getMaxSuspiciousWords, "maxSuspiciousWords")
@@ -815,7 +840,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         checkInt(mdl.getMinFunctionTokens, "minFunctionTokens")
         checkInt(mdl.getJiggleFactor, "jiggleFactor", max = 4)
     }
-    
+
     /**
       * Converts Java collection.
       *
@@ -823,7 +848,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
       */
     private def nlv(col: JCollection[String]): List[String] =
         if (col == null) List.empty else col.asScala.toList
-    
+
     /**
       * Generates trivia data.
       *
@@ -835,9 +860,9 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
             Map.empty
         else {
             val groups = mdl.getTrivia.asScala.toSet
-            
+
             def expand(seq: Seq[String]): Seq[String] = seq.flatMap(parser.expand).map(_.trim)
-            
+
             groups.
                 map(g ⇒ (nlv(g.getInputs), nlv(g.getResponses))).
                 flatMap(h ⇒
@@ -847,19 +872,19 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                     )
                 ).toMap
         }
-    
+
     /**
       *
       * @return
       */
     def getAllModels: List[NCModelDecorator] = {
         ensureStarted()
-    
+
         mux.synchronized {
             models.values.toList
         }
     }
-    
+
     /**
       *
       * @param id Model ID.
@@ -867,42 +892,42 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
       */
     def getModel(id: String): Option[NCModelDecorator] = {
         ensureStarted()
-    
+
         mux.synchronized {
             models.get(id)
         }
     }
-    
+
     /**
-      * 
+      *
       * @param modelId Model ID.
       */
     def reload(modelId: String): Unit = {
         ensureStarted()
-        
+
         mux.synchronized {
             logger.info(s"Started reloading model: $modelId")
-    
+
             models.remove(modelId) match {
                 case Some(m) ⇒
                     // Discard current model instance.
                     discardModel(m.model)
-    
+
                     // Scan providers to reload the same model.
                     for (provider ← NCDeployManager.getProviders)
                         addNewModel(provider, modelId)
-                    
+
                     models.get(modelId) match {
                         case Some(mdl) ⇒
                             // Invariant.
                             require(mdl.model.getDescriptor.getId == modelId)
-                            
+
                             // Ack.
                             val tbl = NCAsciiTable("Model ID", "Name", "Ver.", "Elements", "Synonyms")
-    
+
                             val synCnt = mdl.synonyms.values.flatMap(_.values).flatten.size
                             val newDs = mdl.model.getDescriptor
-    
+
                             tbl += (
                                 newDs.getId,
                                 newDs.getName,
@@ -910,26 +935,26 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                                 mdl.elements.keySet.size,
                                 synCnt
                             )
-    
+
                             tbl.info(logger, Some(s"Model reloaded: $modelId\n"))
-                            
+
                         case None ⇒
                             logger.error(s"Failed to reload model: $modelId")
                     }
-                    
+
                 case None ⇒
                     logger.error(s"Failed to reload unknown model: $modelId")
             }
         }
     }
-    
+
     /**
       *
       * @return
       */
     def getAllUsage: List[NCModelUsage] = {
         ensureStarted()
-    
+
         mux.synchronized {
             usages.values.toList
         }
