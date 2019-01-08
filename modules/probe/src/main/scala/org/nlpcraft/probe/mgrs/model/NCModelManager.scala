@@ -443,9 +443,22 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                         )
                 }
 
-                if (mdl.isPermutateSynonyms && !isElementId && !isValueName && chunks.forall(_.wordStem != null))
+                if (mdl.isPermutateSynonyms && !isElementId && chunks.forall(_.wordStem != null))
                     // Permutes and drops duplicated.
-                    chunks.permutations.map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
+                    // For a given multi-word synonym we allow a single word move left or right only one position per permutation
+                    // (i.e. only one word jiggles per permutation).
+                    // E.g. for "A B C D" synonym we'll have only the following permutations:
+                    // "A, B, C, D"
+                    // "A, B, D, C"
+                    // "A, C, B, D"
+                    // "B, A, C, D"
+                    // "B, A, D, C"
+                    chunks.
+                        zipWithIndex.
+                        permutations.
+                        filter(perm ⇒ perm.zipWithIndex.forall { case ((_, idx1), idx2) ⇒ Math.abs(idx1 - idx2) <= 1 }).
+                        map(_.unzip._1).
+                        map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
                 else
                     add(chunks, true)
             }
