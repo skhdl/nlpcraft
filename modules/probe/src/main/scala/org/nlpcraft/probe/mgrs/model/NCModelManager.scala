@@ -619,13 +619,13 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                     }
 
                 Seq(seq)++
-                    seq.zipWithIndex.flatMap { case (ch, i) ⇒
-                        if (i == 0)
+                    seq.zipWithIndex.flatMap { case (ch, idx) ⇒
+                        if (idx == 0)
                             Seq(permute(0, 1))
-                        else if (i == n - 1)
+                        else if (idx == n - 1)
                             Seq(permute(n - 2, n - 1))
                         else
-                            Seq(permute(i - 1, i), permute(i, i + 1))
+                            Seq(permute(idx - 1, idx), permute(idx, idx + 1))
                     }.distinct
         }
 
