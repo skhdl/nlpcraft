@@ -90,6 +90,8 @@ class NCSynonym(
     /**
       *
       * @param toks
+      * @param toksStemsHash
+      * @param toksStems
       * @return
       */
     @throws[ReflectiveOperationException]
