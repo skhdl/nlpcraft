@@ -1647,13 +1647,15 @@ public class NCIntentSolver {
                     qryRes.setVariant(varFn.get());
     
                 qryRes.setMetadata(cloneMetadata(qryRes.getMetadata(), res));
-    
-                log.trace("Intent result processed OK: {}", res);
 
                 return qryRes;
             }
             catch (NCIntentSkip e) {
-                log.trace("Attempt to try another intent match (if any) due to user skipping the current one: {}", res);
+                // No-op - just skipping this result.
+                String msg = e.getLocalizedMessage();
+
+                if (msg != null)
+                    log.trace("Selected intent skipped due to: " + msg);
             }
             catch (NCCuration e) {
                 errCur = e;
@@ -1691,26 +1693,8 @@ public class NCIntentSolver {
         if (errRej != null)
             throw errRej;
     
-        log.trace("Not found any result.");
-        
-        if (notFound != null) {
-            try {
-                return notFound.get();
-            }
-            catch (NCCuration e) {
-                if (e.getVariants() == null) // Don't override if user already set it.
-                    e.setVariants(vars);
-                
-                throw e;
-            }
-            catch (NCRejection e) {
-                if (e.getVariants() == null) // Don't override if user already set it.
-                    e.setVariants(vars);
-    
-                throw e;
-            }
-        }
-        
-        return DFLT_NOT_FOUND.get();
+        log.trace("Not matching intents found.");
+
+        return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
     }
 }

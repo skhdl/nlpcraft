@@ -32,19 +32,16 @@
 package org.nlpcraft.mdllib;
 
 import org.nlpcraft.mdllib.intent.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * When thrown indicates that human curation is required.
  * <p>
  * This exception should indicates that user has likely provided all necessary information
  * in the input string but the model can't figure out a definitive query for it and therefore requires a human
- * curation to resolve the "last mile". In most cases it is used to have human operator resolve in real time voice
- * input irregularities, complex grammar ambiguities, misspellings, colloquialisms or unsupported slang.
+ * curation (i.e. intervention) to resolve the "last mile". In most cases it is used to have human operator
+ * resolve in real time voice input irregularities, complex grammar ambiguities, misspellings, colloquialisms or
+ * unsupported slang.
  * <p>
  * Note that during curation the human operator can not only correct (i.e. normalize) input sentence but
  * can also provide curation hint that can further facilitate model in determining the appropriate query.
@@ -69,25 +66,17 @@ public class NCCuration extends RuntimeException {
     /**
      * Creates curation exception with given message.
      *
-     * @param msg Curation message. Although minimal HTML markup is supported it will only be rendered
-     *      by the webapp or by compatible user REST applications. Other client devices like voice-based
-     *      assistants may not support that. For cross-platform compatibility it is recommended to stick
-     *      with a simple text.
+     * @param msg Curation message. Note that specific rendering of this message depends on the REST applications.
      */
     public NCCuration(String msg) {
         super(msg);
     }
 
     /**
-     * TODO: javadoc
+     * Creates curation exception with given message.
      *
-     * Creates curation exception with given error message and cause.
-     *
-     * @param msg Curation message. Although minimal HTML markup is supported it will only be rendered
-     *      by the webapp or by compatible user REST applications. Other client devices like voice-based
-     *      assistants may not support that. For cross-platform compatibility it is recommended to stick
-     *      with a simple text.
-     * @param vars Optional sentence variant this curation refers to.
+     * @param msg Curation message. Note that specific rendering of this message depends on the REST applications.
+     * @param vars List of variants (potentially empty) that this curation refers to.
      */
     public NCCuration(String msg, List<NCVariant> vars) {
         super(msg);
@@ -96,16 +85,15 @@ public class NCCuration extends RuntimeException {
     }
 
     /**
-     * TODO: javadoc
-     *
-     * Sets optional sentence variant this curation refers to.
+     * Sets optional sentence variants this curation refers to.
      * <br><br>
      * Note that in general a user input can have more than one possible
-     * parsing {@link NCSentence#variants() variants}. Setting the specific variant that was the cause of the curation
-     * is optional but improves the self-learning capabilities of the system when provided. Note also that
-     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
+     * parsing {@link NCSentence#variants() variants}. Setting one or more variants that were the cause of
+     * the curation is optional but improves the self-learning capabilities of the system when provided. Note
+     * also that sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variants
+     * automatically.
      *
-     * @param vars Sentence variant to set.
+     * @param vars Sentence variants to set.
      * @return This instance of chaining calls.
      */
     public NCCuration setVariants(List<NCVariant> vars) {
@@ -115,19 +103,16 @@ public class NCCuration extends RuntimeException {
     }
 
     /**
-     * TODO: javadoc
+     * Gets optional sentence variants associated with this curation.
      *
-     * Gets optional sentence variant associated with this curation.
-     *
-     * @return Sentence variant associated with this curation or {@code null}.
+     * @return Sentence variants associated with this curation (potentially empty).
      */
     public List<NCVariant> getVariants() {
         return vars;
     }
     
-    
     /**
-     * Gets metadata.
+     * Gets metadata associated with given curation.
      *
      * @return Metadata.
      */
@@ -136,7 +121,7 @@ public class NCCuration extends RuntimeException {
     }
     
     /**
-     * Sets metadata.
+     * Sets metadata associated with given curation.
      *
      * @param metadata Metadata
      */

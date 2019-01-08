@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * When thrown indicates that user input cannot be processed as is.
  * <p>
- * This exception typically indicates that user has not provided enough of information in the input string
+ * This exception typically indicates that user has not provided enough information in the input string
  * to have it processed automatically or with human curation. In most cases this means that the user's input is
  * either too short or too simple, too long or too complex, missing required context, or unrelated to selected
  * data source.
@@ -58,10 +58,7 @@ public class NCRejection extends RuntimeException {
     /**
      * Creates new rejection exception with given message.
      *
-     * @param msg Rejection message. Although minimal HTML markup is supported it will only be rendered
-     *      by the webapp or by compatible user REST applications. Other client devices like voice-based
-     *      assistants may not support that. For cross-platform compatibility it is recommended to stick
-     *      with a simple text.
+     * @param msg Rejection message. Note that specific rendering of this message depends on the REST applications.
      */
     public NCRejection(String msg) {
         super(msg);
@@ -70,10 +67,7 @@ public class NCRejection extends RuntimeException {
     /**
      * Creates new rejection exception with given message and cause.
      *
-     * @param msg Rejection message. Although minimal HTML markup is supported it will only be rendered
-     *      by the webapp or by compatible user REST applications. Other client devices like voice-based
-     *      assistants may not support that. For cross-platform compatibility it is recommended to stick
-     *      with a simple text.
+     * @param msg Rejection message. Note that specific rendering of this message depends on the REST applications.
      * @param cause Cause of this exception.
      */
     public NCRejection(String msg, Throwable cause) {
@@ -81,15 +75,11 @@ public class NCRejection extends RuntimeException {
     }
 
     /**
-     * TODO: javadoc
      * Creates new rejection exception with given message and cause.
      *
-     * @param msg Rejection message. Although minimal HTML markup is supported it will only be rendered
-     *      by the webapp or by compatible user REST applications. Other client devices like voice-based
-     *      assistants may not support that. For cross-platform compatibility it is recommended to stick
-     *      with a simple text.
+     * @param msg Rejection message. Note that specific rendering of this message depends on the REST applications.
      * @param cause Cause of this exception.
-     * @param vars Optional sentence variant this curation refers to.
+     * @param vars List of variants (potentially empty) that this rejection refers to.
      */
     public NCRejection(String msg, Throwable cause, List<NCVariant> vars) {
         super(msg, cause);
@@ -98,16 +88,14 @@ public class NCRejection extends RuntimeException {
     }
 
     /**
-     * TODO: javadoc
-     *
-     * Sets optional sentence variant this curation refers to.
+     * Sets optional sentence variants this rejection refers to.
      * <br><br>
      * Note that in general a user input can have more than one possible
-     * parsing {@link NCSentence#variants() variants}. Setting the specific variant that was the cause of the curation
+     * parsing {@link NCSentence#variants() variants}. Setting the specific variant that was the cause of the rejection
      * is optional but improves the self-learning capabilities of the system when provided. Note also that
      * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
      *
-     * @param vars Sentence variant to set.
+     * @param vars Sentence variants to set.
      * @return This instance of chaining calls.
      */
     public NCRejection setVariants(List<NCVariant> vars) {
@@ -117,19 +105,16 @@ public class NCRejection extends RuntimeException {
     }
 
     /**
-     * TODO: javadoc
+     * Gets optional sentence variants associated with this rejection.
      *
-     * Gets optional sentence variant associated with this curation.
-     *
-     * @return Sentence variant associated with this curation or {@code null}.
+     * @return Sentence variant associated with this rejection (potentially empty).
      */
     public List<NCVariant> getVariants() {
         return vars;
     }
     
-    
     /**
-     * Gets metadata.
+     * Gets metadata associated with this rejection.
      *
      * @return Metadata.
      */
@@ -138,7 +123,7 @@ public class NCRejection extends RuntimeException {
     }
     
     /**
-     * Sets metadata.
+     * Sets metadata associated with this rejection.
      *
      * @param metadata Metadata
      */
