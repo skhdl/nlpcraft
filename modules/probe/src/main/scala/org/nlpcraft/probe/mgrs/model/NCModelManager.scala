@@ -444,7 +444,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 }
 
                 if (mdl.isPermutateSynonyms && !isElementId && chunks.forall(_.wordStem != null))
-                    simplePermute(chunks).map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
+                    simplePermutate(chunks).map(p ⇒ p.map(_.wordStem) → p).toMap.unzip._2.foreach(p ⇒ add(p, p == chunks))
                 else
                     add(chunks, true)
             }
@@ -603,7 +603,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
       * @param seq Initial sequence.
       * @return Permutations.
       */
-    private def simplePermute[T](seq: Seq[T]): Seq[Seq[T]] =
+    private def simplePermutate[T](seq: Seq[T]): Seq[Seq[T]] =
         seq.length match {
             case 0 ⇒ Seq.empty
             case 1 ⇒ Seq(seq)
@@ -619,7 +619,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                     }
 
                 Seq(seq)++
-                    seq.zipWithIndex.flatMap { case (ch, idx) ⇒
+                    seq.zipWithIndex.flatMap { case (_, idx) ⇒
                         if (idx == 0)
                             Seq(permute(0, 1))
                         else if (idx == n - 1)
