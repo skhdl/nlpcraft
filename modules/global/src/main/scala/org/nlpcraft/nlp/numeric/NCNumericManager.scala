@@ -256,10 +256,7 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
         def isDigitChar(ch: Char): Boolean = Character.isDigit(ch) || ch == '.'
         def isOk(ch: Char): Boolean = isDigitChar(ch) || Character.isLetter(ch)
 
-        val cds = ns.filter(p ⇒
-            p.pos == "CD" && p.origText.forall(isOk) ||
-            p.ne.getOrElse("") == "NUMBER" && p.pos.head == "N"
-        )
+        val cds = ns.filter(p ⇒ p.pos == "CD" && p.origText.forall(isOk) || p.pos.head == "N")
 
         def isDigitText(normTxt: String): Boolean = normTxt.forall(isDigitChar)
 

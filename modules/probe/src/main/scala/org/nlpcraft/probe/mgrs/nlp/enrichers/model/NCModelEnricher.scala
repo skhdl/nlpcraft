@@ -82,8 +82,6 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
         }
     }
     
-    type TokenArrayBuffer = ArrayBuffer[NCNlpSentenceToken]
-    
     /**
       * Returns an iterator of tokens arrays where each token is jiggled left and right by given factor.
       * Note that only one token is jiggled at a time.
@@ -92,7 +90,7 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
       * @param factor Distance of left or right jiggle, i.e. how far can an individual token move
       *     left or right in the sentence.
       */
-    private def jiggle(ns: TokenArrayBuffer, factor: Int): Iterator[TokenArrayBuffer] = {
+    private def jiggle(ns: NCNlpSentenceTokenBuffer, factor: Int): Iterator[NCNlpSentenceTokenBuffer] = {
         require(factor >= 0)
         
         if (ns.isEmpty)
@@ -100,7 +98,7 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
         else if (factor == 0)
             Iterator.apply(ns)
         else
-            new Iterator[TokenArrayBuffer] {
+            new Iterator[NCNlpSentenceTokenBuffer] {
                 private val min = -factor
                 private val max = factor
                 private val sz = ns.size
@@ -134,10 +132,10 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
     
                 override def hasNext: Boolean = isNext
     
-                override def next(): TokenArrayBuffer = {
+                override def next(): NCNlpSentenceTokenBuffer = {
                     require(isNext)
     
-                    val buf = new TokenArrayBuffer(sz) ++ ns
+                    val buf = NCNlpSentenceTokenBuffer(ns)
     
                     if (d != 0)
                         buf.insert(i + d , buf.remove(i)) // Jiggle.
@@ -168,8 +166,8 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
       * @param toks
       * @return
       */
-    private def combos(toks: TokenArrayBuffer): Seq[TokenArrayBuffer] =
-        (for (n ← toks.size until 0 by -1) yield toks.sliding(n)).flatten
+    private def combos(toks: NCNlpSentenceTokenBuffer): Seq[NCNlpSentenceTokenBuffer] =
+        (for (n ← toks.size until 0 by -1) yield toks.sliding(n)).flatten.map(NCNlpSentenceTokenBuffer(_))
     
     /**
       * Processes this NLP sentence.
@@ -215,18 +213,12 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
           *
           * @param perm Permutation to process.
           */
-        def procPerm(perm: TokenArrayBuffer): Unit =
+        def procPerm(perm: NCNlpSentenceTokenBuffer): Unit =
             for (toks ← combos(perm)) {
                 val key = toks.map(_.index)
 
                 if (!cache.contains(key)) {
                     val len = toks.size
-                    val stemsSeq = toks.map(_.stem)
-
-                    // TODO: Logic of creation these parameter must be the same as in `NCSynonym`.
-                    // TODO: It's too trivial to be moved into some utility method, but it shouldn't be lost.
-                    val stems = stemsSeq.mkString(" ")
-                    val stemsHash = stems.hashCode
 
                     // Attempt to match each element.
                     for (elm ← mdl.elements.values) {
@@ -235,14 +227,14 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
 
                         // Check synonym exclusions.
                         for (syn ← fastAccess(mdl.excludedSynonyms, elmId, len) if !excluded)
-                            excluded = syn.isMatch(toks, stemsHash, stems)
+                            excluded = syn.isMatch(toks)
 
                         if (!excluded) {
                             var found = false
 
                             // Check synonym matches.
                             for (syn ← fastAccess(mdl.synonyms, elmId, len) if !found)
-                                if (syn.isMatch(toks, stemsHash, stems)) {
+                                if (syn.isMatch(toks)) {
                                     found = true
                                     
                                     matches += ElementMatch(elm, toks, syn)
@@ -256,7 +248,7 @@ object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with Deco
         
         // Iterate over depth-limited permutations of the original sentence with and without stopwords.
         jiggle(ns, jiggleFactor).foreach(procPerm)
-        jiggle(ns.filter(!_.isStopword), jiggleFactor).foreach(procPerm)
+        jiggle(NCNlpSentenceTokenBuffer(ns.filter(!_.isStopword)), jiggleFactor).foreach(procPerm)
 
         val matchCnt = matches.size
         

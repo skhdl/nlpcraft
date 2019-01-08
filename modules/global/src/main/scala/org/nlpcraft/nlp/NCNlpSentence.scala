@@ -38,7 +38,7 @@ import scala.collection._
   * Parsed NLP sentence is a collection of tokens. Each token is a collection of notes and
   * each note is a collection of KV pairs.
   */
-class NCNlpSentence(val text: String) extends mutable.ArrayBuffer[NCNlpSentenceToken] with Serializable {
+class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with Serializable {
     override def clone(): NCNlpSentence = {
         val t = new NCNlpSentence(text)
         

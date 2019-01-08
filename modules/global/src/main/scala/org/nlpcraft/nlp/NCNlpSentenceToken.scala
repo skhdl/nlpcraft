@@ -51,26 +51,22 @@ case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceN
     def words: Int = origText.split(" ").length
 
     // Shortcuts for some frequently used *mandatory* notes.
-    def normText: String = getNlpValue[String]( "normText")
+    def normText: String = getNlpValue[String]("normText")
     def startCharIndex: Int = getNlpValue[Int]("start").intValue() // Start character index.
     def endCharIndex: Int = getNlpValue[Int]("end").intValue() // End character index.
-    def origText: String = getNlpValue[String]( "origText")
+    def origText: String = getNlpValue[String]("origText")
     def wordLength: Int = getNlpValue[Int]("wordLength").intValue()
     def wordIndexes: Seq[Int] = getNlpValue[JList[Int]]("wordIndexes").asScala
-    def pos: String = getNlpValue[String]( "pos")
+    def pos: String = getNlpValue[String]("pos")
     def posDescription: String = getNlpValue[String]( "posDesc")
-    def lemma: String = getNlpValue[String]( "lemma")
-    def stem: String = getNlpValue[String]( "stem")
+    def lemma: String = getNlpValue[String]("lemma")
+    def stem: String = getNlpValue[String]("stem")
     def isStopword: Boolean = getNlpValue[Boolean]("stopWord")
     def isBracketed: Boolean = getNlpValue[Boolean]("bracketed")
     def isDirect: Boolean = getNlpValue[Boolean]("direct")
     def isQuoted: Boolean = getNlpValue[Boolean]("quoted")
     def isSynthetic: Boolean = NCPennTreebank.isSynthetic(pos)
     def isKnownWord: Boolean = getNlpValue[Boolean]("dict")
-
-    // Shortcuts for some frequently used *optional* fields.
-    def ne: Option[String] = getNlpValueOpt[String]("ne")
-    def nne: Option[String] = getNlpValueOpt[String]("nne")
 
     /**
       *

@@ -34,7 +34,7 @@ package org.nlpcraft.probe
 import java.util.regex.Pattern
 
 import org.nlpcraft.mdllib._
-import org.nlpcraft.nlp.NCNlpSentenceToken
+import org.nlpcraft.nlp.{NCNlpSentenceToken, NCNlpSentenceTokenBuffer}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -87,21 +87,25 @@ class NCSynonym(
     require((isElementId && !isValueName && value == null) || !isElementId)
     require((isValueName && value != null) || !isValueName)
     
+    lazy val isTextOnly: Boolean = forall(_.kind == TEXT)
+    lazy val posChunks: Int = count(_.kind == POS)
+    lazy val regexChunks: Int = count(_.kind == REGEX)
+    lazy val isValueSynonym: Boolean = value != null
+    lazy val stems: String = map(_.wordStem).mkString(" ")
+    lazy val stemsHash: Int = stems.hashCode
+    
     /**
       *
       * @param toks
-      * @param toksStemsHash
-      * @param toksStems
       * @return
       */
-    @throws[ReflectiveOperationException]
-    def isMatch(toks: Seq[NCNlpSentenceToken], toksStemsHash: Int, toksStems: String): Boolean = {
+    def isMatch(toks: NCNlpSentenceTokenBuffer): Boolean = {
         require(toks != null)
         
-        if (toks.isEmpty || size != toks.size || isTextOnly && toksStemsHash != stemsHash)
+        if (toks.isEmpty || size != toks.size || isTextOnly && toks.stemsHash != stemsHash)
             false
         else if (isTextOnly)
-            toksStemsHash == stemsHash && toksStems == stems
+            toks.stemsHash == stemsHash && toks.stems == stems
         else
             // Same length.
             toks.zip(this).forall {
@@ -109,19 +113,11 @@ class NCSynonym(
                     chunk.kind match {
                         case TEXT ⇒ chunk.wordStem == tok.stem
                         case POS ⇒ chunk.posTag == tok.pos
-                        case REGEX ⇒
-                            chunk.regex.matcher(tok.origText).matches() || chunk.regex.matcher(tok.normText).matches()
+                        case REGEX ⇒ chunk.regex.matcher(tok.origText).matches() || chunk.regex.matcher(tok.normText).matches()
                         case _ ⇒ throw new AssertionError()
                     }
             }
     }
-    
-    lazy val isTextOnly: Boolean = forall(_.kind == TEXT)
-    lazy val posChunks: Int = count(_.kind == POS)
-    lazy val regexChunks: Int = count(_.kind == REGEX)
-    lazy val isValueSynonym: Boolean = value != null
-    lazy val stems: String = map(_.wordStem).mkString(" ")
-    lazy val stemsHash: Int = stems.hashCode
     
     override def toString(): String = mkString(" ")
 
@@ -190,6 +186,7 @@ class NCSynonym(
 
     override def hashCode(): Int = {
         val state = Seq(super.hashCode(), isTextOnly, posChunks, regexChunks, isValueSynonym, isElementId, isValueName, value)
+        
         state.map(p ⇒ if (p == null) 0 else p.hashCode()).foldLeft(0)((a, b) ⇒ 31 * a + b)
     }
 }
