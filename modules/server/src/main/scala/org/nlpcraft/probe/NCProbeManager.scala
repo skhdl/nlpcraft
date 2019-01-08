@@ -33,10 +33,13 @@ package org.nlpcraft.probe
 
 import java.io._
 import java.security.Key
+
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft._
-import org.nlpcraft.mdo.NCProbeMdo
+import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCUserMdo}
+import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.socket.NCSocket
+
 import scala.collection.mutable
 
 /**
@@ -209,6 +212,18 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             
             false
         }
+    }
+    
+    /**
+      * 
+      * @param usr
+      * @param ds
+      * @param txt
+      * @param nlpSen
+      */
+    @throws[NCE]
+    def forwardToProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
+        ensureStarted()
     }
     
     /**

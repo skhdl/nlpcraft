@@ -45,6 +45,7 @@ import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.user.NCUserManager
 
@@ -150,10 +151,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 "txt" → origTxt,
                 "isTest" → isTest
             )
-            
-            val nlpSen = NCNlpEnricherManager.enrich(origTxt)
     
-            // TODO: send to the probe
+            // Enrich the user input and send it to the probe.
+            NCProbeManager.forwardToProbe(usr, ds, origTxt, NCNlpEnricherManager.enrich(origTxt))
         }
         
         fut onFailure {
