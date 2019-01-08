@@ -34,7 +34,7 @@ package org.nlpcraft.db
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
-import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
+import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.mdo._
 
 import scala.util.control.Exception._
@@ -477,7 +477,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * @param rcvTstamp Receive timestamp.
       */
     @throws[NCE]
-    def addProcessingLog(
+    def newProcessingLog(
         usrId: Long,
         srvReqId: String,
         origTxt: String,
@@ -513,6 +513,46 @@ object NCDbManager extends NCLifecycle("Database manager") {
             status.toString,
             test,
             rcvTstamp
+        )
+    }
+    
+    /**
+      * Updates processing log.
+      *
+      * @param srvReqId
+      * @param errMsg
+      * @param resType
+      * @param resBody
+      * @param tstamp
+      */
+    @throws[NCE]
+    def updateReadyProcessingLog(
+        srvReqId: String,
+        errMsg: String,
+        resType: String,
+        resBody: String,
+        tstamp: Long
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.insertSingle(
+            """
+              |UPDATE proc_log
+              |SET
+              |    status = ?,
+              |    error = ?,
+              |    res_type = ?,
+              |    res_body_gzip = ?,
+              |    resp_tstamp = ?
+              |WHERE
+              |    srv_req_id = ?
+               """.stripMargin,
+            QRY_READY.toString,
+            errMsg,
+            resType,
+            resBody,
+            tstamp,
+            srvReqId
         )
     }
 }

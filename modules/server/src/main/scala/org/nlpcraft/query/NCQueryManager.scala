@@ -160,7 +160,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             case e: Throwable ⇒
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}")
                 
-                setErrorResult(srvReqId, "Processing failed due to a system error.")
+                setError(srvReqId, "Processing failed due to a system error.")
                 
         }
         
@@ -173,11 +173,91 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param errMsg
       */
     @throws[NCE]
-    def setErrorResult(srvReqId: String, errMsg: String): Unit = {
+    def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
         
-        // TODO
+        val now = System.currentTimeMillis()
+    
+        val found = catching(wrapIE) {
+            NCTxManager.startTx {
+                cache(srvReqId) match {
+                    case Some(copy) ⇒
+                        copy.updateTstamp = now
+                        copy.status = QRY_READY
+                        copy.error = Some(errMsg)
+    
+                        cache += srvReqId → copy
+                        
+                        true
+                
+                    case None ⇒
+                        // Safely ignore missing status (cancelled before).
+                        ignore(srvReqId)
+                        
+                        false
+                }
+            }
+        }
+        
+        if (found)
+            NCProcessLogManager.updateReady(
+                srvReqId,
+                now,
+                errMsg = Some(errMsg)
+            )
     }
+    
+    /**
+      * 
+      * @param srvReqId
+      * @param resType
+      * @param resBody
+      * @param resMeta
+      */
+    @throws[NCE]
+    def setResult(srvReqId: String, resType: String, resBody: String, resMeta: Map[String, Object]): Unit = {
+        ensureStarted()
+        
+        val now = System.currentTimeMillis()
+        
+        val found = catching(wrapIE) {
+            NCTxManager.startTx {
+                cache(srvReqId) match {
+                    case Some(copy) ⇒
+                        copy.updateTstamp = now
+                        copy.status = QRY_READY
+                        copy.resultType = Some(resType)
+                        copy.resultBody = Some(resBody)
+                        copy.resultMetadata = Some(resMeta)
+                        
+                        cache += srvReqId → copy
+                        
+                        true
+                    
+                    case None ⇒
+                        // Safely ignore missing status (cancelled before).
+                        ignore(srvReqId)
+                        
+                        false
+                }
+            }
+        }
+        
+        if (found)
+            NCProcessLogManager.updateReady(
+                srvReqId,
+                now,
+                resType = Some(resType),
+                resBody = Some(resBody)
+            )
+    }
+
+    /**
+      *
+      * @param srvReqId
+      */
+    private def ignore(srvReqId: String): Unit =
+        logger.warn(s"Server request not found - safely ignoring (expired or cancelled): $srvReqId")
     
     /**
       *

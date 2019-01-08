@@ -61,7 +61,7 @@ case class NCQueryStateMdo(
     @NCMdoField var resultType: Option[String] = None,
     @NCMdoField var resultBody: Option[String] = None,
     @NCMdoField var resultMetadata: Option[Map[String, Object]] = None,
-    // Query ERROR (HTML message).
+    // Query ERROR.
     @NCMdoField var error: Option[String] = None
 ) extends NCAnnotatedMdo[NCQueryStateMdo]
 
