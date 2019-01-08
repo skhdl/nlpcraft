@@ -607,11 +607,11 @@ object NCGlobals extends NCDebug with LazyLogging {
         }
 
     /**
-      * Reads lines from given stream.
       *
-      * @param f Zipped stream to read from.
+      * @param in Zipped stream to read from.
       * @param enc Encoding.
       * @param log Logger to use.
+      * @return
       */
     @throws[NCE]
     def readGzipResource(in: InputStream, enc: String, log: Logger = logger): Iterator[String] =

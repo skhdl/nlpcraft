@@ -31,7 +31,7 @@
 
 package org.nlpcraft.proclog
 
-import org.nlpcraft.NCLifecycle
+import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
@@ -40,6 +40,36 @@ import org.nlpcraft.db.postgres.NCPsql
   * Process log manager.
   */
 object NCProcessLogManager extends NCLifecycle("Process log manager") {
+    /**
+      * Updates log entry with givem result paramters.
+      * 
+      * @param srvReqId ID of the server request to update.
+      * @param tstamp
+      * @param errMsg
+      * @param resType
+      * @param resBody
+      */
+    @throws[NCE]
+    def updateReady(
+        srvReqId: String,
+        tstamp: Long,
+        errMsg: Option[String] = None,
+        resType: Option[String] = None,
+        resBody: Option[String] = None
+    ): Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.updateReadyProcessingLog(
+                srvReqId,
+                errMsg.orNull,
+                resType.orNull,
+                resBody.orNull,
+                tstamp
+            )
+        }
+    }
+    
     /**
       * Adds new processing log entry.
       * 
@@ -52,6 +82,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
       * @param test
       * @param rcvTstamp
       */
+    @throws[NCE]
     def newEntry(
         usrId: Long,
         srvReqId: String,
@@ -65,7 +96,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         ensureStarted()
         
         NCPsql.sql {
-            NCDbManager.addProcessingLog(
+            NCDbManager.newProcessingLog(
                 usrId,
                 srvReqId,
                 txt,

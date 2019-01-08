@@ -34,6 +34,7 @@ package org.nlpcraft.rest
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
@@ -47,6 +48,7 @@ import spray.json.RootJsonFormat
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
+import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.query.NCQueryManager
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
@@ -77,19 +79,66 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
      * General control exception.
      * Note that these classes must be public because scala 2.11 internal errors (compilations problems).
      */
-    case class AuthFailure() extends NCE("Authentication failed.")
-    case class AdminRequired() extends NCE("Admin privileges required.")
+    case class AccessTokenFailure(acsTkn: String) extends NCE(s"Unknown access token: $acsTkn")
+    case class SignInFailure(email: String) extends NCE(s"Invalid user credentials for: $email")
+    case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
+    case class NotImplemented() extends NCE("Not implemented.")
     
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
-            case e: AuthFailure ⇒ complete(Unauthorized, e.getLocalizedMessage)
-            case e: AdminRequired ⇒ complete(Forbidden, e.getLocalizedMessage)
-            case e: NCException ⇒ complete(BadRequest, e.getLocalizedMessage)
+            case e: AccessTokenFailure ⇒
+                val errMsg = e.getLocalizedMessage
+    
+                NCNotificationManager.addEvent("NC_UNKNOWN_ACCESS_TOKEN",
+                    "errMsg" → errMsg,
+                    "acsTok" → e.acsTkn
+                )
                 
-            case e: Throwable ⇒
+                complete(StatusCodes.Unauthorized, errMsg)
+                
+            case e: SignInFailure ⇒
+                val errMsg = e.getLocalizedMessage
+    
+                NCNotificationManager.addEvent("NC_SIGNIN_FAILURE",
+                    "errMsg" → errMsg,
+                    "email" → e.email
+                )
+
+                complete(StatusCodes.Unauthorized, errMsg)
+                
+            case e: NotImplemented ⇒
+                val errMsg = e.getLocalizedMessage
+    
+                NCNotificationManager.addEvent("NC_NOT_IMPLEMENTED")
+
+                complete(StatusCodes.NotImplemented, errMsg)
+                
+            case e: AdminRequired ⇒
+                val errMsg = e.getLocalizedMessage
+    
+                NCNotificationManager.addEvent("NC_ADMIN_REQUIRED",
+                    "errMsg" → errMsg,
+                    "email" → e.email
+                )
+
+                complete(StatusCodes.Forbidden, errMsg)
+            
+            // General exception.
+            case e: NCException ⇒
                 val errMsg = e.getLocalizedMessage
                 
-                logger.error(s"Unexpected error (${e.getClass.getSimpleName}) => $errMsg")
+                NCNotificationManager.addEvent("NC_ERROR", "errMsg" → errMsg)
+                
+                complete(StatusCodes.BadRequest, errMsg)
+            
+            // Unexpected errors.
+            case e: Throwable ⇒
+                val errMsg = e.getLocalizedMessage
+    
+                NCNotificationManager.addEvent("NC_UNEXPECTED_ERROR",
+                    "exception" → e.getClass.getSimpleName,
+                    "errMsg" → errMsg
+                )
                 
                 complete(InternalServerError, errMsg)
         }
@@ -101,7 +150,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     @throws[NCE]
     private def authenticate(acsTkn: String): Unit = {
         if (!NCUserManager.checkAccessToken(acsTkn))
-            throw AuthFailure()
+            throw AccessTokenFailure(acsTkn)
     }
     
     /**
@@ -111,18 +160,18 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     @throws[NCE]
     private def authenticateAsAdmin(acsTkn: String): Unit =
         NCUserManager.getUserForAccessToken(acsTkn) match {
-            case None ⇒ throw AuthFailure()
-            case Some(usr) ⇒ if (!usr.isAdmin) throw AdminRequired()
+            case None ⇒ throw AccessTokenFailure(acsTkn)
+            case Some(usr) ⇒ if (!usr.isAdmin) throw AdminRequired(usr.email)
         }
     
     /**
-      * 
+      *
       * @param acsTkn Access token.
       * @return
       */
     @throws[NCE]
     private def getUserId(acsTkn: String): Long =
-        NCUserManager.getUserIdForAccessToken(acsTkn).getOrElse { throw AuthFailure() }
+        NCUserManager.getUserIdForAccessToken(acsTkn).getOrElse { throw AccessTokenFailure(acsTkn) }
 
     /**
       * Starts this component.
@@ -521,7 +570,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                             req.email,
                             req.passwd
                         ) match {
-                            case None ⇒ throw AuthFailure() // Email is unknown (user hasn't signed up).
+                            case None ⇒ throw SignInFailure(req.email) // Email is unknown (user hasn't signed up).
                             case Some(acsTkn) ⇒ complete {
                                 Res(API_OK, acsTkn)
                             }
@@ -702,13 +751,13 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "probe" / "stop") {
-                    throw AuthFailure()
+                    throw NotImplemented()
                 } ~
                 path(API / "probe" / "restart") {
-                    throw AuthFailure()
+                    throw NotImplemented()
                 } ~
                 path(API / "probe" / "all") {
-                    throw AuthFailure()
+                    throw NotImplemented()
                 }
             }
         }

@@ -44,11 +44,8 @@ object NCNoopNotificationPlugin extends NCNotificationPlugin {
       * @param params Optional set of named parameters.
       */
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
-        val paramsStr = params.map(p ⇒ s"${p._1}:${p._2}").mkString("[", ", ", "]")
+        val paramsStr = params.map(p ⇒ s"${p._1}=${p._2}").mkString(", ")
     
-        logger.info("Notification event [" +
-            s"name=$evtName, " +
-            s"params=$paramsStr" +
-        "]")
+        logger.info(s"Notification event [name=$evtName, $paramsStr]")
     }
 }

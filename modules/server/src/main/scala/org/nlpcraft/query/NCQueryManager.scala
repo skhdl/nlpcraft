@@ -44,6 +44,8 @@ import scala.util.control.Exception._
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
+import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.user.NCUserManager
 
@@ -89,6 +91,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     ): String = {
         ensureStarted()
         
+        val origTxt = txt.trim()
+        
         val rcvTstamp = System.currentTimeMillis()
         
         // Check user.
@@ -104,7 +108,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         }
         
         // Check input length.
-        if (txt.split(" ").length > MAX_WORDS)
+        if (origTxt.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
         
         val srvReqId = G.genGuid()
@@ -120,7 +124,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                     userId = usrId,
                     email = usr.email,
                     status = QRY_ENLISTED, // Initial status.
-                    origText = txt,
+                    origText = origTxt,
                     createTstamp = rcvTstamp,
                     updateTstamp = rcvTstamp
                 )
@@ -130,7 +134,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             NCProcessLogManager.newEntry(
                 usrId,
                 srvReqId,
-                txt,
+                origTxt,
                 dsId,
                 ds.modelId,
                 QRY_ENLISTED,
@@ -139,19 +143,24 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             )
         }
     
-        // TODO: enrich
-        // TODO: send to the probe
         val fut = Future {
-            val nlpSen = NCNlpEnricherManager.enrich(txt)
-            
-            
+            NCNotificationManager.addEvent("NC_NEW_QRY",
+                "userId" → usrId,
+                "dsId" → dsId,
+                "modelId" → ds.modelId,
+                "txt" → origTxt,
+                "isTest" → isTest
+            )
+    
+            // Enrich the user input and send it to the probe.
+            NCProbeManager.forwardToProbe(usr, ds, origTxt, NCNlpEnricherManager.enrich(origTxt))
         }
         
         fut onFailure {
             case e: Throwable ⇒
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}")
                 
-                setErrorResult(srvReqId, "Processing failed due to a system error.")
+                setError(srvReqId, "Processing failed due to a system error.")
                 
         }
         
@@ -164,9 +173,91 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param errMsg
       */
     @throws[NCE]
-    def setErrorResult(srvReqId: String, errMsg: String): Unit = {
+    def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
+        
+        val now = System.currentTimeMillis()
+    
+        val found = catching(wrapIE) {
+            NCTxManager.startTx {
+                cache(srvReqId) match {
+                    case Some(copy) ⇒
+                        copy.updateTstamp = now
+                        copy.status = QRY_READY
+                        copy.error = Some(errMsg)
+    
+                        cache += srvReqId → copy
+                        
+                        true
+                
+                    case None ⇒
+                        // Safely ignore missing status (cancelled before).
+                        ignore(srvReqId)
+                        
+                        false
+                }
+            }
+        }
+        
+        if (found)
+            NCProcessLogManager.updateReady(
+                srvReqId,
+                now,
+                errMsg = Some(errMsg)
+            )
     }
+    
+    /**
+      * 
+      * @param srvReqId
+      * @param resType
+      * @param resBody
+      * @param resMeta
+      */
+    @throws[NCE]
+    def setResult(srvReqId: String, resType: String, resBody: String, resMeta: Map[String, Object]): Unit = {
+        ensureStarted()
+        
+        val now = System.currentTimeMillis()
+        
+        val found = catching(wrapIE) {
+            NCTxManager.startTx {
+                cache(srvReqId) match {
+                    case Some(copy) ⇒
+                        copy.updateTstamp = now
+                        copy.status = QRY_READY
+                        copy.resultType = Some(resType)
+                        copy.resultBody = Some(resBody)
+                        copy.resultMetadata = Some(resMeta)
+                        
+                        cache += srvReqId → copy
+                        
+                        true
+                    
+                    case None ⇒
+                        // Safely ignore missing status (cancelled before).
+                        ignore(srvReqId)
+                        
+                        false
+                }
+            }
+        }
+        
+        if (found)
+            NCProcessLogManager.updateReady(
+                srvReqId,
+                now,
+                resType = Some(resType),
+                resBody = Some(resBody)
+            )
+    }
+
+    /**
+      *
+      * @param srvReqId
+      */
+    private def ignore(srvReqId: String): Unit =
+        logger.warn(s"Server request not found - safely ignoring (expired or cancelled): $srvReqId")
     
     /**
       *
