@@ -176,14 +176,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                         // Only one token - toks.length == 1
                         val t = toks.head
 
-                        def isLocation: Boolean =
-                            t.ne match {
-                                case Some(ne) ⇒ ne == "LOCATION"
-                                case None ⇒ false
-                            }
-
                         // If LOCATION or noun - add it.
-                        if (NCPennTreebank.NOUNS_POS.contains(t.pos) || isLocation)
+                        if (NCPennTreebank.NOUNS_POS.contains(t.pos))
                             addAll(locs)
                         // If US state - add it.
                         else

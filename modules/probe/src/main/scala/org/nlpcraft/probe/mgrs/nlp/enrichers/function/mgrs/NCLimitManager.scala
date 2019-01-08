@@ -166,28 +166,11 @@ object NCLimitManager {
     }
 
     /**
-      * Stemmatises map's keys.
+      * Stemmatizes map's keys.
       *
       * @param m Map.
       */
     private def stemmatizeWords[T](m: Map[String, T]): Map[String, T] = m.map(p ⇒ NCNlpManager.stem(p._1) → p._2)
-
-    /**
-      * Tries to parse number.
-      *
-      * @param t Token.
-      */
-    private def parseNum(t: Token): Option[Int] =
-        t.nne match {
-            case Some(nne) ⇒
-                try
-                    Some(java.lang.Double.parseDouble(nne).toInt)
-                catch {
-                    case _: NumberFormatException ⇒ None
-                }
-
-            case None ⇒ FUZZY_NUMS.get(t.stem)
-        }
 }
 
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs.NCLimitManager._
@@ -198,7 +181,7 @@ import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs.NCLimitManager._
 case class NCLimitManager(ns: Sentence) {
     private val map: Map[Seq[Token], GroupsHolder] = {
         // All groups combinations.
-        val tks2Nums: Seq[(Token, Option[Int])] = ns.filter(!_.isStopword).map(t ⇒ t → parseNum(t))
+        val tks2Nums: Seq[(Token, Option[Int])] = ns.filter(!_.isStopword).map(t ⇒ t → FUZZY_NUMS.get(t.stem))
 
         // Tokens: A;  B;  20;  C;  twenty; two, D
         // NERs  : -;  -;  20;  -;  22;     22;  -
