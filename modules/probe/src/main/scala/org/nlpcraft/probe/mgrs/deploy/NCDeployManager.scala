@@ -52,7 +52,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Model deployment manager.
   */
-object NCDeployManager extends NCProbeManager("PROBE deploy manager") with NCDebug with DecorateAsScala {
+object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug with DecorateAsScala {
     private val providers = ArrayBuffer.empty[NCModelProvider]
     private val descriptors = ArrayBuffer.empty[NCModelDescriptor]
     

@@ -38,7 +38,7 @@ import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 /**
   * Stop words enricher.
   */
-object NCStopWordEnricher extends NCProbeEnricher("PROBE stopwords enricher") {
+object NCStopWordEnricher extends NCProbeEnricher("Stopwords enricher") {
     /**
       * Processes this NLP sentence in an isolation.
       *

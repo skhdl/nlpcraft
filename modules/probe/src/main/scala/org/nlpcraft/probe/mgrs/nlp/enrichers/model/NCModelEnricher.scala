@@ -44,7 +44,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Model elements enricher.
   */
-object NCModelEnricher extends NCProbeEnricher("PROBE model enricher") with DecorateAsScala {
+object NCModelEnricher extends NCProbeEnricher("Model enricher") with DecorateAsScala {
     // Found-by-synonym model element.
     case class ElementMatch(
         element: NCElement,

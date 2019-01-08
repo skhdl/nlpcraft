@@ -42,7 +42,7 @@ import scala.collection.Seq
 /**
   * Post-enricher.
   */
-object NCPostEnricher extends NCLifecycle("PROBE post-enricher") with LazyLogging {
+object NCPostEnricher extends NCLifecycle("Post-enricher") with LazyLogging {
     // Prepositions should be marked as stop word in the of processing.
     // They can be used for numbers and dates periods calculations.
     private final val STOP_BEFORE_STOP_EXT: Seq[String] = Seq("DT", "PRP", "PRP$", "WDT", "WP", "WP$", "WRB", "TO", "IN")

@@ -54,7 +54,7 @@ import scala.util.control.Exception._
 /**
   * Model manager.
   */
-object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug with DecorateAsScala {
+object NCModelManager extends NCProbeManager("Model manager") with NCDebug with DecorateAsScala {
     // All possible element types.
     private final val ELM_TYPES = Set(
         "STRING",
@@ -83,74 +83,6 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
         elementId: String,
         synonym: NCSynonym
     )
-
-    /**
-      * Tokenizes model element ID or synonym value name that act as **implicit**
-      * synonyms. It tries to mimic Stanford's PTBTokenizer which is unavailable on the probe itself.
-      *
-      * @param s Either model element ID or synonym value name.
-      * @param group Whether or not to group non-letter or digit characters into one token.
-      * @return
-      */
-    private[model] def tokenize(s: String, group: Boolean): Seq[String] = {
-        val len = s.length()
-        var tokBuf = new StringBuilder()
-        var i = 0
-        val toks = ArrayBuffer.empty[String]
-        var f = false
-
-        def addToken(): Unit = {
-            val x = tokBuf.toString.trim
-
-            if (x.nonEmpty)
-                toks += x
-
-            tokBuf = new StringBuilder()
-        }
-
-        while (i < len) {
-            val ch = s.charAt(i)
-
-            if (!ch.isLetterOrDigit) {
-                if ((group && !f) || !group)
-                    addToken()
-
-                f = true
-            }
-            else {
-                if (f)
-                    addToken()
-
-                f = false
-            }
-
-            tokBuf += ch
-
-            i += 1
-        }
-
-        addToken()
-
-        var isPrevTick = false
-
-        // Fix special case of handling "'s" by CoreNLP.
-        val x = for (tok ← toks.filter(_.nonEmpty)) yield {
-            if (tok.toLowerCase == "s" && isPrevTick) {
-                isPrevTick = false
-                Some("'s")
-            }
-            else if (tok == "'") {
-                isPrevTick = true
-                None
-            }
-            else {
-                isPrevTick = false
-                Some(tok)
-            }
-        }
-
-        x.flatten
-    }
 
     /**
       * @param provider Model provider.
@@ -449,10 +381,10 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                     add(chunks, true)
             }
 
-            def chunk0(s: String, group:Boolean): Seq[NCSynonymChunk] = chunkSplit(tokenize(s, group).mkString(" "))
+            def chunk0(s: String): Seq[NCSynonymChunk] = chunkSplit(NCNlpManager.tokenize(s).mkString(" "))
 
             // Add element ID as a synonyms (Duplications ignored)
-            val idChunks = Seq(chunk0(elmId, true), chunk0(elmId, false), chunkSplit(elmId))
+            val idChunks = Seq(chunk0(elmId), chunkSplit(elmId))
 
             idChunks.distinct.foreach(ch ⇒ addSynonym(syns, true, false, null, ch))
 
@@ -484,7 +416,7 @@ object NCModelManager extends NCProbeManager("PROBE model manager") with NCDebug
                 val valName = v.getName
                 val valSyns = v.getSynonyms.asScala
 
-                val vNamesChunks = Seq(chunk0(valName, true), chunk0(valName, false), chunkSplit(valName))
+                val vNamesChunks = Seq(chunk0(valName), chunkSplit(valName))
 
                 // Add value name as a synonyms (duplications ignored)
                 vNamesChunks.distinct.foreach(ch ⇒ addSynonym(syns, false, true, valName, ch))

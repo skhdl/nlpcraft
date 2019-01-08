@@ -39,7 +39,7 @@ import com.typesafe.scalalogging.LazyLogging
 /**
   * Post checker.
   */
-object NCPostChecker extends NCLifecycle("PROBE post-checker") with LazyLogging {
+object NCPostChecker extends NCLifecycle("Post-checker") with LazyLogging {
     @throws[NCPostException]
     def validate(mdl: NCModelDecorator, ns: Sentence) {
         val types = ns.flatten.filter(!_.isNlp).map(_.noteType).distinct

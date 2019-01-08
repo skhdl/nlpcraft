@@ -48,7 +48,7 @@ import scala.collection._
   *
   * This enricher must be used after Model elements enricher.
   */
-object NCFunctionEnricher extends NCProbeEnricher("PROBE function enricher") {
+object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
     private final val NUM_AGGR_TYPES = Seq("LONG", "DOUBLE", "DATE", "TIME", "DATETIME")
 
     case class ComplexHolder(function: NCFunction, headStem: String, allStems: Set[String])

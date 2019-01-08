@@ -52,7 +52,7 @@ import scala.collection.mutable.{HashMap ⇒ HMap}
   * In all cases of overlap (full or partial) - the "longest" note wins. In case of overlap and equal
   * lengths - the winning note is chosen based on this priority.
   */
-object NCPostEnrichCollapser extends NCLifecycle("PROBE post-enrich collapser") with LazyLogging {
+object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with LazyLogging {
     /**
       *
       * @param mdl

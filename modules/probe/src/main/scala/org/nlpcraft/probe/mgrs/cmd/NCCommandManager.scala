@@ -44,7 +44,7 @@ import org.nlpcraft.probe.{NCProbeManager, NCProbeMessage}
 /**
   * Probe commands processor.
   */
-object NCCommandManager extends NCProbeManager("PROBE commands manager") with NCDebug {
+object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug {
     /**
       *
       * @param msg Server message to process.

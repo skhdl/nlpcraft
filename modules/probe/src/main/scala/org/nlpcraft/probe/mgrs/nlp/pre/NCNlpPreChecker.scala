@@ -40,7 +40,7 @@ import org.apache.tika.langdetect.OptimaizeLangDetector
 /**
   * Pre-checker.
   */
-object NCNlpPreChecker extends NCLifecycle("PROBE pre-checker") with LazyLogging {
+object NCNlpPreChecker extends NCLifecycle("Pre-checker") with LazyLogging {
     // Create new language finder singleton.
     private val langFinder = new OptimaizeLangDetector()
     

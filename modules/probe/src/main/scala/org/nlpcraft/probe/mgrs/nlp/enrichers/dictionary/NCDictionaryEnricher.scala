@@ -43,7 +43,7 @@ import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
   *
   * This enricher must be used after all enrichers which can manipulate 'quote' and 'stopword' notes of token.
   */
-object NCDictionaryEnricher extends NCProbeEnricher("PROBE dictionary enricher") {
+object NCDictionaryEnricher extends NCProbeEnricher("Dictionary enricher") {
     @volatile private var swearWords: Set[String] = _
 
     /**

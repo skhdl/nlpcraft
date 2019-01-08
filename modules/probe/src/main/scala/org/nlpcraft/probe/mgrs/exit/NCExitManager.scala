@@ -38,7 +38,7 @@ import org.nlpcraft.{NCLifecycle, _}
 /**
   * Probe process exit manager.
   */
-object NCExitManager extends NCProbeManager("PROBE exit manager") with NCDebug {
+object NCExitManager extends NCProbeManager("Exit manager") with NCDebug {
     // JVM exit codes.
     final val EXIT_FAIL = 0
     final val EXIT_OK = 1

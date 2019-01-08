@@ -39,7 +39,7 @@ import scala.collection._
 /**
   * Conversation manager.
   */
-object NCConversationManager extends NCProbeManager("PROBE conversation manager") with NCDebug {
+object NCConversationManager extends NCProbeManager("Conversation manager") with NCDebug {
     case class Key(userId: Long, dsId: Long)
     
     // TODO: add periodic garbage collector for stale conversations.

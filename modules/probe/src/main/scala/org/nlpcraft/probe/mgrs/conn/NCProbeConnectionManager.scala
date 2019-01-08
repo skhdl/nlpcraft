@@ -51,7 +51,7 @@ import scala.collection.mutable
 /**
   * Probe down/up link connection manager.
   */
-object NCProbeConnectionManager extends NCProbeManager("PROBE connection manager 2") {
+object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     // Uplink retry timeout.
     private final val RETRY_TIMEOUT = 10 * 1000
     // SO_TIMEOUT.

@@ -42,7 +42,7 @@ import scala.collection.mutable
 /**
  * Context-based enricher. This enricher should always be run one of the last.
  */
-object NCContextEnricher extends NCProbeEnricher("PROBE context-based enricher") {
+object NCContextEnricher extends NCProbeEnricher("Context-based enricher") {
     private final val STOP_BEFORE = Seq("DT", "IN", "PRP", "PRP$", "TO", "WDT", "WP", "WP$", "WRB")
 
     @throws[NCE]

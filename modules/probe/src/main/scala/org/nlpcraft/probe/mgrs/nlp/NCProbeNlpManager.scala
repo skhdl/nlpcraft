@@ -65,7 +65,7 @@ import scala.collection.JavaConverters._
 /**
   * Probe NLP manager.
   */
-object NCProbeNlpManager extends NCProbeManager("PROBE NLP manager") with NCDebug {
+object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     private final val EC = ExecutionContext.fromExecutor(
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )

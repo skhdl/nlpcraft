@@ -38,7 +38,7 @@ import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 /**
   * Suspicious words enricher.
   */
-object NCSuspiciousNounsEnricher extends NCProbeEnricher("PROBE suspicious nouns enricher") {
+object NCSuspiciousNounsEnricher extends NCProbeEnricher("Suspicious nouns enricher") {
     /**
       * 
       * @param mdl Model decorator.

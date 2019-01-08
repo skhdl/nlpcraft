@@ -47,7 +47,7 @@ import scala.collection._
   * Must be extended to support all variants of coordinates representation.
   * See http://www.geomidpoint.com/latlon.html.
   */
-object NCCoordinatesEnricher extends NCProbeEnricher("PROBE coordinates enricher") {
+object NCCoordinatesEnricher extends NCProbeEnricher("Coordinates enricher") {
     private final val LAT_STEMS = Seq("lat", "latitude").map(NCNlpManager.stem)
     private final val LON_STEMS = Seq("lon", "longitude").map(NCNlpManager.stem)
 
