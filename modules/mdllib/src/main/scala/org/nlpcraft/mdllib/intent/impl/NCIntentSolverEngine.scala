@@ -60,7 +60,11 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
             addAll(weights.asJava)
         }
 
-        def addWeight(weight: Weight, idx: Int): Unit = addAll(idx, weight)
+        /**
+          * @param idx
+          * @param weight
+          */
+        def addWeight(idx: Int, weight: Weight): Unit = addAll(idx, weight)
 
         /**
           * 
@@ -337,12 +341,12 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
             val exactMatch = !senToks.exists(tok ⇒ !tok.used && !isFreeWord(tok.tok))
             
             intentWeight.addWeight(
+                0,
                 // Weight should be greater, comparing reversed.
                 new Weight(
                     -missedTermNouns.size,
                     if (exactMatch) 1 else 0
-                ),
-                0
+                )
             )
 
             Some(
