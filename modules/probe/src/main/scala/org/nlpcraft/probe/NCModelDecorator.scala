@@ -213,7 +213,6 @@ object NCSynonym {
 /**
   *
   * @param model Decorated model.
-  * @param triviaStems Trivia stems.
   * @param synonyms Fast-access synonyms map (excluding dynamic ones).
   * @param excludedSynonyms Fast-access excluded synonyms map (excluding dynamic ones).
   * @param additionalStopWordsStems Stemmatized additional stopwords.
@@ -223,7 +222,6 @@ object NCSynonym {
   */
 case class NCModelDecorator(
     model: NCModel,
-    triviaStems: Map[String/*Trivia group*/, Set[String]],
     synonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
     excludedSynonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
     additionalStopWordsStems: Set[String],

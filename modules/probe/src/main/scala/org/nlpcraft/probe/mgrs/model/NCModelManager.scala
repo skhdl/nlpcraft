@@ -305,7 +305,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
         checkElementIdsDups(mdl)
         checkCyclicDependencies(mdl)
-        checkTriviaDups(mdl, parser)
 
         val addStopWords = checkAndStemmatize(mdl.getAdditionalStopWords, "Additional stopword")
         val exclStopWords = checkAndStemmatize(mdl.getExcludedStopWords, "Excluded stopword")
@@ -512,7 +511,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
         NCModelDecorator(
             model = mdl,
-            triviaStems = generateTrivia(mdl, parser),
             synonyms = mkFastAccessMap(syns.toSet),
             excludedSynonyms = mkFastAccessMap(exclSyns.toSet),
             additionalStopWordsStems = addStopWords,
@@ -608,38 +606,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                 while (parentId != null)
             }
         }
-
-    /**
-      *
-      * @param mdl Model.
-      * @param parser Macro parser.
-      */
-    @throws[NCE]
-    private def checkTriviaDups(mdl: NCModel, parser: MacroParser): Unit = {
-        val trivia = mdl.getTrivia
-
-        if (trivia.nonEmpty) {
-            val grps = ArrayBuffer.empty[List[String]]
-
-            // Expand trivia inputs.
-            trivia.foreach(grp ⇒ {
-                val ins = ArrayBuffer.empty[String]
-
-                for (in ← grp.getInputs)
-                    ins ++= parser.expand(in).map(NCNlpManager.stem)
-
-                if (ins.nonEmpty)
-                    grps += ins.toList
-            })
-
-            // Check for input dups in different groups.
-            for (grp ← grps; in ← grp) {
-                for (g ← grps if g != grp)
-                    if (g.contains(in))
-                        throw new NCE(s"Duplicate (expanded) trivia input '$in'.")
-            }
-        }
-    }
 
     /**
       *
@@ -780,30 +746,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
       */
     private def nlv(col: JCollection[String]): List[String] =
         if (col == null) List.empty else col.asScala.toList
-
-    /**
-      * Generates trivia data.
-      *
-      * @param mdl Model.
-      * @param parser Initialized macro parser.
-      */
-    private def generateTrivia(mdl: NCModel, parser: MacroParser): Map[String, Set[String]] =
-        if (mdl.getTrivia == null)
-            Map.empty
-        else {
-            val groups = mdl.getTrivia.asScala.toSet
-
-            def expand(seq: Seq[String]): Seq[String] = seq.flatMap(parser.expand).map(_.trim)
-
-            groups.
-                map(g ⇒ (nlv(g.getInputs), nlv(g.getResponses))).
-                flatMap(h ⇒
-                    expand(h._1).
-                        map(txt ⇒ txt.split(" ").map(_.trim).filter(_.nonEmpty).mkString(" ").toLowerCase.trim).map(p ⇒
-                        p → expand(h._2).toSet
-                    )
-                ).toMap
-        }
 
     /**
       *

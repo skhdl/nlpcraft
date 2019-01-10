@@ -590,10 +590,6 @@ public class NCTestClientBuilder {
         private int convertResponse(String respType) {
             switch (respType.toUpperCase()) {
                 case "RESP_OK": return RESP_OK;
-                case "RESP_CURATION": return RESP_CURATION;
-                case "RESP_REJECT": return RESP_REJECT;
-                case "RESP_TRIVIA": return RESP_TRIVIA;
-                case "RESP_TALKBACK": return RESP_TALKBACK;
                 case "RESP_VALIDATION": return RESP_VALIDATION;
                 case "RESP_ERROR": return RESP_ERROR;
             
@@ -605,10 +601,6 @@ public class NCTestClientBuilder {
         private String convertCode(int code) {
             switch (code) {
                 case RESP_OK: return "RESP_OK";
-                case RESP_CURATION: return "RESP_CURATION";
-                case RESP_REJECT: return "RESP_REJECT";
-                case RESP_TRIVIA: return "RESP_TRIVIA";
-                case RESP_TALKBACK: return "RESP_TALKBACK";
                 case RESP_VALIDATION: return "RESP_VALIDATION";
                 case RESP_ERROR: return "RESP_ERROR";
             

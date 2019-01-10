@@ -86,10 +86,6 @@ trait NCModelSpecBase {
                         )
                         .build()
                     )
-                    .addTrivia(List("hi", "howdy").asJava, List("hello!").asJava)
-                    //.addTrivia(List("hi <X>", "howdy2"), List("hello!"))
-                    .addTrivia(List("hi1", "howdy2").asJava, List("hello!").asJava)
-                    //.addRestriction("BLA", 10)
                     .setQueryFunction((_: NCQueryContext) ⇒ null)
                     .build()
     

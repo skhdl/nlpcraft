@@ -101,6 +101,5 @@
                 "<FORECAST> {<OF>|*} {<WEATHER>|<PHENOMENON>}"
             ]
         }
-    ],
-    "defaultTrivia": "true"
+    ]
 }

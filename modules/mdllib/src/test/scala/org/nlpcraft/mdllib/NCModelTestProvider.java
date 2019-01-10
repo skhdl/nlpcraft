@@ -82,15 +82,6 @@ public class NCModelTestProvider implements NCModelProvider {
                 )
                 .build()
             )
-            .addTrivia(new NCTriviaGroup() {
-                @Override public Collection<String> getInputs() {
-                    return Collections.singletonList("hi");
-                }
-
-                @Override public Collection<String> getResponses() {
-                    return Collections.singletonList("hi {a|b}!!!");
-                }
-            })
             .setQueryFunction((NCQueryContext ctx) -> NCQueryResult.html("OK result"))
             .build();
     }

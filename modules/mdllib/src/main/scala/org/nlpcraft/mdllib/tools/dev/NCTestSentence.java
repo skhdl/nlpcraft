@@ -55,9 +55,7 @@ public class NCTestSentence {
      *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
      * @param text Test sentence text.
      * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
-     *      or intent ID check isn't required. Note that intent ID cannot be specified together with the
-     *      following result response statuses: {@link NCTestClient#RESP_TRIVIA}, {@link NCTestClient#RESP_ERROR},
-     *      {@link NCTestClient#RESP_TALKBACK}, or {@link NCTestClient#RESP_VALIDATION}.
+     *      or intent ID check isn't required.
      * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
      * @param check Optional result validation predicate. Supply {@code null} if not required.
      */
@@ -70,9 +68,6 @@ public class NCTestSentence {
     ) {
         if (expIntentId != null) {
             switch (expStatus) {
-                case NCTestClient.RESP_TRIVIA:
-                case NCTestClient.RESP_ERROR:
-                case NCTestClient.RESP_TALKBACK:
                 case NCTestClient.RESP_VALIDATION:
                     throw new IllegalArgumentException(
                         "Intent ID can only be specified for the following responses: RESP_OK, RESP_REJECT, RESP_CURATION"
@@ -96,9 +91,7 @@ public class NCTestSentence {
      *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
      * @param text Test sentence text.
      * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
-     *      or intent ID check isn't required. Note that intent ID cannot be specified together with the
-     *      following result response statuses: {@link NCTestClient#RESP_TRIVIA}, {@link NCTestClient#RESP_ERROR},
-     *      {@link NCTestClient#RESP_TALKBACK}, or {@link NCTestClient#RESP_VALIDATION}.
+     *      or intent ID check isn't required.
      * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
      */
     public NCTestSentence(String dsName, String text, String expIntentId, int expStatus) {

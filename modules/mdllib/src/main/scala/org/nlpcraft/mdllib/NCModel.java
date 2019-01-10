@@ -103,8 +103,6 @@ import java.util.*;
  *              "values": []
  *          }
  *      ],
- *      "defaultTrivia": "true",
- *      "trivia": [],
  *      "additionalStopwords": [],
  *      "excludedStopwords": [],
  *      "suspiciousWords": []
@@ -549,8 +547,7 @@ public interface NCModel {
 
     /**
      * Gets minimum word count (<i>excluding</i> stopwords) below which user input will be automatically rejected
-     * as ambiguous sentence. For conversational models or the models that rely heavily on trivia this value
-     * can be set to zero. For command or query oriented models this should be set to value greater than zero.
+     * as ambiguous sentence.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -988,48 +985,6 @@ public interface NCModel {
      */
     default NCMetadata getMetadata() {
         return new NCMetadataImpl();
-    }
-
-    /**
-     * Gets optional trivia groups.
-     * <br><br>
-     * Trivia is an automatic answer for some simple, common, short sentences like {@code hi, bye, hello}. Note
-     * that NlpCraft comes with default set of trivia (see {@link NCModelBuilder#loadDefaultTrivia()}). This
-     * method allows model to specify its own set of trivia. Note also that both inputs and responses
-     * can use macros and option groups. See {@link NCElement} for documentation on macros and option groups.
-     * <br><br>
-     * <b>JSON</b>
-     * <br>
-     * If using JSON model presentation this is set by <code>trivia</code> JSON properties:
-     * <pre class="brush: js">
-     * {
-     *      "trivia": [
-     *          {
-     *              "inputs": [
-     *                  "how {are|r} {you|u}",
-     *                  "how is it going",
-     *              ],
-     *              "responses": [
-     *                  "Hi there.",
-     *                  "Hi, I'm here to answer your questions.",
-     *              ]
-     *          }
-     *      ]
-     * }
-     * </pre>
-     * You can also enable default trivia in JSON. Note that default trivia and user
-     * trivia may potentially collide:
-     * <pre class="brush: js">
-     * {
-     *      "defaultTrivia": "true",
-     * }
-     * </pre>
-     *
-     * @return Optional collection of trivia groups. Return empty collection if no trivia
-     *      is required.
-     */
-    default Collection<NCTriviaGroup> getTrivia() {
-        return Collections.emptyList();
     }
 
     /**

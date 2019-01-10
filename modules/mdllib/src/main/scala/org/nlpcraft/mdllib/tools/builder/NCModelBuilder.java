@@ -31,12 +31,11 @@
 
 package org.nlpcraft.mdllib.tools.builder;
 
+import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.tools.*;
 import org.nlpcraft.mdllib.tools.builder.impl.*;
 import org.nlpcraft.mdllib.tools.builder.json.*;
 import org.nlpcraft.mdllib.tools.impl.*;
-import org.nlpcraft.mdllib.*;
-import org.nlpcraft.util.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -196,43 +195,6 @@ public class NCModelBuilder extends NCJsonBuilder {
     }
 
     /**
-     * Adds trivia group with given inputs and responses. See {@link NCTriviaGroup} for details.
-     *
-     * @param inputs Trivia inputs. See {@link NCTriviaGroup#getInputs()} for more information.
-     * @param responses Trivia responses.  See {@link NCTriviaGroup#getResponses()} for more information.
-     * @return This builder for chaining operations.
-     * @see NCTriviaGroup
-     */
-    public NCModelBuilder addTrivia(Collection<String> inputs, Collection<String> responses) {
-        impl.addTrivia(new NCTriviaGroup() {
-            @Override
-            public Collection<String> getInputs() {
-                return inputs;
-            }
-
-            @Override
-            public Collection<String> getResponses() {
-                return responses;
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * Adds trivia group. See {@link NCTriviaGroup} for details.
-     *
-     * @param grp Trivia group to add.
-     * @return This builder for chaining operations.
-     * @see NCTriviaGroup
-     */
-    public NCModelBuilder addTrivia(NCTriviaGroup grp) {
-        impl.addTrivia(grp);
-
-        return this;
-    }
-
-    /**
      * Adds model metadata. See {@link NCModel#getMetadata()} for more information.
      *
      * @param name Metadata property name.
@@ -330,10 +292,6 @@ public class NCModelBuilder extends NCJsonBuilder {
         if (js.getExamples() != null)
             addExamples(js.getExamples());
 
-        if (js.getTrivia() != null)
-            for (NCTriviaGroupJson t : js.getTrivia())
-                addTrivia(Arrays.asList(t.getInputs()), Arrays.asList(t.getResponses()));
-
         if (js.getMacros() != null)
             for (NCMacroJson m : js.getMacros())
                 addMacro(m.getName(), m.getMacro());
@@ -412,26 +370,6 @@ public class NCModelBuilder extends NCJsonBuilder {
                 }
             });
         }
-
-        if (js.isDefaultTrivia())
-            loadDefaultTrivia();
-    }
-
-    /**
-     * Loads default built-in trivia provided by NlpCraft.
-     *
-     * @return This builder for chaining operations.
-     * @throws NCBuilderException Thrown in case of any errors loading trivia.
-     */
-    public NCModelBuilder loadDefaultTrivia() throws NCBuilderException {
-        // TODO: hardcore 'en' language choice.
-        NCTriviaGroupJson[] trivia = readFile(NCGlobals.getStream("trivia_en.json"), NCTriviaGroupJson[].class);
-
-        if (trivia != null)
-            for (NCTriviaGroupJson t : trivia)
-                addTrivia(Arrays.asList(t.getInputs()), Arrays.asList(t.getResponses()));
-
-        return this;
     }
 
     /**

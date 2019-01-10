@@ -57,7 +57,7 @@ case class NCQueryStateMdo(
     @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
     @NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.
-    // Query OK (result, trivia, or talkback).
+    // Query OK.
     @NCMdoField var resultType: Option[String] = None,
     @NCMdoField var resultBody: Option[String] = None,
     @NCMdoField var resultMetadata: Option[Map[String, Object]] = None,

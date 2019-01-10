@@ -68,19 +68,6 @@
             ]
         }
     ],
-    "defaultTrivia": "true",
-    "trivia": [
-        {
-            "inputs": [
-                "{are|r} {you|u} ready"
-            ],
-            "responses": [
-                "Ready.",
-                "I am always ready.",
-                "Sure."
-            ]
-        }
-    ],
     "additionalStopwords": [
         "wow", "cool"
     ],

@@ -76,8 +76,6 @@ public class NCModelJson {
     @SuppressWarnings("unchecked") private Map<String, Object> usrMetadata = null;
     private NCMacroJson[] macros = null;
     private NCElementJson[] elements = null;
-    private boolean defaultTrivia = true;
-    private NCTriviaGroupJson[] trivia = null;
     private String[] additionalStopwords = null;
     private String[] excludedStopwords = null;
     private String[] suspiciousWords = null;
@@ -193,38 +191,6 @@ public class NCModelJson {
      */
     public void setElements(NCElementJson[] elements) {
         this.elements = elements;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isDefaultTrivia() {
-        return defaultTrivia;
-    }
-
-    /**
-     *
-     * @param defaultTrivia
-     */
-    public void setDefaultTrivia(boolean defaultTrivia) {
-        this.defaultTrivia = defaultTrivia;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public NCTriviaGroupJson[] getTrivia() {
-        return trivia;
-    }
-
-    /**
-     *
-     * @param trivia
-     */
-    public void setTrivia(NCTriviaGroupJson[] trivia) {
-        this.trivia = trivia;
     }
 
     /**

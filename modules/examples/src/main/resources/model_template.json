@@ -79,11 +79,6 @@
             ]
         }
     ],
-    /* See model documentation for explanation. */
-    "defaultTrivia": "true",
-
-    /* See model documentation for explanation. */
-    "trivia": [],
 
     /* See model documentation for explanation. */
     "additionalStopwords": [],

@@ -76,29 +76,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     private final val MAX_RES_BODY_LENGTH = 1024 * 1024 // 1MB.
     
     /**
-      * Gets trivia response, if any.
-      *
-      * @param mdl Model.
-      * @param ns Sentence.
-      */
-    private def getTriviaResponse(mdl: NCModelDecorator, ns: NCNlpSentence): Option[String] = {
-        def get[T](key: String): Option[String] =
-            mdl.triviaStems.get(key) match {
-                case Some(set) ⇒ Some(G.getRandom(set.toSeq))
-                case None ⇒ None
-            }
-        def normalize(s: String): String =
-            s.dropWhile(!_.isLetterOrDigit)
-
-        val lc = ns.text.toLowerCase.trim
-
-        get(lc) match {
-            case Some(x) ⇒ Some(x)
-            case None ⇒ get(normalize(normalize(lc.reverse).reverse).trim)
-        }
-    }
-    
-    /**
       * Processes 'ask' request from probe server.
       *
       * @param srvReqId Server request ID.
@@ -506,214 +483,201 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     
         val mdl = NCModelManager.getModel(dsModelId).getOrElse(throw new NCE(s"Model not found: $dsModelId"))
         
-        val trivia = getTriviaResponse(mdl, nlpSen)
+        try
+            NCNlpPreChecker.validate(mdl, nlpSen)
+        catch {
+            case e: NCNlpPreException ⇒
+                val errMsg = errorMsg(e.status)
+                
+                logger.error(s"Pre-enrichment validation: $errMsg ")
+                
+                respond(
+                    None,
+                    None,
+                    None,
+                    Some(errMsg),
+                    "RESP_VALIDATION",
+                    "P2S_ASK_RESULT"
+                )
         
-        if (trivia.isDefined) 
-            respond(
-                Some("html"),
-                Some(trivia.get),
-                None,
-                None,
-                "RESP_TRIVIA",
-                "P2S_ASK_RESULT"
-            )
-        else {
+                return
+        }
+
+        NCStopWordEnricher.enrich(mdl, nlpSen)
+        NCModelEnricher.enrich(mdl, nlpSen)
+
+        // This should be after model enricher because
+        // it uses references to user elements.
+        NCFunctionEnricher.enrich(mdl, nlpSen)
+
+        NCCoordinatesEnricher.enrich(mdl, nlpSen)
+        NCSuspiciousNounsEnricher.enrich(mdl, nlpSen)
+
+        var senSeq =
+            NCPostEnrichCollapser.collapse(mdl, nlpSen)
+            .flatMap(sen ⇒ {
+                NCPostEnricher.postEnrich(mdl, sen)
+                NCPostEnrichCollapser.collapse(mdl, sen)
+            })
+
+        senSeq.foreach(sen ⇒ {
+            NCContextEnricher.enrich(mdl, sen)
+            NCDictionaryEnricher.enrich(mdl, sen)
+        })
+
+        // Collapsed again (Sentences stopwords changed by CtxEnricher)
+        senSeq = senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p))
+
+        if (!IS_PROBE_SILENT) {
+            val sz = senSeq.size
+            
+            // Printed here because validation can change sentence.
+            senSeq.zipWithIndex.foreach(p ⇒
+                NCNlpAsciiLogger.prepareTable(p._1).info(logger,
+                    Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
+        }
+        
+        // Final validation before execution.
+        // Note: do not validate for 'explain' command.
+        if (!explain)
             try
-                NCNlpPreChecker.validate(mdl, nlpSen)
+                senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
             catch {
-                case e: NCNlpPreException ⇒
-                    val errMsg = errorMsg(e.status)
-                    
-                    logger.error(s"Pre-enrichment validation: $errMsg ")
-                    
+                case e: NCPostException ⇒
+                    val errMsg = errorMsg(e.code)
+
+                    logger.error(s"Post-enrichment validation: $errMsg ")
+
                     respond(
                         None,
                         None,
                         None,
-                        Some(errMsg),
+                        Some(errorMsg(e.code)),
                         "RESP_VALIDATION",
                         "P2S_ASK_RESULT"
                     )
-            
+
                     return
             }
-    
-            NCStopWordEnricher.enrich(mdl, nlpSen)
-            NCModelEnricher.enrich(mdl, nlpSen)
-    
-            // This should be after model enricher because
-            // it uses references to user elements.
-            NCFunctionEnricher.enrich(mdl, nlpSen)
 
-            NCCoordinatesEnricher.enrich(mdl, nlpSen)
-            NCSuspiciousNounsEnricher.enrich(mdl, nlpSen)
+        val conv = NCConversationManager.get(usrId, dsId)
+        
+        // Update STM and recalculate context.
+        conv.update()
+        
+        if (!IS_PROBE_SILENT)
+            conv.ack()
+        
+        val unitedSen =
+            new NCSentenceImpl(mdl, new NCMetadataImpl((senMeta - EXPLAIN_META_KEY).asJava), srvReqId, senSeq)
 
-            var senSeq =
-                NCPostEnrichCollapser.collapse(mdl, nlpSen)
-                .flatMap(sen ⇒ {
-                    NCPostEnricher.postEnrich(mdl, sen)
-                    NCPostEnrichCollapser.collapse(mdl, sen)
-                })
-
-            senSeq.foreach(sen ⇒ {
-                NCContextEnricher.enrich(mdl, sen)
-                NCDictionaryEnricher.enrich(mdl, sen)
-            })
-
-            // Collapsed again (Sentences stopwords changed by CtxEnricher)
-            senSeq = senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p))
-
-            if (!IS_PROBE_SILENT) {
-                val sz = senSeq.size
-                
-                // Printed here because validation can change sentence.
-                senSeq.zipWithIndex.foreach(p ⇒
-                    NCNlpAsciiLogger.prepareTable(p._1).info(logger,
-                        Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
+        // Create model query context.
+        val qryCtx: NCQueryContext = new NCQueryContext {
+            override val getDataSource: NCDataSource = new NCDataSource {
+                override lazy val getDescription: String = dsDesc
+                override lazy val getName: String = dsName
+                override lazy val getConfig: String = dsModelCfg
             }
             
-            // Final validation before execution.
-            // Note: do not validate for 'explain' command.
-            if (!explain)
-                try
-                    senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
-                catch {
-                    case e: NCPostException ⇒
-                        val errMsg = errorMsg(e.code)
-    
-                        logger.error(s"Post-enrichment validation: $errMsg ")
-    
-                        respond(
-                            None,
-                            None,
-                            None,
-                            Some(errorMsg(e.code)),
-                            "RESP_VALIDATION",
-                            "P2S_ASK_RESULT"
-                        )
-    
-                        return
-                }
+            override lazy val getSentence: NCSentence = unitedSen
+            override lazy val getModel: NCModel = mdl.model
+            override lazy val getServerRequestId: String = srvReqId
+            override lazy val getHint: String = curateHint.orNull
 
-            val conv = NCConversationManager.get(usrId, dsId)
-            
-            // Update STM and recalculate context.
-            conv.update()
-            
-            if (!IS_PROBE_SILENT)
-                conv.ack()
-            
-            val unitedSen =
-                new NCSentenceImpl(mdl, new NCMetadataImpl((senMeta - EXPLAIN_META_KEY).asJava), srvReqId, senSeq)
-
-            // Create model query context.
-            val qryCtx: NCQueryContext = new NCQueryContext {
-                override val getDataSource: NCDataSource = new NCDataSource {
-                    override lazy val getDescription: String = dsDesc
-                    override lazy val getName: String = dsName
-                    override lazy val getConfig: String = dsModelCfg
-                }
-                
-                override lazy val getSentence: NCSentence = unitedSen
-                override lazy val getModel: NCModel = mdl.model
-                override lazy val getServerRequestId: String = srvReqId
-                override lazy val getHint: String = curateHint.orNull
-
-                override lazy val getConversationContext: NCConversationContext = new NCConversationContext {
-                    override def getTokens: JSet[NCToken] = conv.tokens
-                    override def clear(filter: Predicate[NCToken]): Unit = conv.clear(filter)
-                }
+            override lazy val getConversationContext: NCConversationContext = new NCConversationContext {
+                override def getTokens: JSet[NCToken] = conv.tokens
+                override def clear(filter: Predicate[NCToken]): Unit = conv.clear(filter)
             }
-    
-            // Execute model query asynchronously.
-            G.asFuture(
-                _ ⇒ {
-                    if (explain)
-                        explainSentence(qryCtx)
-                    else {
-                        val res = mdl.model.query(qryCtx)
+        }
 
-                        if (res == null)
-                            throw new IllegalStateException("Result cannot be null.")
-                        if (res.getBody == null)
-                            throw new IllegalStateException("Result body cannot be null.")
-                        if (res.getType == null)
-                            throw new IllegalStateException("Result type cannot be null.")
+        // Execute model query asynchronously.
+        G.asFuture(
+            _ ⇒ {
+                if (explain)
+                    explainSentence(qryCtx)
+                else {
+                    val res = mdl.model.query(qryCtx)
 
-                        val `var` = res.getVariant
+                    if (res == null)
+                        throw new IllegalStateException("Result cannot be null.")
+                    if (res.getBody == null)
+                        throw new IllegalStateException("Result body cannot be null.")
+                    if (res.getType == null)
+                        throw new IllegalStateException("Result type cannot be null.")
 
-                        // Adds input sentence to the ongoing conversation if *some* result
-                        // was returned. Do not add if result is invalid.
-                        if (`var` != null) {
-                            conv.addItem(unitedSen, `var`)
+                    val `var` = res.getVariant
 
-                            // Optional selected variants.
-                            toks = Seq(`var`.getTokens.asScala)
-                        }
+                    // Adds input sentence to the ongoing conversation if *some* result
+                    // was returned. Do not add if result is invalid.
+                    if (`var` != null) {
+                        conv.addItem(unitedSen, `var`)
 
-                        res
+                        // Optional selected variants.
+                        toks = Seq(`var`.getTokens.asScala)
                     }
-                },
-                {
-                    case e: NCCuration ⇒
-                        val json = explainSentence(qryCtx)
 
-                        // Optional selected variants.
-                        if (e.getVariants != null)
-                            toks = e.getVariants.asScala.map(_.getTokens.asScala)
+                    res
+                }
+            },
+            {
+                case e: NCCuration ⇒
+                    val json = explainSentence(qryCtx)
 
-                        respond(
-                            // Passing request JSON explanation in the payload for curation.
-                            Some(json.getType),
-                            Some(json.getBody),
-                            Some(e.getMetadata.asScala),
-                            Some(e.getMessage), // User provided curation message.
-                            "RESP_CURATOR",
-                            "P2S_CURATOR"
-                        )
+                    // Optional selected variants.
+                    if (e.getVariants != null)
+                        toks = e.getVariants.asScala.map(_.getTokens.asScala)
 
-                    case e: NCRejection ⇒
-                        logger.info(s"Rejection [srvReqId=$srvReqId, msg=${e.getMessage}]")
-                        
-                        if (e.getCause != null)
-                            logger.info(s"Rejection cause:", e.getCause)
-
-                        // Optional selected variants.
-                        if (e.getVariants != null)
-                            toks = e.getVariants.asScala.map(_.getTokens.asScala)
-
-                        respond(
-                            None,
-                            None,
-                            Some(e.getMetadata.asScala),
-                            Some(e.getMessage), // User provided rejection message.
-                            "RESP_REJECT",
-                            "P2S_ASK_RESULT"
-                        )
-
-                    case e: Throwable ⇒
-                        logger.error(s"Unexpected error for: $srvReqId", e)
-
-                        respond(
-                            None,
-                            None,
-                            None,
-                            Some("Processing failed with unexpected error."), // System error message.
-                            "RESP_ERROR",
-                            "P2S_ASK_RESULT"
-                        )
-                },
-                (res: NCQueryResult) ⇒ {
                     respond(
-                        Some(res.getType),
-                        Some(res.getBody),
-                        Some(res.getMetadata.asScala),
+                        // Passing request JSON explanation in the payload for curation.
+                        Some(json.getType),
+                        Some(json.getBody),
+                        Some(e.getMetadata.asScala),
+                        Some(e.getMessage), // User provided curation message.
+                        "RESP_CURATOR",
+                        "P2S_CURATOR"
+                    )
+
+                case e: NCRejection ⇒
+                    logger.info(s"Rejection [srvReqId=$srvReqId, msg=${e.getMessage}]")
+                    
+                    if (e.getCause != null)
+                        logger.info(s"Rejection cause:", e.getCause)
+
+                    // Optional selected variants.
+                    if (e.getVariants != null)
+                        toks = e.getVariants.asScala.map(_.getTokens.asScala)
+
+                    respond(
                         None,
-                        "RESP_OK",
+                        None,
+                        Some(e.getMetadata.asScala),
+                        Some(e.getMessage), // User provided rejection message.
+                        "RESP_REJECT",
                         "P2S_ASK_RESULT"
                     )
-                }
-            )(EC)
-        }
+
+                case e: Throwable ⇒
+                    logger.error(s"Unexpected error for: $srvReqId", e)
+
+                    respond(
+                        None,
+                        None,
+                        None,
+                        Some("Processing failed with unexpected error."), // System error message.
+                        "RESP_ERROR",
+                        "P2S_ASK_RESULT"
+                    )
+            },
+            (res: NCQueryResult) ⇒ {
+                respond(
+                    Some(res.getType),
+                    Some(res.getBody),
+                    Some(res.getMetadata.asScala),
+                    None,
+                    "RESP_OK",
+                    "P2S_ASK_RESULT"
+                )
+            }
+        )(EC)
     }
 }

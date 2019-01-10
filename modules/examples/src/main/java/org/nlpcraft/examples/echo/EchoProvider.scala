@@ -224,8 +224,7 @@ class EchoProvider extends NCModelProviderAdapter {
               |    "vendorContact": "Support",
               |    "vendorEmail": "info@nlpcraft.org",
               |    "docsUrl": "https://www.nlpcraft.org",
-              |    "allowNoUserTokens": true,
-              |    "defaultTrivia": false
+              |    "allowNoUserTokens": true
               | }
             """.stripMargin)
             .setQueryFunction((ctx: NCQueryContext) ⇒ {

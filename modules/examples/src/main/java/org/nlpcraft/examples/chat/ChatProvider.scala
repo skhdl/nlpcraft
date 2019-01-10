@@ -67,8 +67,7 @@ class ChatProvider extends NCModelProviderAdapter {
                |    "examples": [
                |        "Hey, any plans this evening?",
                |        "Wanna see Warriors tonight?"
-               |    ],
-               |    "defaultTrivia": "true"
+               |    ]
                | }
             """.stripMargin)
             // Query function sends any user input to curation.

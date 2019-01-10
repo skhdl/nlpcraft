@@ -53,6 +53,5 @@
                 "{what is|*} {my|*} {current|actual|*} {geo|geographical|*} {position|location|coordinates|place}"
             ]
         }
-    ],
-    "defaultTrivia": "true"
+    ]
 }
