@@ -204,13 +204,4 @@ public class NCElementImpl implements NCElement {
 
         exclSyns.add(syn);
     }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String toString() {
-        return String.format("Model element [id=%s, group=%s, type=%s, parentId=%s]", id, group, type, parentId);
-    }
 }

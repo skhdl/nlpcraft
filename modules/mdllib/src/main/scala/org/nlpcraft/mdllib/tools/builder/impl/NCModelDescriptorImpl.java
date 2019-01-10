@@ -83,9 +83,4 @@ public class NCModelDescriptorImpl implements NCModelDescriptor {
 
         this.ver = ver;
     }
-
-    @Override
-    public String toString() {
-        return String.format("Model descriptor [id=%s, name=%s, ver=%s]", id, name, ver);
-    }
 }

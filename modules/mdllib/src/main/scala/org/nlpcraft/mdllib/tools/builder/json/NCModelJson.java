@@ -720,7 +720,15 @@ public class NCModelJson {
     public void setMaxTotalSynonyms(int maxTotalSynonyms) {
         this.maxTotalSynonyms = maxTotalSynonyms;
     }
-    
+
+    /**
+     * 
+     * @param isPermutateSynonyms
+     */
+    public void setPermutateSynonyms(boolean isPermutateSynonyms) {
+        this.isPermutateSynonyms = isPermutateSynonyms;
+    }
+
     /**
      *
      * @return
