@@ -335,6 +335,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 0,
                 // Weight should be greater, comparing reversed.
                 new Weight(
+                    // TODO: removed term nouns value - correct?
                     if (exactMatch) 1 else 0
                 )
             )
