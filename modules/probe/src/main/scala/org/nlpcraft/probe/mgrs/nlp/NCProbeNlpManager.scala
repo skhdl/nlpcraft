@@ -620,23 +620,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 }
             },
             {
-                case e: NCCuration ⇒
-                    val json = explainSentence(qryCtx)
-
-                    // Optional selected variants.
-                    if (e.getVariants != null)
-                        toks = e.getVariants.asScala.map(_.getTokens.asScala)
-
-                    respond(
-                        // Passing request JSON explanation in the payload for curation.
-                        Some(json.getType),
-                        Some(json.getBody),
-                        Some(e.getMetadata.asScala),
-                        Some(e.getMessage), // User provided curation message.
-                        "RESP_CURATOR",
-                        "P2S_CURATOR"
-                    )
-
                 case e: NCRejection ⇒
                     logger.info(s"Rejection [srvReqId=$srvReqId, msg=${e.getMessage}]")
                     

@@ -204,7 +204,7 @@ public class NCIntentSolver {
     /**
      * Callback provided by the user for an intent when it is matched. It takes solver
      * context as a parameter and should return query result. It can also throw either
-     * {@link NCRejection}, {@link NCCuration} or {@link NCIntentSkip} exceptions.
+     * {@link NCRejection} or {@link NCIntentSkip} exceptions.
      *
      * @see NCIntentSolver#addIntent(INTENT, IntentCallback)
      */
@@ -1591,7 +1591,7 @@ public class NCIntentSolver {
      * @return Query result.
      */
     @SuppressWarnings("unchecked")
-    public NCQueryResult solve(NCQueryContext ctx) throws NCRejection, NCCuration {
+    public NCQueryResult solve(NCQueryContext ctx) throws NCRejection {
         if (intents.isEmpty())
             log.warn("Intent solver has no registered intents (ignoring).");
 
@@ -1615,7 +1615,6 @@ public class NCIntentSolver {
     
         NCIntentSolverResult termRes = null;
         
-        NCCuration errCur = null;
         NCRejection errRej = null;
         List<NCVariant> vars = new ArrayList<>();
     
@@ -1657,16 +1656,6 @@ public class NCIntentSolver {
                 if (msg != null)
                     log.trace("Selected intent skipped due to: " + msg);
             }
-            catch (NCCuration e) {
-                errCur = e;
-
-                if (errCur.getVariants() == null) // Don't override if user already set it.
-                    errCur.setVariants(Collections.singletonList(varFn.get()));
-    
-                errCur.setMetadata(cloneMetadata(errCur.getMetadata(), res));
-
-                break;
-            }
             catch (NCRejection e) {
                 errRej = e;
 
@@ -1686,9 +1675,6 @@ public class NCIntentSolver {
             
             return res;
         }
-
-        if (errCur != null)
-            throw errCur;
     
         if (errRej != null)
             throw errRej;

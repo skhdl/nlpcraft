@@ -347,13 +347,9 @@ public class WeatherProvider extends NCModelProviderAdapter {
      * @param ctx Solver context.
      */
     private void checkMatch(NCIntentSolverContext ctx) {
-        // Send for curation if intent match is not exact ("dangling" tokens remain).
-        if (!ctx.isExactMatch())
-            throw new NCCuration("Intent match was not exact.");
-        
-        // Send for curation if there are too many free words left unmatched.
-        if (ctx.getVariant().stream(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
-            throw new NCCuration("Too many free words.");
+        // Reject if intent match is not exact ("dangling" tokens remain) or too many free words left unmatched.
+        if (!ctx.isExactMatch() || ctx.getVariant().stream(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
+            throw new NCRejection("Too many extra words - please simplify.");
     }
 
     /**
@@ -369,7 +365,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
             // Look 5 days ahead by default.
             return onRangeMatch(ctx, LocalDate.now(), LocalDate.now().plusDays(5));
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {
@@ -390,7 +386,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
             // Look 5 days back by default.
             return onRangeMatch(ctx, LocalDate.now().minusDays(5), LocalDate.now());
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {
@@ -418,7 +414,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
         catch (ApixuPeriodException e) {
             throw new NCRejection(e.getLocalizedMessage());
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {

@@ -1213,10 +1213,9 @@ public interface NCModel {
      *
      * @param ctx Query context containing parsed user input and all associated data.
      * @return Query result. This result cannot be {@code null}. In case of any errors this method should
-     *      throw either {@link NCCuration} or {@link NCRejection} exceptions.
-     * @throws NCCuration Thrown when human curation is required.
+     *      throw {@link NCRejection} exception.
      * @throws NCRejection Thrown when user input cannot be processed as is and should be rejected.
      * @see NCIntentSolver
      */
-    NCQueryResult query(NCQueryContext ctx) throws NCCuration, NCRejection;
+    NCQueryResult query(NCQueryContext ctx) throws NCRejection;
 }
