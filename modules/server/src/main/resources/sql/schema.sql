@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS proc_log CASCADE;
 CREATE TABLE proc_log (
     -- Common part.
     srv_req_id VARCHAR(64) PRIMARY KEY,
-    orig_txt VARCHAR(1024),
+    txt VARCHAR(1024),
     user_id BIGINT,
     ds_id BIGINT,
     model_id VARCHAR(64),
@@ -113,14 +113,10 @@ CREATE TABLE proc_log (
     -- Ask and result timestamps.
     recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
-    -- Optional curation part.
-    curate_txt VARCHAR(1024) NULL, -- Last curate text, NULL if there was no curation.
-    curate_hint VARCHAR(1024) NULL, -- Last curate hint, NULL if there was no curation or no hint.
     -- Result parts.
     res_type VARCHAR(32) NULL,
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
     error TEXT NULL,
-    cache_id BIGINT NULL,
     -- Probe information for this request.
     probe_token VARCHAR(256) NULL,
     probe_id VARCHAR(512) NULL,

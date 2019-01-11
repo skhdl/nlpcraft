@@ -73,16 +73,6 @@ public interface NCQueryContext extends Serializable {
     NCDataSource getDataSource();
 
     /**
-     * During human curation an operator can provide a hint that can be used by
-     * {@link NCModel#query(NCQueryContext)} method. A hint can be anything that can be expressed in text:
-     * SQL query, REST call, property set, JavaScript code, etc.
-     *
-     * @return Curation hint or {@code null} if not provided.
-     * @see NCCuration
-     */
-    String getHint();
-
-    /**
      * Gets fully parsed, canonical representation of user input.
      *
      * @return Fully parsed, canonical representation of user input.

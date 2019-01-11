@@ -118,14 +118,12 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
       * @param tokGrps
       * @param weight
       * @param intent
-      * @param termNouns
       * @param exactMatch
       */
     private case class IntentMatch(
         tokGrps: List[List[UseToken]],
         weight: Weight,
         intent: INTENT,
-        termNouns: List[String],
         exactMatch: Boolean
     )
     
@@ -224,7 +222,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 m.intentMatch.intent.getId,
                 m.callback,
                 new JArrayList(m.intentMatch.tokGrps.map(lst ⇒ new JArrayList(lst.map(_.tok)))),
-                new JArrayList(m.intentMatch.termNouns),
                 m.intentMatch.exactMatch,
                 m.variant
             )
@@ -278,7 +275,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         senToks: Seq[UseToken],
         convToks: Set[UseToken],
         varIdx: Int): Option[IntentMatch] = {
-        var missedTermNouns = List.empty[String]
         val intentWeight = new Weight()
         val intentGrps = mutable.ListBuffer.empty[List[UseToken]]
         var abort = false
@@ -305,14 +301,9 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     }
                     
                 case None ⇒
-                    if (term.getTermNoun != null)
-                        // Term is missing but we can still ask for it.
-                        missedTermNouns ::= term.getTermNoun
-                    else
-                        // Term is missing and we can't ask for it.
-                        // Stop further terms processing for this intent.
-                        // This intent cannot be matched.
-                        abort = true
+                    // Term is missing. Stop further terms processing for this intent.
+                    // This intent cannot be matched.
+                    abort = true
             }
         }
         
@@ -344,7 +335,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 0,
                 // Weight should be greater, comparing reversed.
                 new Weight(
-                    -missedTermNouns.size,
                     if (exactMatch) 1 else 0
                 )
             )
@@ -354,7 +344,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     tokGrps = intentGrps.toList,
                     weight = intentWeight,
                     intent = intent,
-                    termNouns = missedTermNouns,
                     exactMatch = exactMatch
                 )
             )
@@ -387,15 +376,8 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     abort = true
             }
         
-        if (abort) {
-            if (term.getTermNoun != null)
-                // Even though the term is not found we can still ask for it
-                // and therefore we need to rollback tokens used by already processed items
-                // so that they can be used by other terms that can still be found further.
-                termToks.foreach(_.used = false)
-            
+        if (abort)
             None
-        }
         else
             Some(TermMatch(termToks, termWeight))
     }

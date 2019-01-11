@@ -1154,47 +1154,29 @@ public class NCIntentSolver {
     }
 
     /**
-     * Term is a building block of the {@link INTENT INTENT}. Term is a collection of one or more {@link ITEM ITEMs}
-     * plus an optional term noun. Intent has a list of terms that all have to be found in the user input for the
-     * intent to match. Term can also have an optional name (a term noun) that, if provided, will force token solver
-     * to ask user for that term if it can't be found in the current user input. Note that order of items is not
-     * important for matching the term.
+     * Term is a building block of the {@link INTENT INTENT}. Term is a collection of one or more {@link ITEM ITEMs}.
+     * Intent has a list of terms that all have to be found in the user input for the intent to match. Note that
+     * order of items is not important for matching the term.
      */
     public static final class TERM {
         final private ITEM[] items;
-        final private String termNoun;
 
         /**
          * Creates new term with given parameters.
          *
-         * @param termNoun Optional term noun. If non-{@code null} token solver will ask for this term
-         *      from the user when it's missing in the current user input.
          * @param items List of items that define conditions for that term to match.
          */
-        public TERM(String termNoun, ITEM... items) {
+        public TERM(ITEM... items) {
             if (items.length == 0)
                 throw new IllegalArgumentException("Term should have at least one item.");
 
             this.items = items;
-            this.termNoun = termNoun;
-        }
-
-        /**
-         * Shortcut constructor. It is equivalent to:
-         * <pre class="brush: java">
-         *      this(null, items);
-         * </pre>
-         * 
-         * @param items List of items that define conditions for that term to match.
-         */
-        public TERM(ITEM... items) {
-            this(null, items);
         }
 
         /**
          * Shortcut constructor for term with a single item. It is equivalent to:
          * <pre class="brush: java">
-         *      this((String)null, new ITEM(ptrn, min, max));
+         *      this(new ITEM(ptrn, min, max));
          * </pre>
          *
          * @param pred Built-in token predicate: either one of the logical combinators or {@link RULE RULE}.
@@ -1202,7 +1184,7 @@ public class NCIntentSolver {
          * @param max Maximum quantifier for this predicate.
          */
         public TERM(Predicate pred, int min, int max) {
-            this((String)null, new ITEM(pred, min, max));
+            this(new ITEM(pred, min, max));
         }
 
         /**
@@ -1216,49 +1198,7 @@ public class NCIntentSolver {
          * @param max Maximum quantifier for this predicate.
          */
         public TERM(String expr, int min, int max) {
-            this((String)null, new ITEM(new RULE(expr), min, max));
-        }
-
-        /**
-         * Shortcut constructor for term with a single item. It is equivalent to:
-         * <pre class="brush: java">
-         *      this(termNoun, new ITEM(ptrn, min, max));
-         * </pre>
-         *
-         * @param termNoun Optional term noun. If non-{@code null} token solver will ask for this term
-         *      from the user when it's missing in the current user input.
-         * @param pred Built-in token predicate: either one of the logical combinators or {@link RULE RULE}.
-         * @param min Minimum quantifier for this predicate.
-         * @param max Maximum quantifier for this predicate.
-         */
-        public TERM(String termNoun, Predicate pred, int min, int max) {
-            this(termNoun, new ITEM(pred, min, max));
-        }
-
-        /**
-         * Shortcut constructor for term with a single item. It is equivalent to:
-         * <pre class="brush: java">
-         *      this(termNoun, new ITEM(ptrn, min, max));
-         * </pre>
-         *
-         * @param termNoun Optional term noun. If non-{@code null} token solver will ask for this term
-         *      from the user when it's missing in the current user input.
-         * @param expr Whitespace separated string of parameter, its operation and value for the {@link RULE RULE}.
-         * @param min Minimum quantifier for this predicate.
-         * @param max Maximum quantifier for this predicate.
-         */
-        public TERM(String termNoun, String expr, int min, int max) {
-            this(termNoun, new ITEM(new RULE(expr), min, max));
-
-        }
-
-        /**
-         * Gets optional term noun.
-         * 
-         * @return Optional term noun.
-         */
-        public String getTermNoun() {
-            return termNoun;
+            this(new ITEM(new RULE(expr), min, max));
         }
 
         /**
@@ -1272,8 +1212,7 @@ public class NCIntentSolver {
 
         @Override
         public String toString() {
-            return String.format("TERM(termNoun=%s, %s)", termNoun,
-                Arrays.stream(items).map(Object::toString).collect(Collectors.joining(", ")));
+            return String.format("TERM(%s)", Arrays.stream(items).map(Object::toString).collect(Collectors.joining(", ")));
         }
     }
 
@@ -1300,8 +1239,7 @@ public class NCIntentSolver {
          * @param id Intent ID. It can be any arbitrary string meaningful for the developer.
          *      Look at the example for one approach to provide descriptive intent IDs.
          * @param inclConv Whether or not to include conversation into the search for this intent. If conversation
-         *      is not included than only the tokens present in the user input will be considered. Note that
-         *      conversation cannot be excluded if this intent has at least one interactive term.
+         *      is not included than only the tokens present in the user input will be considered. 
          * @param ordered Whether or not the specified order of {@link TERM TERMs} is important for matching
          *      this intent. If intent is unordered its {@link TERM TERMs} can be found anywhere in the string
          *      and in any order.
@@ -1310,8 +1248,6 @@ public class NCIntentSolver {
         public INTENT(String id, boolean inclConv, boolean ordered, TERM... terms) {
             if (terms.length == 0)
                 throw new IllegalArgumentException("Intent should have at least one term.");
-            if (!inclConv && Arrays.stream(terms).anyMatch(t -> t.getTermNoun() != null))
-                throw new IllegalArgumentException("Intent cannot exclude conversation if it has interactive term.");
 
             this.id = id;
             this.inclConv = inclConv;
@@ -1331,10 +1267,6 @@ public class NCIntentSolver {
 
         /**
          * Gets conversation policy flag.
-         * <br><br>
-         * If conversation is not included than only the tokens present in the user input will be
-         * considered. Note that conversation cannot be excluded if this intent has at least one
-         * interactive term.
          *
          * @return Conversation policy flag.
          */
@@ -1612,17 +1544,10 @@ public class NCIntentSolver {
             return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
 
         boolean isOnlyOneVar = sen.variants().size() == 1;
-    
-        NCIntentSolverResult termRes = null;
         
         NCRejection errRej = null;
-        List<NCVariant> vars = new ArrayList<>();
     
         for (NCIntentSolverResult res : results) {
-            termRes = res;
-            
-            vars.add(termRes.variant());
-
             Supplier<NCVariant> varFn = () -> {
                 if (res.variant() != null)
                     return res.variant();
@@ -1659,21 +1584,8 @@ public class NCIntentSolver {
             catch (NCRejection e) {
                 errRej = e;
 
-                if (errRej.getVariants() == null) // Don't override if user already set it.
-                    errRej.setVariants(Collections.singletonList(varFn.get()));
-    
-                errRej.setMetadata(cloneMetadata(errRej.getMetadata(), res));
-
                 break;
             }
-        }
-    
-        if (termRes != null && termRes.termNouns() != null && !termRes.termNouns().isEmpty()) {
-            NCQueryResult res = NCQueryResult.ask(String.format("Please provide %s.", mkHumanList(termRes.termNouns())));
-            
-            res.setMetadata(cloneMetadata(null, termRes));
-            
-            return res;
         }
     
         if (errRej != null)

@@ -223,15 +223,14 @@ public interface NCElement {
      * This unique ID should be human readable for simpler debugging and testing of the model.
      * Although element ID could be any arbitrary string it is highly recommended to have
      * element ID as a lower case string starting with some model prefix, followed by colon and
-     * then the element's name. This naming consistency will greatly help during curation process
-     * where a human operator can specify model element directly by its ID. For example, some
-     * built-in NlpCraft IDs are: <code>nlp:date</code>, <code>nlp:geo</code>
+     * then the element's name. For example, some built-in NlpCraft IDs are: <code>nlp:date</code>,
+     * <code>nlp:geo</code>.
      * <br><br>
      * Few important notes:
      * <ul>
      *      <li>Element IDs starting with <code>nlp:</code> are reserved for built-in system IDs.</li>
      *      <li>
-     *          Element ID can be, and often is, used by the human operator during curation to clearly
+     *          Element ID can be used in the user input directly (i.e. "power user mode") to clearly
      *          disambiguate the element in the input sentence instead of relying on synonyms or other
      *          ways of detection.
      *      </li>

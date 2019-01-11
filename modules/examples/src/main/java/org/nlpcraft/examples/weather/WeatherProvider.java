@@ -67,7 +67,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
     private final static DateFormat outFmt = new SimpleDateFormat("EE'<br/><span style=___>'MMM dd'</span>'");
     // Base CSS.
     private static final String CSS = "style='display: inline-block; min-width: 120px'";
-    // Maximum free words left before auto-curation.
+    // Maximum free words left before rejection.
     private static final int MAX_FREE_WORDS = 4;
     // Keywords for 'local' weather.
     private static final Set<String> LOCAL_WORDS = new HashSet<>(Arrays.asList("my", "local", "hometown"));
@@ -342,7 +342,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
 
     /**
      * Strict check for an exact match (i.e. no dangling unused system or user defined tokens) and
-     * maximum number of free words left unmatched. In both cases user input will go into curation.
+     * maximum number of free words left unmatched. In both cases user input will be rejected.
      *
      * @param ctx Solver context.
      */

@@ -70,7 +70,7 @@ public class NCTestSentence {
             switch (expStatus) {
                 case NCTestClient.RESP_VALIDATION:
                     throw new IllegalArgumentException(
-                        "Intent ID can only be specified for the following responses: RESP_OK, RESP_REJECT, RESP_CURATION"
+                        "Intent ID can only be specified for the following responses: RESP_OK, RESP_REJECT."
                     );
                 default: // No-op.
             }

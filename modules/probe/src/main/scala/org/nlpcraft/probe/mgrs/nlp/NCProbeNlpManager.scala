@@ -70,8 +70,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )
     
-    private final val EXPLAIN_META_KEY = "__NC__EXPLAIN"
-    
     // Maximum size of the result body.
     private final val MAX_RES_BODY_LENGTH = 1024 * 1024 // 1MB.
     
@@ -79,10 +77,8 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       * Processes 'ask' request from probe server.
       *
       * @param srvReqId Server request ID.
-      * @param origTxt Text.
-      * @param curateTxt Curated text.
-      * @param curateHint Hint.
-      * @param origTokens Original tokens.
+      * @param txt Text.
+      * @param toks Original tokens.
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
@@ -91,16 +87,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       * @param dsName Datasource name.
       * @param dsDesc Datasource description.
       * @param dsModelCfg Datasource model config.
-      * @param cacheable `Should be cached` flag.
       * @param test Test flag.
       */
     @throws[NCE]
     def ask(
         srvReqId: String,
-        origTxt: String,
-        curateTxt: Option[String],
-        curateHint: Option[String],
-        origTokens: Option[Seq[NCToken]],
+        txt: String,
+        toks: Option[Seq[NCToken]],
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
@@ -109,7 +102,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         dsName: String,
         dsDesc: String,
         dsModelCfg: String,
-        cacheable: Boolean,
         test: Boolean
     ): Unit = {
         ensureStarted()
@@ -117,10 +109,8 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         try
             ask0(
                 srvReqId,
-                origTxt,
-                curateTxt,
-                curateHint,
-                origTokens,
+                txt,
+                toks,
                 nlpSen,
                 usrId,
                 senMeta,
@@ -129,7 +119,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 dsName,
                 dsDesc,
                 dsModelCfg,
-                cacheable,
                 test
             )
         catch {
@@ -142,10 +131,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 msg += "error" → "Processing failed due to a system error."
                 msg += "dsId" → dsId
                 msg += "dsModelId" → dsModelId
-                msg += "origTxt" → origTxt
-                
-                addOptional(msg, "curateTxt", curateTxt)
-                addOptional(msg, "curateHint", curateHint)
+                msg += "txt" → txt
                 
                 NCProbeConnectionManager.send(msg)
         }
@@ -161,186 +147,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     private def addOptional(msg: NCProbeMessage, name: String, vOpt: Option[Serializable]): Unit =
         if (vOpt.isDefined)
             msg += name → vOpt.get
-    
-    /**
-      *
-      * @param v
-      * @return
-      */
-    @scala.annotation.tailrec
-    private def mkJsonVal(v: Any): String =
-        v match {
-            case opt: Optional[_] ⇒ if (opt.isPresent) mkJsonVal(opt.get) else "null"
-            case _ ⇒
-                if (v == null) "null"
-                else if (v.isInstanceOf[Number] || v.isInstanceOf[lang.Boolean])
-                    v.toString
-                else
-                    s""""${G.escapeJson(v.toString)}""""
-        }
-
-    /**
-      *
-      * @param map
-      * @return
-      */
-    private def mkMapJson(map: Map[String, java.io.Serializable]): String =
-        // Skip very long line keys for prettier display...
-        // Is this necessary?
-        map.toList.filter(p ⇒ p._1 != "AVATAR_URL" && p._1 != "USER_AGENT").
-            sortBy(_._1).map(t ⇒ s""""${t._1}": ${mkJsonVal(t._2)}""").mkString("{", ",", "}")
-    
-    /**
-      *
-      * @param ctx
-      * @return
-      */
-    private def mkDataSourceJson(ctx: NCQueryContext): String = {
-        val ds = ctx.getDataSource
-        
-        s"""
-           | {
-           |    "name": ${mkJsonVal(ds.getName)},
-           |    "description": ${mkJsonVal(ds.getDescription)},
-           |    "config": ${mkJsonVal(ds.getConfig)}
-           | }
-         """.stripMargin
-    }
-    
-    /**
-      *
-      * @param tok
-      * @return
-      */
-    private def mkTokenJson(tok: NCToken): String = {
-        s"""
-           | {
-           |    "id": ${mkJsonVal(tok.getId)},
-           |    "group": ${mkJsonVal(tok.getGroup)},
-           |    "type": ${mkJsonVal(tok.getType)},
-           |    "parentId": ${mkJsonVal(tok.getParentId)},
-           |    "value": ${mkJsonVal(tok.getValue)},
-           |    "group": ${mkJsonVal(tok.getGroup)},
-           |    "isUserDefined": ${mkJsonVal(tok.isUserDefined)},
-           |    "metadata": ${mkMapJson(tok.getMetadata.asScala.toMap)}
-           | }
-         """.stripMargin
-    }
-    
-    /**
-      *
-      * @param ctx
-      * @return
-      */
-    private def mkSentenceJson(ctx: NCQueryContext): String = {
-        val sen = ctx.getSentence
-
-        s"""
-           | {
-           |    "normalizedText": ${mkJsonVal(sen.getNormalizedText)},
-           |    "srvReqId": ${mkJsonVal(sen.getServerRequestId)},
-           |    "receiveTimestamp": ${mkJsonVal(sen.getReceiveTimestamp)},
-           |    "userFirstName": ${mkJsonVal(sen.getUserFirstName)},
-           |    "userLastName": ${mkJsonVal(sen.getUserLastName)},
-           |    "userEmail": ${mkJsonVal(sen.getUserEmail)},
-           |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
-           |    "userCompany": ${mkJsonVal(sen.getUserCompany)},
-           |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
-           |    "userTotalQs": ${mkJsonVal(sen.getUserTotalQs)},
-           |    "userLastQTstamp": ${mkJsonVal(sen.getUserLastQTimestamp)},
-           |    "countryName": ${mkJsonVal(sen.getCountryName)},
-           |    "countryCode": ${mkJsonVal(sen.getCountryCode)},
-           |    "regionName": ${mkJsonVal(sen.getRegionName)},
-           |    "cityName": ${mkJsonVal(sen.getCityName)},
-           |    "metroCode": ${mkJsonVal(sen.getMetroCode)},
-           |    "origin": ${mkJsonVal(sen.getOrigin)},
-           |    "remoteAddress": ${mkJsonVal(sen.getRemoteAddress)},
-           |    "timezoneName": ${mkJsonVal(sen.getTimezoneName)},
-           |    "timezoneAbbr": ${mkJsonVal(sen.getTimezoneAbbreviation)},
-           |    "latitude": ${mkJsonVal(sen.getLatitude)},
-           |    "longitude": ${mkJsonVal(sen.getLongitude)},
-           |    "tokens": [
-           |        ${sen.variants().get(0).getTokens.asScala.map(mkTokenJson).mkString(",")}
-           |    ]
-           | }
-         """.stripMargin
-    }
-
-    /**
-      *
-      * @param ctx
-      * @return
-      */
-    private def mkModelJson(ctx: NCQueryContext): String = {
-        val mdl = ctx.getModel
-        
-        s"""
-           | {
-           |    "id": ${mkJsonVal(mdl.getDescriptor.getId)},
-           |    "name": ${mkJsonVal(mdl.getDescriptor.getName)},
-           |    "version": ${mkJsonVal(mdl.getDescriptor.getVersion)},
-           |    "description": ${mkJsonVal(mdl.getDescription)},
-           |    "vendorUrl": ${mkJsonVal(mdl.getVendorUrl)},
-           |    "vendorContact": ${mkJsonVal(mdl.getVendorContact)},
-           |    "vendorName": ${mkJsonVal(mdl.getVendorName)},
-           |    "vendorEmail": ${mkJsonVal(mdl.getVendorEmail)},
-           |    "docsUrl": ${mkJsonVal(mdl.getDocsUrl)},
-           |    "maxUnknownWords": ${mkJsonVal(mdl.getMaxUnknownWords)},
-           |    "maxFreeWords": ${mkJsonVal(mdl.getMaxFreeWords)},
-           |    "maxSuspiciousWords": ${mkJsonVal(mdl.getMaxSuspiciousWords)},
-           |    "minWords": ${mkJsonVal(mdl.getMinWords)},
-           |    "maxWords": ${mkJsonVal(mdl.getMaxWords)},
-           |    "minTokens": ${mkJsonVal(mdl.getMinTokens)},
-           |    "maxTokens": ${mkJsonVal(mdl.getMaxTokens)},
-           |    "minNonStopwords": ${mkJsonVal(mdl.getMinNonStopwords)},
-           |    "isNonEnglishAllowed": ${mkJsonVal(mdl.isNonEnglishAllowed)},
-           |    "isNotLatinCharsetAllowed": ${mkJsonVal(mdl.isNotLatinCharsetAllowed)},
-           |    "isSwearWordsAllowed": ${mkJsonVal(mdl.isSwearWordsAllowed)},
-           |    "isNoNounsAllowed": ${mkJsonVal(mdl.isNoNounsAllowed)},
-           |    "isNoUserTokensAllowed": ${mkJsonVal(mdl.isNoUserTokensAllowed)},
-           |    "isDupSynonymsAllowed": ${mkJsonVal(mdl.isDupSynonymsAllowed)},
-           |    "isPermutateSynonyms": ${mkJsonVal(mdl.isPermutateSynonyms)},
-           |    "jiggleFactor": ${mkJsonVal(mdl.getJiggleFactor)},
-           |    "minDateTokens": ${mkJsonVal(mdl.getMinDateTokens)},
-           |    "maxDateTokens": ${mkJsonVal(mdl.getMaxDateTokens)},
-           |    "minNumTokens": ${mkJsonVal(mdl.getMinNumTokens)},
-           |    "maxNumTokens": ${mkJsonVal(mdl.getMaxNumTokens)},
-           |    "minGeoTokens": ${mkJsonVal(mdl.getMinGeoTokens)},
-           |    "maxGeoTokens": ${mkJsonVal(mdl.getMaxGeoTokens)},
-           |    "minFunctionTokens": ${mkJsonVal(mdl.getMinFunctionTokens)},
-           |    "maxFunctionTokens": ${mkJsonVal(mdl.getMaxFunctionTokens)},
-           |    "maxTotalSynonyms": ${mkJsonVal(mdl.getMaxTotalSynonyms)},
-           |    "metadata": ${mkMapJson(mdl.getMetadata.asScala.toMap)}
-           | }
-         """.stripMargin
-    }
-
-    /**
-      *
-      * @param ctx
-      * @return
-      */
-    private def explainSentence(ctx: NCQueryContext): NCQueryResult =
-        NCQueryResult.json(
-            s"""
-               |{
-               |    "srvReqId": ${mkJsonVal(ctx.getServerRequestId)},
-               |    "sentence": ${mkSentenceJson(ctx)},
-               |    "model": ${mkModelJson(ctx)},
-               |    "dataSource": ${mkDataSourceJson(ctx)},
-               |    "hint": ${mkJsonVal(ctx.getHint)}
-               |}
-             """.stripMargin
-        )
 
     /**
       * Processes 'ask' request from probe server.
       *
       * @param srvReqId Server request ID.
-      * @param origTxt Text.
-      * @param curateTxt Curated text.
-      * @param curateHint Hint.
-      * @param origTokens Original tokens.
+      * @param txt Text.
+      * @param toks Original tokens.
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
@@ -349,16 +162,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       * @param dsName Data source name.
       * @param dsDesc Data source description.
       * @param dsModelCfg Data source model config.
-      * @param cacheable `Should be cached` flag.
       * @param test Test flag.
       */
     @throws[NCE]
     private def ask0(
         srvReqId: String,
-        origTxt: String,
-        curateTxt: Option[String],
-        curateHint: Option[String],
-        origTokens: Option[Seq[NCToken]],
+        txt: String,
+        toks: Option[Seq[NCToken]],
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
@@ -367,7 +177,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         dsName: String,
         dsDesc: String,
         dsModelCfg: String,
-        cacheable: Boolean,
         test: Boolean
     ): Unit = {
         var toks: Seq[Seq[NCToken]] = null
@@ -409,7 +218,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
           *
           * @param resType Result type.
           * @param resBody Result body.
-          * @param resMeta Result metadata.
           * @param errMsg Error message.
           * @param respType Message type.
           * @param msgName Message name.
@@ -417,7 +225,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         def respond(
             resType: Option[String],
             resBody: Option[String],
-            resMeta: Option[Map[String, Object]],
             errMsg: Option[String],
             respType: String,
             msgName: String
@@ -427,13 +234,9 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             msg += "srvReqId" → srvReqId
             msg += "dsId" → dsId
             msg += "dsModelId" → dsModelId
-            msg += "origTxt" → origTxt
-            msg += "cacheable" → cacheable
+            msg += "txt" → txt
             msg += "responseType" → respType
             msg += "test" → test
-            
-            addOptional(msg, "curateTxt", curateTxt)
-            addOptional(msg, "curateHint", curateHint)
             
             if (resBody.isDefined && resBody.get.length > MAX_RES_BODY_LENGTH) {
                 addOptional(msg, "error", Some("Result is too big. Model needs to be corrected."))
@@ -443,7 +246,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 addOptional(msg, "error", errMsg)
                 addOptional(msg, "resType", resType)
                 addOptional(msg, "resBody", resBody)
-                addOptional(msg, "resMetadata", resMeta.asInstanceOf[Option[Serializable]])
             }
             
             if (toks != null) {
@@ -466,7 +268,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 msg += "tokens" → tokens.asInstanceOf[java.io.Serializable]
             }
 
-            origTokens match {
+            toks match {
                 case Some(x) ⇒ msg += "origTokens" → x.asInstanceOf[java.io.Serializable]
                 case None ⇒ // No-op.
             }
@@ -479,8 +281,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 logger.trace(s"REJECT response $msgName [srvReqId=$srvReqId, response=${errMsg.get}]")
         }
         
-        val explain = senMeta(EXPLAIN_META_KEY).asInstanceOf[Boolean]
-    
         val mdl = NCModelManager.getModel(dsModelId).getOrElse(throw new NCE(s"Model not found: $dsModelId"))
         
         try
@@ -539,26 +339,25 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         
         // Final validation before execution.
         // Note: do not validate for 'explain' command.
-        if (!explain)
-            try
-                senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
-            catch {
-                case e: NCPostException ⇒
-                    val errMsg = errorMsg(e.code)
+        try
+            senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
+        catch {
+            case e: NCPostException ⇒
+                val errMsg = errorMsg(e.code)
 
-                    logger.error(s"Post-enrichment validation: $errMsg ")
+                logger.error(s"Post-enrichment validation: $errMsg ")
 
-                    respond(
-                        None,
-                        None,
-                        None,
-                        Some(errorMsg(e.code)),
-                        "RESP_VALIDATION",
-                        "P2S_ASK_RESULT"
-                    )
+                respond(
+                    None,
+                    None,
+                    None,
+                    Some(errorMsg(e.code)),
+                    "RESP_VALIDATION",
+                    "P2S_ASK_RESULT"
+                )
 
-                    return
-            }
+                return
+        }
 
         val conv = NCConversationManager.get(usrId, dsId)
         
@@ -569,7 +368,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             conv.ack()
         
         val unitedSen =
-            new NCSentenceImpl(mdl, new NCMetadataImpl((senMeta - EXPLAIN_META_KEY).asJava), srvReqId, senSeq)
+            new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq)
 
         // Create model query context.
         val qryCtx: NCQueryContext = new NCQueryContext {
@@ -582,7 +381,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             override lazy val getSentence: NCSentence = unitedSen
             override lazy val getModel: NCModel = mdl.model
             override lazy val getServerRequestId: String = srvReqId
-            override lazy val getHint: String = curateHint.orNull
 
             override lazy val getConversationContext: NCConversationContext = new NCConversationContext {
                 override def getTokens: JSet[NCToken] = conv.tokens
@@ -593,31 +391,27 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         // Execute model query asynchronously.
         G.asFuture(
             _ ⇒ {
-                if (explain)
-                    explainSentence(qryCtx)
-                else {
-                    val res = mdl.model.query(qryCtx)
+                val res = mdl.model.query(qryCtx)
 
-                    if (res == null)
-                        throw new IllegalStateException("Result cannot be null.")
-                    if (res.getBody == null)
-                        throw new IllegalStateException("Result body cannot be null.")
-                    if (res.getType == null)
-                        throw new IllegalStateException("Result type cannot be null.")
+                if (res == null)
+                    throw new IllegalStateException("Result cannot be null.")
+                if (res.getBody == null)
+                    throw new IllegalStateException("Result body cannot be null.")
+                if (res.getType == null)
+                    throw new IllegalStateException("Result type cannot be null.")
 
-                    val `var` = res.getVariant
+                val `var` = res.getVariant
 
-                    // Adds input sentence to the ongoing conversation if *some* result
-                    // was returned. Do not add if result is invalid.
-                    if (`var` != null) {
-                        conv.addItem(unitedSen, `var`)
+                // Adds input sentence to the ongoing conversation if *some* result
+                // was returned. Do not add if result is invalid.
+                if (`var` != null) {
+                    conv.addItem(unitedSen, `var`)
 
-                        // Optional selected variants.
-                        toks = Seq(`var`.getTokens.asScala)
-                    }
-
-                    res
+                    // Optional selected variants.
+                    toks = Seq(`var`.getTokens.asScala)
                 }
+
+                res
             },
             {
                 case e: NCRejection ⇒
@@ -625,10 +419,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                     
                     if (e.getCause != null)
                         logger.info(s"Rejection cause:", e.getCause)
-
-                    // Optional selected variants.
-                    if (e.getVariants != null)
-                        toks = e.getVariants.asScala.map(_.getTokens.asScala)
 
                     respond(
                         None,

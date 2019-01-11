@@ -796,7 +796,6 @@ public interface NCModel {
 
     /**
      * Gets minimum number of {@code nlp:date} tokens below which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -819,7 +818,6 @@ public interface NCModel {
 
     /**
      * Gets maximum number of {@code nlp:date} tokens above which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -842,7 +840,6 @@ public interface NCModel {
 
     /**
      * Gets minimum number of {@code nlp:num} tokens below which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -865,7 +862,6 @@ public interface NCModel {
 
     /**
      * Gets maximum number of {@code nlp:num} tokens above which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -888,7 +884,6 @@ public interface NCModel {
 
     /**
      * Gets minimum number of {@code nlp:geo} tokens below which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -911,7 +906,6 @@ public interface NCModel {
 
     /**
      * Gets maximum number of {@code nlp:geo} tokens above which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -934,7 +928,6 @@ public interface NCModel {
 
     /**
      * Gets minimum number of {@code nlp:function} tokens below which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -957,7 +950,6 @@ public interface NCModel {
 
     /**
      * Gets maximum number of {@code nlp:function} tokens above which user input will be automatically rejected.
-     * Setting this property to a specific value can minimize spurious curation requests.
      * <br><br>
      * <b>Default</b>
      * <br>

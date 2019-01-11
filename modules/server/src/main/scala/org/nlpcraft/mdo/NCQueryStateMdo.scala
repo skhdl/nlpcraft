@@ -47,16 +47,11 @@ case class NCQueryStateMdo(
     @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
     @NCMdoField userId: Long,
     @NCMdoField email: String,
-    @NCMdoField origText: String, // Text of the initial question.
+    @NCMdoField text: String, // Text of the initial question.
     @NCMdoField createTstamp: Long, // Creation timestamp.
     @NCMdoField var updateTstamp: Long, // Last update timestamp.
     @NCMdoField var status: String,
-    @NCMdoField var curateText: Option[String] = None, // Optional text after human curation.
-    @NCMdoField var curateJson: Option[String] = None, // Optional request JSON explanation for curation.
-    @NCMdoField var curateHint: Option[String] = None, // Optional hint after human curation.
     @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
-    @NCMdoField(jsonConverter = "toJsonList") var origTokens: Option[Seq[NCToken]] = None, // Optional tokens.
-    @NCMdoField var cacheId: Option[Long] = None, // Optional cache ID.
     // Query OK.
     @NCMdoField var resultType: Option[String] = None,
     @NCMdoField var resultBody: Option[String] = None,

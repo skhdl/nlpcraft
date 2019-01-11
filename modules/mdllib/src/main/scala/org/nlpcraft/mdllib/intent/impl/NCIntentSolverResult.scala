@@ -43,7 +43,6 @@ case class NCIntentSolverResult(
     intentId: String,
     fn: IntentCallback, // For Java interop.
     toks: JList[JList[NCToken]], // For Java interop.
-    termNouns: JList[String], // For Java interop.
     isExactMatch: Boolean,
     variant: NCVariant
 )
