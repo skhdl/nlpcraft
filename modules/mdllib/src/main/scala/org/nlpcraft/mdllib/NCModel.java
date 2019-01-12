@@ -35,6 +35,7 @@ import org.nlpcraft.mdllib.intent.*;
 import org.nlpcraft.mdllib.tools.builder.*;
 import org.nlpcraft.mdllib.tools.impl.*;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * <b>Main interface</b> for user-defined semantic data model.
@@ -1264,4 +1265,10 @@ public interface NCModel {
      * @see NCIntentSolver
      */
     NCQueryResult query(NCQueryContext ctx) throws NCCuration, NCRejection;
+
+    /**
+     */
+    default Function<NCNlpSentence, List<NCNlpElementData>> getElementsFinder() {
+        return null;
+    }
 }
