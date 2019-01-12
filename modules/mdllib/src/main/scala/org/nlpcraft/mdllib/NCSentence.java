@@ -73,33 +73,11 @@ public interface NCSentence extends Serializable {
     String getNormalizedText();
 
     /**
-     * Gets string representation of the user client agent that made the call with
-     * this sentence.
-     *
-     * @return User agent string from user client (web browser, REST client, etc.).
-     */
-    String getUserClientAgent();
-
-    /**
-     * Gets formal string code that defines the origin of the request.
-     *
-     * @return A string defining the origin of the request ('web', 'rest', etc.).
-     */
-    String getOrigin();
-
-    /**
      * Gets local timestamp in msec when user input was received.
      *
      * @return Local timestamp in msec when user input was received.
      */
     long getReceiveTimestamp();
-
-    /**
-     * Gets optional address of the remote client.
-     *
-     * @return Optional address of the remote client.
-     */
-    Optional<String> getRemoteAddress();
 
     /**
      * Gets first name of the user that made the request.
@@ -121,13 +99,6 @@ public interface NCSentence extends Serializable {
      * @return Email of the user that made the request.
      */
     String getUserEmail();
-
-    /**
-     * Gets user company name that made the request.
-     *
-     * @return User company name that made the request.
-     */
-    String getUserCompany();
 
     /**
      * Gets user avatar URL ({@code data:} or {@code http:} scheme URLs).

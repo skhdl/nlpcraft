@@ -31,7 +31,6 @@
 
 package org.nlpcraft.nlp
 
-import org.nlpcraft._
 import scala.collection._
 
 /**

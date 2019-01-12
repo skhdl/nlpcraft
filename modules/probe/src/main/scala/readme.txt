@@ -38,4 +38,4 @@ It can be launched in a standard way as any other executable JAR application:
  Starts with all default parameters.
 
  `java -jar probe-x.x.x-all-dependencies.jar -email=user@email.com -token=ASD12126GF`
- Starts with specified email and company token.
+ Starts with specified email and probe token.

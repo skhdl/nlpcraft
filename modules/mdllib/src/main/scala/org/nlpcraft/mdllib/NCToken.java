@@ -292,24 +292,6 @@ public interface NCToken extends Serializable {
      *         </td>
      *         <td>{@link Boolean}</td>
      *     </tr>
-     *     <tr>
-     *         <td>NLP_NE</td>
-     *         <td>
-     *             This is <b>optional</b> <i>named entity</i> as recognized by Stanford CoreNLP <a href="https://stanfordnlp.github.io/CoreNLP/ner.html">https://stanfordnlp.github.io/CoreNLP/ner.html</a>.
-     *             For some named entities the {@code NLP_NNE} property will also be present. For example, for the
-     *             user input "twenty five", the {@code NLP_NE} will be {@code NUMBER} and {@code NLP_NNE} will be {@code 25}.
-     *         </td>
-     *         <td>{@link String}</td>
-     *     </tr>
-     *     <tr>
-     *         <td>NLP_NNE</td>
-     *         <td>
-     *             This is <b>optional</b> <i>normalized named entity</i> value. Note that if this property is present than
-     *             {@code NLP_NE} should be present as well. For example, for the user input "twenty five",
-     *             the {@code NLP_NE} will be {@code NUMBER} and {@code NLP_NNE} will be {@code 25}.
-     *         </td>
-     *         <td>{@link String}</td>
-     *     </tr>
      * </table>
      * <br><br>
      * <b>Properties For <tt>nlp:geo</tt> Tokens</b><br>

@@ -35,7 +35,6 @@ import java.util.Optional
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder
-import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 import scala.collection.Seq
@@ -189,7 +188,6 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "userLastName": ${mkJsonVal(sen.getUserLastName)},
            |    "userEmail": ${mkJsonVal(sen.getUserEmail)},
            |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
-           |    "userCompany": ${mkJsonVal(sen.getUserCompany)},
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "userTotalQs": ${mkJsonVal(sen.getUserTotalQs)},
            |    "userLastQTstamp": ${mkJsonVal(sen.getUserLastQTimestamp)},
@@ -198,8 +196,6 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "regionName": ${mkJsonVal(sen.getRegionName)},
            |    "cityName": ${mkJsonVal(sen.getCityName)},
            |    "metroCode": ${mkJsonVal(sen.getMetroCode)},
-           |    "origin": ${mkJsonVal(sen.getOrigin)},
-           |    "remoteAddress": ${mkJsonVal(sen.getRemoteAddress)},
            |    "timezoneName": ${mkJsonVal(sen.getTimezoneName)},
            |    "timezoneAbbr": ${mkJsonVal(sen.getTimezoneAbbreviation)},
            |    "latitude": ${mkJsonVal(sen.getLatitude)},
@@ -234,8 +230,7 @@ class EchoProvider extends NCModelProviderAdapter {
                        |{
                        |    "srvReqId": ${mkJsonVal(ctx.getServerRequestId)},
                        |    "dataSource": ${mkDataSourceJson(ctx)},
-                       |    "sentence": ${mkSentenceJson(ctx)},
-                       |    "hint": ${mkJsonVal(ctx.getHint)}
+                       |    "sentence": ${mkSentenceJson(ctx)}
                        |}
                      """.stripMargin
                 )
