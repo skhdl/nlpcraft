@@ -61,7 +61,6 @@
         {
             "id": "x:id", /* --==MANDATORY==-- */
             "group": "default",
-            "type": "STRING",
             "parentId": null,
             "description": "Short description for this element.",
             "excludedSynonyms": [

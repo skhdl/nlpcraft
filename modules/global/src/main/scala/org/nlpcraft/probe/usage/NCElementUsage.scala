@@ -36,14 +36,12 @@ package org.nlpcraft.probe.usage
   *
   * @param id
   * @param group
-  * @param `type`
   * @param description
   * @param synonyms Sample synonyms.
   */
 case class NCElementUsage(
     id: String,
     group: String,
-    `type`: String,
     description: String,
     synonyms: List[String]
 ) extends java.io.Serializable

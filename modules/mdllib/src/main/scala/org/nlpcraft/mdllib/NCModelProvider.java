@@ -35,9 +35,9 @@ import java.io.*;
 import java.util.*;
 
 /**
- * NlpCraft model provider. Model provider is a deployment unit and acts as a factory for models.
+ * Model provider. Model provider is a deployment unit and acts as a factory for models.
  * Note that single provider can support one or more different models, and multiple providers can
- * be deployed.
+ * be deployed into the probe.
  * <p>
  * In most cases users should use {@link NCModelProviderAdapter} for convenience.
  *

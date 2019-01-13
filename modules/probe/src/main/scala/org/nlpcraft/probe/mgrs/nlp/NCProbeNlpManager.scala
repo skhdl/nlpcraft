@@ -255,7 +255,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                             tok.getServerRequestId,
                             tok.getId,
                             tok.getGroup,
-                            tok.getType,
                             tok.getParentId,
                             tok.getValue,
                             tok.getMetadata,

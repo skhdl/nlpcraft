@@ -46,7 +46,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
-  * TODO: add description.
+  * Intent solver that finds the best matching intent given user sentence.
   */
 object NCIntentSolverEngine extends NCDebug with LazyLogging {
     private class Weight extends java.util.ArrayList[Int] with Ordered[Weight] {

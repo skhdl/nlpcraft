@@ -44,7 +44,7 @@ public class NCRejection extends RuntimeException {
     /**
      * Creates new rejection exception with given message.
      *
-     * @param msg Rejection message. Note that specific rendering of this message depends on the REST applications.
+     * @param msg Rejection message.
      */
     public NCRejection(String msg) {
         super(msg);
@@ -53,7 +53,7 @@ public class NCRejection extends RuntimeException {
     /**
      * Creates new rejection exception with given message and cause.
      *
-     * @param msg Rejection message. Note that specific rendering of this message depends on the REST applications.
+     * @param msg Rejection message. 
      * @param cause Cause of this exception.
      */
     public NCRejection(String msg, Throwable cause) {

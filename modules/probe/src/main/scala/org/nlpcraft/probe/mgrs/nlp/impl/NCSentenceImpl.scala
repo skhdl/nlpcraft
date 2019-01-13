@@ -140,7 +140,6 @@ class NCSentenceImpl(
                         srvReqId,
                         elm.getId,
                         elm.getGroup,
-                        elm.getType,
                         elm.getParentId,
                         usrNote.dataOpt("value").orNull,
                         tokMeta,

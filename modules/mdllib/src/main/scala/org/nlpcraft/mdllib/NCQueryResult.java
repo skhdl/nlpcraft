@@ -31,7 +31,6 @@
 
 package org.nlpcraft.mdllib;
 
-import org.nlpcraft.mdllib.intent.*;
 import org.nlpcraft.util.*;
 import java.io.*;
 import java.util.*;
@@ -39,17 +38,12 @@ import java.util.stream.*;
 
 /**
  * Model query result returned from {@link NCModel#query(NCQueryContext)} method. Query result consists of the
- * text body and the type. The type is similar in notion to MIME types. Query result is what being sent back to
- * the user client like web browser or REST client. The following is the list of supported result types. These
- * types are directly accessible when used with REST API and automatically rendered by webapp:
+ * text body and the type. The type is similar in notion to MIME types. The following is the list of supported
+ * result types:
  * <table summary="" class="dl-table">
  *     <tr>
  *         <th>Result Type</th>
  *         <th>Factory Method</th>
- *     </tr>
- *     <tr>
- *         <td><code>ask</code></td>
- *         <td>{@link #ask(String)}</td>
  *     </tr>
  *     <tr>
  *         <td><code>text</code></td>
@@ -68,10 +62,6 @@ import java.util.stream.*;
  *         <td>{@link #json(String)}</td>
  *     </tr>
  *     <tr>
- *         <td><code>json/speech</code></td>
- *         <td>{@link #jsonSpeech(String)}</td>
- *     </tr>
- *     <tr>
  *         <td><code>json/multipart</code></td>
  *         <td>{@link #jsonMultipart(NCQueryResult...)}</td>
  *     </tr>
@@ -84,23 +74,18 @@ import java.util.stream.*;
  *         <td>{@link #jsonGmap(String)}</td>
  *     </tr>
  * </table>
- * Note that all of these types have specified meaning <b>only</b> for NlpCraft webapp where each of these result types
- * is rendered and processed in a special way. When used via REST API the responsibility to render and process
- * different result types will rest on REST client itself and may differ from the default processing of NlpCraft
- * webapp. For example, the REST client interfacing between NlpCraft and Amazon Alexa or Apple HomeKit can only
+ * Note that all of these types have specific meaning <b>only</b> for REST applications that interpret them
+ * accordingly. For example, the REST client interfacing between NlpCraft and Amazon Alexa or Apple HomeKit can only
  * accept {@code text} result type and ignore everything else.
  */
 public class NCQueryResult implements Serializable {
     private String body;
     private String type;
-    private NCVariant var;
-    private Map<String, Object> metadata;
     
     /**
      * Creates {@code text} result.
      *
-     * @param txt Textual result. Text interpretation will be defined by the client receiving this result. In
-     *      NlpCraft webapp, it will be rendered as {@link #html(String)} result.
+     * @param txt Textual result. Text interpretation will be defined by the client receiving this result.
      * @return Newly created query result.
      */
     public static NCQueryResult text(String txt) {
@@ -112,25 +97,10 @@ public class NCQueryResult implements Serializable {
      *
      * @param html Minimal markup HTML. Unlike {@link #htmlRaw(String)} this assumes only minimal
      *      HTML text formatting markup: {@code <i> <b> <u> <a> <br> <strong> <em> <mark> <small> <del> <ins> <sub> <sup>}.
-     *      Webapp will render it in {@code <div></div>} element.
      * @return Newly created query result.
      */
     public static NCQueryResult html(String html) {
         return new NCQueryResult(html, "html");
-    }
-    
-    /**
-     * Creates {@code ask} result. This is a special result type that is used to ask
-     * end user for additional or missing information. This is similar to {@link #html(String)} but
-     * on webapp it is rendered differently.
-     *
-     * @param html Minimal markup HTML. This assumes only minimal
-     *      HTML text formatting markup: {@code <i> <b> <u> <a> <br> <strong> <em> <mark> <small> <del> <ins> <sub> <sup>}.
-     *      Webapp will render it in {@code <div></div>} element.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult ask(String html) {
-        return new NCQueryResult(html, "ask");
     }
     
     /**
@@ -145,45 +115,7 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json/speech} result. Accepts JSON configuration string that will be processed
-     * by <a href="https://w3c.github.io/speech-api/webspeechapi.html">Web Speech</a> based synthesis:
-     * <pre class="brush: js">
-     * {
-     *      "text": "Something to say",
-     *      "lang": "en-US"
-     * }
-     * </pre>
-     * Only two of <a href="https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance">SpeechSynthesisUtterance</a>
-     * parameters are accepted (others will be set to default values):
-     * <ul>
-     *     <li>{@code SpeechSynthesisUtterance.lang} - language of the utterance,</li>
-     *     <li>{@code SpeechSynthesisUtterance.text} - text that will be synthesised when the utterance is spoken.</li>
-     * </ul>
-     *
-     * @param json JSON configuration string.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult jsonSpeech(String json) {
-        return new NCQueryResult(json, "json/speech");
-    }
-    
-    /**
-     * Shortcut method for {@link #jsonSpeech(String)} with {@code en-US} language.
-     *
-     * @param txt Text that will be synthesised when the <a href="https://w3c.github.io/speech-api/webspeechapi.html">Web Speech</a>
-     *      utterance is spoken.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult enUsSpeak(String txt) {
-        return new NCQueryResult(String.format(
-            "{" +
-                "\"text\": \"%s\", " +
-                "\"lang\": \"en-US\"" +
-                "}", txt), "json/speech");
-    }
-    
-    /**
-     * Creates {@code json} result. JSON will be properly rendered on webapp.
+     * Creates {@code json} result.
      *
      * @param json Any JSON string to be rendered on the client.
      * @return Newly created query result.
@@ -193,7 +125,7 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json/table} result. This allows for a simplified HTML table presentation rendered by webapp:
+     * Creates {@code json/table} result:
      * <pre class="brush: js">
      * {
      *      "border": true, // Whether or not table has border.
@@ -262,8 +194,9 @@ public class NCQueryResult implements Serializable {
                     "{" +
                         "\"resType\": \"" + part.getType() + "\", " +
                         "\"resBody\": \"" + NCGlobals.escapeJson(part.getBody()) + "\"" +
-                        "}").collect(Collectors.joining(",")) +
-                "]",
+                        "}")
+                    .collect(Collectors.joining(",")) +
+            "]",
             "json/multipart"
         );
     }
@@ -291,15 +224,12 @@ public class NCQueryResult implements Serializable {
     private String checkType(String type) {
         String typeLc = type.toLowerCase();
         
-        // TODO: add future checks here.
         if (!typeLc.equals("html") &&
             !typeLc.equals("json") &&
             !typeLc.equals("text") &&
             !typeLc.equals("json/google/map") &&
             !typeLc.equals("json/multipart") &&
             !typeLc.equals("json/table") &&
-            !typeLc.equals("json/speech") &&
-            !typeLc.equals("ask") &&
             !typeLc.equals("html/raw"))
             throw new IllegalArgumentException("Invalid result type: " + type);
         else
@@ -311,32 +241,6 @@ public class NCQueryResult implements Serializable {
      */
     public NCQueryResult() {
         // No-op.
-    }
-
-    /**
-     * Gets optional sentence variant associated with this result.
-     *
-     * @return Sentence variant associated with this result or {@code null}.
-     */
-    public NCVariant getVariant() {
-        return var;
-    }
-
-    /**
-     * Sets optional sentence variant this result refers to.
-     * <br><br>
-     * Note that in general a user input can have one or more possible
-     * parsing {@link NCSentence#variants() variants}. Setting the specific variant that was the origin of this result
-     * is optional but improves the self-learning capabilities of the system when provided. Note also that
-     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
-     *
-     * @param var Sentence variant to set.
-     * @return This instance of chaining calls.
-     */
-    public NCQueryResult setVariant(NCVariant var) {
-        this.var = var;
-
-        return this;
     }
 
     /**
@@ -380,23 +284,5 @@ public class NCQueryResult implements Serializable {
      */
     public String getBody() {
         return body;
-    }
-    
-    /**
-     * Gets metadata.
-     *
-     * @return Metadata.
-     */
-    public Map<String, Object> getMetadata() {
-        return metadata != null ? metadata : Collections.emptyMap();
-    }
-    
-    /**
-     * Sets metadata.
-     *
-     * @param metadata Metadata
-     */
-    public void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
     }
 }

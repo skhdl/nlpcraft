@@ -35,7 +35,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Map-based container for user-provided metadata.
+ * Convenient map-based container for user-provided metadata.
  *
  * @see NCModel#getMetadata()
  * @see NCElement#getMetadata()

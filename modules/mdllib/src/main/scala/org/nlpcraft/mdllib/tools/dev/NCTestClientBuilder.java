@@ -1005,7 +1005,6 @@ public class NCTestClientBuilder {
     
                                 res.setBody(body);
                                 res.setType(type);
-                                res.setMetadata(testRes.getResultMetadata());
     
                                 if (!test.getCheck().test(res))
                                     err = "Result has not satisfied user validation";

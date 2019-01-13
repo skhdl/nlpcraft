@@ -45,14 +45,9 @@ import java.io.*;
  */
 public interface NCQueryContext extends Serializable {
     /**
-     * Gets ID of the current request.
-     * <p>
-     * Server request is defined as a processing of a one user input sentence (a session).
-     * Note that model can be accessed multiple times during processing of a single user sentence
-     * and therefor that ID can appear in multiple invocations of {@link NCModel#query(NCQueryContext)} method.
-     * In fact, users of this interfaces can use this fact by using this ID,
-     * for example, as a map key for a session scoped storage.
-     * 
+     * Gets ID of the current request. Server request is defined as a processing of a one user input
+     * sentence (a session).
+     *
      * @return Server request ID.
      * @see NCModel#query(NCQueryContext)
      */

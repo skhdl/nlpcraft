@@ -63,7 +63,6 @@ public class NCModelTestProvider implements NCModelProvider {
             .addMacro("<NUM>", "{number|count|qty|quantity|amount}")
             .addElement(NCElementBuilder.newElement()
                 .setId("ELM1")
-                .setType("STRING")
                 .setDescription("Element 1 description.")
                 .addSynonyms(
                     "element {number|*} {<OF>|*} {one|1}",
@@ -74,7 +73,6 @@ public class NCModelTestProvider implements NCModelProvider {
             )
             .addElement(NCElementBuilder.newElement("ELM2")
                 .setDescription("Super element description.")
-                .setType("LONG")
                 .addSynonyms(
                     "super {elm|elem|element}",
                     "today",

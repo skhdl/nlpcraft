@@ -39,7 +39,6 @@ import java.util.*;
 public class NCElementJson {
     private String id;
     private String group;
-    private String type;
     private String parentId;
     private String desc;
     private String[] excludedSynonyms = new String[0];
@@ -93,22 +92,6 @@ public class NCElementJson {
      */
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     *
-     * @param type
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

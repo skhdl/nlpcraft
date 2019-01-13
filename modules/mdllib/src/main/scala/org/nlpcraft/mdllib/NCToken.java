@@ -37,7 +37,7 @@ import java.io.*;
 
 /**
  * A token is a part of a fully parsed user input. A token corresponds to a one or more
- * words in the user sentence and can be of two types:
+ * words, sequential or not, in the user sentence and can be of two types:
  * <ul>
  *     <li>
  *         <b>System defined</b> token that represents a built-in element whose ID starts with {@code nlp:},
@@ -61,7 +61,7 @@ public interface NCToken extends Serializable {
      * Gets token metadata.
      * <br><br>
      * When a token is detected in the user input it has number of properties describing that token. These
-     * properties are stored in a general map-like {@link NCMetadata metadata} interface for better future
+     * properties are stored in a map-like {@link NCMetadata metadata} interface for better future
      * extensibility and API compatibility. Note that certain metadata is common across all
      * types of tokens, while other parameters are specific to the particular types of built-in token.
      * Note also that class {@link NCTokenUtils} provide convenient typed accessors to these properties as well
@@ -168,7 +168,7 @@ public interface NCToken extends Serializable {
      *         <td>NLP_SWEAR</td>
      *         <td>
      *             Whether or not this token is a swear word. NlpCraft has built-in list of common English swear words.
-     *              See {@link NCModel#isSwearWordsAllowed()} for corresponding model configuration.
+     *             See {@link NCModel#isSwearWordsAllowed()} for corresponding model configuration.
      *         </td>
      *         <td>{@link Boolean}</td>
      *     </tr>
@@ -688,15 +688,6 @@ public interface NCToken extends Serializable {
      * @see #getMetadata()
      */
     String getId();
-
-    /**
-     * Gets the data type of the model element this token represents (user defined or built-in system).
-     * NOTE: do no confuse this <i>data</i> type with token ID.
-     *
-     * @return Data type of the token's element.
-     * @see NCElement#getType()
-     */
-    String getType();
 
     /**
      * Gets the optional parent ID of the model element this token represents. This only available

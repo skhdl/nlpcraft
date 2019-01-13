@@ -720,12 +720,6 @@ public class NCIntentSolver {
          *         </td>
          *     </tr>
          *     <tr>
-         *         <td><code>type</code></td>
-         *         <td>
-         *             Token {@link NCToken#getType() type}
-         *         </td>
-         *     </tr>
-         *     <tr>
          *         <td><code>group</code></td>
          *         <td>
          *             Token {@link NCToken#getGroup() group}
@@ -853,14 +847,13 @@ public class NCIntentSolver {
                  init(param, op, true);
              else if (value.equalsIgnoreCase("false"))
                  init(param, op, false);
-             else {
+             else
                  try {
                      init(param, op, Integer.parseInt(value));
                  }
                  catch (NumberFormatException e) {
                      init(param, op, value);
                  }
-             }
         }
 
         /**
@@ -997,7 +990,6 @@ public class NCIntentSolver {
                 switch (param) {
                     case "id": v1 = tok.getId().trim(); break;
                     case "group": v1 = tok.getGroup().trim(); break;
-                    case "type": v1 = tok.getType().trim(); break;
                     case "value":  v1 = tok.getValue().trim(); break;
                     case "parent": v1 = tok.getParentId().trim(); break;
 
@@ -1543,36 +1535,17 @@ public class NCIntentSolver {
         if (results.isEmpty())
             return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
 
-        boolean isOnlyOneVar = sen.variants().size() == 1;
-        
         NCRejection errRej = null;
     
-        for (NCIntentSolverResult res : results) {
-            Supplier<NCVariant> varFn = () -> {
-                if (res.variant() != null)
-                    return res.variant();
-                else if (isOnlyOneVar)
-                    // If there's only one variant - use it implicitly.
-                    return sen.variants().get(0);
-                else
-                    return null;
-            };
-    
+        for (NCIntentSolverResult res : results)
             try {
-                NCQueryResult qryRes = res.fn().apply(new NCIntentSolverContext() {
+                return res.fn().apply(new NCIntentSolverContext() {
                     @Override public NCQueryContext getQueryContext() { return ctx; }
                     @Override public List<List<NCToken>> getIntentTokens() { return res.toks(); }
                     @Override public NCVariant getVariant() { return res.variant(); }
                     @Override public boolean isExactMatch() { return res.isExactMatch(); }
                     @Override public String getIntentId() { return res.intentId(); }
                 });
-
-                if (qryRes.getVariant() == null) // Don't override if user already set it.
-                    qryRes.setVariant(varFn.get());
-    
-                qryRes.setMetadata(cloneMetadata(qryRes.getMetadata(), res));
-
-                return qryRes;
             }
             catch (NCIntentSkip e) {
                 // No-op - just skipping this result.
@@ -1586,7 +1559,6 @@ public class NCIntentSolver {
 
                 break;
             }
-        }
     
         if (errRej != null)
             throw errRej;

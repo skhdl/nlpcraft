@@ -307,8 +307,6 @@ public class NCModelBuilder extends NCJsonBuilder {
                 for (Map.Entry<String, Object> entry : e.getMetadata().entrySet())
                     elmMeta.put(entry.getKey(), (Serializable)entry.getValue());
 
-            String typ = e.getType() == null ? "STRING" : e.getType();
-
             addElement(new NCElement() {
                 private final List<String> syns =
                     e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms());
@@ -342,11 +340,6 @@ public class NCModelBuilder extends NCJsonBuilder {
                 @Override
                 public String getId() {
                     return e.getId();
-                }
-
-                @Override
-                public String getType() {
-                    return typ;
                 }
 
                 @Override

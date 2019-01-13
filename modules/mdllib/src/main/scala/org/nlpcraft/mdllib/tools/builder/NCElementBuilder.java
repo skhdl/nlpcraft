@@ -222,18 +222,6 @@ public class NCElementBuilder extends NCJsonBuilder {
     }
 
     /**
-     * Sets type. See {@link NCElement#getType()} for more information.
-     *
-     * @param type Type to set.
-     * @return This element builder for chaining operations.
-     */
-    public NCElementBuilder setType(String type) {
-        impl.setType(type);
-
-        return this;
-    }
-
-    /**
      * Adds user defined metadata. See {@link NCElement#getMetadata()} for more information.
      *
      * @param name Metadata name.

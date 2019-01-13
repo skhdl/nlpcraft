@@ -119,7 +119,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                         override lazy val getToken: String = config.getToken
                         override lazy val getUpLink: String = config.getUpLink
                         override lazy val getDownLink: String = config.getDownLink
-                        override lazy val getEmail: String = config.getEmail
                         override lazy val getJarsFolder: String = config.getJarsFolder
                     })
 
@@ -642,11 +641,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
             if (hasWhitespace(elmId))
                 throw new NCE(s"Model element ID '$elmId' cannot have whitespaces.")
-
-            if (elm.getType == null)
-                throw new NCE(s"Type is not provided for model element '$elmId'.")
-            else if (!ELM_TYPES.contains(elm.getType))
-                throw new NCE(s"Unknown type '${elm.getType}' for model element '$elmId'.")
         }
     }
 
@@ -688,7 +682,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
             elements += NCElementUsage(
                 id = elm.getId,
                 group = elm.getGroup,
-                `type` = elm.getType,
                 description = elm.getDescription,
                 synonyms = exampleSyns
             )

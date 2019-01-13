@@ -42,7 +42,6 @@ import java.util.*;
 public class NCElementImpl implements NCElement {
     private String id;
     private String group;
-    private String type;
     private String desc;
     private String parentId;
     private List<String> syns = new ArrayList<>();
@@ -65,25 +64,12 @@ public class NCElementImpl implements NCElement {
         return parentId;
     }
 
-    @Override
-    public String getType() {
-        return type == null ? "STRING" : type;
-    }
-
     /**
      *
      * @param desc
      */
     public void setDescription(String desc) {
         this.desc = desc;
-    }
-
-    /**
-     *
-     * @param type
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

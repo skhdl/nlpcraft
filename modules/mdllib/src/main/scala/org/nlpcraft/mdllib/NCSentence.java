@@ -43,10 +43,8 @@ import java.util.*;
  * mechanisms, like {@link NCIntentSolver intent-based matching}, utilize the external context (i.e. intents)
  * that simplify the processing and selection among multiple variants.
  * <br><br>
- * Sentence provides access to parsing {@link #variants() variants} representing parsed input sentence as
- * well as environment metadata such as user and caller information. Instance of {@link NCSentence} interface
- * is available through {@link NCQueryContext} object that is passed to {@link NCModel#query(NCQueryContext)}
- * method.
+ * Instance of {@link NCSentence} interface is available through {@link NCQueryContext} object that is
+ * passed to {@link NCModel#query(NCQueryContext)} method.
  * 
  * @see NCToken
  * @see NCIntentSolver
@@ -135,78 +133,6 @@ public interface NCSentence extends Serializable {
      * @return Total number of questions issues by this user.
      */
     int getUserTotalQs();
-
-    /**
-     * Gets optional timezone name of the location from where user made its request.
-     *
-     * @return Timezone name of the location from where user made its request.
-     */
-    Optional<String> getTimezoneName();
-
-    /**
-     * Gets optional timezone abbreviation of the location from where user made its request.
-     *
-     * @return Timezone abbreviation of the location from where user made its request.
-     */
-    Optional<String> getTimezoneAbbreviation();
-
-    /**
-     * Gets optional latitude of the location from where user made its request.
-     *
-     * @return Latitude of the location from where user made its request.
-     */
-    Optional<Double> getLatitude();
-
-    /**
-     * Gets optional longitude of the location from where user made its request.
-     *
-     * @return Longitude of the location from where user made its request.
-     */
-    Optional<Double> getLongitude();
-
-    /**
-     * Gets optional country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>) of the
-     * location from where user made its request.
-     *
-     * @return Country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>) of
-     *      the location from where user made its request.
-     */
-    Optional<String> getCountryCode();
-
-    /**
-     * Gets optional country name of the location from where user made its request.
-     *
-     * @return Country name of the location from where user made its request.
-     */
-    Optional<String> getCountryName();
-
-    /**
-     * Gets optional region (state, province) name of the location from where user made its request.
-     *
-     * @return Region (state, province) name of the location from where user made its request.
-     */
-    Optional<String> getRegionName();
-
-    /**
-     * Gets optional city name of the location from where user made its request.
-     *
-     * @return City name of the location from where user made its request.
-     */
-    Optional<String> getCityName();
-
-    /**
-     * Gets optional zip or postal code of the location from where user made its request.
-     *
-     * @return Zip or postal code of the location from where user made its request.
-     */
-    Optional<String> getZipCode();
-
-    /**
-     * Gets optional metro (area) code of the location from where user made its request.
-     *
-     * @return Metro (area) code of the location from where user made its request.
-     */
-    Optional<java.lang.Long> getMetroCode();
 
     /**
      * Tests if given token is part of this sentence.

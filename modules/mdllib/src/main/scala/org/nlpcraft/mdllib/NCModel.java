@@ -94,7 +94,6 @@ import java.util.*;
  *          {
  *              "id": "x:id", // --==MANDATORY==--
  *              "group": "default",
- *              "type": "STRING",
  *              "parentId": null,
  *              "excludedSynonyms": [],
  *              "synonyms": [],
@@ -241,9 +240,9 @@ public interface NCModel {
      * Gets descriptor for this model.
      * <br><br>
      * Descriptor provides model identification including its unique, immutable ID,
-     * user-friendly name and a semantic version. Model ID is not exposed to the end user and
+     * user-friendly name and a version. Model ID is not exposed to the end user and
      * used only for internal purposes. Note that model ID <b>must</b> be immutable - changing
-     * model ID is equal to creating a new model all together. Model name and version are both
+     * model ID is equal to creating a new model. Model name and version are both
      * exposed to the end user and can be changed. Note that model version should be
      * compatible with (<a href="http://www.semver.org">www.semver.org</a>) specification.
      * <br><br>
@@ -264,7 +263,7 @@ public interface NCModel {
     NCModelDescriptor getDescriptor();
 
     /**
-     * Gets optional short model description. This can be displayed in the webapp or client apps.
+     * Gets optional short model description. This can be displayed by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -282,7 +281,7 @@ public interface NCModel {
     }
 
     /**
-     * Gets optional URL to model documentation. This can be used in the webapp or client apps.
+     * Gets optional URL to model documentation. This can be used by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -300,7 +299,7 @@ public interface NCModel {
     }
 
     /**
-     * Gets optional URL of model vendor. This can be used in the webapp or client apps.
+     * Gets optional URL of model vendor. This can be used by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -318,7 +317,7 @@ public interface NCModel {
     }
 
     /**
-     * Gets optional email of model vendor. This can be used in the webapp or client apps.
+     * Gets optional email of model vendor. This can be used by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -336,7 +335,7 @@ public interface NCModel {
     }
 
     /**
-     * Gets optional contact name of model vendor. This can be used in the webapp or client apps.
+     * Gets optional contact name of model vendor. This can be used by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -354,7 +353,7 @@ public interface NCModel {
     }
 
     /**
-     * Gets optional name of model vendor. This can be used in the webapp or client apps.
+     * Gets optional name of model vendor. This can be used by the management tools.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -399,7 +398,7 @@ public interface NCModel {
 
     /**
      * Gets maximum number of free words until automatic rejection. A free word is a known word that is
-     * not part of any parsed token. In other words, a word that is present in the user input
+     * not part of any recognized token. In other words, a word that is present in the user input
      * but won't be used to understand its meaning. Setting it to a non-zero risks the misunderstanding
      * of the user input, while setting it to zero often makes understanding logic too rigid. In most
      * cases we recommend setting to between one and three. If you expect the user input to contain
@@ -571,7 +570,7 @@ public interface NCModel {
 
     /**
      * Whether or not to allow non-English language in user input.
-     * Currently, NlpCraft supports English language only. However, model can choose whether or not
+     * Currently, only English language is supported. However, model can choose whether or not
      * to automatically reject user input that is detected to be a non-English. Note that current
      * algorithm only works reliably on longer user input (10+ words). On short sentences it will
      * often produce an incorrect result.
@@ -596,10 +595,10 @@ public interface NCModel {
     }
 
     /**
-     * Whether or not to allow non-Latin charset in user input. Currently, NlpCraft supports
-     * Latin charset only. However, model can choose whether or not to automatically reject u
-     * ser input with characters outside of Latin charset. If {@code false} such user input will
-     * be automatically rejected.
+     * Whether or not to allow non-Latin charset in user input. Currently, only
+     * Latin charset is supported. However, model can choose whether or not to automatically reject user
+     * input with characters outside of Latin charset. If {@code false} such user input will be automatically
+     * rejected.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -621,7 +620,7 @@ public interface NCModel {
     }
 
     /**
-     * Whether or not to allow known swear words in user input. If {@code false} - user input with
+     * Whether or not to allow known English swear words in user input. If {@code false} - user input with
      * detected known English swear words will be automatically rejected.
      * <br><br>
      * <b>Default</b>
@@ -669,10 +668,10 @@ public interface NCModel {
     }
 
     /**
-     * Whether or not to permutate multi-word synonyms. Multi-word synonyms permutations greatly increase
-     * the total number of synonyms in the system but allows for better multi-word synonym detection. For
-     * example, if permutation is allowed the synonym "a b c" will be automatically converted into a
-     * sequence of synonyms of "a b c", "b c a", "c b a", "b a c", "c a b", "a c b".
+     * Whether or not to permutate multi-word synonyms. Automatic multi-word synonyms permutations greatly
+     * increase the total number of synonyms in the system and allows for better multi-word synonym detection.
+     * For example, if permutation is allowed the synonym "a b c" will be automatically converted into a
+     * sequence of synonyms of "a b c", "b a c", "a c b".
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -743,10 +742,10 @@ public interface NCModel {
     /**
      * Whether or not to allow the user input with no user token detected. If {@code false} such user
      * input will be automatically rejected. Note that this property only applies to user-defined
-     * token (i.e. model element). Even of there are no user defined tokens, the user input will still
-     * contain some system token like "nlp:geo" or "nlp:date". In many cases models should be build to allow user input
-     * without user tokens. However, set it to {@code false} if presence of at least one user token is
-     * mandatory.
+     * token (i.e. model element). Even if there are no user defined tokens, the user input may still
+     * contain system token like <code>nlp:geo</code> or <code>nlp:date</code>. In many cases models
+     * should be build to allow user input without user tokens. However, set it to {@code false} if presence
+     * of at least one user token is mandatory.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -772,8 +771,8 @@ public interface NCModel {
      * match the multi-word synonyms. Zero means no reordering is allowed. One means
      * that only one word in a synonym can move one position left or right, and so on. Empirically
      * the value of {@code 2} proved to be a good default value in most cases. Note that larger
-     * values mean that synonym words can be practically in any random place in the user input. Maximum
-     * value is <code>4</code>.
+     * values mean that synonym words can be almost in any random place in the user input which makes
+     * synonym matching practically meaningless. Maximum value is <code>4</code>.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -982,8 +981,8 @@ public interface NCModel {
     /**
      * Gets an optional list of stopwords to add to the built-in ones.
      * <br><br>
-     * Stopword is an individual (i.e. sequence of characters excluding whitespaces) that contribute no
-     * semantic meaning to the sentence. For example, 'the', 'wow', or 'hm' provide no meaning to the
+     * Stopword is an individual word (i.e. sequence of characters excluding whitespaces) that contribute no
+     * semantic meaning to the sentence. For example, 'the', 'wow', or 'hm' provide no semantic meaning to the
      * sentence and can be safely excluded from semantic analysis.
      * <br><br>
      * NlpCraft comes with a carefully selected list of English stopwords which should be sufficient
@@ -1036,10 +1035,9 @@ public interface NCModel {
 
     /**
      * Gets an optional list of example sentences demonstrating what can be asked with this model. These
-     * examples will be displayed for informational purpose on data source help window in webapp.
-     * It is highly recommended to supply a good list of examples for the model as this provides
-     * perhaps the best description to the end user on how a particular model and its data sources
-     * can be used.
+     * examples may be displayed by the management tools. It is highly recommended to supply a good list of
+     * examples for the model as this provides perhaps the best description to the end user on how a particular
+     * model and its data sources can be used.
      * <br><br>
      * <b>JSON</b>
      * <br>
@@ -1168,7 +1166,7 @@ public interface NCModel {
      * persisted it needs to persist that state through its own mechanisms without relying on this method.
      * <br><br>
      * Note that if model has an important state it is highly recommended that it would store it periodically
-     * instead of solely relying on this method.
+     * instead of relying on this method.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -1185,7 +1183,8 @@ public interface NCModel {
     }
 
     /**
-     * Probe calls this method to initialize the model when it gets deployed in the probe.
+     * Probe calls this method to initialize the model when it gets deployed in the probe. This method
+     * is guaranteed to be called and it will be called only once.
      * <br><br>
      * <b>Default</b>
      * <br>
@@ -1199,9 +1198,9 @@ public interface NCModel {
 
     /**
      * Processes user input provided in the given query context and either returns the query result or throws
-     * one of the two exceptions. This is the <b>main method</b> that user
+     * an exception. This is the <b>main method</b> that user
      * should implement when developing a semantic model. See {@link NCIntentSolver} for intent-based
-     * user input processing for a significantly simplified way to encoding that processing logic.
+     * user input processing for a simplified way to encode that processing logic.
      *
      * @param ctx Query context containing parsed user input and all associated data.
      * @return Query result. This result cannot be {@code null}. In case of any errors this method should

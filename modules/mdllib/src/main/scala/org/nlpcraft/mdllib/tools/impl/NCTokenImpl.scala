@@ -31,7 +31,6 @@
 
 package org.nlpcraft.mdllib.tools.impl
 
-import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.{NCMetadata, NCToken}
 
 /**
@@ -39,7 +38,6 @@ import org.nlpcraft.mdllib.{NCMetadata, NCToken}
   * @param srvReqId
   * @param elmId
   * @param elmGrp
-  * @param elmTyp
   * @param parentId
   * @param value
   * @param tokMeta
@@ -49,22 +47,15 @@ private[nlpcraft] class NCTokenImpl(
     srvReqId: String,
     elmId: String,
     elmGrp: String,
-    elmTyp: String,
     parentId: String,
     value: String,
     tokMeta: NCMetadata,
     elmMeta: NCMetadata
 ) extends NCToken with Serializable {
-    elmTyp match {
-        case "STRING" | "LONG" | "DOUBLE" | "DATE" | "TIME" | "DATETIME" | "BOOLEAN" ⇒ ()
-        case _ ⇒ throw new IllegalArgumentException(s"Invalid token type: $elmTyp")
-    }
-    
     override def getMetadata: NCMetadata = tokMeta
     override def getElementMetadata: NCMetadata = elmMeta
     override def getServerRequestId: String = srvReqId
     override def getId: String = elmId
-    override def getType: String = elmTyp
     override def getGroup: String = elmGrp
     override def getParentId: String = parentId
     override def isUserDefined: Boolean = !elmId.startsWith("nlp:")
