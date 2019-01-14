@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -208,16 +208,12 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     "PROBE_HOST_ADDR" → localHost.getHostAddress,
                     "PROBE_HW_ADDR" → hwAddrs,
                     "PROBE_MODELS_DS" → NCDeployManager.getDescriptors.toList.map(d ⇒ (d.getId, d.getName, d.getVersion)),
-                    "PROBE_MODELS_USAGE" → NCModelManager.getAllUsage,
-                    "PROBE_USER_EMAIL" → config.getEmail
+                    "PROBE_MODELS_USAGE" → NCModelManager.getAllUsage
                 ), cryptoKey)
     
                 val resp = sock.read[NCProbeMessage](cryptoKey) // Get handshake response.
     
                 resp.getType match {
-                    case "S2P_PROBE_EMAIL_INVALID" ⇒ err(
-                        s"Unknown admin email provided: ${config.getEmail}")
-                    
                     case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err(
                         "Duplicate probes ID detected. Each probe has to have a unique ID.")
                         

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -55,17 +55,6 @@ import scala.util.control.Exception._
   * Model manager.
   */
 object NCModelManager extends NCProbeManager("Model manager") with NCDebug with DecorateAsScala {
-    // All possible element types.
-    private final val ELM_TYPES = Set(
-        "STRING",
-        "DATE",
-        "DATETIME",
-        "LONG",
-        "DOUBLE",
-        "BOOLEAN",
-        "DATE"
-    )
-
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
     // Model usage keyed by model IDs.
@@ -654,14 +643,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
         s.exists(_.isWhitespace)
 
     /**
-      * Checks if synonym is dynamic.
-      *
-      * @param syn Synonym to check.
-      */
-    private def isDynamic(syn: String): Boolean =
-        syn.startsWith("%") && syn.endsWith("%")
-
-    /**
       * Makes usage holder.
       *
       * @param mdl Model.
@@ -675,7 +656,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
         for (elm ← mdl.getElements.asScala) {
             val exampleSyns = nlv(elm.getSynonyms) // Take un-processed synonyms in their original form.
                 .map(_.trim)
-                .filter(!isDynamic(_))
                 .take(3)
                 .map(parser.expand(_).head)
 
