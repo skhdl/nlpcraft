@@ -31,8 +31,6 @@
 
 package org.nlpcraft.probe.mgrs.nlp.impl
 
-import java.util.{Optional, List ⇒ JList}
-
 import org.nlpcraft.mdllib.tools.impl._
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp._
@@ -59,7 +57,7 @@ class NCSentenceImpl(
     override def isOwnerOf(tok: NCToken): Boolean = allToks.contains(tok)
     
     override lazy val getServerRequestId: String = srvReqId
-    override lazy val variants: JList[NCVariant] = combToks.map(toks ⇒ new NCVariant(toks.asJava)).asJava
+    override lazy val variants: java.util.List[NCVariant] = combToks.map(toks ⇒ new NCVariant(toks.asJava)).asJava
     override lazy val getNormalizedText: String = meta.getString("NORMTEXT")
     override lazy val getReceiveTimestamp: Long = meta.getLong("RECEIVE_TSTAMP")
     override lazy val getUserFirstName: String = meta.getString("FIRST_NAME")
@@ -70,16 +68,6 @@ class NCSentenceImpl(
     override lazy val getUserSignupDate: Long = meta.getLong("SIGNUP_DATE")
     override lazy val getUserLastQTimestamp: Long = meta.getLong("LAST_Q_TSTAMP")
     override lazy val getUserTotalQs: Int = meta.getInteger("TOTAL_QS")
-    override lazy val getTimezoneName: Optional[String] = meta.getStringOpt("TMZ_NAME")
-    override lazy val getTimezoneAbbreviation: Optional[String] = meta.getStringOpt("TMZ_ABBR")
-    override lazy val getLatitude: Optional[java.lang.Double] = meta.getDoubleOpt("LATITUDE")
-    override lazy val getLongitude: Optional[java.lang.Double] = meta.getDoubleOpt("LONGITUDE")
-    override lazy val getCountryCode: Optional[String] = meta.getStringOpt("COUNTRY_CODE")
-    override lazy val getCountryName: Optional[String] = meta.getStringOpt("COUNTRY_NAME")
-    override lazy val getRegionName: Optional[String] = meta.getStringOpt("REGION_NAME")
-    override lazy val getCityName: Optional[String] = meta.getStringOpt("CITY")
-    override lazy val getZipCode: Optional[String] = meta.getStringOpt("ZIP_CODE")
-    override lazy val getMetroCode: Optional[java.lang.Long] = meta.getLongOpt("METRO_CODE")
 
     /**
       * Converts NLP sentence into sequence of model tokens.
@@ -158,7 +146,6 @@ class NCSentenceImpl(
                         srvReqId,
                         note.noteType, // Use NLP note type as synthetic element ID.
                         note.noteType, // Use NLP note type as synthetic element group.
-                        "STRING",
                         null,
                         null,
                         nlpTokMeta,

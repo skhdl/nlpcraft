@@ -35,7 +35,6 @@ import java.io.Serializable
 import java.lang
 import java.util.concurrent.Executors
 import java.util.function.Predicate
-import java.util.{Optional, Set ⇒ JSet}
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.impl.NCMetadataImpl
@@ -179,8 +178,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         dsModelCfg: String,
         test: Boolean
     ): Unit = {
-        var toks: Seq[Seq[NCToken]] = null
-    
         if (!IS_PROBE_SILENT)
             logger.info(s"New sentence received: ${nlpSen.text}")
     
@@ -219,59 +216,32 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
           * @param resType Result type.
           * @param resBody Result body.
           * @param errMsg Error message.
-          * @param respType Message type.
           * @param msgName Message name.
           */
         def respond(
             resType: Option[String],
             resBody: Option[String],
             errMsg: Option[String],
-            respType: String,
             msgName: String
         ): Unit = {
+            require(errMsg.isDefined || (resType.isDefined && resBody.isDefined))
+            
             val msg = NCProbeMessage(msgName)
 
             msg += "srvReqId" → srvReqId
             msg += "dsId" → dsId
             msg += "dsModelId" → dsModelId
             msg += "txt" → txt
-            msg += "responseType" → respType
             msg += "test" → test
             
-            if (resBody.isDefined && resBody.get.length > MAX_RES_BODY_LENGTH) {
+            if (resBody.isDefined && resBody.get.length > MAX_RES_BODY_LENGTH)
                 addOptional(msg, "error", Some("Result is too big. Model needs to be corrected."))
-                msg += "responseType" → "RESP_ERROR"
-            }
             else {
                 addOptional(msg, "error", errMsg)
                 addOptional(msg, "resType", resType)
                 addOptional(msg, "resBody", resBody)
             }
             
-            if (toks != null) {
-                val tokens = toks.map(seq ⇒
-                    seq.map(tok ⇒
-                        new NCTokenImpl(
-                            tok.getServerRequestId,
-                            tok.getId,
-                            tok.getGroup,
-                            tok.getParentId,
-                            tok.getValue,
-                            tok.getMetadata,
-                            null
-                        )
-                    )
-                )
-
-                // TODO: change probe server side logic. Now it is Seq[Seq[NCToken]] but was Seq[NCToken]
-                msg += "tokens" → tokens.asInstanceOf[java.io.Serializable]
-            }
-
-            toks match {
-                case Some(x) ⇒ msg += "origTokens" → x.asInstanceOf[java.io.Serializable]
-                case None ⇒ // No-op.
-            }
-    
             NCProbeConnectionManager.send(msg)
             
             if (errMsg.isEmpty)
@@ -293,22 +263,17 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 respond(
                     None,
                     None,
-                    None,
                     Some(errMsg),
-                    "RESP_VALIDATION",
                     "P2S_ASK_RESULT"
                 )
         
                 return
         }
 
+        // Order is important!
         NCStopWordEnricher.enrich(mdl, nlpSen)
         NCModelEnricher.enrich(mdl, nlpSen)
-
-        // This should be after model enricher because
-        // it uses references to user elements.
         NCFunctionEnricher.enrich(mdl, nlpSen)
-
         NCCoordinatesEnricher.enrich(mdl, nlpSen)
         NCSuspiciousNounsEnricher.enrich(mdl, nlpSen)
 
@@ -324,20 +289,19 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             NCDictionaryEnricher.enrich(mdl, sen)
         })
 
-        // Collapsed again (Sentences stopwords changed by CtxEnricher)
+        // Collapse again.
         senSeq = senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p))
 
         if (!IS_PROBE_SILENT) {
             val sz = senSeq.size
             
-            // Printed here because validation can change sentence.
+            // Print here because validation can change sentence.
             senSeq.zipWithIndex.foreach(p ⇒
                 NCNlpAsciiLogger.prepareTable(p._1).info(logger,
                     Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
         }
         
         // Final validation before execution.
-        // Note: do not validate for 'explain' command.
         try
             senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
         catch {
@@ -349,9 +313,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 respond(
                     None,
                     None,
-                    None,
                     Some(errorMsg(e.code)),
-                    "RESP_VALIDATION",
                     "P2S_ASK_RESULT"
                 )
 
@@ -382,7 +344,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             override lazy val getServerRequestId: String = srvReqId
 
             override lazy val getConversationContext: NCConversationContext = new NCConversationContext {
-                override def getTokens: JSet[NCToken] = conv.tokens
+                override def getTokens: java.util.HashSet[NCToken] = conv.tokens
                 override def clear(filter: Predicate[NCToken]): Unit = conv.clear(filter)
             }
         }
@@ -399,17 +361,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 if (res.getType == null)
                     throw new IllegalStateException("Result type cannot be null.")
 
-                val `var` = res.getVariant
-
-                // Adds input sentence to the ongoing conversation if *some* result
-                // was returned. Do not add if result is invalid.
-                if (`var` != null) {
-                    conv.addItem(unitedSen, `var`)
-
-                    // Optional selected variants.
-                    toks = Seq(`var`.getTokens.asScala)
-                }
-
                 res
             },
             {
@@ -422,9 +373,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                     respond(
                         None,
                         None,
-                        Some(e.getMetadata.asScala),
                         Some(e.getMessage), // User provided rejection message.
-                        "RESP_REJECT",
                         "P2S_ASK_RESULT"
                     )
 
@@ -434,9 +383,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                     respond(
                         None,
                         None,
-                        None,
                         Some("Processing failed with unexpected error."), // System error message.
-                        "RESP_ERROR",
                         "P2S_ASK_RESULT"
                     )
             },
@@ -444,9 +391,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 respond(
                     Some(res.getType),
                     Some(res.getBody),
-                    Some(res.getMetadata.asScala),
                     None,
-                    "RESP_OK",
                     "P2S_ASK_RESULT"
                 )
             }

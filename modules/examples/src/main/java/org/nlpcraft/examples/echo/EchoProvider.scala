@@ -35,6 +35,7 @@ import java.util.Optional
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder
+import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 import scala.collection.Seq
@@ -57,7 +58,6 @@ class EchoProvider extends NCModelProviderAdapter {
       * @param s String to escape.
       * @return Escaped string.
       */
-    // TODO: instead of coding it here - you can borrow it from some well known library...
     def escapeJson(s: String): String = {
         val len = s.length
         
@@ -160,7 +160,6 @@ class EchoProvider extends NCModelProviderAdapter {
            | {
            |    "id": ${mkJsonVal(tok.getId)},
            |    "group": ${mkJsonVal(tok.getGroup)},
-           |    "type": ${mkJsonVal(tok.getType)},
            |    "parentId": ${mkJsonVal(tok.getParentId)},
            |    "value": ${mkJsonVal(tok.getValue)},
            |    "group": ${mkJsonVal(tok.getGroup)},
@@ -191,15 +190,6 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "userTotalQs": ${mkJsonVal(sen.getUserTotalQs)},
            |    "userLastQTstamp": ${mkJsonVal(sen.getUserLastQTimestamp)},
-           |    "countryName": ${mkJsonVal(sen.getCountryName)},
-           |    "countryCode": ${mkJsonVal(sen.getCountryCode)},
-           |    "regionName": ${mkJsonVal(sen.getRegionName)},
-           |    "cityName": ${mkJsonVal(sen.getCityName)},
-           |    "metroCode": ${mkJsonVal(sen.getMetroCode)},
-           |    "timezoneName": ${mkJsonVal(sen.getTimezoneName)},
-           |    "timezoneAbbr": ${mkJsonVal(sen.getTimezoneAbbreviation)},
-           |    "latitude": ${mkJsonVal(sen.getLatitude)},
-           |    "longitude": ${mkJsonVal(sen.getLongitude)},
            |    "variants":
            |        ${mkJsonVals(sen.variants().asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
            | }

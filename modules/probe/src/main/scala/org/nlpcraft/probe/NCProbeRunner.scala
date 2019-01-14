@@ -125,7 +125,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         tbl += ("API Version", ver.version + ", " + ver.date.toString)
         tbl += ("Down-Link", cfg.getDownLink)
         tbl += ("Up-Link", cfg.getUpLink)
-        tbl += ("Email", nvl(cfg.getEmail))
         tbl += ("In-Process Provider", if (cfg.getProvider == null) nvl(null) else cfg.getProvider.getClass)
         tbl += ("JARs Folder", nvl(cfg.getJarsFolder))
         
