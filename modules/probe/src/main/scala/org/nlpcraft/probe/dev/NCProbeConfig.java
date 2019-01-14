@@ -243,10 +243,7 @@ public class NCProbeConfig implements Serializable {
     }
 
     /**
-     * Creates probe configuration. This is equivalent to:
-     * <pre class="brush: java">
-     *     this(id, token, null, null, null, provider);
-     * </pre>
+     * Creates probe configuration.
      *
      * @param id ID of the probe. If {@code null} environment variable or system
      *      property {@code NLPCRAFT_PROBE_ID} will be checked.
@@ -261,26 +258,30 @@ public class NCProbeConfig implements Serializable {
         String id,
         String token,
         NCModelProvider provider) {
-        this(id, token, null, null, null, provider);
+        this.id = mkId(id);
+        this.token = mkToken(token);
+        this.upLink = mkUpLink(null);
+        this.downLink = mkDownLink(null);
+        this.jarsFolder = null;
+        this.provider = provider;
     }
 
     /**
-     * Creates probe configuration. This is equivalent to:
-     * <pre class="brush: java">
-     *     this(null, null, null, null, null, provider);
-     * </pre>
+     * Creates probe configuration.
      *
      * @param provider Mandatory model provider for the probe.
      */
     public NCProbeConfig(NCModelProvider provider) {
-        this(null, null, null, null, null, provider);
+        this.id = propOrEnv("NLPCRAFT_PROBE_ID");
+        this.token = propOrEnv("NLPCRAFT_PROBE_TOKEN");
+        this.upLink = mkUpLink(null);
+        this.downLink = mkDownLink(null);
+        this.jarsFolder = null;
+        this.provider = provider;
     }
 
     /**
-     * Creates probe configuration. This is equivalent to:
-     * <pre class="brush: java">
-     *     this(id, token, null, null, jarsFolder, null);
-     * </pre>
+     * Creates probe configuration.
      *
      * @param id ID of the probe. If {@code null} environment variable or system
      *      property {@code NLPCRAFT_PROBE_ID} will be checked.
@@ -295,19 +296,26 @@ public class NCProbeConfig implements Serializable {
         String token,
         String jarsFolder
     ) {
-        this(id, token, null, null, jarsFolder, null);
+        this.id = mkId(id);
+        this.token = mkToken(token);
+        this.upLink = mkUpLink(null);
+        this.downLink = mkDownLink(null);
+        this.jarsFolder = jarsFolder;
+        this.provider = null;
     }
 
     /**
-     * Creates probe configuration. This is equivalent to:
-     * <pre class="brush: java">
-     *     this(null, null, null, null, jarsFolder, null);
-     * </pre>
+     * Creates probe configuration.
      *
      * @param jarsFolder Mandatory folder to scan for model JARs.
      */
     public NCProbeConfig(String jarsFolder) {
-        this(null, null, null, null, jarsFolder, null);
+        this.id = propOrEnv("NLPCRAFT_PROBE_ID");
+        this.token = propOrEnv("NLPCRAFT_PROBE_TOKEN");
+        this.upLink = mkUpLink(null);
+        this.downLink = mkDownLink(null);
+        this.jarsFolder = jarsFolder;
+        this.provider = null;
     }
 
     /**
@@ -387,7 +395,7 @@ public class NCProbeConfig implements Serializable {
      * @param upLink Uplink endpoint to set.
      */
     public void setUpLink(String upLink) {
-        assert upLink != null;
+        checkEndpoint(upLink);
 
         this.upLink = upLink;
     }
@@ -398,7 +406,7 @@ public class NCProbeConfig implements Serializable {
      * @param downLink Downlink endpoint to set.
      */
     public void setDownLink(String downLink) {
-        assert downLink != null;
+        checkEndpoint(downLink);
 
         this.downLink = downLink;
     }
