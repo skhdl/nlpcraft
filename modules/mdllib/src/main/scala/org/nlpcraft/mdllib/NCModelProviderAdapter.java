@@ -48,9 +48,7 @@ public class NCModelProviderAdapter implements NCModelProvider {
      * @param models Model instances.
      */
     public void setup(NCModel... models) {
-        assert models != null;
-
-        setup(Arrays.asList(models));
+        setup(models != null ? Arrays.asList(models) : Collections.emptyList());
     }
 
     /**
@@ -60,19 +58,18 @@ public class NCModelProviderAdapter implements NCModelProvider {
      * @param models Model instances.
      */
     public void setup(Collection<NCModel> models) {
-        assert models != null;
-
         ids.clear();
         mdls.clear();
         dss.clear();
 
-        for (NCModel mdl : models) {
-            NCModelDescriptor ds = mdl.getDescriptor();
+        if (models != null)
+            for (NCModel mdl : models) {
+                NCModelDescriptor ds = mdl.getDescriptor();
 
-            mdls.add(mdl);
-            dss.add(ds);
-            ids.add(ds.getId());
-        }
+                mdls.add(mdl);
+                dss.add(ds);
+                ids.add(ds.getId());
+            }
     }
 
     @Override
