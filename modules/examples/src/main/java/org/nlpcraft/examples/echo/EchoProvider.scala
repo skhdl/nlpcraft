@@ -161,7 +161,6 @@ class EchoProvider extends NCModelProviderAdapter {
            | {
            |    "id": ${mkJsonVal(tok.getId)},
            |    "group": ${mkJsonVal(tok.getGroup)},
-           |    "type": ${mkJsonVal(tok.getType)},
            |    "parentId": ${mkJsonVal(tok.getParentId)},
            |    "value": ${mkJsonVal(tok.getValue)},
            |    "group": ${mkJsonVal(tok.getGroup)},

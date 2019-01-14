@@ -387,11 +387,6 @@ public class NCModelBuilder extends NCJsonBuilder {
                 }
 
                 @Override
-                public String getType() {
-                    return typ;
-                }
-
-                @Override
                 public String getGroup() {
                     return e.getGroup();
                 }

@@ -270,7 +270,6 @@ object NCModelEnricher extends NCProbeEnricher("Model enricher") with DecorateAs
 
             val params = ArrayBuffer(
                 "group" → elm.getGroup,
-                "dataType" → elm.getType,
                 "length" → m.tokens.map(_.words).sum,
                 "direct" → direct
             )

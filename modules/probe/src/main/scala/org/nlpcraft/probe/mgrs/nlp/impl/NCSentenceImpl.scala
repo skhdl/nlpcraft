@@ -144,7 +144,6 @@ class NCSentenceImpl(
                         srvReqId,
                         elm.getId,
                         elm.getGroup,
-                        elm.getType,
                         elm.getParentId,
                         usrNote.dataOpt("value").orNull,
                         tokMeta,
@@ -163,7 +162,6 @@ class NCSentenceImpl(
                         srvReqId,
                         note.noteType, // Use NLP note type as synthetic element ID.
                         note.noteType, // Use NLP note type as synthetic element group.
-                        "STRING",
                         null,
                         null,
                         nlpTokMeta,

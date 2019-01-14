@@ -65,11 +65,6 @@ public class NCElementImpl implements NCElement {
         return parentId;
     }
 
-    @Override
-    public String getType() {
-        return type == null ? "STRING" : type;
-    }
-
     /**
      *
      * @param desc

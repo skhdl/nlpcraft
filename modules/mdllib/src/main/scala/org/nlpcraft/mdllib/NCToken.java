@@ -708,15 +708,6 @@ public interface NCToken extends Serializable {
     String getId();
 
     /**
-     * Gets the data type of the model element this token represents (user defined or built-in system).
-     * NOTE: do no confuse this <i>data</i> type with token ID.
-     *
-     * @return Data type of the token's element.
-     * @see NCElement#getType()
-     */
-    String getType();
-
-    /**
      * Gets the optional parent ID of the model element this token represents. This only available
      * for user-defined model elements (system built-in tokens do not have parents).
      *

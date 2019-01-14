@@ -272,23 +272,6 @@ public interface NCElement {
     String getDescription();
 
     /**
-     * Gets optional element type. If returning {@code null}, the system will assume {@code STRING} type.
-     * The following types are supported:
-     * <ul>
-     *      <li>{@code STRING} <i>(default)</i></li>
-     *      <li>{@code LONG}</li>
-     *      <li>{@code DOUBLE}</li>
-     *      <li>{@code DATE}</li>
-     *      <li>{@code TIME}</li>
-     *      <li>{@code DATETIME}</li>
-     *      <li>{@code BOOLEAN}</li>
-     * </ul>
-     *
-     * @return Element type.
-     */
-    String getType();
-
-    /**
      * Gets optional map of {@link NCValue values} for this element.
      * <br><br>
      * Each element can generally be recognized either by one of its synonyms or values. Elements and their values

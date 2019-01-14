@@ -244,7 +244,7 @@ object NCNlpAsciiLogger extends LazyLogging {
 
                     s
                 // User tokens.
-                case id if !id.startsWith("nlp:") ⇒ seq.find(_._1 == "dataType").get._2.toString
+                case id if !id.startsWith("nlp:") ⇒ id
                 case _ ⇒
                     seq.map(p ⇒ s"${p._1}=${if (p._2 == null) "null" else {p._2}.toString}").mkString(", ")
             }

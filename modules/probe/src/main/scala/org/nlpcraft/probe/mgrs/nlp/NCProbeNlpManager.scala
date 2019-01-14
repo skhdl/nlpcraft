@@ -240,7 +240,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
            | {
            |    "id": ${mkJsonVal(tok.getId)},
            |    "group": ${mkJsonVal(tok.getGroup)},
-           |    "type": ${mkJsonVal(tok.getType)},
            |    "parentId": ${mkJsonVal(tok.getParentId)},
            |    "value": ${mkJsonVal(tok.getValue)},
            |    "group": ${mkJsonVal(tok.getGroup)},
@@ -476,7 +475,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                             tok.getServerRequestId,
                             tok.getId,
                             tok.getGroup,
-                            tok.getType,
                             tok.getParentId,
                             tok.getValue,
                             tok.getMetadata,

@@ -720,12 +720,6 @@ public class NCIntentSolver {
          *         </td>
          *     </tr>
          *     <tr>
-         *         <td><code>type</code></td>
-         *         <td>
-         *             Token {@link NCToken#getType() type}
-         *         </td>
-         *     </tr>
-         *     <tr>
          *         <td><code>group</code></td>
          *         <td>
          *             Token {@link NCToken#getGroup() group}
@@ -997,7 +991,6 @@ public class NCIntentSolver {
                 switch (param) {
                     case "id": v1 = tok.getId().trim(); break;
                     case "group": v1 = tok.getGroup().trim(); break;
-                    case "type": v1 = tok.getType().trim(); break;
                     case "value":  v1 = tok.getValue().trim(); break;
                     case "parent": v1 = tok.getParentId().trim(); break;
 
