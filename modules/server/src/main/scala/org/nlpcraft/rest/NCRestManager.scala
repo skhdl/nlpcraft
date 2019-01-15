@@ -191,8 +191,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         srvReqId: String
                     )
 
-
-    
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
@@ -217,7 +215,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                                 }
                             }
                         }
-
                     }
                 } ~
                 path(API / "cancel") {
