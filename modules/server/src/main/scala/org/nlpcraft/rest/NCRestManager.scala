@@ -195,24 +195,24 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticate(req.accessToken)
-
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
-                            optionalHeaderValueByName("Remote-Address") { remoteAddr1 ⇒
-                                optionalHeaderValueByName("X-Forwarded-For") { remoteAddr2 ⇒
-                                    val newSrvReqId = NCQueryManager.ask(
-                                        getUserId(req.accessToken),
-                                        req.txt,
-                                        req.dsId,
-                                        req.isTest.getOrElse(false),
-                                        userAgent,
-                                        if (remoteAddr1.isDefined) remoteAddr1 else remoteAddr2
-                                    )
-
-                                    complete {
-                                        Res(API_OK, newSrvReqId)
+                            extractClientIP { remoteAddr ⇒
+                                val newSrvReqId = NCQueryManager.ask(
+                                    getUserId(req.accessToken),
+                                    req.txt,
+                                    req.dsId,
+                                    req.isTest.getOrElse(false),
+                                    userAgent,
+                                    remoteAddr.toOption match {
+                                        case Some(a) ⇒ Some(a.getHostAddress)
+                                        case None ⇒ None
                                     }
+                                )
+
+                                complete {
+                                    Res(API_OK, newSrvReqId)
                                 }
+
                             }
                         }
                     }
