@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -53,7 +53,6 @@ public class NCModelImpl implements NCModel {
     private NCSerializableFunction<NCQueryContext, NCQueryResult> qryFun;
     private NCSerializableConsumer<NCProbeContext> initFun;
     private NCSerializableRunnable discardFun;
-    private List<NCTriviaGroup> trivia = new ArrayList<>();
 
     private String desc;
     private String docsUrl;
@@ -89,11 +88,6 @@ public class NCModelImpl implements NCModel {
     private int maxTotalSynonyms = DFLT_MAX_TOTAL_SYNONYMS;
 
     @Override
-    public Collection<NCTriviaGroup> getTrivia() {
-        return trivia;
-    }
-
-    @Override
     public NCMetadata getMetadata() {
         return meta;
     }
@@ -102,17 +96,6 @@ public class NCModelImpl implements NCModel {
     public void discard() {
         if (discardFun != null)
             discardFun.run();
-    }
-
-    /**
-     * Adds trivia group.
-     *
-     * @param grp Trivia group to add.
-     */
-    public void addTrivia(NCTriviaGroup grp) {
-        assert grp != null;
-
-        trivia.add(grp);
     }
 
     /**
@@ -572,10 +555,5 @@ public class NCModelImpl implements NCModel {
     
     public void setMaxTotalSynonyms(int maxTotalSynonyms) {
         this.maxTotalSynonyms = maxTotalSynonyms;
-    }
-    
-    @Override
-    public String toString() {
-        return "NCModelImpl{" + "ds=" + ds + ", meta=" + meta + ", suspWords=" + suspWords + ", examples=" + examples + ", exclStopWords=" + exclStopWords + ", elms=" + elms + ", macros=" + macros + ", addStopWords=" + addStopWords + ", qryFun=" + qryFun + ", initFun=" + initFun + ", discardFun=" + discardFun + ", trivia=" + trivia + ", desc='" + desc + '\'' + ", docsUrl='" + docsUrl + '\'' + ", vendorUrl='" + vendorUrl + '\'' + ", vendorEmail='" + vendorEmail + '\'' + ", vendorContact='" + vendorContact + '\'' + ", vendorName='" + vendorName + '\'' + ", jiggleFactor=" + jiggleFactor + ", minDateTokens=" + minDateTokens + ", maxDateTokens=" + maxDateTokens + ", minNumTokens=" + minNumTokens + ", maxNumTokens=" + maxNumTokens + ", minGeoTokens=" + minGeoTokens + ", maxGeoTokens=" + maxGeoTokens + ", minFunctionTokens=" + minFunctionTokens + ", maxFunctionTokens=" + maxFunctionTokens + ", maxUnknownWords=" + maxUnknownWords + ", maxFreeWords=" + maxFreeWords + ", maxSuspiciousWords=" + maxSuspiciousWords + ", minWords=" + minWords + ", maxWords=" + maxWords + ", minTokens=" + minTokens + ", maxTokens=" + maxTokens + ", minNonStopwords=" + minNonStopwords + ", isNonEnglishAllowed=" + isNonEnglishAllowed + ", isNotLatinCharsetAllowed=" + isNotLatinCharsetAllowed + ", isSwearWordsAllowed=" + isSwearWordsAllowed + ", isNoNounsAllowed=" + isNoNounsAllowed + ", isNoUserTokensAllowed=" + isNoUserTokensAllowed + ", isDupSynonymsAllowed=" + isDupSynonymsAllowed + ", isPermutateSynonyms=" + isPermutateSynonyms + ", maxTotalSynonyms=" + maxTotalSynonyms + '}';
     }
 }

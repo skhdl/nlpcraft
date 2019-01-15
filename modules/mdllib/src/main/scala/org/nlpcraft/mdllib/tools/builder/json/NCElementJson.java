@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -39,7 +39,6 @@ import java.util.*;
 public class NCElementJson {
     private String id;
     private String group;
-    private String type;
     private String parentId;
     private String desc;
     private String[] excludedSynonyms = new String[0];
@@ -93,22 +92,6 @@ public class NCElementJson {
      */
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     *
-     * @param type
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

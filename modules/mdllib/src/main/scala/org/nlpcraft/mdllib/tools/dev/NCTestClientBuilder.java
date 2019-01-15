@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -590,10 +590,6 @@ public class NCTestClientBuilder {
         private int convertResponse(String respType) {
             switch (respType.toUpperCase()) {
                 case "RESP_OK": return RESP_OK;
-                case "RESP_CURATION": return RESP_CURATION;
-                case "RESP_REJECT": return RESP_REJECT;
-                case "RESP_TRIVIA": return RESP_TRIVIA;
-                case "RESP_TALKBACK": return RESP_TALKBACK;
                 case "RESP_VALIDATION": return RESP_VALIDATION;
                 case "RESP_ERROR": return RESP_ERROR;
             
@@ -605,10 +601,6 @@ public class NCTestClientBuilder {
         private String convertCode(int code) {
             switch (code) {
                 case RESP_OK: return "RESP_OK";
-                case RESP_CURATION: return "RESP_CURATION";
-                case RESP_REJECT: return "RESP_REJECT";
-                case RESP_TRIVIA: return "RESP_TRIVIA";
-                case RESP_TALKBACK: return "RESP_TALKBACK";
                 case RESP_VALIDATION: return "RESP_VALIDATION";
                 case RESP_ERROR: return "RESP_ERROR";
             
@@ -1013,7 +1005,6 @@ public class NCTestClientBuilder {
     
                                 res.setBody(body);
                                 res.setType(type);
-                                res.setMetadata(testRes.getResultMetadata());
     
                                 if (!test.getCheck().test(res))
                                     err = "Result has not satisfied user validation";

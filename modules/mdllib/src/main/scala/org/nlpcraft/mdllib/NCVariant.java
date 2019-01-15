@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -41,7 +41,7 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  * Sentence variant is a list of {@link NCToken tokens}. This class is used throughout the
  * API as a container of tokens coupled with their utility methods. Note that a given user input
  * can have one or more possible different parsing variants (i.e. set of tokens representing that parsed input).
- * Note also that variants support natural ordering from best to worst probable fitness.
+ * Note also that variants support natural ordering from best to worst fitness.
  *
  * @see NCSentence#variants()
  */

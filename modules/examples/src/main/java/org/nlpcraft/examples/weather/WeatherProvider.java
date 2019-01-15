@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -67,7 +67,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
     private final static DateFormat outFmt = new SimpleDateFormat("EE'<br/><span style=___>'MMM dd'</span>'");
     // Base CSS.
     private static final String CSS = "style='display: inline-block; min-width: 120px'";
-    // Maximum free words left before auto-curation.
+    // Maximum free words left before rejection.
     private static final int MAX_FREE_WORDS = 4;
     // Keywords for 'local' weather.
     private static final Set<String> LOCAL_WORDS = new HashSet<>(Arrays.asList("my", "local", "hometown"));
@@ -342,18 +342,14 @@ public class WeatherProvider extends NCModelProviderAdapter {
 
     /**
      * Strict check for an exact match (i.e. no dangling unused system or user defined tokens) and
-     * maximum number of free words left unmatched. In both cases user input will go into curation.
+     * maximum number of free words left unmatched. In both cases user input will be rejected.
      *
      * @param ctx Solver context.
      */
     private void checkMatch(NCIntentSolverContext ctx) {
-        // Send for curation if intent match is not exact ("dangling" tokens remain).
-        if (!ctx.isExactMatch())
-            throw new NCCuration("Intent match was not exact.");
-        
-        // Send for curation if there are too many free words left unmatched.
-        if (ctx.getVariant().stream(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
-            throw new NCCuration("Too many free words.");
+        // Reject if intent match is not exact ("dangling" tokens remain) or too many free words left unmatched.
+        if (!ctx.isExactMatch() || ctx.getVariant().stream(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
+            throw new NCRejection("Too many extra words - please simplify.");
     }
 
     /**
@@ -369,7 +365,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
             // Look 5 days ahead by default.
             return onRangeMatch(ctx, LocalDate.now(), LocalDate.now().plusDays(5));
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {
@@ -390,7 +386,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
             // Look 5 days back by default.
             return onRangeMatch(ctx, LocalDate.now().minusDays(5), LocalDate.now());
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {
@@ -418,7 +414,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
         catch (ApixuPeriodException e) {
             throw new NCRejection(e.getLocalizedMessage());
         }
-        catch (NCRejection | NCCuration e) {
+        catch (NCRejection e) {
             throw e;
         }
         catch (Exception e) {

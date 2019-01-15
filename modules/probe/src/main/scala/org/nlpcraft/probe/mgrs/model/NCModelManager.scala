@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -108,7 +108,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                         override lazy val getToken: String = config.getToken
                         override lazy val getUpLink: String = config.getUpLink
                         override lazy val getDownLink: String = config.getDownLink
-                        override lazy val getEmail: String = config.getEmail
                         override lazy val getJarsFolder: String = config.getJarsFolder
                     })
 
@@ -294,7 +293,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
         checkElementIdsDups(mdl)
         checkCyclicDependencies(mdl)
-        checkTriviaDups(mdl, parser)
 
         val addStopWords = checkAndStemmatize(mdl.getAdditionalStopWords, "Additional stopword")
         val exclStopWords = checkAndStemmatize(mdl.getExcludedStopWords, "Excluded stopword")
@@ -501,7 +499,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
         NCModelDecorator(
             model = mdl,
-            triviaStems = generateTrivia(mdl, parser),
             synonyms = mkFastAccessMap(syns.toSet),
             excludedSynonyms = mkFastAccessMap(exclSyns.toSet),
             additionalStopWordsStems = addStopWords,
@@ -601,38 +598,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
     /**
       *
       * @param mdl Model.
-      * @param parser Macro parser.
-      */
-    @throws[NCE]
-    private def checkTriviaDups(mdl: NCModel, parser: MacroParser): Unit = {
-        val trivia = mdl.getTrivia
-
-        if (trivia.nonEmpty) {
-            val grps = ArrayBuffer.empty[List[String]]
-
-            // Expand trivia inputs.
-            trivia.foreach(grp ⇒ {
-                val ins = ArrayBuffer.empty[String]
-
-                for (in ← grp.getInputs)
-                    ins ++= parser.expand(in).map(NCNlpManager.stem)
-
-                if (ins.nonEmpty)
-                    grps += ins.toList
-            })
-
-            // Check for input dups in different groups.
-            for (grp ← grps; in ← grp) {
-                for (g ← grps if g != grp)
-                    if (g.contains(in))
-                        throw new NCE(s"Duplicate (expanded) trivia input '$in'.")
-            }
-        }
-    }
-
-    /**
-      *
-      * @param mdl Model.
       */
     @throws[NCE]
     private def checkElementIdsDups(mdl: NCModel): Unit = {
@@ -678,14 +643,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
         s.exists(_.isWhitespace)
 
     /**
-      * Checks if synonym is dynamic.
-      *
-      * @param syn Synonym to check.
-      */
-    private def isDynamic(syn: String): Boolean =
-        syn.startsWith("%") && syn.endsWith("%")
-
-    /**
       * Makes usage holder.
       *
       * @param mdl Model.
@@ -699,7 +656,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
         for (elm ← mdl.getElements.asScala) {
             val exampleSyns = nlv(elm.getSynonyms) // Take un-processed synonyms in their original form.
                 .map(_.trim)
-                .filter(!isDynamic(_))
                 .take(3)
                 .map(parser.expand(_).head)
 
@@ -763,30 +719,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
       */
     private def nlv(col: JCollection[String]): List[String] =
         if (col == null) List.empty else col.asScala.toList
-
-    /**
-      * Generates trivia data.
-      *
-      * @param mdl Model.
-      * @param parser Initialized macro parser.
-      */
-    private def generateTrivia(mdl: NCModel, parser: MacroParser): Map[String, Set[String]] =
-        if (mdl.getTrivia == null)
-            Map.empty
-        else {
-            val groups = mdl.getTrivia.asScala.toSet
-
-            def expand(seq: Seq[String]): Seq[String] = seq.flatMap(parser.expand).map(_.trim)
-
-            groups.
-                map(g ⇒ (nlv(g.getInputs), nlv(g.getResponses))).
-                flatMap(h ⇒
-                    expand(h._1).
-                        map(txt ⇒ txt.split(" ").map(_.trim).filter(_.nonEmpty).mkString(" ").toLowerCase.trim).map(p ⇒
-                        p → expand(h._2).toSet
-                    )
-                ).toMap
-        }
 
     /**
       *

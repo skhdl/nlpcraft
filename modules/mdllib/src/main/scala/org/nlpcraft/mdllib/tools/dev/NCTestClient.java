@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -46,15 +46,6 @@ public interface NCTestClient {
     
     /** Response status: request rejected from user code. */
     int RESP_REJECT = 2;
-    
-    /** Response status: request forwarded to curation from user code.*/
-    int RESP_CURATION = 3;
-    
-    /** Response status: request successfully answered with trivia response. */
-    int RESP_TRIVIA = 4;
-    
-    /** Response status: request successfully answered with talkback response. */
-    int RESP_TALKBACK = 5;
     
     /** Response status: request returned with error due to model validation check. */
     int RESP_VALIDATION = 6;

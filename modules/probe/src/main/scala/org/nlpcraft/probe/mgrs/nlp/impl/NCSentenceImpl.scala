@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -30,8 +30,6 @@
  */
 
 package org.nlpcraft.probe.mgrs.nlp.impl
-
-import java.util.{Optional, List ⇒ JList}
 
 import org.nlpcraft.mdllib.tools.impl._
 import org.nlpcraft.mdllib._
@@ -59,31 +57,17 @@ class NCSentenceImpl(
     override def isOwnerOf(tok: NCToken): Boolean = allToks.contains(tok)
     
     override lazy val getServerRequestId: String = srvReqId
-    override lazy val variants: JList[NCVariant] = combToks.map(toks ⇒ new NCVariant(toks.asJava)).asJava
+    override lazy val variants: java.util.List[NCVariant] = combToks.map(toks ⇒ new NCVariant(toks.asJava)).asJava
     override lazy val getNormalizedText: String = meta.getString("NORMTEXT")
-    override lazy val getUserClientAgent: String = meta.getString("USER_AGENT")
-    override lazy val getOrigin: String = meta.getString("ORIGIN")
     override lazy val getReceiveTimestamp: Long = meta.getLong("RECEIVE_TSTAMP")
-    override lazy val getRemoteAddress: Optional[String] = meta.getStringOpt("REMOTE_ADDR")
     override lazy val getUserFirstName: String = meta.getString("FIRST_NAME")
     override lazy val getUserLastName: String = meta.getString("LAST_NAME")
     override lazy val getUserEmail: String = meta.getString("EMAIL")
-    override lazy val getUserCompany: String = meta.getString("COMPANY_NAME")
     override lazy val getUserAvatarUrl: String = meta.getString("AVATAR_URL")
     override lazy val isUserAdmin: Boolean = meta.getBoolean("IS_ADMIN")
     override lazy val getUserSignupDate: Long = meta.getLong("SIGNUP_DATE")
     override lazy val getUserLastQTimestamp: Long = meta.getLong("LAST_Q_TSTAMP")
     override lazy val getUserTotalQs: Int = meta.getInteger("TOTAL_QS")
-    override lazy val getTimezoneName: Optional[String] = meta.getStringOpt("TMZ_NAME")
-    override lazy val getTimezoneAbbreviation: Optional[String] = meta.getStringOpt("TMZ_ABBR")
-    override lazy val getLatitude: Optional[java.lang.Double] = meta.getDoubleOpt("LATITUDE")
-    override lazy val getLongitude: Optional[java.lang.Double] = meta.getDoubleOpt("LONGITUDE")
-    override lazy val getCountryCode: Optional[String] = meta.getStringOpt("COUNTRY_CODE")
-    override lazy val getCountryName: Optional[String] = meta.getStringOpt("COUNTRY_NAME")
-    override lazy val getRegionName: Optional[String] = meta.getStringOpt("REGION_NAME")
-    override lazy val getCityName: Optional[String] = meta.getStringOpt("CITY")
-    override lazy val getZipCode: Optional[String] = meta.getStringOpt("ZIP_CODE")
-    override lazy val getMetroCode: Optional[java.lang.Long] = meta.getLongOpt("METRO_CODE")
 
     /**
       * Converts NLP sentence into sequence of model tokens.

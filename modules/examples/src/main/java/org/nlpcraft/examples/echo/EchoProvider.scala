@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -58,7 +58,6 @@ class EchoProvider extends NCModelProviderAdapter {
       * @param s String to escape.
       * @return Escaped string.
       */
-    // TODO: instead of coding it here - you can borrow it from some well known library...
     def escapeJson(s: String): String = {
         val len = s.length
         
@@ -188,21 +187,9 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "userLastName": ${mkJsonVal(sen.getUserLastName)},
            |    "userEmail": ${mkJsonVal(sen.getUserEmail)},
            |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
-           |    "userCompany": ${mkJsonVal(sen.getUserCompany)},
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "userTotalQs": ${mkJsonVal(sen.getUserTotalQs)},
            |    "userLastQTstamp": ${mkJsonVal(sen.getUserLastQTimestamp)},
-           |    "countryName": ${mkJsonVal(sen.getCountryName)},
-           |    "countryCode": ${mkJsonVal(sen.getCountryCode)},
-           |    "regionName": ${mkJsonVal(sen.getRegionName)},
-           |    "cityName": ${mkJsonVal(sen.getCityName)},
-           |    "metroCode": ${mkJsonVal(sen.getMetroCode)},
-           |    "origin": ${mkJsonVal(sen.getOrigin)},
-           |    "remoteAddress": ${mkJsonVal(sen.getRemoteAddress)},
-           |    "timezoneName": ${mkJsonVal(sen.getTimezoneName)},
-           |    "timezoneAbbr": ${mkJsonVal(sen.getTimezoneAbbreviation)},
-           |    "latitude": ${mkJsonVal(sen.getLatitude)},
-           |    "longitude": ${mkJsonVal(sen.getLongitude)},
            |    "variants":
            |        ${mkJsonVals(sen.variants().asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
            | }
@@ -223,8 +210,7 @@ class EchoProvider extends NCModelProviderAdapter {
               |    "vendorContact": "Support",
               |    "vendorEmail": "info@nlpcraft.org",
               |    "docsUrl": "https://www.nlpcraft.org",
-              |    "allowNoUserTokens": true,
-              |    "defaultTrivia": false
+              |    "allowNoUserTokens": true
               | }
             """.stripMargin)
             .setQueryFunction((ctx: NCQueryContext) ⇒ {
@@ -234,8 +220,7 @@ class EchoProvider extends NCModelProviderAdapter {
                        |{
                        |    "srvReqId": ${mkJsonVal(ctx.getServerRequestId)},
                        |    "dataSource": ${mkDataSourceJson(ctx)},
-                       |    "sentence": ${mkSentenceJson(ctx)},
-                       |    "hint": ${mkJsonVal(ctx.getHint)}
+                       |    "sentence": ${mkSentenceJson(ctx)}
                        |}
                      """.stripMargin
                 )

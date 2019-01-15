@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -43,7 +43,6 @@ case class NCIntentSolverResult(
     intentId: String,
     fn: IntentCallback, // For Java interop.
     toks: JList[JList[NCToken]], // For Java interop.
-    termNouns: JList[String], // For Java interop.
     isExactMatch: Boolean,
     variant: NCVariant
 )

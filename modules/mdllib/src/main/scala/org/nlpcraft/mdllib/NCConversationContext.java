@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -40,9 +40,8 @@ import java.util.function.*;
  * <br><br>
  * Conversation management is based on idea of a short-term-memory (STM). STM can be viewed as a condensed
  * short-term history of the user input for a given user and data source. Every submitted user request that wasn't
- * rejected or curated and for which the specific sentence {@link NCVariant variant} was determined is added to the
- * conversation STM. Existing STM tokens with the same {@link NCElement#getGroup() group} will be overridden by
- * the more recent tokens from the same group.
+ * rejected is added to the conversation STM as a list of {@link NCToken tokens}. Existing STM tokens with
+ * the same {@link NCElement#getGroup() group} will be overridden by the more recent tokens from the same group.
  *
  * @see NCQueryContext#getConversationContext()
  */
@@ -61,7 +60,7 @@ public interface NCConversationContext {
     /**
      * Removes all tokens satisfying given predicate from the current conversation STM.
      * This is particularly useful when the logic processing the user input makes an implicit
-     * assumption not present in the user input itself. Such assumption may affect the conversation context and
+     * assumption not present in the user input itself. Such assumption may alter the conversation context and
      * therefore this method can be used to remove "stale" tokens from conversation STM.
      * <br><br>
      * For example, in some cases the intent logic can assume the user current location as an implicit geo

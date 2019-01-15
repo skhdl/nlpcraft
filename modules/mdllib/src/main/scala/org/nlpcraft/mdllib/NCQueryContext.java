@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -45,14 +45,9 @@ import java.io.*;
  */
 public interface NCQueryContext extends Serializable {
     /**
-     * Gets ID of the current request.
-     * <p>
-     * Server request is defined as a processing of a one user input sentence (a session).
-     * Note that model can be accessed multiple times during processing of a single user sentence
-     * and therefor that ID can appear in multiple invocations of {@link NCModel#query(NCQueryContext)} method.
-     * In fact, users of this interfaces can use this fact by using this ID,
-     * for example, as a map key for a session scoped storage.
-     * 
+     * Gets ID of the current request. Server request is defined as a processing of a one user input
+     * sentence (a session).
+     *
      * @return Server request ID.
      * @see NCModel#query(NCQueryContext)
      */
@@ -71,16 +66,6 @@ public interface NCQueryContext extends Serializable {
      * @return Descriptor of data source for the user sentence associated with this context.
      */
     NCDataSource getDataSource();
-
-    /**
-     * During human curation an operator can provide a hint that can be used by
-     * {@link NCModel#query(NCQueryContext)} method. A hint can be anything that can be expressed in text:
-     * SQL query, REST call, property set, JavaScript code, etc.
-     *
-     * @return Curation hint or {@code null} if not provided.
-     * @see NCCuration
-     */
-    String getHint();
 
     /**
      * Gets fully parsed, canonical representation of user input.

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -86,10 +86,6 @@ trait NCModelSpecBase {
                         )
                         .build()
                     )
-                    .addTrivia(List("hi", "howdy").asJava, List("hello!").asJava)
-                    //.addTrivia(List("hi <X>", "howdy2"), List("hello!"))
-                    .addTrivia(List("hi1", "howdy2").asJava, List("hello!").asJava)
-                    //.addRestriction("BLA", 10)
                     .setQueryFunction((_: NCQueryContext) ⇒ null)
                     .build()
     

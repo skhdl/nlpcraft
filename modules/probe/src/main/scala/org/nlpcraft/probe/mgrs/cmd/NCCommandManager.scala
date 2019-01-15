@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -71,10 +71,8 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                 case "S2P_ASK" ⇒
                     NCProbeNlpManager.ask(
                         srvReqId = msg.data[String]("srvReqId"),
-                        origTxt = msg.data[String]("origTxt"),
-                        curateTxt = msg.dataOpt[String]("curateTxt"),
-                        curateHint = msg.dataOpt[String]("curateHint"),
-                        origTokens = msg.dataOpt[Seq[NCToken]]("origTokens"),
+                        txt = msg.data[String]("txt"),
+                        toks = msg.dataOpt[Seq[NCToken]]("tokens"),
                         nlpSen = msg.data[NCNlpSentence]("sentence"),
                         usrId = msg.data[Long]("userId"),
                         senMeta = msg.data[Map[String, Serializable]]("senMeta"),
@@ -83,7 +81,6 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                         dsName = msg.data[String]("dsName"),
                         dsDesc = msg.data[String]("dsDesc"),
                         dsModelCfg = msg.data[String]("dsModelCfg"),
-                        cacheable = msg.data[Boolean]("cacheable"),
                         test = msg.data[Boolean]("test")
                     )
 

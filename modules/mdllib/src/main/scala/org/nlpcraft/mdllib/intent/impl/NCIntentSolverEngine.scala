@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -46,45 +46,64 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
-  * TODO: add description.
+  * Intent solver that finds the best matching intent given user sentence.
   */
 object NCIntentSolverEngine extends NCDebug with LazyLogging {
-    private class Weight extends java.util.ArrayList[Int] with Ordered[Weight] {
+    private class Weight extends Ordered[Weight] {
+        private val weights: Array[Int] = new Array(5)
+    
         /**
           *
-          * @param weights Weights values from most to least important.
+          * @param w0
+          * @param w1
+          * @param w2
+          * @param w3
+          * @param w4
           */
-        def this(weights: Int*) = {
+        def this(w0: Int, w1: Int, w2: Int, w3: Int, w4: Int) = {
             this()
 
-            addAll(weights.asJava)
+            weights(0) = w0
+            weights(1) = w1
+            weights(2) = w2
+            weights(3) = w3
+            weights(4) = w4
         }
-
+    
         /**
+          * Sets specific weight at a given index.
+          *
           * @param idx
-          * @param weight
+          * @param w
           */
-        def addWeight(idx: Int, weight: Weight): Unit = addAll(idx, weight)
-
+        def setWeight(idx: Int, w: Int): Unit =
+            weights(idx) = w
+    
         /**
-          * 
+          *
           * @param that
           * @return
           */
         def ++=(that: Weight): Weight = {
-            require(size() == that.size())
-
-            new Weight(this.zip(that).map { case (i1, i2) ⇒ i1 + i2 } :_*)
+            val newW = new Weight()
+    
+            for (i ← 0 to 5)
+                newW.setWeight(i, this.weights(i) + that.weights(i))
+            
+            newW
         }
-
+    
+        /**
+          *
+          * @param that
+          * @return
+          */
         override def compare(that: Weight): Int = {
-            require(size() == that.size())
-
             var res = 0
-
-            for ((i1, i2) ← this.zip(that) if res == 0)
-               res = Integer.compare(i1, i2)
-
+    
+            for ((i1, i2) ← this.weights.zip(that.weights) if res == 0)
+                res = Integer.compare(i1, i2)
+    
             res
         }
     }
@@ -118,14 +137,12 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
       * @param tokGrps
       * @param weight
       * @param intent
-      * @param termNouns
       * @param exactMatch
       */
     private case class IntentMatch(
         tokGrps: List[List[UseToken]],
         weight: Weight,
         intent: INTENT,
-        termNouns: List[String],
         exactMatch: Boolean
     )
     
@@ -224,7 +241,6 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 m.intentMatch.intent.getId,
                 m.callback,
                 new JArrayList(m.intentMatch.tokGrps.map(lst ⇒ new JArrayList(lst.map(_.tok)))),
-                new JArrayList(m.intentMatch.termNouns),
                 m.intentMatch.exactMatch,
                 m.variant
             )
@@ -278,8 +294,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         senToks: Seq[UseToken],
         convToks: Set[UseToken],
         varIdx: Int): Option[IntentMatch] = {
-        var missedTermNouns = List.empty[String]
-        val intentWeight = new Weight()
+        val intentW = new Weight()
         val intentGrps = mutable.ListBuffer.empty[List[UseToken]]
         var abort = false
         
@@ -298,21 +313,16 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     else {
                         // Term is found.
                         // Add its weight and grab its tokens.
-                        intentWeight ++= termMatch.weight
+                        intentW ++= termMatch.weight
                         intentGrps += termMatch.toks
                         
                         lastTermMatch = termMatch
                     }
                     
                 case None ⇒
-                    if (term.getTermNoun != null)
-                        // Term is missing but we can still ask for it.
-                        missedTermNouns ::= term.getTermNoun
-                    else
-                        // Term is missing and we can't ask for it.
-                        // Stop further terms processing for this intent.
-                        // This intent cannot be matched.
-                        abort = true
+                    // Term is missing. Stop further terms processing for this intent.
+                    // This intent cannot be matched.
+                    abort = true
             }
         }
         
@@ -340,21 +350,13 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         else {
             val exactMatch = !senToks.exists(tok ⇒ !tok.used && !isFreeWord(tok.tok))
             
-            intentWeight.addWeight(
-                0,
-                // Weight should be greater, comparing reversed.
-                new Weight(
-                    -missedTermNouns.size,
-                    if (exactMatch) 1 else 0
-                )
-            )
+            intentW.setWeight(0, if (exactMatch) 1 else 0)
 
             Some(
                 IntentMatch(
                     tokGrps = intentGrps.toList,
-                    weight = intentWeight,
+                    weight = intentW,
                     intent = intent,
-                    termNouns = missedTermNouns,
                     exactMatch = exactMatch
                 )
             )
@@ -387,15 +389,8 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                     abort = true
             }
         
-        if (abort) {
-            if (term.getTermNoun != null)
-                // Even though the term is not found we can still ask for it
-                // and therefore we need to rollback tokens used by already processed items
-                // so that they can be used by other terms that can still be found further.
-                termToks.foreach(_.used = false)
-            
+        if (abort)
             None
-        }
         else
             Some(TermMatch(termToks, termWeight))
     }
@@ -419,7 +414,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         var itemToks = List.empty[UseToken]
         val min = item.getMin
         val max = item.getMax
-        val iw = Array(0, 0, 0) // Total 3-part items weight.
+        val itemW = Array(0, 0, 0) // Total 3-part items weight.
     
         /**
           *
@@ -436,9 +431,9 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                         
                         val w = p.getRight // Item's weight for this token.
     
-                        iw(0) += w(0)
-                        iw(1) += w(1)
-                        iw(2) += w(2)
+                        itemW(0) += w(0)
+                        itemW(1) += w(1)
+                        itemW(2) += w(2)
                         
                         found = true
                         
@@ -451,10 +446,8 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         // Collect to the 'max', if possible.
         collect(senToks, max)
         
-        // Specificity weight ('-1' if conversation was used, '1' if not).
-        // Note that '-1' weight will counterbalance '1' when summed up, i.e. if a term has items
-        // with specificity weight '1' and '-1' the total specificity weight for this term will be '0'.
-        val w0 = if (collect(convToks, max)) -1 else 1
+        // Specificity weight ('0' if conversation was used, '1' if not).
+        val specW = if (collect(convToks, max)) 0 else 1
         
         if (itemToks.lengthCompare(min) < 0) // We couldn't collect even 'min' tokens.
             None
@@ -466,7 +459,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         else { // We've collected some tokens.
             itemToks.foreach(_.used = true) // Mark tokens as used.
     
-            Some(itemToks → new Weight(w0, iw(0), iw(1), iw(2)))
+            Some(itemToks → new Weight(0/* set later */, specW, itemW(0), itemW(1), itemW(2)))
         }
     }
     

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -85,8 +85,7 @@ public interface NCIntentSolverContext extends Serializable {
      * Non exact match completely ignores extra found user or system tokens (which are not part
      * of the intent template) which could have altered the matching outcome had they been included.
      * <br><br>
-     * Intent callbacks can check this property and provide custom rejection message or send user input
-     * to curation to ensure proper answer - if desired.
+     * Intent callbacks can check this property and provide custom rejection message.
      *
      * @return {@code True} if the intent match was exact, {@code false} otherwise.
      */

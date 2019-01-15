@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -125,7 +125,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         tbl += ("API Version", ver.version + ", " + ver.date.toString)
         tbl += ("Down-Link", cfg.getDownLink)
         tbl += ("Up-Link", cfg.getUpLink)
-        tbl += ("Email", nvl(cfg.getEmail))
         tbl += ("In-Process Provider", if (cfg.getProvider == null) nvl(null) else cfg.getProvider.getClass)
         tbl += ("JARs Folder", nvl(cfg.getJarsFolder))
         

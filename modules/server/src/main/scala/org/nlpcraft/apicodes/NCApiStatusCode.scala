@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -44,7 +44,6 @@ object NCApiStatusCode extends Enumeration {
     
     // Query state machine status.
     val QRY_ENLISTED: Value = Value // Query has been enlisted for processing.
-    val QRY_CURATE: Value = Value // Query has been dispatched for human curation.
     val QRY_READY: Value = Value // Query final result is ready.
     
     // Support string conversion.

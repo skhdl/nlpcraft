@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -43,10 +43,8 @@ import java.util.*;
  * mechanisms, like {@link NCIntentSolver intent-based matching}, utilize the external context (i.e. intents)
  * that simplify the processing and selection among multiple variants.
  * <br><br>
- * Sentence provides access to parsing {@link #variants() variants} representing parsed input sentence as
- * well as environment metadata such as user and caller information. Instance of {@link NCSentence} interface
- * is available through {@link NCQueryContext} object that is passed to {@link NCModel#query(NCQueryContext)}
- * method.
+ * Instance of {@link NCSentence} interface is available through {@link NCQueryContext} object that is
+ * passed to {@link NCModel#query(NCQueryContext)} method.
  * 
  * @see NCToken
  * @see NCIntentSolver
@@ -73,33 +71,11 @@ public interface NCSentence extends Serializable {
     String getNormalizedText();
 
     /**
-     * Gets string representation of the user client agent that made the call with
-     * this sentence.
-     *
-     * @return User agent string from user client (web browser, REST client, etc.).
-     */
-    String getUserClientAgent();
-
-    /**
-     * Gets formal string code that defines the origin of the request.
-     *
-     * @return A string defining the origin of the request ('web', 'rest', etc.).
-     */
-    String getOrigin();
-
-    /**
      * Gets local timestamp in msec when user input was received.
      *
      * @return Local timestamp in msec when user input was received.
      */
     long getReceiveTimestamp();
-
-    /**
-     * Gets optional address of the remote client.
-     *
-     * @return Optional address of the remote client.
-     */
-    Optional<String> getRemoteAddress();
 
     /**
      * Gets first name of the user that made the request.
@@ -121,13 +97,6 @@ public interface NCSentence extends Serializable {
      * @return Email of the user that made the request.
      */
     String getUserEmail();
-
-    /**
-     * Gets user company name that made the request.
-     *
-     * @return User company name that made the request.
-     */
-    String getUserCompany();
 
     /**
      * Gets user avatar URL ({@code data:} or {@code http:} scheme URLs).
@@ -164,78 +133,6 @@ public interface NCSentence extends Serializable {
      * @return Total number of questions issues by this user.
      */
     int getUserTotalQs();
-
-    /**
-     * Gets optional timezone name of the location from where user made its request.
-     *
-     * @return Timezone name of the location from where user made its request.
-     */
-    Optional<String> getTimezoneName();
-
-    /**
-     * Gets optional timezone abbreviation of the location from where user made its request.
-     *
-     * @return Timezone abbreviation of the location from where user made its request.
-     */
-    Optional<String> getTimezoneAbbreviation();
-
-    /**
-     * Gets optional latitude of the location from where user made its request.
-     *
-     * @return Latitude of the location from where user made its request.
-     */
-    Optional<Double> getLatitude();
-
-    /**
-     * Gets optional longitude of the location from where user made its request.
-     *
-     * @return Longitude of the location from where user made its request.
-     */
-    Optional<Double> getLongitude();
-
-    /**
-     * Gets optional country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>) of the
-     * location from where user made its request.
-     *
-     * @return Country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>) of
-     *      the location from where user made its request.
-     */
-    Optional<String> getCountryCode();
-
-    /**
-     * Gets optional country name of the location from where user made its request.
-     *
-     * @return Country name of the location from where user made its request.
-     */
-    Optional<String> getCountryName();
-
-    /**
-     * Gets optional region (state, province) name of the location from where user made its request.
-     *
-     * @return Region (state, province) name of the location from where user made its request.
-     */
-    Optional<String> getRegionName();
-
-    /**
-     * Gets optional city name of the location from where user made its request.
-     *
-     * @return City name of the location from where user made its request.
-     */
-    Optional<String> getCityName();
-
-    /**
-     * Gets optional zip or postal code of the location from where user made its request.
-     *
-     * @return Zip or postal code of the location from where user made its request.
-     */
-    Optional<String> getZipCode();
-
-    /**
-     * Gets optional metro (area) code of the location from where user made its request.
-     *
-     * @return Metro (area) code of the location from where user made its request.
-     */
-    Optional<java.lang.Long> getMetroCode();
 
     /**
      * Tests if given token is part of this sentence.

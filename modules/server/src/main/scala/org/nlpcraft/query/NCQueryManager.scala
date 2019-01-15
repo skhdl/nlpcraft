@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -91,7 +91,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     ): String = {
         ensureStarted()
         
-        val origTxt = txt.trim()
+        val txt0 = txt.trim()
         
         val rcvTstamp = System.currentTimeMillis()
         
@@ -108,7 +108,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         }
         
         // Check input length.
-        if (origTxt.split(" ").length > MAX_WORDS)
+        if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
         
         val srvReqId = G.genGuid()
@@ -124,7 +124,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                     userId = usrId,
                     email = usr.email,
                     status = QRY_ENLISTED, // Initial status.
-                    origText = origTxt,
+                    text = txt0,
                     createTstamp = rcvTstamp,
                     updateTstamp = rcvTstamp
                 )
@@ -134,7 +134,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             NCProcessLogManager.newEntry(
                 usrId,
                 srvReqId,
-                origTxt,
+                txt0,
                 dsId,
                 ds.modelId,
                 QRY_ENLISTED,
@@ -148,12 +148,12 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 "userId" → usrId,
                 "dsId" → dsId,
                 "modelId" → ds.modelId,
-                "txt" → origTxt,
+                "txt" → txt0,
                 "isTest" → isTest
             )
     
             // Enrich the user input and send it to the probe.
-            NCProbeManager.forwardToProbe(usr, ds, origTxt, NCNlpEnricherManager.enrich(origTxt))
+            NCProbeManager.forwardToProbe(usr, ds, txt0, NCNlpEnricherManager.enrich(txt0))
         }
         
         fut onFailure {

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -90,10 +90,6 @@ class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
     private def convertStatus(code: Int): String =
         code match {
             case RESP_OK ⇒ "RESP_OK"
-            case RESP_CURATION ⇒ "RESP_CURATION"
-            case RESP_REJECT ⇒ "RESP_REJECT"
-            case RESP_TRIVIA ⇒ "RESP_TRIVIA"
-            case RESP_TALKBACK ⇒ "RESP_TALKBACK"
             case RESP_VALIDATION ⇒ "RESP_VALIDATION"
             case RESP_ERROR ⇒ "RESP_ERROR"
 
@@ -149,35 +145,6 @@ class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
                         "weather",
                         "LA weather today second date today test",
                         NCTestClient.RESP_VALIDATION
-                    ),
-                    shouldTestPassed = true
-                ),
-                // Non full-match, forwarded to Curator.
-                TestHolder(
-                    new NCTestSentence(
-                        "weather",
-                        "weather limit 5",
-                        "curr|date?|city?",
-                        NCTestClient.RESP_CURATION
-                    ),
-                    shouldTestPassed = true
-                ),
-                // OK.
-                TestHolder(
-                    new NCTestSentence(
-                        "weather",
-                        "LA weather now",
-                        "curr|date?|city?",
-                        NCTestClient.RESP_OK
-                    ),
-                    shouldTestPassed = true
-                ),
-                // Trivia.
-                TestHolder(
-                    new NCTestSentence(
-                        "weather",
-                        "hi",
-                        NCTestClient.RESP_TRIVIA
                     ),
                     shouldTestPassed = true
                 )
@@ -242,16 +209,5 @@ class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
                 )
             )
         )
-    }
-
-    it should "check parameter" in {
-        try {
-            new NCTestSentence("x", "x", "intent.id", RESP_TRIVIA)
-
-            require(false)
-        }
-        catch {
-            case e: IllegalArgumentException ⇒ println(s"Excepted error: $e")
-        }
     }
 }

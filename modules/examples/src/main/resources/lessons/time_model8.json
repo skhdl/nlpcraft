@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -66,19 +66,6 @@
             "description": "Date and/or time token indicator.",
             "synonyms": [
                 "{<CUR>|*} <TIME>"
-            ]
-        }
-    ],
-    "defaultTrivia": "true",
-    "trivia": [
-        {
-            "inputs": [
-                "{are|r} {you|u} ready"
-            ],
-            "responses": [
-                "Ready.",
-                "I am always ready.",
-                "Sure."
             ]
         }
     ],

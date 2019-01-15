@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -213,9 +213,8 @@ object NCSynonym {
 /**
   *
   * @param model Decorated model.
-  * @param triviaStems Trivia stems.
-  * @param synonyms Fast-access synonyms map (excluding dynamic ones).
-  * @param excludedSynonyms Fast-access excluded synonyms map (excluding dynamic ones).
+  * @param synonyms Fast-access synonyms map.
+  * @param excludedSynonyms Fast-access excluded synonyms map.
   * @param additionalStopWordsStems Stemmatized additional stopwords.
   * @param excludedStopWordsStems Stemmatized excluded stopwords.
   * @param suspiciousWordsStems Stemmatized suspicious stopwords.
@@ -223,7 +222,6 @@ object NCSynonym {
   */
 case class NCModelDecorator(
     model: NCModel,
-    triviaStems: Map[String/*Trivia group*/, Set[String]],
     synonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
     excludedSynonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
     additionalStopWordsStems: Set[String],

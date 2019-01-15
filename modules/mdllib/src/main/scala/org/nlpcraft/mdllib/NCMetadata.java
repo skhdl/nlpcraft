@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -35,7 +35,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Map-based container for user-provided metadata.
+ * Convenient map-based container for user-provided metadata.
  *
  * @see NCModel#getMetadata()
  * @see NCElement#getMetadata()

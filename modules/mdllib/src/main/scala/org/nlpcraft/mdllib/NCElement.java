@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -62,10 +62,10 @@ import java.util.regex.*;
  *
  * <h3>Macro Expansions</h3>
  * Listing all possible multi-word synonyms for a given element can be a time consuming tasks. Macros together with
- * option groups allow for dramatic simplification of this process. Model provides a list of macros via
+ * option groups allow for significant simplification of this process. Model provides a list of macros via
  * {@link NCModel#getMacros()} method. Each macro has a name in a form of {@code <X>} where {@code X} is
  * just any string, and a string value. Note that macros can be nested, i.e. macro value can include references
- * to another macros. When macro name {@code <X>} is encountered in the synonym it gets repeatedly replaced with
+ * to another macros. When macro name {@code <X>} is encountered in the synonym it gets recursively replaced with
  * its value.
  *
  * <h3>Option Groups</h3>
@@ -187,7 +187,7 @@ import java.util.regex.*;
  * that start with {@code bar} as long as this string doesn't contain whitespaces.
  *
  * <h3>PoS Tags</h3>
- * Any individual synonym word that that starts and ends with {@code "```"} (three backticks) in a form <code>```XXX```</code> is
+ * Any individual synonym word that that starts and ends with {@code "```"} (three back ticks) in a form <code>```XXX```</code> is
  * considered to be a PoS (Part-of-Speech) tag that will be matched against PoS tag of the individual word in the
  * user input, where {@code XXX} is one of the
  * <a target=_ href="https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">Penn Treebank PoS</a> tags.
@@ -223,15 +223,14 @@ public interface NCElement {
      * This unique ID should be human readable for simpler debugging and testing of the model.
      * Although element ID could be any arbitrary string it is highly recommended to have
      * element ID as a lower case string starting with some model prefix, followed by colon and
-     * then the element's name. This naming consistency will greatly help during curation process
-     * where a human operator can specify model element directly by its ID. For example, some
-     * built-in NlpCraft IDs are: <code>nlp:date</code>, <code>nlp:geo</code>
+     * then the element's name. For example, some built-in IDs are: <code>nlp:date</code>,
+     * <code>nlp:geo</code>.
      * <br><br>
      * Few important notes:
      * <ul>
      *      <li>Element IDs starting with <code>nlp:</code> are reserved for built-in system IDs.</li>
      *      <li>
-     *          Element ID can be, and often is, used by the human operator during curation to clearly
+     *          Element ID can be used in the user input directly (i.e. "power user mode") to clearly
      *          disambiguate the element in the input sentence instead of relying on synonyms or other
      *          ways of detection.
      *      </li>
@@ -248,7 +247,7 @@ public interface NCElement {
      * Elements groups is an important mechanism in implementing {@link NCModel#query(NCQueryContext)} method.
      * Defining proper group for an element is important for proper operation of Short-Term-Memory (STM) in
      * {@link NCConversationContext conversation context}. Specifically, a user token (i.e. found model element)
-     * with a given group name will be overridden in the conversation by the more recent token with the same group.
+     * with a given group name will be overridden in the conversation by the more recent token from the same group.
      *
      * @return Optional group name, or {@code null} if not specified. Note that {@code null} group logically
      *      defines a default group.
@@ -308,7 +307,6 @@ public interface NCElement {
      *
      * @return Map of value's name and its synonyms or {@code null} if not defined.
      */
-    // TODO: javadoc
     List<NCValue> getValues();
 
     /**
@@ -330,6 +328,9 @@ public interface NCElement {
     /**
      * Gets the optional list of synonyms to exclude from the list returned by {@link #getSynonyms()}.
      * Can return empty list or {@code null} to indicate that there are no synonyms to exclude.
+     * <br><br>
+     * Note that it is sometimes easier to exclude a specific synonym or a group of synonyms than creating
+     * complex rules with macros and option groups for inclusive synonyms.
      *
      * @return Optional list of synonyms to exclude.
      * @see #getSynonyms() 

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -63,7 +63,6 @@ public class NCModelTestProvider implements NCModelProvider {
             .addMacro("<NUM>", "{number|count|qty|quantity|amount}")
             .addElement(NCElementBuilder.newElement()
                 .setId("ELM1")
-                .setType("STRING")
                 .setDescription("Element 1 description.")
                 .addSynonyms(
                     "element {number|*} {<OF>|*} {one|1}",
@@ -74,7 +73,6 @@ public class NCModelTestProvider implements NCModelProvider {
             )
             .addElement(NCElementBuilder.newElement("ELM2")
                 .setDescription("Super element description.")
-                .setType("LONG")
                 .addSynonyms(
                     "super {elm|elem|element}",
                     "today",
@@ -82,15 +80,6 @@ public class NCModelTestProvider implements NCModelProvider {
                 )
                 .build()
             )
-            .addTrivia(new NCTriviaGroup() {
-                @Override public Collection<String> getInputs() {
-                    return Collections.singletonList("hi");
-                }
-
-                @Override public Collection<String> getResponses() {
-                    return Collections.singletonList("hi {a|b}!!!");
-                }
-            })
             .setQueryFunction((NCQueryContext ctx) -> NCQueryResult.html("OK result"))
             .build();
     }

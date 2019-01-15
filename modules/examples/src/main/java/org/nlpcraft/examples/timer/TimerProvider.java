@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -62,12 +62,12 @@ public class TimerProvider extends NCModelProviderAdapter {
     private Timer timer = new Timer();
     
     TimerProvider() {
+        NCIntentSolver solver = new NCIntentSolver();
+
         // Add a wide-catch intent. Note that terms in the intent will be matched
         // in any order and this intent can match some unusual grammar input
         // like "2 secs and 3mins set the timer". For the sake of simplicity
         // we allow such idiosyncratic input.
-        NCIntentSolver solver = new NCIntentSolver(null, () -> { throw new NCCuration(); });
-        
         solver.addIntent(
             new NON_CONV_INTENT(
                 "timer|num{1+}",

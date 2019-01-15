@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -74,31 +74,6 @@
             "relations": {
 
             }
-        }
-    ],
-    "defaultTrivia": "true",
-    "trivia": [
-        { /* Greetings. */
-            "inputs": [
-                "how {are|r} {you|u}",
-                "how is it going",
-                "what's {up|new|going on}",
-                "how's {everything|live|life}",
-                "how {are|r} things",
-                "{it's} {good|nice} to {see|meet} {you|u} {again}",
-                "long time no see",
-                "it's been a while",
-                "{hey|hi|hello|howdy|ok} {you|u|there|data lingua|bro|*}",
-                "good {day|morning|evening|afternoon}"
-            ],
-            "responses": [
-                "Hi there.",
-                "Hi, I'm here to answer your questions.",
-                "Hi, I'm here to help.",
-                "Hi, you can ask me another question.",
-                "Hi, I'm ready whenever you are.",
-                "Hi, I'm ready to answer your questions."
-            ]
         }
     ],
     "additionalStopwords": [

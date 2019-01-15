@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -60,11 +60,9 @@ public interface NCProbeContext {
     String getId();
 
     /**
-     * Gets company specific probe token. All probes belonging to one company should have
-     * the same token. This token should be kept secure. See account page on the website
-     * to see your company's token.
+     * Gets probe token. This token should be kept secure.
      *
-     * @return Company specific probe token.
+     * @return Probe token.
      */
     String getToken();
 
@@ -81,14 +79,6 @@ public interface NCProbeContext {
      * @return Downlink endpoint for this probe.
      */
     String getDownLink();
-
-    /**
-     * Get optional user email. It should be used during development and debugging of the model
-     * to ensure that unfinished model isn't exposed to other users.
-     *
-     * @return Optional user email.
-     */
-    String getEmail();
 
     /**
      * Gets optional folder to scan for model JARs.

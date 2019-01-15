@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -33,11 +33,11 @@ package org.nlpcraft.mdllib;
 
 /**
  * Descriptor of the data source. Data source logically acts as a specific instance of the
- * model. Data source are created by administrators either through REST API or through the webapp.
+ * model.
  */
 public interface NCDataSource {
     /**
-     * Gets name of the data source.
+     * Gets the name of the data source.
      *
      * @return Short, descriptive name of the data source.
      */
@@ -53,9 +53,9 @@ public interface NCDataSource {
     String getConfig();
 
     /**
-     * Gets short data source description.
+     * Gets optional short data source description. Short description can be used in management tools.
      *
-     * @return Short data source description.
+     * @return Short data source description, or {@code null} if not provided.
      */
     String getDescription();
 }

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -52,12 +52,10 @@ object NCProbeCmdAppChild extends App {
     val uplink = sys.props.getOrElse("__NC_PROBE_UPLINK", null) // Optional.
     val downlink = sys.props.getOrElse("__NC_PROBE_DOWNLINK", null) // Optional.
     val jars = sys.props("__NC_PROBE_JARS")
-    val email = sys.props.getOrElse("__NC_PROBE_EMAIL", null) // Optional.
     
     System.exit(NCProbeRunner.startProbe(new NCProbeConfig(
         id,
         token,
-        email,
         uplink,
         downlink,
         jars,
@@ -88,28 +86,17 @@ object NCProbeCmdApp extends App {
         println()
         println("   -token=xxx")
         println("      Sets mandatory probe token to 'xxx'.")
-        println("      Probe token links a probe instance with the company account it provides access to.")
         println("      Can also be set via 'NLPCRAFT_PROBE_TOKEN' system property or environment variable.")
         println("      NOTE: probe token must be kept secure.")
         println("      Example: -token=ASD12-IUW12-YTR98-I2N7H")
         println()
-        println("   -email=xxx")
-        println("      Sets optional email to 'xxx'.")
-        println("      When probe email is set only the user signed in with that email will see this probe.")
-        println("      This is convenient during development and testing of the user models to")
-        println("      ensure that unfinished data sources are not exposed to other end users.")
-        println("      Can also be set via 'NLPCRAFT_PROBE_EMAIL' system property or environment variable.")
-        println("      Example: -email=scott@nlpcrat.org")
-        println()
         println("   -uplink=host:port")
         println("      Sets up-link to 'host:port'. If not provided - the default up-link is used.")
         println("      Can also be set via 'NLPCRAFT_PROBE_UPLINK' system property or environment variable.")
-        println("      NOTE: only change up-link if you were specifically instructed to do so.")
         println()
         println("   -downlink=host:port")
         println("      Sets down-link to 'host:port'. If not provided - the default down-link is used.")
         println("      Can also be set via 'NLPCRAFT_PROBE_DOWNLINK' system property or environment variable.")
-        println("      NOTE: only change down-link if you were specifically instructed to do so.")
         println()
         println("   -jars=dir")
         println("      Sets JARs folder to 'dir' directory. If not provided - current directory is used instead.")
@@ -207,7 +194,6 @@ object NCProbeCmdApp extends App {
                 !arg.startsWith("-token=") &&
                 !arg.startsWith("-uplink=") &&
                 !arg.startsWith("-downlink=") &&
-                !arg.startsWith("-email=") &&
                 !arg.startsWith("-jars=") &&
                 !arg.startsWith("-help") &&
                 !arg.startsWith("-?") &&
@@ -222,7 +208,6 @@ object NCProbeCmdApp extends App {
         
         val id = mandatoryArg(appArgs, "-id", "NLPCRAFT_PROBE_ID")
         val token = mandatoryArg(appArgs, "-token", "NLPCRAFT_PROBE_TOKEN")
-        val email = optionalArg(appArgs, "-email", "NLPCRAFT_PROBE_EMAIL")
         val upLink = optionalArg(appArgs, "-uplink", "NLPCRAFT_PROBE_UPLINK")
         val downLink = optionalArg(appArgs, "-downlink", "NLPCRAFT_PROBE_DOWNLINK")
         val jarsDir = optionalArg(appArgs, "-jars", "NLPCRAFT_PROBE_JARS") getOrElse curDir
@@ -232,7 +217,6 @@ object NCProbeCmdApp extends App {
             new NCProbeConfig(
                 id,
                 token,
-                email orNull,
                 upLink orNull,
                 downLink orNull,
                 jarsDir,
@@ -255,8 +239,6 @@ object NCProbeCmdApp extends App {
             Seq(s"-D__NC_PROBE_TOKEN=$token") ++
             Seq(s"-D__NC_PROBE_JARS=$jarsDir")
         
-        if (email.isDefined)
-            params = params ++ Seq(s"-D__NC_PROBE_EMAIL=${email.get}")
         if (upLink.isDefined)
             params = params ++ Seq(s"-D__NC_PROBE_UPLINK=${upLink.get}")
         if (downLink.isDefined)

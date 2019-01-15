@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -209,32 +209,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "reject") {
-                    case class Req(
-                        accessToken: String,
-                        srvReqId: String,
-                        error: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
-        
-                        NCQueryManager.reject(
-                            req.srvReqId,
-                            req.error
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
                 path(API / "cancel") {
                     case class Req(
                         accessToken: String,
@@ -252,60 +226,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
         
                         NCQueryManager.cancel(
                             req.srvReqIds
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                path(API / "curate") {
-                    case class Req(
-                        accessToken: String,
-                        srvReqId: String,
-                        curateTxt: String,
-                        curateHint: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
-        
-                        NCQueryManager.curate(
-                            req.srvReqId,
-                            req.curateTxt,
-                            req.curateHint
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                path(API / "talkback") {
-                    case class Req(
-                        accessToken: String,
-                        srvReqId: String,
-                        talkback: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
-        
-                        NCQueryManager.talkback(
-                            req.srvReqId,
-                            req.talkback
                         )
         
                         complete {

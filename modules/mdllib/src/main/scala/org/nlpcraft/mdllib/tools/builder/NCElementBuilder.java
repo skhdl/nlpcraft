@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -217,18 +217,6 @@ public class NCElementBuilder extends NCJsonBuilder {
      */
     public NCElementBuilder setGroup(String group) {
         impl.setGroup(group);
-
-        return this;
-    }
-
-    /**
-     * Sets type. See {@link NCElement#getType()} for more information.
-     *
-     * @param type Type to set.
-     * @return This element builder for chaining operations.
-     */
-    public NCElementBuilder setType(String type) {
-        impl.setType(type);
 
         return this;
     }

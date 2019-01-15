@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -42,7 +42,6 @@ import java.util.*;
 public class NCElementImpl implements NCElement {
     private String id;
     private String group;
-    private String type;
     private String desc;
     private String parentId;
     private List<String> syns = new ArrayList<>();
@@ -71,14 +70,6 @@ public class NCElementImpl implements NCElement {
      */
     public void setDescription(String desc) {
         this.desc = desc;
-    }
-
-    /**
-     *
-     * @param type
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**
@@ -198,14 +189,5 @@ public class NCElementImpl implements NCElement {
         assert syn != null;
 
         exclSyns.add(syn);
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String toString() {
-        return String.format("Model element [id=%s, group=%s, type=%s, parentId=%s]", id, group, type, parentId);
     }
 }

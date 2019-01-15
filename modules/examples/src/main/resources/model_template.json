@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -61,7 +61,6 @@
         {
             "id": "x:id", /* --==MANDATORY==-- */
             "group": "default",
-            "type": "STRING",
             "parentId": null,
             "description": "Short description for this element.",
             "excludedSynonyms": [
@@ -79,11 +78,6 @@
             ]
         }
     ],
-    /* See model documentation for explanation. */
-    "defaultTrivia": "true",
-
-    /* See model documentation for explanation. */
-    "trivia": [],
 
     /* See model documentation for explanation. */
     "additionalStopwords": [],

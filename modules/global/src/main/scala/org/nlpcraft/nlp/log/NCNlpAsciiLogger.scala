@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -244,7 +244,6 @@ object NCNlpAsciiLogger extends LazyLogging {
 
                     s
                 // User tokens.
-                case id if !id.startsWith("nlp:") ⇒ id
                 case _ ⇒
                     seq.map(p ⇒ s"${p._1}=${if (p._2 == null) "null" else {p._2}.toString}").mkString(", ")
             }

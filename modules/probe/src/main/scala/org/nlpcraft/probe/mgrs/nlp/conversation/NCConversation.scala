@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -32,7 +32,6 @@
 package org.nlpcraft.probe.mgrs.nlp.conversation
 
 import java.text.SimpleDateFormat
-import java.util.{Date, HashSet ⇒ JHashSet, List ⇒ JList, Set ⇒ JSet}
 import java.util.function.Predicate
 
 import org.nlpcraft._
@@ -57,7 +56,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
     
     // Short-Term-Memory.
     private val stm = mutable.TreeSet.empty[NCConversationItem]
-    private var ctx = new JHashSet[NCToken]()
+    private var ctx = new java.util.HashSet[NCToken]()
     private var lastUpdateTstamp = System.currentTimeMillis()
     
     /**
@@ -68,7 +67,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
       * @param tstamp
       */
     case class NCConversationItem(
-        tokens: JList[NCToken],
+        tokens: java.util.List[NCToken],
         text: String,
         srvReqId: String,
         tstamp: Long
@@ -105,7 +104,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
                 tok ⇒ if (tok.getGroup == null) "" else tok.getGroup
             )
     
-        ctx = new JHashSet[NCToken](map.values.flatten.asJavaCollection)
+        ctx = new java.util.HashSet[NCToken](map.values.flatten.asJavaCollection)
     }
     
     /**
@@ -159,7 +158,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
         val stmTbl = NCAsciiTable("Time", "Sentence", "Server Request ID")
         
         stm.foreach(item ⇒ stmTbl += (
-            TSTAMP_FMT.format(new Date(item.tstamp)),
+            TSTAMP_FMT.format(new java.util.Date(item.tstamp)),
             item.text,
             item.srvReqId
         ))
@@ -182,7 +181,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
       * 
       * @return
       */
-    def tokens: JSet[NCToken] = stm.synchronized {
+    def tokens: java.util.HashSet[NCToken] = stm.synchronized {
         ctx
     }
 }

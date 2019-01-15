@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -81,8 +81,6 @@ import java.util.function.*;
  *          {@link #getLemma(NCToken)}<br>
  *          {@link #getStem(NCToken)}<br>
  *          {@link #getSparsity(NCToken)}<br>
- *          {@link #getNamedEntity(NCToken)}<br>
- *          {@link #getNormalizedNamedEntity(NCToken)}<br>
  *          {@link #getPosDescription(NCToken)}<br>
  *          {@link #getUnid(NCToken)}<br>
  *          {@link #getWordIndexes(NCToken)}<br>
@@ -1575,34 +1573,6 @@ public class NCTokenUtils {
         assert tok != null;
 
         return tok.getMetadata().getString("NLP_POSDESC");
-    }
-
-    /**
-     * Gets <b>optional</b> <i>named entity</i> as recognized by Stanford CoreNLP <a href="https://stanfordnlp.github.io/CoreNLP/ner.html">https://stanfordnlp.github.io/CoreNLP/ner.html</a>.
-     * <br><br>
-     * Corresponds to {@code NLP_NE} token {@link NCToken#getMetadata() metadata} property.
-     *
-     * @param tok A token.
-     * @return Optional named entity or {@code null} if not detected.
-     */
-    static public String getNamedEntity(NCToken tok) {
-        assert tok != null;
-
-        return tok.getMetadata().getString("NLP_NE");
-    }
-
-    /**
-     * Gets <b>optional</b> <i>normalized named entity</i> value.
-     * <br><br>
-     * Corresponds to {@code NLP_NNE} token {@link NCToken#getMetadata() metadata} property.
-     *
-     * @param tok A token.
-     * @return Optional normalized named entity or {@code null} if not detected.
-     */
-    static public String getNormalizedNamedEntity(NCToken tok) {
-        assert tok != null;
-
-        return tok.getMetadata().getString("NLP_NNE");
     }
 
     /**

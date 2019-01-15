@@ -19,7 +19,7 @@
 --
 --   Software:    NlpCraft
 --   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
---   Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+--   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
 --
 --       _   ____      ______           ______
 --      / | / / /___  / ____/________ _/ __/ /_
@@ -99,60 +99,13 @@ CREATE TABLE ds_instance (
 );
 
 --
--- Main cache.
---
-DROP TABLE IF EXISTS main_cache CASCADE;
-CREATE TABLE main_cache (
-    id SERIAL PRIMARY KEY,
-    json BYTEA NOT NULL,
-    tstamp TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    model_id VARCHAR(64) NOT NULL
-);
-
-CREATE INDEX main_cache_idx_1 ON main_cache(model_id);
-
---
--- Synonyms cache table.
---
-DROP TABLE IF EXISTS synonyms_cache CASCADE;
-CREATE TABLE synonyms_cache (
-    id SERIAL PRIMARY KEY,
-    main_cache_id BIGINT NOT NULL REFERENCES main_cache ON DELETE CASCADE,
-    cache_key VARCHAR(5120) NOT NULL,
-    base_words VARCHAR(5120) NOT NULL,
-    sorted BOOL NOT NULL,
-    model_id VARCHAR(64) NOT NULL,
-    UNIQUE (model_id, cache_key, base_words)
-);
-
-CREATE INDEX synonyms_cache_idx_1 ON synonyms_cache(cache_key);
-CREATE INDEX synonyms_cache_idx_2 ON synonyms_cache(main_cache_id);
-CREATE INDEX synonyms_cache_idx_3 ON synonyms_cache(model_id);
-
---
--- Submit cache table.
---
-DROP TABLE IF EXISTS submit_cache CASCADE;
-CREATE TABLE submit_cache (
-    id SERIAL PRIMARY KEY,
-    main_cache_id BIGINT NOT NULL REFERENCES main_cache ON DELETE CASCADE,
-    cache_key VARCHAR(5120) NOT NULL,
-    sorted BOOL NOT NULL,
-    model_id VARCHAR(64) NOT NULL,
-    UNIQUE (model_id, cache_key)
-);
-
-CREATE INDEX submit_cache_idx_1 ON submit_cache(main_cache_id);
-CREATE INDEX submit_cache_idx_2 ON submit_cache(model_id);
-
---
 -- Processing log.
 --
 DROP TABLE IF EXISTS proc_log CASCADE;
 CREATE TABLE proc_log (
     -- Common part.
     srv_req_id VARCHAR(64) PRIMARY KEY,
-    orig_txt VARCHAR(1024),
+    txt VARCHAR(1024),
     user_id BIGINT,
     ds_id BIGINT,
     model_id VARCHAR(64),
@@ -160,14 +113,10 @@ CREATE TABLE proc_log (
     -- Ask and result timestamps.
     recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
-    -- Optional curation part.
-    curate_txt VARCHAR(1024) NULL, -- Last curate text, NULL if there was no curation.
-    curate_hint VARCHAR(1024) NULL, -- Last curate hint, NULL if there was no curation or no hint.
     -- Result parts.
     res_type VARCHAR(32) NULL,
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
     error TEXT NULL,
-    cache_id BIGINT NULL,
     -- Probe information for this request.
     probe_token VARCHAR(256) NULL,
     probe_id VARCHAR(512) NULL,

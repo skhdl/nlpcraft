@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -37,7 +37,7 @@ import java.io.*;
 
 /**
  * A token is a part of a fully parsed user input. A token corresponds to a one or more
- * words in the user sentence and can be of two types:
+ * words, sequential or not, in the user sentence and can be of two types:
  * <ul>
  *     <li>
  *         <b>System defined</b> token that represents a built-in element whose ID starts with {@code nlp:},
@@ -61,7 +61,7 @@ public interface NCToken extends Serializable {
      * Gets token metadata.
      * <br><br>
      * When a token is detected in the user input it has number of properties describing that token. These
-     * properties are stored in a general map-like {@link NCMetadata metadata} interface for better future
+     * properties are stored in a map-like {@link NCMetadata metadata} interface for better future
      * extensibility and API compatibility. Note that certain metadata is common across all
      * types of tokens, while other parameters are specific to the particular types of built-in token.
      * Note also that class {@link NCTokenUtils} provide convenient typed accessors to these properties as well
@@ -168,7 +168,7 @@ public interface NCToken extends Serializable {
      *         <td>NLP_SWEAR</td>
      *         <td>
      *             Whether or not this token is a swear word. NlpCraft has built-in list of common English swear words.
-     *              See {@link NCModel#isSwearWordsAllowed()} for corresponding model configuration.
+     *             See {@link NCModel#isSwearWordsAllowed()} for corresponding model configuration.
      *         </td>
      *         <td>{@link Boolean}</td>
      *     </tr>
@@ -291,24 +291,6 @@ public interface NCToken extends Serializable {
      *             Whether or not this token is found in Princeton WordNet database.
      *         </td>
      *         <td>{@link Boolean}</td>
-     *     </tr>
-     *     <tr>
-     *         <td>NLP_NE</td>
-     *         <td>
-     *             This is <b>optional</b> <i>named entity</i> as recognized by Stanford CoreNLP <a href="https://stanfordnlp.github.io/CoreNLP/ner.html">https://stanfordnlp.github.io/CoreNLP/ner.html</a>.
-     *             For some named entities the {@code NLP_NNE} property will also be present. For example, for the
-     *             user input "twenty five", the {@code NLP_NE} will be {@code NUMBER} and {@code NLP_NNE} will be {@code 25}.
-     *         </td>
-     *         <td>{@link String}</td>
-     *     </tr>
-     *     <tr>
-     *         <td>NLP_NNE</td>
-     *         <td>
-     *             This is <b>optional</b> <i>normalized named entity</i> value. Note that if this property is present than
-     *             {@code NLP_NE} should be present as well. For example, for the user input "twenty five",
-     *             the {@code NLP_NE} will be {@code NUMBER} and {@code NLP_NNE} will be {@code 25}.
-     *         </td>
-     *         <td>{@link String}</td>
      *     </tr>
      * </table>
      * <br><br>

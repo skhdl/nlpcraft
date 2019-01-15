@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -32,9 +32,9 @@
 package org.nlpcraft.mdllib;
 
 /**
- * NlpCraft active model provider marker. Only providers marked with this annotation
- * will be instantiated by the probe. This marker is apparently useful when there are multiple model providers
- * but not all of them have to be actually deployed due to internal testing, auxiliary packaging, etc.
+ * Active model provider marker. Only providers marked with this annotation
+ * will be instantiated by the probe. This marker is useful when there are multiple model providers
+ * but not all of them have to be actually deployed due to internal testing, etc.
  *
  * @see NCModelProvider
  */

@@ -19,7 +19,7 @@
  *
  * Software:    NlpCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
- * Licensor:    DataLingvo, Inc. https://www.datalingvo.com
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
  *     _   ____      ______           ______
  *    / | / / /___  / ____/________ _/ __/ /_
@@ -159,8 +159,7 @@ public class TimeProvider8 extends NCModelProviderAdapter {
 
         // We don't have timezone mapping for parsed GEO location.
         if (data == null)
-            // Ask for human curation.
-            throw new NCCuration(String.format("No timezone mapping for %s, %s.", city, cntry));
+            throw new NCRejection(String.format("No timezone mapping for %s, %s.", city, cntry));
 
         return formatResult(
             city,
@@ -180,13 +179,7 @@ public class TimeProvider8 extends NCModelProviderAdapter {
         String path = NCModelBuilder.classPathFile("lessons/time_model8.json");
 
         NCIntentSolver solver =
-            new NCIntentSolver(
-                "time-solver",
-                () -> {
-                    // Custom not-found function with tailored rejection message.
-                    throw new NCCuration("Input is ambiguous.");
-                }
-            );
+            new NCIntentSolver("time-solver");
 
         // Check for exactly one 'x:time' token **without** looking into conversation context.
         // That's an indication of asking for local time only.
