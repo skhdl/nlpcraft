@@ -517,6 +517,32 @@ object NCDbManager extends NCLifecycle("Database manager") {
     }
     
     /**
+      * 
+      * @param srvReqId
+      * @param tstamp
+      */
+    @throws[NCE]
+    def updateCancelProcessingLog(
+        srvReqId: String,
+        tstamp: Long
+    ): Unit = {
+        ensureStarted()
+        NCPsql.insertSingle(
+            """
+              |UPDATE proc_log
+              |SET
+              |    status = ?,
+              |    cancel_tstamp = ?
+              |WHERE
+              |    srv_req_id = ?
+            """.stripMargin,
+            QRY_CANCELLED.toString,
+            tstamp,
+            srvReqId
+        )
+    }
+    
+    /**
       * Updates processing log.
       *
       * @param srvReqId

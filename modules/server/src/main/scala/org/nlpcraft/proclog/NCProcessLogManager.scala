@@ -41,7 +41,28 @@ import org.nlpcraft.db.postgres.NCPsql
   */
 object NCProcessLogManager extends NCLifecycle("Process log manager") {
     /**
-      * Updates log entry with givem result paramters.
+      * 
+      * @param srvReqId
+      * @param tstamp
+      */
+    @throws[NCE]
+    def updateCancel(
+        srvReqId: String,
+        tstamp: Long
+    )
+    : Unit = {
+        ensureStarted()
+    
+        NCPsql.sql {
+            NCDbManager.updateCancelProcessingLog(
+                srvReqId,
+                tstamp
+            )
+        }
+    }
+    
+    /**
+      * Updates log entry with given result parameters.
       * 
       * @param srvReqId ID of the server request to update.
       * @param tstamp
