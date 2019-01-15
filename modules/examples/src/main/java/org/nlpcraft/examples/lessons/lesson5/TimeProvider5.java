@@ -36,6 +36,8 @@ import org.nlpcraft.examples.lessons.utils.LessonsUtils;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
 import org.nlpcraft.examples.misc.geo.cities.City;
 import org.nlpcraft.examples.misc.geo.cities.CityData;
+import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
+import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.intent.*;
 import org.nlpcraft.mdllib.intent.NCIntentSolver.AND;
@@ -45,6 +47,8 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 
 import java.time.ZoneId;
 import java.util.Map;
+import java.util.Optional;
+
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
 
 /**
@@ -53,6 +57,8 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
 @NCActiveModelProvider
 public class TimeProvider5 extends NCModelProviderAdapter {
     static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    // Geo manager.
+    static private GeoManager geoMrg = new GeoManager();
 
     /**
      * Gets formatted query result.
@@ -71,11 +77,12 @@ public class TimeProvider5 extends NCModelProviderAdapter {
      */
     private NCQueryResult onMatch(NCIntentSolverContext ctx) {
         // 'nlp:geo' is optional here.
-        if (ctx.getIntentTokens().get(1).isEmpty())
+        if (ctx.getIntentTokens().get(1).isEmpty()) {
+            Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
+    
             // Get user's timezone from sentence metadata.
-            return formatResult(
-                ctx.getQueryContext().getSentence().getTimezoneName().orElse("America/Los_Angeles")
-            );
+            return formatResult(geoOpt.isPresent() ? geoOpt.get().getTimezoneName() : "America/Los_Angeles");
+        }
 
         // Note that only one 'nlp:geo' token is allowed per model metadata.
         NCToken geoTok = ctx.getIntentTokens().get(1).get(0);

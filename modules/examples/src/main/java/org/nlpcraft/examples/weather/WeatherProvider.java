@@ -31,19 +31,44 @@
 
 package org.nlpcraft.examples.weather;
 
-import org.nlpcraft.examples.weather.apixu.*;
-import org.nlpcraft.examples.weather.apixu.beans.*;
-import org.nlpcraft.mdllib.*;
-import org.nlpcraft.mdllib.intent.*;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.*;
-import org.nlpcraft.mdllib.tools.builder.*;
-import org.nlpcraft.mdllib.utils.*;
-import org.apache.commons.lang3.tuple.*;
-import java.text.*;
-import java.time.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import org.apache.commons.lang3.tuple.Pair;
+import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
+import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
+import org.nlpcraft.examples.weather.apixu.ApixuPeriodException;
+import org.nlpcraft.examples.weather.apixu.ApixuWeatherService;
+import org.nlpcraft.examples.weather.apixu.beans.Current;
+import org.nlpcraft.examples.weather.apixu.beans.CurrentResponse;
+import org.nlpcraft.examples.weather.apixu.beans.Day;
+import org.nlpcraft.examples.weather.apixu.beans.Location;
+import org.nlpcraft.examples.weather.apixu.beans.RangeResponse;
+import org.nlpcraft.mdllib.NCActiveModelProvider;
+import org.nlpcraft.mdllib.NCModelProviderAdapter;
+import org.nlpcraft.mdllib.NCQueryResult;
+import org.nlpcraft.mdllib.NCRejection;
+import org.nlpcraft.mdllib.NCSentence;
+import org.nlpcraft.mdllib.NCToken;
+import org.nlpcraft.mdllib.intent.NCIntentSolver;
+import org.nlpcraft.mdllib.intent.NCIntentSolver.AND;
+import org.nlpcraft.mdllib.intent.NCIntentSolver.CONV_INTENT;
+import org.nlpcraft.mdllib.intent.NCIntentSolver.INTENT;
+import org.nlpcraft.mdllib.intent.NCIntentSolver.TERM;
+import org.nlpcraft.mdllib.intent.NCIntentSolverContext;
+import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.mdllib.utils.NCTokenUtils;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
 
@@ -60,7 +85,8 @@ public class WeatherProvider extends NCModelProviderAdapter {
     // Please register your own account at https://www.apixu.com/pricing.aspx and
     // replace this demo token with your own.
     private ApixuWeatherService srv = new ApixuWeatherService("3f9b7de2d3894eb6b27150825171909");
-
+    // Geo manager.
+    private GeoManager geoMrg = new GeoManager();
     // Date formats.
     private final static DateFormat inFmt = new SimpleDateFormat("yyyy-MM-dd");
     // We'll use string substitution here for '___' piece...
@@ -279,17 +305,20 @@ public class WeatherProvider extends NCModelProviderAdapter {
      */
     private String prepGeo(NCIntentSolverContext ctx) throws NCRejection {
         List<NCToken> geoToks = ctx.getIntentTokens().get(2); // Can be empty...
-        NCSentence sen = ctx.getQueryContext().getSentence();
         List<NCToken> allToks = ctx.getVariant().getTokens();
-
+    
+        Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
+        
+        if (!geoOpt.isPresent())
+            throw new NCRejection("City cannot be determined.");
+    
+        GeoDataBean geo = geoOpt.get();
+    
         // Common lambda for getting current user city.
         Supplier<String> curCityFn = () -> {
             // Try current user location.
-            if (sen.getLatitude().isPresent() && sen.getLongitude().isPresent())
-                // APIXU weather service understands this format too.
-                return sen.getLatitude().get() + "," + sen.getLongitude().get();
-            else
-                throw new NCRejection("City cannot be determined.");
+            // APIXU weather service understands this format too.
+            return geo.getLatitude() + "," + geo.getLongitude();
         };
 
         // Manually process request for local weather. We need to separate between 'local Moscow weather'

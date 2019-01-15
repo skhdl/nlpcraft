@@ -32,25 +32,22 @@
 package org.nlpcraft.query
 
 import org.apache.ignite.IgniteCache
-import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft._
-import org.nlpcraft.db.NCDbManager
-import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
-import org.nlpcraft.mdo.NCQueryStateMdo
-import org.nlpcraft.tx.NCTxManager
-
-import scala.util.control.Exception._
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.ignite.NCIgniteHelpers._
+import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
+import org.nlpcraft.tx.NCTxManager
 import org.nlpcraft.user.NCUserManager
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.control.Exception._
 
 /**
   * Query state machine.
@@ -74,20 +71,26 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         
         super.start()
     }
-    
+
     /**
       *
       * @param usrId
       * @param txt
       * @param dsId
       * @param isTest
+      * @param userAgent
+      * @param remoteAddr
+      * @throws
+      * @return
       */
     @throws[NCE]
     def ask(
         usrId: Long,
         txt: String,
         dsId: Long,
-        isTest: Boolean
+        isTest: Boolean,
+        userAgent: Option[String],
+        remoteAddr: Option[String]
     ): String = {
         ensureStarted()
         
@@ -125,6 +128,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                     email = usr.email,
                     status = QRY_ENLISTED, // Initial status.
                     text = txt0,
+                    userAgent = userAgent,
+                    remoteAddress = remoteAddr,
                     createTstamp = rcvTstamp,
                     updateTstamp = rcvTstamp
                 )

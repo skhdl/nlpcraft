@@ -29,40 +29,19 @@
  *        /_/
  */
 
-package org.nlpcraft.mdo
-
-import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
-import org.nlpcraft.mdllib.NCToken
-import org.nlpcraft.mdo.impl._
+package org.nlpcraft.examples.misc.geo.keycdn.beans;
 
 /**
-  * Query state MDO.
-  */
-@NCMdoEntity(sql = false)
-case class NCQueryStateMdo(
-    @NCMdoField srvReqId: String,
-    @NCMdoField test: Boolean,
-    @NCMdoField dsId: Long,
-    @NCMdoField modelId: String,
-    @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
-    @NCMdoField userId: Long,
-    @NCMdoField email: String,
-    @NCMdoField text: String, // Text of the initial question.
-    @NCMdoField userAgent: Option[String],
-    @NCMdoField remoteAddress: Option[String],
-    @NCMdoField createTstamp: Long, // Creation timestamp.
-    @NCMdoField var updateTstamp: Long, // Last update timestamp.
-    @NCMdoField var status: String,
-    @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
-    // Query OK.
-    @NCMdoField var resultType: Option[String] = None,
-    @NCMdoField var resultBody: Option[String] = None,
-    @NCMdoField var resultMetadata: Option[Map[String, Object]] = None,
-    // Query ERROR.
-    @NCMdoField var error: Option[String] = None
-) extends NCAnnotatedMdo[NCQueryStateMdo]
-
-object NCQueryStateMdo {
-    implicit val x: RsParser[NCQueryStateMdo] =
-        NCAnnotatedMdo.mkRsParser(classOf[NCQueryStateMdo])
+ * Service https://tools.keycdn.com/geo response bean.
+ */
+public class ResponseDataBean {
+    private GeoDataBean geo;
+    
+    public GeoDataBean getGeo() {
+        return geo;
+    }
+    
+    public void setGeo(GeoDataBean geo) {
+        this.geo = geo;
+    }
 }

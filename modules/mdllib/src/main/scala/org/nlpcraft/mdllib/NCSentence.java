@@ -148,4 +148,19 @@ public interface NCSentence extends Serializable {
      * @return All parsing variants of this sentence. Always contains at least one variant.
      */
     List<NCVariant> variants();
+    
+    /**
+     * Gets optional address of the remote client.
+     *
+     * @return Optional address of the remote client.
+     */
+    Optional<String> getRemoteAddress();
+    
+    /**
+     * Gets string representation of the user client agent that made the call with
+     * this sentence.
+     *
+     * @return User agent string from user client (web browser, REST client, etc.).
+     */
+    Optional<String> getUserClientAgent();
 }

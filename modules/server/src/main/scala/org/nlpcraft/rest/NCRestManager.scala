@@ -190,23 +190,34 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         status: String,
                         srvReqId: String
                     )
+
+
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
                         authenticate(req.accessToken)
-        
-                        val newSrvReqId = NCQueryManager.ask(
-                            getUserId(req.accessToken),
-                            req.txt,
-                            req.dsId,
-                            req.isTest.getOrElse(false)
-                        )
-        
-                        complete {
-                            Res(API_OK, newSrvReqId)
+
+                        optionalHeaderValueByName("User-Agent") { userAgent ⇒
+                            optionalHeaderValueByName("Remote-Address") { remoteAddr1 ⇒
+                                optionalHeaderValueByName("X-Forwarded-For") { remoteAddr2 ⇒
+                                    val newSrvReqId = NCQueryManager.ask(
+                                        getUserId(req.accessToken),
+                                        req.txt,
+                                        req.dsId,
+                                        req.isTest.getOrElse(false),
+                                        userAgent,
+                                        if (remoteAddr1.isDefined) remoteAddr1 else remoteAddr2
+                                    )
+
+                                    complete {
+                                        Res(API_OK, newSrvReqId)
+                                    }
+                                }
+                            }
                         }
+
                     }
                 } ~
                 path(API / "cancel") {
