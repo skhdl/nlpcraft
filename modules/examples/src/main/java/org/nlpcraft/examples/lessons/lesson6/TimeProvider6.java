@@ -138,7 +138,7 @@ public class TimeProvider6 extends NCModelProviderAdapter {
     
             // Get local geo data from sentence metadata defaulting to
             // Silicon Valley location in case we are missing that info.
-            GeoDataBean geo = geoOpt.isPresent() ? geoOpt.get() : geoMrg.getSiliconValley();
+            GeoDataBean geo = geoOpt.orElseGet(() -> geoMrg.getSiliconValley());
     
             return formatResult(
                 geo.getCityName(),

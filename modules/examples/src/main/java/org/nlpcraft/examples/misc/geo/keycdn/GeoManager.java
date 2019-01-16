@@ -74,7 +74,7 @@ public class GeoManager {
         Optional<String> remAddr = sen.getRemoteAddress();
 
         if (!remAddr.isPresent()) {
-            System.err.println("Geo data can't be found because remote address is not defined in the sentence.");
+            System.err.println("Geo data can't be found because remote address is not available in the sentence.");
 
             return Optional.empty();
         }

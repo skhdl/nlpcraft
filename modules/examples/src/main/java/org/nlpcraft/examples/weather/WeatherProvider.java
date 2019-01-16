@@ -45,7 +45,6 @@ import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCRejection;
-import org.nlpcraft.mdllib.NCSentence;
 import org.nlpcraft.mdllib.NCToken;
 import org.nlpcraft.mdllib.intent.NCIntentSolver;
 import org.nlpcraft.mdllib.intent.NCIntentSolver.AND;
