@@ -275,6 +275,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         error: String
     ): Unit = {
         ensureStarted()
+        
+        setError(srvReqId, error)
     }
     
     /**
@@ -288,33 +290,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         dsId: Long
     ): Unit = {
         ensureStarted()
-    }
-
-    /**
-      *
-      * @param srvReqId
-      * @param curateTxt
-      * @param curateHint
-      */
-    @throws[NCE]
-    def curate(
-        srvReqId: String,
-        curateTxt: String,
-        curateHint: String): Unit = {
-        ensureStarted()
-    }
-    
-    /**
-      *
-      * @param srvReqId
-      * @param talkback
-      */
-    @throws[NCE]
-    def talkback(
-        srvReqId: String,
-        talkback: String
-    ): Unit = {
-        ensureStarted()
+        
+        // TODO
     }
     
     /**
@@ -324,6 +301,21 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @throws[NCE]
     def cancel(srvReqIds: List[String]): Unit = {
         ensureStarted()
+        
+        val now = System.currentTimeMillis()
+    
+        NCTxManager.startTx {
+            for (srvReqId ← srvReqIds) {
+                catching(wrapIE) {
+                    cache -= srvReqId
+                }
+                
+                NCProcessLogManager.updateCancel(
+                    srvReqId,
+                    now
+                )
+            }
+        }
     }
     
     /**
@@ -332,13 +324,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @throws[NCE]
     def check(): Unit = {
         ensureStarted()
-    }
     
-    /**
-      *
-      */
-    @throws[NCE]
-    def pending(): Unit = {
-        ensureStarted()
+        // TODO
     }
 }

@@ -113,6 +113,7 @@ CREATE TABLE proc_log (
     -- Ask and result timestamps.
     recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
+    cancel_tstamp TIMESTAMP NULL, -- Cancel timestamp.
     -- Result parts.
     res_type VARCHAR(32) NULL,
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
