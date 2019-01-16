@@ -100,13 +100,10 @@ public class NCProbeConfig implements Serializable {
      * @param key
      * @return
      */
-    private String propOrEnv(String key) {
+    private static String propOrEnv(String key) {
         String v = System.getProperty(key);
-
-        if (v == null)
-            v = System.getenv(key);
-
-        return v;
+        
+        return v != null ? v : System.getenv(key);
     }
 
     /**
@@ -114,7 +111,7 @@ public class NCProbeConfig implements Serializable {
      * @param s
      * @return
      */
-    private boolean isEmpty(String s) {
+    private static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
 
@@ -124,7 +121,7 @@ public class NCProbeConfig implements Serializable {
      * @param ep endpoint to check.
      * @throws IllegalArgumentException
      */
-    private void checkEndpoint(String ep) throws IllegalArgumentException {
+    private static void checkEndpoint(String ep) throws IllegalArgumentException {
         if (isEmpty(ep))
             throw new IllegalArgumentException("Endpoint cannot be null or empty.");
 
@@ -134,17 +131,17 @@ public class NCProbeConfig implements Serializable {
 
         if (idx == -1)
             throw new IllegalArgumentException(String.format("Invalid uplink endpoint: %s. %s", ep, help));
-        else
-            try {
-                int port = Integer.parseInt(ep.substring(idx + 1));
+        
+        try {
+            int port = Integer.parseInt(ep.substring(idx + 1));
 
-                // 0 to 65536
-                if (port < 0 || port > 65536)
-                    throw new IllegalArgumentException(String.format("Endpoint port is invalid in: %d. %s", port, help));
-            }
-            catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("Endpoint port is invalid in: %s. %s", ep, help));
-            }
+            // 0 to 65536
+            if (port < 0 || port > 65536)
+                throw new IllegalArgumentException(String.format("Endpoint port is invalid in: %d. %s", port, help));
+        }
+        catch (NumberFormatException e) {
+            throw new IllegalArgumentException(String.format("Endpoint port is invalid in: %s. %s", ep, help));
+        }
     }
 
     /**
@@ -152,7 +149,7 @@ public class NCProbeConfig implements Serializable {
      * @param id
      * @return
      */
-    private String mkId(String id) {
+    private static String mkId(String id) {
         String x = isEmpty(id) ? propOrEnv("NLPCRAFT_PROBE_ID") : id;
 
         if (isEmpty(x))
@@ -166,7 +163,7 @@ public class NCProbeConfig implements Serializable {
      * @param tok
      * @return
      */
-    private String mkToken(String tok) {
+    private static String mkToken(String tok) {
         String x = isEmpty(tok) ? propOrEnv("NLPCRAFT_PROBE_TOKEN") : tok;
 
         if (isEmpty(x))
@@ -174,21 +171,33 @@ public class NCProbeConfig implements Serializable {
 
         return x;
     }
-
+    
+    /**
+     *
+     * @param link
+     * @param propName
+     * @param dflt
+     * @return
+     */
+    private static String mkLink(String link, String propName, String dflt) {
+        String x = isEmpty(link) ? propOrEnv(propName) : link;
+        
+        if (isEmpty(x)) {
+            return dflt;
+        }
+        
+        checkEndpoint(x);
+        
+        return x;
+    }
+    
     /**
      *
      * @param upLink
      * @return
      */
-    private String mkUpLink(String upLink) {
-        String x = isEmpty(upLink) ? propOrEnv("NLPCRAFT_PROBE_UPLINK") : upLink;
-
-        if (!isEmpty(x))
-            checkEndpoint(x);
-        else
-            x = DFLT_UP_LINK;
-
-        return x;
+    private static String mkUpLink(String upLink) {
+        return mkLink(upLink, "NLPCRAFT_PROBE_UPLINK", DFLT_UP_LINK);
     }
 
     /**
@@ -196,15 +205,8 @@ public class NCProbeConfig implements Serializable {
      * @param downLink
      * @return
      */
-    private String mkDownLink(String downLink) {
-        String x = isEmpty(downLink) ? propOrEnv("NLPCRAFT_PROBE_DOWNLINK") : downLink;
-
-        if (!isEmpty(x))
-            checkEndpoint(x);
-        else
-            x = DFLT_DOWN_LINK;
-
-        return x;
+    private static String mkDownLink(String downLink) {
+        return mkLink(downLink, "NLPCRAFT_PROBE_DOWNLINK", DFLT_DOWN_LINK);
     }
 
     /**
@@ -233,7 +235,8 @@ public class NCProbeConfig implements Serializable {
         String upLink,
         String downLink,
         String jarsFolder,
-        NCModelProvider provider) {
+        NCModelProvider provider
+    ) {
         this.id = mkId(id);
         this.token = mkToken(token);
         this.upLink = mkUpLink(upLink);
@@ -257,7 +260,8 @@ public class NCProbeConfig implements Serializable {
     public NCProbeConfig(
         String id,
         String token,
-        NCModelProvider provider) {
+        NCModelProvider provider
+    ) {
         this.id = mkId(id);
         this.token = mkToken(token);
         this.upLink = mkUpLink(null);
