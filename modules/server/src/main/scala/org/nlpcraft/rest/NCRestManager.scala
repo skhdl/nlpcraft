@@ -179,7 +179,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         val routes: Route = {
             post {
-                path(API / "ask") {
+                /**/path(API / "ask") {
                     case class Req(
                         accessToken: String,
                         txt: String,
@@ -217,7 +217,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "cancel") {
+                /**/path(API / "cancel") {
                     case class Req(
                         accessToken: String,
                         srvReqIds: List[String]
@@ -277,7 +277,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "clear" / "conversation") {
+                /**/path(API / "clear" / "conversation") {
                     case class Req(
                         accessToken: String,
                         dsId: Long

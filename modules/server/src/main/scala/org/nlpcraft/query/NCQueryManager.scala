@@ -78,9 +78,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param txt
       * @param dsId
       * @param isTest
-      * @param userAgent
-      * @param remoteAddr
-      * @throws
+      * @param usrAgent
+      * @param rmtAddr
       * @return
       */
     @throws[NCE]
@@ -89,8 +88,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         txt: String,
         dsId: Long,
         isTest: Boolean,
-        userAgent: Option[String],
-        remoteAddr: Option[String]
+        usrAgent: Option[String],
+        rmtAddr: Option[String]
     ): String = {
         ensureStarted()
         
@@ -128,14 +127,15 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                     email = usr.email,
                     status = QRY_ENLISTED, // Initial status.
                     text = txt0,
-                    userAgent = userAgent,
-                    remoteAddress = remoteAddr,
+                    userAgent = usrAgent,
+                    remoteAddress = rmtAddr,
                     createTstamp = rcvTstamp,
                     updateTstamp = rcvTstamp
                 )
             }
 
             // Add processing log.
+            // TODO: add remove address and user agent to the processing log.
             NCProcessLogManager.newEntry(
                 usrId,
                 srvReqId,
@@ -166,7 +166,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}")
                 
                 setError(srvReqId, "Processing failed due to a system error.")
-                
         }
         
         srvReqId
@@ -263,21 +262,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       */
     private def ignore(srvReqId: String): Unit =
         logger.warn(s"Server request not found - safely ignoring (expired or cancelled): $srvReqId")
-    
-    /**
-      *
-      * @param srvReqId
-      * @param error
-      */
-    @throws[NCE]
-    def reject(
-        srvReqId: String,
-        error: String
-    ): Unit = {
-        ensureStarted()
-        
-        setError(srvReqId, error)
-    }
     
     /**
       *
