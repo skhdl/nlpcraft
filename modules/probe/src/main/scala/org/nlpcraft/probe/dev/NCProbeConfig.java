@@ -182,9 +182,8 @@ public class NCProbeConfig implements Serializable {
     private static String mkLink(String link, String propName, String dflt) {
         String x = isEmpty(link) ? propOrEnv(propName) : link;
         
-        if (isEmpty(x)) {
+        if (isEmpty(x))
             return dflt;
-        }
         
         checkEndpoint(x);
         
@@ -246,12 +245,26 @@ public class NCProbeConfig implements Serializable {
     }
 
     /**
+     * Creates probe with default configuration. Note that {@link #setJarsFolder(String)} or
+     * {@link #setProvider(NCModelProvider)} will still have to be set. Note also that probe ID, probe token, uplink
+     * and downlink will be taken from {@code NLPCRAFT_PROBE_ID}, {@code NLPCRAFT_PROBE_TOKEN},
+     * {@code NLPCRAFT_PROBE_UPLINK}, and {@code NLPCRAFT_PROBE_DOWNLINK} environment variables or system
+     * properties accordingly, if any set.
+     */
+    public NCProbeConfig() {
+        this.id = propOrEnv("NLPCRAFT_PROBE_ID");
+        this.token = propOrEnv("NLPCRAFT_PROBE_TOKEN");
+        this.upLink = mkUpLink(null);
+        this.downLink = mkDownLink(null);
+    }
+
+    /**
      * Creates probe configuration.
      *
-     * @param id ID of the probe. If {@code null} environment variable or system
+     * @param id ID of the probe. If {@code null} the environment variable or system
      *      property {@code NLPCRAFT_PROBE_ID} will be checked.
      * @param token Company specific probe token. All probes belonging to one company should have the same token.
-     *      See admin account page on the website to see your company's token. If {@code null} environment
+     *      See admin account page on the website to see your company's token. If {@code null} the environment
      *      variable or system property {@code NLPCRAFT_PROBE_TOKEN} will be checked.
      * @param provider Optional model provider for the probe. If specified, it will be used additionally to
      *      scanning JARs in {@code jarsFolder} folder, if provided. Note that either {@code jarsFolder}
@@ -287,10 +300,10 @@ public class NCProbeConfig implements Serializable {
     /**
      * Creates probe configuration.
      *
-     * @param id ID of the probe. If {@code null} environment variable or system
+     * @param id ID of the probe. If {@code null} the environment variable or system
      *      property {@code NLPCRAFT_PROBE_ID} will be checked.
      * @param token Company specific probe token. All probes belonging to one company should have the same token.
-     *      See admin account page on the website to see your company's token. If {@code null} environment
+     *      See admin account page on the website to see your company's token. If {@code null} the environment
      *      variable or system property {@code NLPCRAFT_PROBE_TOKEN} will be checked.
      * @param jarsFolder Optional folder to scan for model JARs.
      *      Note that either {@code jarsFolder} or {@code provider} should be specified.
