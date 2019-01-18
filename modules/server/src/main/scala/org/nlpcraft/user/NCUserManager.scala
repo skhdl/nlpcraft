@@ -236,19 +236,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     }
 
     /**
-      * Checks if given access token is valid.
-      *
-      * @param acsTkn Access token.
-      * @return
-      */
-    @throws[NCE]
-    def checkAccessToken(acsTkn: String): Boolean = {
-        ensureStarted()
-
-        getUserIdForAccessToken(acsTkn).isDefined
-    }
-
-    /**
       *
       * @param email User email (as username).
       * @param passwd User password.

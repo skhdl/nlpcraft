@@ -48,6 +48,7 @@ import spray.json.RootJsonFormat
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
+import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.query.NCQueryManager
 
@@ -142,36 +143,35 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 
                 complete(InternalServerError, errMsg)
         }
-    
+
     /**
       *
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticate(acsTkn: String): Unit = {
-        if (!NCUserManager.checkAccessToken(acsTkn))
-            throw AccessTokenFailure(acsTkn)
-    }
-    
-    /**
-      *
-      * @param acsTkn Access token to check.
-      */
-    @throws[NCE]
-    private def authenticateAsAdmin(acsTkn: String): Unit =
+    private def authenticate0(acsTkn: String, check: NCUserMdo ⇒ Unit): Long =
         NCUserManager.getUserForAccessToken(acsTkn) match {
             case None ⇒ throw AccessTokenFailure(acsTkn)
-            case Some(usr) ⇒ if (!usr.isAdmin) throw AdminRequired(usr.email)
+            case Some(usr) ⇒
+                check(usr)
+
+                usr.id
         }
     
     /**
       *
-      * @param acsTkn Access token.
-      * @return
+      * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def getUserId(acsTkn: String): Long =
-        NCUserManager.getUserIdForAccessToken(acsTkn).getOrElse { throw AccessTokenFailure(acsTkn) }
+    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, (usr: NCUserMdo) ⇒ ())
+
+    /**
+      *
+      * @param acsTkn Access token to check.
+      */
+    @throws[NCE]
+    private def authenticateAsAdmin(acsTkn: String): Long =
+        authenticate0(acsTkn, (usr: NCUserMdo) ⇒ if (!usr.isAdmin) throw AdminRequired(usr.email))
 
     /**
       * Starts this component.
@@ -195,10 +195,12 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        val userId = authenticate(req.accessToken)
+
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
                             extractClientIP { remoteAddr ⇒
                                 val newSrvReqId = NCQueryManager.ask(
-                                    getUserId(req.accessToken),
+                                    userId,
                                     req.txt,
                                     req.dsId,
                                     req.isTest.getOrElse(false),
@@ -249,8 +251,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         srvReqId: String,
                         usrId: Long,
                         dsId: Long,
-                        modelId: Long,
-                        probeId: Option[Long],
+                        modelId: String,
+                        probeId: Option[String],
                         status: String,
                         resType: Option[String],
                         resBody: Option[String],
@@ -260,7 +262,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
                     case class Res(
                         status: String,
-                        users: List[QueryState]
+                        users: Seq[QueryState]
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
@@ -268,12 +270,27 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticate(req.accessToken)
+                        val userId = authenticate(req.accessToken)
+
+                        val states =
+                            NCQueryManager.check(userId).map(p ⇒
+                                QueryState(
+                                    p.srvReqId,
+                                    p.userId,
+                                    p.dsId,
+                                    p.modelId,
+                                    p.probeId,
+                                    p.status,
+                                    p.resultType,
+                                    p.resultBody,
+                                    p.error,
+                                    p.createTstamp,
+                                    p.updateTstamp
+                                )
+                        )
                         
-                        // TODO
-        
                         complete {
-                            Res(API_OK, Nil)
+                            Res(API_OK, states)
                         }
                     }
                 } ~
@@ -290,12 +307,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
+                        val userId = authenticateAsAdmin(req.accessToken)
         
-                        NCQueryManager.clearConversation(
-                            getUserId(req.accessToken),
-                            req.dsId
-                        )
+                        NCQueryManager.clearConversation(userId, req.dsId)
         
                         complete {
                             Res(API_OK)
@@ -381,9 +395,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
+                        val userId = authenticateAsAdmin(req.accessToken)
     
-                        NCUserManager.deleteUser(getUserId(req.accessToken))
+                        NCUserManager.deleteUser(userId)
     
                         complete {
                             Res(API_OK)

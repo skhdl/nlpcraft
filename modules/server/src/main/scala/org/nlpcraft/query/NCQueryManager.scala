@@ -45,6 +45,7 @@ import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.tx.NCTxManager
 import org.nlpcraft.user.NCUserManager
 
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.Exception._
@@ -56,6 +57,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
     
     private final val MAX_WORDS = 100
+
+    private final val STATUSES = Seq(QRY_READY, QRY_ENLISTED).map(_.toString)
     
     /**
       * Starts this component.
@@ -306,9 +309,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       *
       */
     @throws[NCE]
-    def check(): Unit = {
+    def check(usrId: Long): Seq[NCQueryStateMdo] = {
         ensureStarted()
     
-        // TODO
+        cache.values.filter(p ⇒ p.userId == usrId && STATUSES.contains(p.status)).toSeq
     }
 }
