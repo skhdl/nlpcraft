@@ -40,17 +40,16 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
+import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.ignite._
+import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCConfigurable, NCE, NCException, NCLifecycle}
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import org.nlpcraft.ds.NCDsManager
-import org.nlpcraft.ignite._
-import org.nlpcraft.mdo.NCUserMdo
-import org.nlpcraft.notification.NCNotificationManager
-import org.nlpcraft.query.NCQueryManager
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     // Akka intestines.
@@ -155,13 +154,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     /**
       *
       * @param acsTkn Access token to check.
+      * @param shouldBeAdmin Admin flag.
       */
     @throws[NCE]
-    private def authenticate0(acsTkn: String, check: NCUserMdo ⇒ Unit): Long =
+    private def authenticate0(acsTkn: String, shouldBeAdmin: Boolean): Long =
         NCUserManager.getUserForAccessToken(acsTkn) match {
             case None ⇒ throw AccessTokenFailure(acsTkn)
             case Some(usr) ⇒
-                check(usr)
+                if (shouldBeAdmin && !usr.isAdmin)
+                    throw AdminRequired(usr.email)
 
                 usr.id
         }
@@ -171,15 +172,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, (_: NCUserMdo) ⇒ ())
+    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, false)
 
     /**
       *
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticateAsAdmin(acsTkn: String): Long =
-        authenticate0(acsTkn, (usr: NCUserMdo) ⇒ if (!usr.isAdmin) throw AdminRequired(usr.email))
+    private def authenticateAsAdmin(acsTkn: String): Long = authenticate0(acsTkn, true)
 
     /**
       * Checks length of field value.
@@ -336,6 +336,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         val adminId = authenticateAsAdmin(req.accessToken)
 
+                        // TODO: can admin do it for any user?
+                        // TODO: Why should it be admin?
                         NCQueryManager.clearConversation(adminId, req.dsId)
         
                         complete {
