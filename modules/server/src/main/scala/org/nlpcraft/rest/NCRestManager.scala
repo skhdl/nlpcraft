@@ -40,17 +40,17 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
+import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.ignite._
+import org.nlpcraft.mdo.NCUserMdo
+import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCConfigurable, NCE, NCException, NCLifecycle}
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import org.nlpcraft.ds.NCDsManager
-import org.nlpcraft.ignite._
-import org.nlpcraft.mdo.NCUserMdo
-import org.nlpcraft.notification.NCNotificationManager
-import org.nlpcraft.query.NCQueryManager
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     // Akka intestines.
@@ -84,6 +84,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     case class SignInFailure(email: String) extends NCE(s"Invalid user credentials for: $email")
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
     case class NotImplemented() extends NCE("Not implemented.")
+    case class OutOfRangePubApiField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
     
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
@@ -113,7 +114,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 NCNotificationManager.addEvent("NC_NOT_IMPLEMENTED")
 
                 complete(StatusCodes.NotImplemented, errMsg)
-                
+
+            case e: OutOfRangePubApiField ⇒
+                val errMsg = e.getLocalizedMessage
+
+                NCNotificationManager.addEvent("NC_INVALID_ARGUMENT")
+
+                complete(StatusCodes.BadRequest, errMsg)
+
             case e: AdminRequired ⇒
                 val errMsg = e.getLocalizedMessage
     
@@ -163,7 +171,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, (usr: NCUserMdo) ⇒ ())
+    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, (_: NCUserMdo) ⇒ ())
 
     /**
       *
@@ -172,6 +180,18 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     @throws[NCE]
     private def authenticateAsAdmin(acsTkn: String): Long =
         authenticate0(acsTkn, (usr: NCUserMdo) ⇒ if (!usr.isAdmin) throw AdminRequired(usr.email))
+
+    /**
+      * Checks length of field value.
+      *
+      * @param name Field name.
+      * @param v Field value.
+      * @param maxLen Maximum length.
+      */
+    @throws[OutOfRangePubApiField]
+    private def checkLength(name: String, v: String, maxLen: Int): Unit =
+        if (v.length > maxLen)
+            throw OutOfRangePubApiField(name, maxLen)
 
     /**
       * Starts this component.
@@ -195,6 +215,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("txt", req.txt, 1024)
+
                         val userId = authenticate(req.accessToken)
 
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
@@ -232,6 +255,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         authenticate(req.accessToken)
         
                         NCQueryManager.cancel(
@@ -270,6 +295,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         val userId = authenticate(req.accessToken)
 
                         val states =
@@ -307,6 +334,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         val userId = authenticateAsAdmin(req.accessToken)
         
                         NCQueryManager.clearConversation(userId, req.dsId)
@@ -338,6 +367,12 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("email", req.email, 64)
+                        checkLength("firstName", req.firstName, 64)
+                        checkLength("lastName", req.lastName, 64)
+                        checkLength("avatarUrl", req.avatarUrl, 512000)
+
                         authenticateAsAdmin(req.accessToken)
                         
                         val newUsrId = NCUserManager.addUser(
@@ -370,6 +405,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("newPasswd", req.newPasswd, 64)
+
                         authenticateAsAdmin(req.accessToken)
         
                         NCUserManager.resetPassword(
@@ -395,6 +433,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         val userId = authenticateAsAdmin(req.accessToken)
     
                         NCUserManager.deleteUser(userId)
@@ -425,6 +465,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("firstName", req.firstName, 64)
+                        checkLength("lastName", req.lastName, 64)
+                        checkLength("avatarUrl", req.avatarUrl, 512000)
+
                         authenticateAsAdmin(req.accessToken)
     
                         NCUserManager.updateUser(
@@ -458,6 +503,12 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     // NOTE: no authentication requires on signup.
     
                     entity(as[Req]) { req ⇒
+                        checkLength("email", req.email, 64)
+                        checkLength("passwd", req.passwd, 64)
+                        checkLength("firstName", req.firstName, 64)
+                        checkLength("lastName", req.lastName, 64)
+                        checkLength("avatarUrl", req.avatarUrl, 512000)
+
                         NCUserManager.signup(
                             req.email,
                             req.passwd,
@@ -483,6 +534,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         authenticate(req.accessToken)
     
                         NCUserManager.signout(req.accessToken)
@@ -508,6 +561,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     // NOTE: no authentication requires on signin.
     
                     entity(as[Req]) { req ⇒
+                        checkLength("email", req.email, 64)
+                        checkLength("passwd", req.passwd, 64)
+
                         NCUserManager.signin(
                             req.email,
                             req.passwd
@@ -543,6 +599,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         authenticateAsAdmin(req.accessToken)
         
                         val usrLst = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
@@ -582,6 +640,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("name", req.name, 128)
+                        checkLength("shortDesc", req.shortDesc, 128)
+                        // TODO: validate model fields?
+
                         authenticateAsAdmin(req.accessToken)
         
                         val newDsId = NCDsManager.addDataSource(
@@ -617,6 +680,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     
                     entity(as[Req]) { req ⇒
                         authenticateAsAdmin(req.accessToken)
+
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("name", req.name, 128)
+                        checkLength("shortDesc", req.shortDesc, 128)
         
                         NCDsManager.updateDataSource(
                             req.dsId,
@@ -653,6 +720,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         authenticateAsAdmin(req.accessToken)
         
                         val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
@@ -683,6 +752,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
                         authenticateAsAdmin(req.accessToken)
         
                         NCDsManager.deleteDataSource(req.dsId)
