@@ -303,6 +303,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
     /**
       *
+      * @param updaterId
       * @param usrId
       * @param firstName
       * @param lastName
@@ -312,6 +313,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     def updateUser(
+        updaterId: Long,
         usrId: Long,
         firstName: String,
         lastName: String,
@@ -321,26 +323,29 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         ensureStarted()
 
         NCPsql.sql {
-            NCDbManager.getUser(usrId) match {
-                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case _ ⇒
-                    NCDbManager.updateUser(
-                        usrId,
-                        avatarUrl,
-                        firstName,
-                        lastName,
-                        isAdmin
-                    )
+            val updater = getUser0(updaterId)
+            val usr = getUser0(usrId)
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_USER_UPDATE",
-                        "userId" → usrId,
-                        "firstName" → firstName,
-                        "lastName" → lastName,
-                        "isAdmin" → isAdmin
-                    )
+            if (!updater.isAdmin && updater.id != usr.id)
+                throw new NCE(
+                    s"User can update only his own profile [updaterId=$updaterId, userId=$usrId]"
+                )
 
-            }
+            NCDbManager.updateUser(
+                usrId,
+                avatarUrl,
+                firstName,
+                lastName,
+                isAdmin
+            )
+
+            // Notification.
+            NCNotificationManager.addEvent("NC_USER_UPDATE",
+                "userId" → usrId,
+                "firstName" → firstName,
+                "lastName" → lastName,
+                "isAdmin" → isAdmin
+            )
         }
     }
 
@@ -354,19 +359,17 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         ensureStarted()
 
         NCPsql.sql {
-            NCDbManager.getUser(usrId) match {
-                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case Some(usr) ⇒
-                    NCDbManager.deleteUser(usrId)
+            val usr = getUser0(usrId)
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_USER_DELETE",
-                        "userId" → usrId,
-                        "firstName" → usr.firstName,
-                        "lastName" → usr.lastName,
-                        "email" → usr.email
-                    )
-            }
+            NCDbManager.deleteUser(usrId)
+
+            // Notification.
+            NCNotificationManager.addEvent("NC_USER_DELETE",
+                "userId" → usrId,
+                "firstName" → usr.firstName,
+                "lastName" → usr.lastName,
+                "email" → usr.email
+            )
         }
     }
 
@@ -380,20 +383,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         ensureStarted()
 
         NCPsql.sql {
-            NCDbManager.getUser(usrId) match {
-                case None ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case Some(usr) ⇒
-                    val salt = NCBlowfishHasher.hash(usr.email)
+            val usr = getUser0(usrId)
 
-                    // Add actual hash for the password.
-                    // NOTE: we don't "stir up" password pool for password resets.
-                    NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
+            val salt = NCBlowfishHasher.hash(usr.email)
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
-                        "userId" → usrId
-                    )
-            }
+            // Add actual hash for the password.
+            // NOTE: we don't "stir up" password pool for password resets.
+            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
+
+            // Notification.
+            NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
+                "userId" → usrId
+            )
         }
     }
     
@@ -570,4 +571,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             usrId
         }
     }
+
+    /**
+      *
+      * @param usrId
+      * @return
+      */
+    private def getUser0(usrId: Long): NCUserMdo =
+        NCDbManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 }

@@ -40,17 +40,17 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
-import org.nlpcraft.ds.NCDsManager
-import org.nlpcraft.ignite._
-import org.nlpcraft.mdo.NCUserMdo
-import org.nlpcraft.notification.NCNotificationManager
-import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCConfigurable, NCE, NCException, NCLifecycle}
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.ignite._
+import org.nlpcraft.mdo.NCUserMdo
+import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.query.NCQueryManager
 
 object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     // Akka intestines.
@@ -257,11 +257,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        authenticate(req.accessToken)
+                        val userId = authenticate(req.accessToken)
         
-                        NCQueryManager.cancel(
-                            req.srvReqIds
-                        )
+                        NCQueryManager.cancel(userId, req.srvReqIds)
         
                         complete {
                             Res(API_OK)
@@ -336,9 +334,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val userId = authenticateAsAdmin(req.accessToken)
-        
-                        NCQueryManager.clearConversation(userId, req.dsId)
+                        val adminId = authenticateAsAdmin(req.accessToken)
+
+                        NCQueryManager.clearConversation(adminId, req.dsId)
         
                         complete {
                             Res(API_OK)
@@ -435,9 +433,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val userId = authenticateAsAdmin(req.accessToken)
+                        val adminIdId = authenticateAsAdmin(req.accessToken)
     
-                        NCUserManager.deleteUser(userId)
+                        NCUserManager.deleteUser(adminIdId)
     
                         complete {
                             Res(API_OK)
@@ -470,9 +468,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("lastName", req.lastName, 64)
                         checkLength("avatarUrl", req.avatarUrl, 512000)
 
-                        authenticateAsAdmin(req.accessToken)
+                        val userId = authenticate(req.accessToken)
     
                         NCUserManager.updateUser(
+                            userId,
                             req.userId,
                             req.firstName,
                             req.lastName,

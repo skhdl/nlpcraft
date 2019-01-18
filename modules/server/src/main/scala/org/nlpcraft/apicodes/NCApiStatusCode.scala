@@ -45,8 +45,7 @@ object NCApiStatusCode extends Enumeration {
     // Query state machine status.
     val QRY_ENLISTED: Value = Value // Query has been enlisted for processing.
     val QRY_READY: Value = Value // Query final result is ready.
-    val QRY_CANCELLED: Value = Value // Query final result is ready.
-    
+
     // Support string conversion.
     implicit def m1(status: NCApiStatusCode): String = status.toString
 }

@@ -536,7 +536,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |WHERE
               |    srv_req_id = ?
             """.stripMargin,
-            QRY_CANCELLED.toString,
+            "QRY_CANCELLED",
             tstamp,
             srvReqId
         )
