@@ -44,7 +44,7 @@ import scala.compat.Platform._
  */
 trait NCServer extends LazyLogging {
     // Copyright blurb. Can be changed at build time.
-    protected val COPYRIGHT = /*@copyright*/"Copyright (C) NlpCraft Project."
+    protected val COPYRIGHT = /*@copyright*/"Copyright (C) DataLingvo, Inc."
 
     // Version number. Can be changed at build time.
     protected val VER = /*@version*/"0.5.0"

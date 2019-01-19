@@ -417,8 +417,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     private def addDefaultUser(): Unit = {
         val email = "admin@admin.com"
         val passwd = "admin"
-        val firstName = "Scott"
-        val lastName = "Tiger"
+        val firstName = "Hermann"
+        val lastName = "Minkowski"
         val avatarUrl = ""
         val isAdmin = true
     

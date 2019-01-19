@@ -101,6 +101,8 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
       * @param mdlId
       * @param status
       * @param test
+      * @param usrAgent
+      * @param rmtAddr
       * @param rcvTstamp
       */
     @throws[NCE]
@@ -112,6 +114,8 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         mdlId: String,
         status: NCApiStatusCode,
         test: Boolean,
+        usrAgent: String,
+        rmtAddr: String,
         rcvTstamp: Long
     ): Unit = {
         ensureStarted()
@@ -125,6 +129,8 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
                 mdlId,
                 status,
                 test,
+                usrAgent,
+                rmtAddr,
                 rcvTstamp
             )
         }
