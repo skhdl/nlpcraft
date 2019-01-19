@@ -100,7 +100,7 @@ public class TimerProvider extends NCModelProviderAdapter {
         long unitsCnt = nums.stream().map(NCTokenUtils::getNumUnit).distinct().count();
         
         if (unitsCnt != nums.size())
-            throw new NCRejection("Ambiguous units.");
+            throw new NCRejection("Ambiguous time units.");
     
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime dt = now;

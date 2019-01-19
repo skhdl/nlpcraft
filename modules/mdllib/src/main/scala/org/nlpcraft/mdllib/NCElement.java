@@ -320,7 +320,8 @@ public interface NCElement {
     /**
      * Gets the list of synonyms by which this semantic element will be recognized by.
      *
-     * @return List of synonyms for this element.
+     * @return List of synonyms for this element. List is generally optional since element's ID acts
+     *      as an implicit synonym.
      * @see #getExcludedSynonyms()
      */
     List<String> getSynonyms();
