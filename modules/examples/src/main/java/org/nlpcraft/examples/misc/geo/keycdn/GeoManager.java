@@ -57,7 +57,7 @@ import java.util.zip.GZIPInputStream;
  * 2. Implementation is not thread safe.
  * 3. Errors just forwarded to error console.
  * 4. Cache, which used to avoid rate-limiting requests (3 requests per second, see https://tools.keycdn.com/geo),
- * applied only to successfully received GEO data.
+ *    applied only to successfully received GEO data.
  */
 public class GeoManager {
     private static final String URL = "https://tools.keycdn.com/geo.json?host=";

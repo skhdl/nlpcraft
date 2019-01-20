@@ -82,11 +82,5 @@ public class GeoDataBean {
     public void setTimezoneName(String timezoneName) {
         this.timezoneName = timezoneName;
     }
-    
-    @Override
-    public String toString() {
-        return "GeoDataBean{" + "countryName='" + countryName + '\'' + ", cityName='" + cityName + '\'' + ", latitude"
-            + "=" + latitude + ", longitude=" + longitude + ", timezoneName='" + timezoneName + '\'' + '}';
-    }
 }
 

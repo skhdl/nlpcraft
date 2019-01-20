@@ -129,7 +129,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             }
 
             // Add processing log.
-            // TODO: add remove address and user agent to the processing log.
             NCProcessLogManager.newEntry(
                 usrId,
                 srvReqId,
@@ -138,6 +137,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 ds.modelId,
                 QRY_ENLISTED,
                 isTest,
+                usrAgent.orNull,
+                rmtAddr.orNull,
                 rcvTstamp
             )
         }
