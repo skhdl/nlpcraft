@@ -275,38 +275,19 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
 
     /**
       *
-      * @param usrId
       * @param srvReqIds
       */
     @throws[NCE]
-    def cancel(usrId: Long, srvReqIds: List[String]): Unit = {
+    def cancel(srvReqIds: List[String]): Unit = {
         ensureStarted()
-
-        val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
         val now = System.currentTimeMillis()
     
         NCTxManager.startTx {
-            for (srvReqId ← srvReqIds) {
-                catching(wrapIE) {
-                    if (!usr.isAdmin)
-                        cache.get(srvReqId) match {
-                            case null ⇒ // No-op.
-                            case state ⇒
-                                if (state.userId != usrId)
-                                    throw new NCE(
-                                        s"User can cancel only his own request [userId=$usrId, reqId=$srvReqId]"
-                                    )
-                        }
+            cache --= srvReqIds.toSet
 
-                    cache -= srvReqId
-                }
-                
-                NCProcessLogManager.updateCancel(
-                    srvReqId,
-                    now
-                )
-            }
+            for (srvReqId ← srvReqIds)
+                NCProcessLogManager.updateCancel(srvReqId, now)
         }
     }
     
@@ -320,5 +301,15 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
         (if (usr.isAdmin) cache.values else cache.values.filter(p ⇒ p.userId == usrId)).toSeq
+    }
+
+    /**
+      *
+      */
+    @throws[NCE]
+    def get(srvReqIds: List[String]): Seq[NCQueryStateMdo] = {
+        ensureStarted()
+
+        srvReqIds.map(cache.get).filter(_!= null)
     }
 }

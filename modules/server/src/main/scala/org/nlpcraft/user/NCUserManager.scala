@@ -303,7 +303,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
     /**
       *
-      * @param updaterId
       * @param usrId
       * @param firstName
       * @param lastName
@@ -313,7 +312,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
       */
     @throws[NCE]
     def updateUser(
-        updaterId: Long,
         usrId: Long,
         firstName: String,
         lastName: String,
@@ -322,15 +320,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     ) : Unit = {
         ensureStarted()
 
+        getUser0(usrId)
+
         NCPsql.sql {
-            val updater = getUser0(updaterId)
-            val usr = getUser0(usrId)
-
-            if (!updater.isAdmin && updater.id != usr.id)
-                throw new NCE(
-                    s"User can update only his own profile [updaterId=$updaterId, userId=$usrId]"
-                )
-
             NCDbManager.updateUser(
                 usrId,
                 avatarUrl,

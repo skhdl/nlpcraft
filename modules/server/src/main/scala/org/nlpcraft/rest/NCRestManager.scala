@@ -42,6 +42,7 @@ import akka.stream.ActorMaterializer
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
+import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
@@ -157,14 +158,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       * @param shouldBeAdmin Admin flag.
       */
     @throws[NCE]
-    private def authenticate0(acsTkn: String, shouldBeAdmin: Boolean): Long =
+    private def authenticate0(acsTkn: String, shouldBeAdmin: Boolean): NCUserMdo =
         NCUserManager.getUserForAccessToken(acsTkn) match {
             case None ⇒ throw AccessTokenFailure(acsTkn)
             case Some(usr) ⇒
                 if (shouldBeAdmin && !usr.isAdmin)
                     throw AdminRequired(usr.email)
 
-                usr.id
+                usr
         }
     
     /**
@@ -172,14 +173,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticate(acsTkn: String): Long = authenticate0(acsTkn, false)
+    private def authenticate(acsTkn: String): NCUserMdo = authenticate0(acsTkn, false)
 
     /**
       *
       * @param acsTkn Access token to check.
       */
     @throws[NCE]
-    private def authenticateAsAdmin(acsTkn: String): Long = authenticate0(acsTkn, true)
+    private def authenticateAsAdmin(acsTkn: String): NCUserMdo = authenticate0(acsTkn, true)
 
     /**
       * Checks length of field value.
@@ -192,6 +193,17 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     private def checkLength(name: String, v: String, maxLen: Int): Unit =
         if (v.length > maxLen)
             throw OutOfRangePubApiField(name, maxLen)
+
+    /**
+      * Checks operation permissions.
+      *
+      * @param initiatorUsr  Operration initiator.
+      * @param usrId User ID.
+      */
+    @throws[AdminRequired]
+    private def checkPermission(initiatorUsr: NCUserMdo, usrId: Long): Unit =
+        if (initiatorUsr.id != usrId && !initiatorUsr.isAdmin)
+            throw AdminRequired(initiatorUsr.email)
 
     /**
       * Starts this component.
@@ -218,7 +230,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("txt", req.txt, 1024)
 
-                        val userId = authenticate(req.accessToken)
+                        val userId = authenticate(req.accessToken).id
 
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
                             extractClientIP { remoteAddr ⇒
@@ -257,9 +269,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val userId = authenticate(req.accessToken)
-        
-                        NCQueryManager.cancel(userId, req.srvReqIds)
+                        val initiatorUsr = authenticate(req.accessToken)
+
+                        if (
+                            !initiatorUsr.isAdmin &&
+                            NCQueryManager.get(req.srvReqIds).exists(_.userId != initiatorUsr.id)
+                        )
+                            throw AdminRequired(initiatorUsr.email)
+
+                        NCQueryManager.cancel(req.srvReqIds)
         
                         complete {
                             Res(API_OK)
@@ -295,7 +313,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val userId = authenticate(req.accessToken)
+                        val userId = authenticate(req.accessToken).id
 
                         val states =
                             NCQueryManager.check(userId).map(p ⇒
@@ -322,23 +340,24 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "clear" / "conversation") {
                     case class Req(
                         accessToken: String,
-                        dsId: Long
+                        dsId: Long,
+                        userId: Long
                     )
                     case class Res(
                         status: String
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val adminId = authenticateAsAdmin(req.accessToken)
+                        val initiatorUsr = authenticate(req.accessToken)
 
-                        // TODO: can admin do it for any user?
-                        // TODO: Why should it be admin?
-                        NCQueryManager.clearConversation(adminId, req.dsId)
+                        checkPermission(initiatorUsr, req.userId)
+
+                        NCQueryManager.clearConversation(req.userId, req.dsId)
         
                         complete {
                             Res(API_OK)
@@ -393,8 +412,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     case class Req(
                         // Caller.
                         accessToken: String, // Administrator.
-        
-                        usrId: Long, // ID of the user to reset password for.
+
+                        userId: Long, // ID of the user to reset password for.
                         newPasswd: String
                     )
                     case class Res(
@@ -408,10 +427,12 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("newPasswd", req.newPasswd, 64)
 
-                        authenticateAsAdmin(req.accessToken)
-        
+                        val initiatorUsr = authenticate(req.accessToken)
+
+                        checkPermission(initiatorUsr, req.userId)
+
                         NCUserManager.resetPassword(
-                            req.usrId,
+                            req.userId,
                             req.newPasswd
                         )
         
@@ -435,9 +456,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val adminIdId = authenticateAsAdmin(req.accessToken)
+                        val initiatorUsr = authenticate(req.accessToken)
+
+                        checkPermission(initiatorUsr, req.userId)
     
-                        NCUserManager.deleteUser(adminIdId)
+                        NCUserManager.deleteUser(req.userId)
     
                         complete {
                             Res(API_OK)
@@ -470,10 +493,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("lastName", req.lastName, 64)
                         checkLength("avatarUrl", req.avatarUrl, 512000)
 
-                        val userId = authenticate(req.accessToken)
-    
+                        val initiatorUsr = authenticate(req.accessToken)
+
+                        checkPermission(initiatorUsr, req.userId)
+
                         NCUserManager.updateUser(
-                            userId,
                             req.userId,
                             req.firstName,
                             req.lastName,
