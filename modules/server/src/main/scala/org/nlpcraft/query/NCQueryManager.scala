@@ -305,6 +305,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
 
     /**
       *
+      * @param srvReqIds
       */
     @throws[NCE]
     def get(srvReqIds: List[String]): Seq[NCQueryStateMdo] = {
