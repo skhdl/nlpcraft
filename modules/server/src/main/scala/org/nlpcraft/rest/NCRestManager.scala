@@ -84,7 +84,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     case class SignInFailure(email: String) extends NCE(s"Invalid user credentials for: $email")
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
     case class NotImplemented() extends NCE("Not implemented.")
-    case class OutOfRangePubApiField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
+    case class OutOfRangeField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
     
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
@@ -115,10 +115,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                 complete(StatusCodes.NotImplemented, errMsg)
 
-            case e: OutOfRangePubApiField ⇒
+            case e: OutOfRangeField ⇒
                 val errMsg = e.getLocalizedMessage
 
-                NCNotificationManager.addEvent("NC_INVALID_ARGUMENT")
+                NCNotificationManager.addEvent("NC_INVALID_FIELD")
 
                 complete(StatusCodes.BadRequest, errMsg)
 
@@ -189,10 +189,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
       * @param v Field value.
       * @param maxLen Maximum length.
       */
-    @throws[OutOfRangePubApiField]
+    @throws[OutOfRangeField]
     private def checkLength(name: String, v: String, maxLen: Int): Unit =
         if (v.length > maxLen)
-            throw OutOfRangePubApiField(name, maxLen)
+            throw OutOfRangeField(name, maxLen)
 
     /**
       * Checks operation permissions.
