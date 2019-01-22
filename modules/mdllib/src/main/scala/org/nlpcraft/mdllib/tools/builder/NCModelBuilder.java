@@ -53,7 +53,10 @@ import java.util.stream.*;
  *     <li>{@link #newJsonStringModel(String)}</li>
  * </ul>
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
- * method to get properly constructed {@link NCModel} instance.
+ * method to get properly constructed {@link NCModel} instance. Note that at the minimum the
+ * {@link #setDescriptor(NCModelDescriptor) descriptor} and
+ * the {@link #setQueryFunction(NCSerializableFunction) query function}
+ * must be set.
  */
 public class NCModelBuilder extends NCJsonBuilder {
     /** */
@@ -158,7 +161,10 @@ public class NCModelBuilder extends NCJsonBuilder {
     }
 
     /**
-     * Returns newly built model.
+     * Returns newly built model. Note that at the minimum the
+     * {@link #setDescriptor(NCModelDescriptor) descriptor} and
+     * the {@link #setQueryFunction(NCSerializableFunction) query function}
+     * must be set.
      *
      * @return New built model.
      * @throws NCBuilderException Thrown in case of any errors building the model.

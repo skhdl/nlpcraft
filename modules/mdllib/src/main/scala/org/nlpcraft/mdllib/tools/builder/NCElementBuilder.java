@@ -46,7 +46,8 @@ import java.util.*;
  *     <li>{@link #newElement(String, String)}</li>
  * </ul>
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
- * method to get properly constructed {@link NCElement} instance.
+ * method to get properly constructed {@link NCElement} instance. Note that at the minimum the element
+ * {@link #setId(String) ID} must be set.
  */
 public class NCElementBuilder extends NCJsonBuilder {
     private NCElementImpl impl;
@@ -235,7 +236,8 @@ public class NCElementBuilder extends NCJsonBuilder {
     }
 
     /**
-     * Builds and returns mode element.
+     * Builds and returns mode element. Note that at the minimum the element
+     * {@link #setId(String) ID} must be set.
      *
      * @return Model element.
      * @throws NCBuilderException Thrown in case of any errors building the element.
