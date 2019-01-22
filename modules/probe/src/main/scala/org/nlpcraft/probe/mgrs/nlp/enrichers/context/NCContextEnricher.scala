@@ -159,21 +159,6 @@ object NCContextEnricher extends NCProbeEnricher("Context-based enricher") {
     }
 
     /**
-      * Gets flag.
-      *
-      * @param t Token.
-      */
-    private def isNumericUserElement(t: NCNlpSentenceToken): Boolean = t.exists(n ⇒
-        if (n.isUser)
-            n.get("dataType") match {
-                case Some(v) ⇒ v == "LONG" || v == "DOUBLE"
-                case None ⇒ false
-            }
-        else
-            false
-    )
-
-    /**
       * Gets `is-numeric` processing flag.
       *
       * Sequence: first user token, after numeric condition, any tokens between.
@@ -184,7 +169,7 @@ object NCContextEnricher extends NCProbeEnricher("Context-based enricher") {
       * @param toks Tokens.
       */
     private def isNumeric(toks: Seq[NCNlpSentenceToken]): Boolean =
-        if (toks.size > 1 && isNumericUserElement(toks.head)) {
+        if (toks.size > 1) {
             val others = toks.drop(1).dropWhile(_.isStopword)
 
             others.size match {

@@ -49,8 +49,6 @@ import scala.collection._
   * This enricher must be used after Model elements enricher.
   */
 object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
-    private final val NUM_AGGR_TYPES = Seq("LONG", "DOUBLE", "DATE", "TIME", "DATETIME")
-
     case class ComplexHolder(function: NCFunction, headStem: String, allStems: Set[String])
     case class SortHolder(asc: Boolean, byPart: Seq[NCNlpSentenceToken], orderPart: Seq[NCNlpSentenceToken])
     case class TypedFunction(function: NCFunction, isNumeric: Boolean)
@@ -356,7 +354,7 @@ object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
                     case Some(f) ⇒
                         val after = toks.drop(before.length)
 
-                        after.find(p ⇒ if (f.isNumeric) isUserAndNumAggr(p) else isMeaningful(p)) match {
+                        after.find(p ⇒ if (f.isNumeric) p.exists(_.isUser) else isMeaningful(p)) match {
                             case Some(aggrCand) ⇒
                                 if (
                                     aggrCand.count(_.isUser) >= 1 &&
@@ -437,21 +435,6 @@ object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
       * @param t Token.
       */
     private def isMeaningful(t: NCNlpSentenceToken): Boolean = t.exists(!_.isNlp)
-
-    /**
-      * Gets aggregate flag.
-      *
-      * @param t Token.
-      */
-    private def isUserAndNumAggr(t: NCNlpSentenceToken): Boolean =
-        t.find(_.isUser) match {
-            case Some(n) ⇒
-                n.get("dataType") match {
-                    case Some(dt) ⇒ NUM_AGGR_TYPES.contains(dt)
-                    case None ⇒ throw new AssertionError(s"Invalid user note: $n")
-                }
-            case None ⇒ false
-        }
 
     /**
      * Gets not `meaningful ` flag.

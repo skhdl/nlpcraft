@@ -68,10 +68,10 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     private final val EC = ExecutionContext.fromExecutor(
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )
-    
+
     // Maximum size of the result body.
     private final val MAX_RES_BODY_LENGTH = 1024 * 1024 // 1MB.
-    
+
     /**
       * Processes 'ask' request from probe server.
       *
@@ -225,7 +225,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             msgName: String
         ): Unit = {
             require(errMsg.isDefined || (resType.isDefined && resBody.isDefined))
-            
+
             val msg = NCProbeMessage(msgName)
 
             msg += "srvReqId" → srvReqId
@@ -241,7 +241,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 addOptional(msg, "resType", resType)
                 addOptional(msg, "resBody", resBody)
             }
-            
+
             NCProbeConnectionManager.send(msg)
             
             if (errMsg.isEmpty)
@@ -249,7 +249,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             else
                 logger.trace(s"REJECT response $msgName [srvReqId=$srvReqId, response=${errMsg.get}]")
         }
-        
+
         val mdl = NCModelManager.getModel(dsModelId).getOrElse(throw new NCE(s"Model not found: $dsModelId"))
         
         try
@@ -257,16 +257,16 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         catch {
             case e: NCNlpPreException ⇒
                 val errMsg = errorMsg(e.status)
-                
+
                 logger.error(s"Pre-enrichment validation: $errMsg ")
-                
+
                 respond(
                     None,
                     None,
                     Some(errMsg),
                     "P2S_ASK_RESULT"
                 )
-        
+
                 return
         }
 
@@ -294,13 +294,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
 
         if (!IS_PROBE_SILENT) {
             val sz = senSeq.size
-            
+
             // Print here because validation can change sentence.
             senSeq.zipWithIndex.foreach(p ⇒
                 NCNlpAsciiLogger.prepareTable(p._1).info(logger,
                     Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
         }
-        
+
         // Final validation before execution.
         try
             senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
@@ -321,13 +321,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
         }
 
         val conv = NCConversationManager.get(usrId, dsId)
-        
+
         // Update STM and recalculate context.
         conv.update()
-        
+
         if (!IS_PROBE_SILENT)
             conv.ack()
-        
+
         val unitedSen =
             new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq)
 
@@ -338,7 +338,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 override lazy val getName: String = dsName
                 override lazy val getConfig: String = dsModelCfg
             }
-            
+
             override lazy val getSentence: NCSentence = unitedSen
             override lazy val getModel: NCModel = mdl.model
             override lazy val getServerRequestId: String = srvReqId
@@ -366,7 +366,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             {
                 case e: NCRejection ⇒
                     logger.info(s"Rejection [srvReqId=$srvReqId, msg=${e.getMessage}]")
-                    
+
                     if (e.getCause != null)
                         logger.info(s"Rejection cause:", e.getCause)
 
