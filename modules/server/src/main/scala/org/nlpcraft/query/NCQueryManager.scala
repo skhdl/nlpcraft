@@ -32,25 +32,22 @@
 package org.nlpcraft.query
 
 import org.apache.ignite.IgniteCache
-import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft._
-import org.nlpcraft.db.NCDbManager
-import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
-import org.nlpcraft.mdo.NCQueryStateMdo
-import org.nlpcraft.tx.NCTxManager
-
-import scala.util.control.Exception._
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.ignite.NCIgniteHelpers._
+import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
+import org.nlpcraft.tx.NCTxManager
 import org.nlpcraft.user.NCUserManager
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.control.Exception._
 
 /**
   * Query state machine.
@@ -74,20 +71,25 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         
         super.start()
     }
-    
+
     /**
       *
       * @param usrId
       * @param txt
       * @param dsId
       * @param isTest
+      * @param usrAgent
+      * @param rmtAddr
+      * @return
       */
     @throws[NCE]
     def ask(
         usrId: Long,
         txt: String,
         dsId: Long,
-        isTest: Boolean
+        isTest: Boolean,
+        usrAgent: Option[String],
+        rmtAddr: Option[String]
     ): String = {
         ensureStarted()
         
@@ -125,6 +127,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                     email = usr.email,
                     status = QRY_ENLISTED, // Initial status.
                     text = txt0,
+                    userAgent = usrAgent,
+                    remoteAddress = rmtAddr,
                     createTstamp = rcvTstamp,
                     updateTstamp = rcvTstamp
                 )
@@ -139,6 +143,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 ds.modelId,
                 QRY_ENLISTED,
                 isTest,
+                usrAgent.orNull,
+                rmtAddr.orNull,
                 rcvTstamp
             )
         }
@@ -161,7 +167,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}")
                 
                 setError(srvReqId, "Processing failed due to a system error.")
-                
         }
         
         srvReqId
@@ -261,19 +266,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     
     /**
       *
-      * @param srvReqId
-      * @param error
-      */
-    @throws[NCE]
-    def reject(
-        srvReqId: String,
-        error: String
-    ): Unit = {
-        ensureStarted()
-    }
-    
-    /**
-      *
       * @param usrId
       * @param dsId
       */
@@ -283,33 +275,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         dsId: Long
     ): Unit = {
         ensureStarted()
-    }
-
-    /**
-      *
-      * @param srvReqId
-      * @param curateTxt
-      * @param curateHint
-      */
-    @throws[NCE]
-    def curate(
-        srvReqId: String,
-        curateTxt: String,
-        curateHint: String): Unit = {
-        ensureStarted()
-    }
-    
-    /**
-      *
-      * @param srvReqId
-      * @param talkback
-      */
-    @throws[NCE]
-    def talkback(
-        srvReqId: String,
-        talkback: String
-    ): Unit = {
-        ensureStarted()
+        
+        // TODO
     }
     
     /**
@@ -319,6 +286,21 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @throws[NCE]
     def cancel(srvReqIds: List[String]): Unit = {
         ensureStarted()
+        
+        val now = System.currentTimeMillis()
+    
+        NCTxManager.startTx {
+            for (srvReqId ← srvReqIds) {
+                catching(wrapIE) {
+                    cache -= srvReqId
+                }
+                
+                NCProcessLogManager.updateCancel(
+                    srvReqId,
+                    now
+                )
+            }
+        }
     }
     
     /**
@@ -327,13 +309,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     @throws[NCE]
     def check(): Unit = {
         ensureStarted()
-    }
     
-    /**
-      *
-      */
-    @throws[NCE]
-    def pending(): Unit = {
-        ensureStarted()
+        // TODO
     }
 }

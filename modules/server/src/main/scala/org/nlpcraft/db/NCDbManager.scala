@@ -474,6 +474,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * @param dsId Data source ID.
       * @param mdlId Data source model ID.
       * @param test Test flag.
+      * @param usrAgent User agent string.
+      * @param rmtAddr Remote user address.
       * @param rcvTstamp Receive timestamp.
       */
     @throws[NCE]
@@ -485,6 +487,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
         mdlId: String,
         status: NCApiStatusCode,
         test: Boolean,
+        usrAgent: String,
+        rmtAddr: String,
         rcvTstamp: Long
     ): Unit = {
         ensureStarted()
@@ -500,10 +504,12 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |     model_id,
               |     status,
               |     is_test,
+              |     user_agent,
+              |     rmt_addr,
               |     recv_tstamp
               | )
               | VALUES (
-              |     ?, ?, ?, ?, ?, ?, ?, ?
+              |     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
               | )""".stripMargin,
             usrId,
             srvReqId,
@@ -512,7 +518,35 @@ object NCDbManager extends NCLifecycle("Database manager") {
             mdlId,
             status.toString,
             test,
+            usrAgent,
+            rmtAddr,
             rcvTstamp
+        )
+    }
+    
+    /**
+      * 
+      * @param srvReqId
+      * @param tstamp
+      */
+    @throws[NCE]
+    def updateCancelProcessingLog(
+        srvReqId: String,
+        tstamp: Long
+    ): Unit = {
+        ensureStarted()
+        NCPsql.insertSingle(
+            """
+              |UPDATE proc_log
+              |SET
+              |    status = ?,
+              |    cancel_tstamp = ?
+              |WHERE
+              |    srv_req_id = ?
+            """.stripMargin,
+            QRY_CANCELLED.toString,
+            tstamp,
+            srvReqId
         )
     }
     

@@ -165,7 +165,10 @@ public class NCModelBuilder extends NCJsonBuilder {
      */
     public NCModel build() throws NCBuilderException {
         if (impl.getQueryFunction() == null)
-            throw new NCBuilderException("Query function is not set in:" + impl, null);
+            throw new NCBuilderException("Query function is not.");
+
+        if (impl.getDescriptor() == null)
+            throw new NCBuilderException("Model descriptor is not set.");
 
         return impl;
     }

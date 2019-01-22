@@ -33,6 +33,8 @@ package org.nlpcraft.examples.lessons.lesson8;
 
 import org.nlpcraft.*;
 import org.nlpcraft.examples.misc.geo.cities.*;
+import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
+import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.intent.*;
 import org.nlpcraft.mdllib.intent.NCIntentSolver.*;
@@ -51,6 +53,9 @@ import static java.time.format.FormatStyle.*;
 @NCActiveModelProvider
 public class TimeProvider8 extends NCModelProviderAdapter {
     static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    
+    // Geo manager.
+    static private GeoManager geoMrg = new GeoManager();
 
     // Medium data formatter.
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
@@ -128,16 +133,18 @@ public class TimeProvider8 extends NCModelProviderAdapter {
      * @return Query result.
      */
     private NCQueryResult onLocalMatch(NCIntentSolverContext ctx) {
-        NCSentence sen = ctx.getQueryContext().getSentence();
-
+        Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
+    
         // Get local geo data from sentence metadata defaulting to
         // Silicon Valley location in case we are missing that info.
+        GeoDataBean geo = geoOpt.orElseGet(() -> geoMrg.getSiliconValley());
+    
         return formatResult(
-            sen.getCityName().orElse(""),
-            sen.getCountryName().orElse("United States"),
-            sen.getTimezoneName().orElse("America/Los_Angeles"),
-            sen.getLatitude().orElse(37.7749),
-            sen.getLongitude().orElse(122.4194)
+            geo.getCityName(),
+            geo.getCountryName(),
+            geo.getTimezoneName(),
+            geo.getLatitude(),
+            geo.getLongitude()
         );
     }
 

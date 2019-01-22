@@ -54,6 +54,15 @@ public class NCModelDescriptorBuilder {
      * @return Built model descriptor instance.
      */
     public NCModelDescriptor build() {
+        if (impl.getId() == null)
+            throw new NCBuilderException("Model ID is not set for this descriptor.");
+
+        if (impl.getName() == null)
+            throw new NCBuilderException("Model name is not set for this descriptor.");
+
+        if (impl.getVersion() == null)
+            throw new NCBuilderException("Model version is not set for this descriptor.");
+
         return impl;
     }
 

@@ -110,9 +110,12 @@ CREATE TABLE proc_log (
     ds_id BIGINT,
     model_id VARCHAR(64),
     status VARCHAR(32),
+    user_agent VARCHAR(512) NULL,
+    rmt_address VARCHAR(256) NULL,
     -- Ask and result timestamps.
     recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
+    cancel_tstamp TIMESTAMP NULL, -- Cancel timestamp.
     -- Result parts.
     res_type VARCHAR(32) NULL,
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
@@ -136,7 +139,6 @@ CREATE TABLE proc_log (
     probe_host_name VARCHAR(1024) NULL,
     probe_host_addr VARCHAR(512) NULL,
     probe_mac_addr VARCHAR(512) NULL,
-    probe_email VARCHAR(512) NULL,
     -- Whether or not this is a test run.
     is_test BOOL NOT NULL DEFAULT FALSE
 );

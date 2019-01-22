@@ -179,7 +179,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
     override def start(): NCLifecycle = {
         val routes: Route = {
             post {
-                path(API / "ask") {
+                /**/path(API / "ask") {
                     case class Req(
                         accessToken: String,
                         txt: String,
@@ -190,26 +190,34 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         status: String,
                         srvReqId: String
                     )
-    
+
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticate(req.accessToken)
-        
-                        val newSrvReqId = NCQueryManager.ask(
-                            getUserId(req.accessToken),
-                            req.txt,
-                            req.dsId,
-                            req.isTest.getOrElse(false)
-                        )
-        
-                        complete {
-                            Res(API_OK, newSrvReqId)
+                        optionalHeaderValueByName("User-Agent") { userAgent ⇒
+                            extractClientIP { remoteAddr ⇒
+                                val newSrvReqId = NCQueryManager.ask(
+                                    getUserId(req.accessToken),
+                                    req.txt,
+                                    req.dsId,
+                                    req.isTest.getOrElse(false),
+                                    userAgent,
+                                    remoteAddr.toOption match {
+                                        case Some(a) ⇒ Some(a.getHostAddress)
+                                        case None ⇒ None
+                                    }
+                                )
+
+                                complete {
+                                    Res(API_OK, newSrvReqId)
+                                }
+
+                            }
                         }
                     }
                 } ~
-                path(API / "cancel") {
+                /**/path(API / "cancel") {
                     case class Req(
                         accessToken: String,
                         srvReqIds: List[String]
@@ -269,7 +277,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "clear" / "conversation") {
+                /**/path(API / "clear" / "conversation") {
                     case class Req(
                         accessToken: String,
                         dsId: Long

@@ -238,8 +238,12 @@ public class NCElementBuilder extends NCJsonBuilder {
      * Builds and returns mode element.
      *
      * @return Model element.
+     * @throws NCBuilderException Thrown in case of any errors building the element.
      */
-    public NCElement build() {
+    public NCElement build() throws NCBuilderException {
+        if (impl.getId() == null)
+            throw new NCBuilderException("Element ID is not set.");
+        
         return impl;
     }
 }

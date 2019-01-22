@@ -78,7 +78,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     private def asciiLogo(cfg: NCProbeConfig) {
         val NL = System getProperty "line.separator"
         
-        val copyright = s"Copyright (C) NlpCraft Project."
+        val copyright = s"Copyright (C) DataLingvo, Inc."
         
         val s = NL +
             raw"    _   ____      ______           ______   $NL" +

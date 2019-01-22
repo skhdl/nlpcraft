@@ -99,7 +99,6 @@ class NCJson(val json: JValue) {
             case _: Throwable ⇒ None
         }
 
-
     /**
      * Renders this JSON with proper new-lines and indentation (suitable for human readability).
      *
