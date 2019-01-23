@@ -1,0 +1,1669 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "NlpCraft provides REST API for integration with user applications.",
+        "version": "0.0.1",
+        "title": "NlpCraft REST API"
+    },
+    "host": "pubapi.nlpcraft.org",
+    "basePath": "/pub/v1",
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Getting access token."
+        },
+        {
+            "name": "Data Sources",
+            "description": "Managing data sources."
+        },
+        {
+            "name": "Users",
+            "description": "Managing users."
+        },
+        {
+            "name": "Data Probes",
+            "description": "Managing data probes."
+        },
+        {
+            "name": "Asking",
+            "description": "Asking questions."
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/clear/conversation": {
+            "post": {
+                "tags": ["Asking"],
+                "summary": "Clears conversation context.",
+                "description": "Clears conversation context for given user and data source.",
+                "operationId": "clearConversation",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "dsId"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "dsId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Data source ID for which to clear conversation context"
+                            },
+                            "userId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Optional user ID for which to clear conversation context (caller user ID is used if not provided)"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/check": {
+            "post": {
+                "tags": ["Asking"],
+                "summary": "Gets status of submitted requests.",
+                "description": "Gets the status of the previously submitted requests.",
+                "operationId": "check",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "hash": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Optional client hash (if client and server hashes match, the server will not send the payload)"
+                            },
+                            "srvReqIds": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Optional list of server request identifiers. If this identifiers list defined, only these required server requests statuses returned. If this parameter omitted, statuses returned for all active requests."
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "hash",
+                                "states"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "hash": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "Current server hash (can be sent back to server to avoid unnecessary payloads)"
+                                },
+                                "states": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "srvReqId",
+                                            "userAgent",
+                                            "userId",
+                                            "dsId",
+                                            "probeId",
+                                            "mdlId",
+                                            "text",
+                                            "origin",
+                                            "status",
+                                            "responseType",
+                                            "createTstamp",
+                                            "updateTstamp"
+                                        ],
+                                        "properties": {
+                                            "srvReqId": {
+                                                "type": "string",
+                                                "description": "Server request ID"
+                                            },
+                                            "userAgent": {
+                                                "type": "string",
+                                                "description": "User agent string"
+                                            },
+                                            "userId": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "description": "ID of the user that submitted the request"
+                                            },
+                                            "dsId": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "description": "ID of the data source for this request"
+                                            },
+                                            "probeId": {
+                                                "type": "string",
+                                                "description": "ID of the data probe"
+                                            },
+                                            "mdlId": {
+                                                "type": "string",
+                                                "description": "ID of the model"
+                                            },
+                                            "text": {
+                                                "type": "string",
+                                                "description": "Original text of the request sentence"
+                                            },
+                                            "origin": {
+                                                "type": "string",
+                                                "description": "Origin of the request"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "description": "Current status of this request (ASK_READY indicates that result - error or ok - is ready, ASK_WAIT_LINGUIST indicates that curation was requested by the model)",
+                                                "enum": [
+                                                    "ASK_WAIT_REGISTERED",
+                                                    "ASK_WAIT_LINGUIST",
+                                                    "ASK_READY"
+                                                ]
+                                            },
+                                            "responseType": {
+                                                "type": "string",
+                                                "description": "Response type",
+                                                "enum": [
+                                                    "INITIAL",
+                                                    "OK",
+                                                    "CURATION",
+                                                    "REJECT",
+                                                    "TRIVIA",
+                                                    "TALKBACK",
+                                                    "VALIDATION",
+                                                    "ERROR"
+                                                ]
+                                            },
+
+                                            "resType": {
+                                                "type": "string",
+                                                "description": "Optional type of the result if returned by the model (provided only if status is ASK_READY and processing was not rejected or terminated due to an exception)"
+                                            },
+                                            "resBody": {
+                                                "type": "string",
+                                                "description": "Optional body of the result if returned by model (provided only if status is ASK_READY and processing was not rejected or terminated due to an exception)"
+                                            },
+                                            "error": {
+                                                "type": "string",
+                                                "description": "Optional error if returned by model (provided only if status is ASK_READY and processing was rejected or terminated due to an exception)"
+                                            },
+                                            "createTstamp": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "description": "Creation timestamp of the request"
+                                            },
+                                            "updateTstamp": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "description": "Last update timestamp of the request"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/cancel": {
+            "post": {
+                "tags": ["Asking"],
+                "summary": "Cancels a question.",
+                "description": "Cancels the previously submitted sentence.",
+                "operationId": "cancel",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "srvReqId"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "srvReqId": {
+                                "type": "string",
+                                "description": "Server ID of the request to cancel"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ask": {
+            "post": {
+                "tags": ["Asking"],
+                "summary": "Asks a question.",
+                "description": "Submits the sentence to be processed.",
+                "operationId": "ask",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "txt",
+                            "dsId"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "txt": {
+                                "type": "string",
+                                "description": "Text of the question"
+                            },
+                            "userId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Optional ID of the user. If not provided the question will be submitted on behalf of the caller"
+                            },
+                            "dsId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Data source ID"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "srvReqId"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "srvReqId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "Server ID assigned to the new processing request"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/all": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Gets all users.",
+                "description": "Gets all users for signed in user company.",
+                "operationId": "getAllUsers",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 32,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "allUsers"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "allUsers": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "id",
+                                            "firstName",
+                                            "lastName",
+                                            "email",
+                                            "title",
+                                            "department",
+                                            "phone",
+                                            "avatarUrl",
+                                            "isActive",
+                                            "isFirstLogin",
+                                            "isAdmin",
+                                            "activeDsId",
+                                            "userOrigin",
+                                            "registrationDate",
+                                            "lastLoginTime",
+                                            "lastQuestionTime",
+                                            "totalQuestionCount",
+                                            "tmzName",
+                                            "tmzAbbr",
+                                            "latitude",
+                                            "longitude",
+                                            "countryName",
+                                            "countryCode",
+                                            "regionName",
+                                            "regionCode",
+                                            "city",
+                                            "zipCode",
+                                            "metroCode"
+                                        ],
+                                        "properties": {
+                                            "id": {
+                                                "description": "User ID",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "firstName": {
+                                                "description": "User first or given name",
+                                                "type": "string"
+                                            },
+                                            "lastName": {
+                                                "description": "User last name",
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "description": "User email",
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "description": "User phone number",
+                                                "type": "string"
+                                            },
+                                            "department": {
+                                                "description": "User department",
+                                                "type": "string"
+                                            },
+                                            "avatarUrl": {
+                                                "description": "User avatar URL",
+                                                "type": "string"
+                                            },
+                                            "isActive": {
+                                                "description": "Whether or not user is enabled",
+                                                "type": "boolean"
+                                            },
+                                            "isFirstLogin": {
+                                                "description": "Whether or not user logged in for the first time",
+                                                "type": "boolean"
+                                            },
+                                            "isAdmin": {
+                                                "description": "Whether or not user has admin privileges",
+                                                "type": "boolean"
+                                            },
+                                            "activeDsId": {
+                                                "description": "ID of the last used data source",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "userOrigin": {
+                                                "description": "Origin of the user registration",
+                                                "type": "string"
+                                            },
+                                            "registrationDate": {
+                                                "description": "User registration timestamp",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "lastLoginTime": {
+                                                "description": "User last login timestamp",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "lastQuestionTime": {
+                                                "description": "User last question timestamp",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "tmzName": {
+                                                "description": "Last user login timezone name",
+                                                "type": "string"
+                                            },
+                                            "tmzAbbr": {
+                                                "description": "Last user login timezone code",
+                                                "type": "string"
+                                            },
+                                            "latitude": {
+                                                "description": "Last user login latitude",
+                                                "type": "string"
+                                            },
+                                            "longitude": {
+                                                "description": "Last user login longitude",
+                                                "type": "string"
+                                            },
+                                            "countryName": {
+                                                "description": "Last user login country name",
+                                                "type": "string"
+                                            },
+                                            "countryCode": {
+                                                "description": "Last user login country code",
+                                                "type": "string"
+                                            },
+                                            "regionName": {
+                                                "description": "Last user login region name",
+                                                "type": "string"
+                                            },
+                                            "regionCode": {
+                                                "description": "Last user login region code",
+                                                "type": "string"
+                                            },
+                                            "city": {
+                                                "description": "Last user login city name",
+                                                "type": "string"
+                                            },
+                                            "zipCode": {
+                                                "description": "Last user login zip code",
+                                                "type": "string"
+                                            },
+                                            "metroCode": {
+                                                "description": "Last user login metro code",
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/update": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Updates regular user.",
+                "description": "Updates regular user with given parameters. Note that admin status and preferences can only be changed via website.",
+                "operationId": "updateUser",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "userId",
+                            "email",
+                            "firstName",
+                            "lastName",
+                            "phone",
+                            "title",
+                            "department"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "userId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "ID of the user to update"
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "User email",
+                                "maxLength": 64
+                            },
+                            "firstName": {
+                                "type": "string",
+                                "description": "User first or given name",
+                                "maxLength": 64
+                            },
+                            "lastName": {
+                                "type": "string",
+                                "description": "User last name",
+                                "maxLength": 64
+                            },
+                            "phone": {
+                                "type": "string",
+                                "description": "User phone number",
+                                "maxLength": 64
+                            },
+                            "department": {
+                                "type": "string",
+                                "description": "User department name",
+                                "maxLength": 64
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "User title",
+                                "maxLength": 64
+                            },
+                            "avatarUrl": {
+                                "type": "string",
+                                "description": "Optional user avatar URL",
+                                "maxLength": 512000
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/delete": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Deletes user.",
+                "description": "Deletes user with given ID.",
+                "operationId": "deleteUser",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken",
+                                "userId"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 32,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                },
+                                "userId": {
+                                    "maxLength": 32,
+                                    "description": "ID of the user to delete",
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/add": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Adds new regular user.",
+                "description": "Adds new regular user with given parameters. Note that admin status and preferences can only be changed via website.",
+                "operationId": "addUser",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "email",
+                            "firstName",
+                            "lastName",
+                            "phone",
+                            "title",
+                            "department"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 32
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "User email",
+                                "maxLength": 64
+                            },
+                            "firstName": {
+                                "type": "string",
+                                "description": "User first or given name",
+                                "maxLength": 64
+                            },
+                            "lastName": {
+                                "type": "string",
+                                "description": "User last name",
+                                "maxLength": 64
+                            },
+                            "phone": {
+                                "type": "string",
+                                "description": "User phone number",
+                                "maxLength": 64
+                            },
+                            "department": {
+                                "type": "string",
+                                "description": "User department name",
+                                "maxLength": 64
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "User title",
+                                "maxLength": 64
+                            },
+                            "avatarUrl": {
+                                "type": "string",
+                                "description": "Optional user avatar URL",
+                                "maxLength": 512000
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "userId"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "userId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "ID of the newly created user"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/signin": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Signs in and obtains new access token.",
+                "description": "Accepts user's probe token and email and returns a **new access** token that should be used in all subsequent API calls. An access token can expire or be invalidated on the server side and this call should be used to obtain it again in such cases.",
+                "operationId": "signIn",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "probeToken",
+                            "email"
+                        ],
+                        "properties": {
+                            "probeToken": {
+                                "maxLength": 256,
+                                "description": "Probe token that can be obtained on admin user 'account page'.",
+                                "type": "string"
+                            },
+                            "email": {
+                                "maxLength": 64,
+                                "description": "User sign in email.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "accessToken"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "accessToken": {
+                                    "type": "string",
+                                    "description": "Temporary (session) access token that should be used for further REST calls"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/signout": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Signs out and releases access token.",
+                "description": "Releases previously obtained access token. After this call given access token is no longer valid for authentication.",
+                "operationId": "signOut",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "maxLength": 32,
+                                "description": "Previously obtained access token to release.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/signup": {
+
+        },
+        "/user/passwd/reset": {
+
+        },
+        "/probe/stop": {
+            "post": {
+                "tags": ["Data Probes"],
+                "summary": "Stops data probe.",
+                "description": "Stops data probe with given ID.",
+                "operationId": "stopDataProbe",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken",
+                                "probeGuid"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 32,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                },
+                                "probeGuid": {
+                                    "maxLength": 32,
+                                    "description": "Probe GUID",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/probe/restart": {
+            "post": {
+                "tags": ["Data Probes"],
+                "summary": "Restarts data probe.",
+                "description": "Restarts data probe with given ID.",
+                "operationId": "restartDataProbe",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken",
+                                "probeGuid"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 32,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                },
+                                "probeGuid": {
+                                    "maxLength": 32,
+                                    "description": "Probe GUID",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/probe/all": {
+            "post": {
+                "tags": ["Data Probes"],
+                "summary": "Gets all data probes.",
+                "description": "Gets all started data probes for this company.",
+                "operationId": "getAllDataProbes",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 32,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "allProbes"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "allProbes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "probeToken",
+                                            "probeId",
+                                            "probeGuid",
+                                            "probeApiVersion",
+                                            "probeApiDate",
+                                            "osVersion",
+                                            "osName",
+                                            "osArch",
+                                            "startTstamp",
+                                            "tmzId",
+                                            "tmzName",
+                                            "userName",
+                                            "javaVersion",
+                                            "javaVendor",
+                                            "hostName",
+                                            "hostAddr",
+                                            "macAddr",
+                                            "models"
+                                        ],
+                                        "properties": {
+                                            "email": {
+                                                "description": "Optional email limiting probe's visibility",
+                                                "type": "string"
+                                            },
+                                            "probeToken": {
+                                                "description": "Probe token",
+                                                "type": "string"
+                                            },
+                                            "probeId": {
+                                                "description": "User defined probe ID",
+                                                "type": "string"
+                                            },
+                                            "probeGuid": {
+                                                "description": "Probe GUID",
+                                                "type": "string"
+                                            },
+                                            "probeApiVersion": {
+                                                "description": "Probe API version",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "probeApiDate": {
+                                                "description": "Probe API release date",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "osName": {
+                                                "description": "Probe OS name",
+                                                "type": "string"
+                                            },
+                                            "osVer": {
+                                                "description": "Probe OS version",
+                                                "type": "string"
+                                            },
+                                            "osArch": {
+                                                "description": "Probe OS architecture",
+                                                "type": "string"
+                                            },
+                                            "startTstamp": {
+                                                "description": "Probe start timestamp",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "tmzId": {
+                                                "description": "Probe timezone ID",
+                                                "type": "string"
+                                            },
+                                            "tmzName": {
+                                                "description": "Probe timezone name",
+                                                "type": "string"
+                                            },
+                                            "userName": {
+                                                "description": "Probe OS system user name",
+                                                "type": "string"
+                                            },
+                                            "javaVersion": {
+                                                "description": "Probe runtime JVM version",
+                                                "type": "string"
+                                            },
+                                            "javaVendor": {
+                                                "description": "Probe runtime JVM vendor",
+                                                "type": "string"
+                                            },
+                                            "hostAddr": {
+                                                "description": "Probe host address",
+                                                "type": "string"
+                                            },
+                                            "hostName": {
+                                                "description": "Probe host local name",
+                                                "type": "string"
+                                            },
+                                            "macAddr": {
+                                                "description": "Probe NIC MAC address",
+                                                "type": "string"
+                                            },
+                                            "models": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "id",
+                                                        "name",
+                                                        "version"
+                                                    ],
+                                                    "properties": {
+                                                        "id": {
+                                                            "description": "Model ID",
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "description": "Model name",
+                                                            "type": "string"
+                                                        },
+                                                        "version": {
+                                                            "description": "Model version",
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ds/all": {
+            "post": {
+                "tags": ["Data Sources"],
+                "summary": "Gets all data sources.",
+                "description": "Gets all data sources for signed in user company.",
+                "operationId": "getAllDataSources",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 256,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "dataSources"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "allDs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "id",
+                                            "name",
+                                            "shortDesc",
+                                            "mdlId",
+                                            "mdlName",
+                                            "mdlVer",
+                                            "mdlId"
+                                        ],
+                                        "properties": {
+                                            "id": {
+                                                "description": "Data source ID",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "name": {
+                                                "description": "Data source name",
+                                                "type": "string"
+                                            },
+                                            "shortDesc": {
+                                                "description": "Short data source description",
+                                                "type": "string"
+                                            },
+                                            "mdlId": {
+                                                "description": "Model ID",
+                                                "type": "string"
+                                            },
+                                            "mdlName": {
+                                                "description": "Model name",
+                                                "type": "string"
+                                            },
+                                            "mdlVer": {
+                                                "description": "Model version",
+                                                "type": "string"
+                                            },
+                                            "mdlCfg": {
+                                                "description": "Model config",
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ds/delete": {
+            "post": {
+                "tags": ["Data Sources"],
+                "summary": "Deletes data source.",
+                "description": "Deletes data source with given ID.",
+                "operationId": "deleteDataSource",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken",
+                                "dsId"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "maxLength": 256,
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "type": "string"
+                                },
+                                "dsId": {
+                                    "maxLength": 32,
+                                    "description": "ID of the data source to delete",
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ds/update": {
+            "post": {
+                "tags": ["Data Sources"],
+                "summary": "Updates data source.",
+                "description": "Updates data source with given parameters.",
+                "operationId": "updateDataSource",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Payload body",
+                        "description": "JSON request.",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "accessToken",
+                                "dsId",
+                                "name",
+                                "shortDesc"
+                            ],
+                            "properties": {
+                                "accessToken": {
+                                    "type": "string",
+                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "maxLength": 256
+                                },
+                                "dsId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "ID of the data source to update"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Data source name to update",
+                                    "maxLength": 128
+                                },
+                                "shortDesc": {
+                                    "type": "string",
+                                    "description": "Short data source description to update",
+                                    "maxLength": 128
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ds/add": {
+            "post": {
+                "tags": ["Data Sources"],
+                "summary": "Adds new data source.",
+                "description": "Adds new data source with given parameters.",
+                "operationId": "addDataSource",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "name",
+                            "shortDesc",
+                            "mdlId",
+                            "mdlName",
+                            "mdlVer"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/pub/signin' call",
+                                "maxLength": 256
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Data source name",
+                                "maxLength": 128
+                            },
+                            "shortDesc": {
+                                "type": "string",
+                                "description": "Short data source description",
+                                "maxLength": 128
+                            },
+                            "mdlId": {
+                                "type": "string",
+                                "description": "Model ID",
+                                "maxLength": 64
+                            },
+                            "mdlName": {
+                                "type": "string",
+                                "description": "Model name",
+                                "maxLength": 512
+                            },
+                            "mdlVer": {
+                                "type": "string",
+                                "description": "Model version",
+                                "maxLength": 512
+                            },
+                            "mdlCfg": {
+                                "type": "string",
+                                "description": "Optional model configuration string",
+                                "maxLength": 5120
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status",
+                                "dsId"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "PUB_API_OK"
+                                    ]
+                                },
+                                "dsId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "ID of the newly created data source"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Ok": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status code of this operation",
+                    "enum": [
+                        "PUB_API_OK"
+                    ]
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status code of this error",
+                    "enum": [
+                        "API_SYS_FAILURE",
+                        "API_AUTH_FAILED",
+                        "API_ADMIN_REQUIRED",
+                        "API_OFFLINE",
+                        "API_FIELD_INVALID",
+                        "API_FIELD_MISSED",
+                        "USAGE_LIMIT_VIOLATION"
+                    ]
+                },
+                "reason": {
+                    "type": "string",
+                    "description": "Reason for this error"
+                }
+            }
+        }
+    }
+}

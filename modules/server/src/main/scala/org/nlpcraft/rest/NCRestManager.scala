@@ -668,7 +668,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
-                        // TODO: validate model fields?
+
+                        checkLength("mdlId", req.mdlId, 64)
+                        checkLength("mdlName", req.mdlName, 512)
+                        checkLength("mdlVer", req.mdlVer, 512)
+                        checkLength("mdlCfg", req.mdlCfg, 5120)
 
                         authenticateAsAdmin(req.accessToken)
         
