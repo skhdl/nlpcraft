@@ -33,7 +33,7 @@ package org.nlpcraft.probe.plugins.auth.basic
 
 import java.security.Key
 
-import org.nlpcraft.plugin.NCProbeAuthenticationPlugin
+import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 
 /**
   * Basic probe authentication plugin.

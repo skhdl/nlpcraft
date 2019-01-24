@@ -31,8 +31,9 @@
 
 package org.nlpcraft.notification
 
-import org.nlpcraft.plugin.{NCNotificationPlugin, NCPluginManager}
+import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft._
+import org.nlpcraft.plugin.apis.NCNotificationPlugin
 
 /**
   * Push-based notification manager.

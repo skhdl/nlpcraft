@@ -29,11 +29,12 @@
  *        /_/
  */
 
-package org.nlpcraft.plugin
+package org.nlpcraft.plugin.apis
 
 import java.security.Key
 
 import org.nlpcraft.NCE
+import org.nlpcraft.plugin.NCPlugin
 
 /**
   * Probe manager authentication manager.

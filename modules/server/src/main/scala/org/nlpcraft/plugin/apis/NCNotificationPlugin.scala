@@ -29,9 +29,10 @@
  *        /_/
  */
 
-package org.nlpcraft.plugin
+package org.nlpcraft.plugin.apis
 
 import org.nlpcraft.NCE
+import org.nlpcraft.plugin.NCPlugin
 
 /**
   * Notification manager plugin.
