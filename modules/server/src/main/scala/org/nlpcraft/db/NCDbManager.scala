@@ -397,7 +397,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         lastName: String,
         email: String,
         passwdSalt: String,
-        avatarUrl: String,
+        avatarUrl: Option[String],
         isAdmin: Boolean
     ): Long = {
         ensureStarted()
@@ -419,7 +419,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
             lastName,
             email,
             passwdSalt,
-            avatarUrl,
+            avatarUrl.orNull,
             -1, // No data source yet.
             isAdmin
         )

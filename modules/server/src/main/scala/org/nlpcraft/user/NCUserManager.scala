@@ -399,7 +399,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         val passwd = "admin"
         val firstName = "Hermann"
         val lastName = "Minkowski"
-        val avatarUrl = ""
+        val avatarUrl: Option[String] = None
         val isAdmin = true
     
         NCPsql.sql {
@@ -443,26 +443,26 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
     /**
       *
-      * @param newUsrEmail
-      * @param newUsrPasswd
-      * @param newUsrFirstName
-      * @param newUsrLastName
-      * @param newUsrAvatarUrl
-      * @param newUsrIsAdmin
+      * @param email
+      * @param pswd
+      * @param firstName
+      * @param lastName
+      * @param avatarUrl
+      * @param isAdmin
       * @return
       */
     @throws[NCE]
     def addUser(
-        newUsrEmail: String,
-        newUsrPasswd: String,
-        newUsrFirstName: String,
-        newUsrLastName: String,
-        newUsrAvatarUrl: String,
-        newUsrIsAdmin: Boolean
+        email: String,
+        pswd: String,
+        firstName: String,
+        lastName: String,
+        avatarUrl: Option[String],
+        isAdmin: Boolean
     ) : Long = {
         ensureStarted()
 
-        val normEmail = G.normalizeEmail(newUsrEmail)
+        val normEmail = G.normalizeEmail(email)
 
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
@@ -475,16 +475,16 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
 
             // Add new user.
             val newUsrId = NCDbManager.addUser(
-                newUsrFirstName,
-                newUsrLastName,
+                firstName,
+                lastName,
                 normEmail,
                 salt,
-                newUsrAvatarUrl,
-                newUsrIsAdmin
+                avatarUrl,
+                isAdmin
             )
 
             // Add actual hash for the password.
-            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newUsrPasswd, salt))
+            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(pswd, salt))
 
             // "Stir up" password pool with each user.
             (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
@@ -494,8 +494,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             // Notification.
             NCNotificationManager.addEvent("NC_USER_ADD",
                 "userId" → newUsrId,
-                "firstName" → newUsrFirstName,
-                "lastName" → newUsrLastName,
+                "firstName" → firstName,
+                "lastName" → lastName,
                 "email" → normEmail
             )
 
@@ -519,7 +519,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         passwd: String,
         firstName: String,
         lastName: String,
-        avatarUrl: String
+        avatarUrl: Option[String]
     ): Long = {
         ensureStarted()
         

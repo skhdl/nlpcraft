@@ -195,6 +195,18 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
             throw OutOfRangeField(name, maxLen)
 
     /**
+      * Checks length of field value.
+      *
+      * @param name Field name.
+      * @param v Field value.
+      * @param maxLen Maximum length.
+      */
+    @throws[OutOfRangeField]
+    private def checkLength(name: String, v: Option[String], maxLen: Int): Unit =
+        if (v.isDefined)
+            checkLength(name, v.get, maxLen)
+
+    /**
       * Checks operation permissions.
       *
       * @param initiatorUsr  Operration initiator.
@@ -374,7 +386,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         passwd: String,
                         firstName: String,
                         lastName: String,
-                        avatarUrl: String,
+                        avatarUrl: Option[String],
                         isAdmin: Boolean
                     )
                     case class Res(
@@ -516,7 +528,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         passwd: String,
                         firstName: String,
                         lastName: String,
-                        avatarUrl: String
+                        avatarUrl: Option[String]
                     )
                     case class Res(
                         status: String
