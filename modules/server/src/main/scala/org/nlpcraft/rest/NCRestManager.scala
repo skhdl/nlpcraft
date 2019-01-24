@@ -684,7 +684,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("mdlId", req.mdlId, 64)
                         checkLength("mdlName", req.mdlName, 512)
                         checkLength("mdlVer", req.mdlVer, 512)
-                        checkLength("mdlCfg", req.mdlCfg, 5120)
+                        checkLength("mdlCfg", req.mdlCfg, 512000)
 
                         authenticateAsAdmin(req.accessToken)
         
