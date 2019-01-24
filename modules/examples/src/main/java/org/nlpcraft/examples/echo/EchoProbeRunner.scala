@@ -31,7 +31,7 @@
 
 package org.nlpcraft.examples.echo
 
-import org.nlpcraft.probe.dev.{NCProbeConfig, NCProbeDevApp}
+import org.nlpcraft.probe.dev.{NCProbeConfig, NCProbeConfigBuilder, NCProbeDevApp}
 
 /**
   * In-process probe runner for this example.
@@ -48,7 +48,7 @@ import org.nlpcraft.probe.dev.{NCProbeConfig, NCProbeDevApp}
   */
 object EchoProbeRunner extends App {
     // Create probe configuration with the provider instance.
-    val cfg = new NCProbeConfig(new EchoProvider())
+    val cfg = NCProbeConfigBuilder.newConfig(new EchoProvider()).build()
     
     // Start probe and wait synchronously for its exit code.
     val exitCode = NCProbeDevApp.start(cfg)

@@ -34,7 +34,7 @@ package org.nlpcraft.notification.plugins.restpush
 import java.net.InetAddress
 
 import org.nlpcraft.NCConfigurable
-import org.nlpcraft.plugin.NCNotificationPlugin
+import org.nlpcraft.plugin.apis.NCNotificationPlugin
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable

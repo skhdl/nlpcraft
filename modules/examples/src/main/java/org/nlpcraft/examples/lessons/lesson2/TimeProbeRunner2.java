@@ -32,8 +32,7 @@
 package org.nlpcraft.examples.lessons.lesson2;
 
 import org.nlpcraft.NCException;
-import org.nlpcraft.probe.dev.NCProbeConfig;
-import org.nlpcraft.probe.dev.NCProbeDevApp;
+import org.nlpcraft.probe.dev.*;
 
 /**
  * In-process probe runner for this example.
@@ -54,7 +53,7 @@ public class TimeProbeRunner2 {
      * @param args Command like arguments (none are required).
      */
     public static void main(String[] args) throws NCException {
-        NCProbeConfig cfg = new NCProbeConfig(new TimeProvider2());
+        NCProbeConfig cfg = NCProbeConfigBuilder.newConfig(new TimeProvider2()).build();
 
         int exitCode = NCProbeDevApp.start(cfg);
 

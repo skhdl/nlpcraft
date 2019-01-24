@@ -31,7 +31,7 @@
 
 package org.nlpcraft.notification.plugins.noop
 
-import org.nlpcraft.plugin.NCNotificationPlugin
+import org.nlpcraft.plugin.apis.NCNotificationPlugin
 
 /**
   * Simple notification plugin using local system output.

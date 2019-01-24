@@ -376,7 +376,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
      */
     private void checkMatch(NCIntentSolverContext ctx) {
         // Reject if intent match is not exact ("dangling" tokens remain) or too many free words left unmatched.
-        if (!ctx.isExactMatch() || ctx.getVariant().stream(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
+        if (!ctx.isExactMatch() || ctx.getVariant().getTokens().stream().filter(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
             throw new NCRejection("Too many extra words - please simplify.");
     }
 

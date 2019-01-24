@@ -31,9 +31,8 @@
 
 package org.nlpcraft.examples.timer;
 
-import org.nlpcraft.NCException;
-import org.nlpcraft.probe.dev.NCProbeConfig;
-import org.nlpcraft.probe.dev.NCProbeDevApp;
+import org.nlpcraft.*;
+import org.nlpcraft.probe.dev.*;
 
 /**
  * In-process probe runner for this example.
@@ -58,6 +57,12 @@ public class TimerProbeRunner {
         // 1. Create probe configuration with the provider instance.
         // 2. Start probe.
         // 3. Wait synchronously for its exit code.
-        System.exit(NCProbeDevApp.start(new NCProbeConfig(new TimerProvider())));
+        System.exit(
+            NCProbeDevApp.start(
+                NCProbeConfigBuilder.newConfig(
+                    new TimerProvider()
+                ).build()
+            )
+        );
     }
 }
