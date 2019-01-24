@@ -207,15 +207,21 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
             checkLength(name, v.get, maxLen)
 
     /**
-      * Checks operation permissions.
+      * Checks operation permissions and gets user ID.
       *
-      * @param initiatorUsr  Operration initiator.
-      * @param usrId User ID.
+      * @param initiatorUsr Operation initiator.
+      * @param usrIdOpt User ID. Optional.
       */
     @throws[AdminRequired]
-    private def checkPermission(initiatorUsr: NCUserMdo, usrId: Long): Unit =
-        if (initiatorUsr.id != usrId && !initiatorUsr.isAdmin)
-            throw AdminRequired(initiatorUsr.email)
+    private def getUserId(initiatorUsr: NCUserMdo, usrIdOpt: Option[Long]): Long =
+        usrIdOpt match {
+            case Some(userId) ⇒
+                if (!initiatorUsr.isAdmin)
+                    throw AdminRequired(initiatorUsr.email)
+
+                userId
+            case None ⇒ initiatorUsr.id
+        }
 
     /**
       * Starts this component.
@@ -315,7 +321,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
                     case class Res(
                         status: String,
-                        users: Seq[QueryState]
+                        states: Seq[QueryState]
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
@@ -352,24 +358,21 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "clear" / "conversation") {
                     case class Req(
                         accessToken: String,
-                        dsId: Long,
-                        userId: Long
+                        dsId: Long
                     )
                     case class Res(
                         status: String
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
 
-                        val initiatorUsr = authenticate(req.accessToken)
+                        val userId = authenticate(req.accessToken).id
 
-                        checkPermission(initiatorUsr, req.userId)
-
-                        NCQueryManager.clearConversation(req.userId, req.dsId)
+                        NCQueryManager.clearConversation(userId, req.dsId)
         
                         complete {
                             Res(API_OK)
@@ -391,7 +394,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
                     case class Res(
                         status: String,
-                        userId: Long
+                        id: Long
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
@@ -406,7 +409,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         authenticateAsAdmin(req.accessToken)
                         
-                        val newUsrId = NCUserManager.addUser(
+                        val id = NCUserManager.addUser(
                             req.email,
                             req.passwd,
                             req.firstName,
@@ -416,16 +419,15 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         )
                         
                         complete {
-                            Res(API_OK, newUsrId)
+                            Res(API_OK, id)
                         }
                     }
                 } ~
                 /**/path(API / "user" / "passwd" / "reset") {
                     case class Req(
                         // Caller.
-                        accessToken: String, // Administrator.
-
-                        userId: Long, // ID of the user to reset password for.
+                        accessToken: String,
+                        userId: Option[Long],
                         newPasswd: String
                     )
                     case class Res(
@@ -440,11 +442,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("newPasswd", req.newPasswd, 64)
 
                         val initiatorUsr = authenticate(req.accessToken)
-
-                        checkPermission(initiatorUsr, req.userId)
+                        val usrId = getUserId(initiatorUsr, req.userId)
 
                         NCUserManager.resetPassword(
-                            req.userId,
+                            usrId,
                             req.newPasswd
                         )
         
@@ -456,7 +457,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "user" / "delete") {
                     case class Req(
                         accessToken: String,
-                        userId: Long
+                        id: Option[Long]
                     )
                     case class Res(
                         status: String
@@ -469,10 +470,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("accessToken", req.accessToken, 256)
 
                         val initiatorUsr = authenticate(req.accessToken)
-
-                        checkPermission(initiatorUsr, req.userId)
+                        val usrId = getUserId(initiatorUsr, req.id)
     
-                        NCUserManager.deleteUser(req.userId)
+                        NCUserManager.deleteUser(usrId)
     
                         complete {
                             Res(API_OK)
@@ -485,7 +485,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         accessToken: String,
         
                         // Update user.
-                        userId: Long,
+                        id: Option[Long],
                         passwd: String,
                         firstName: String,
                         lastName: String,
@@ -506,11 +506,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("avatarUrl", req.avatarUrl, 512000)
 
                         val initiatorUsr = authenticate(req.accessToken)
-
-                        checkPermission(initiatorUsr, req.userId)
+                        val usrId = getUserId(initiatorUsr, req.id)
 
                         NCUserManager.updateUser(
-                            req.userId,
+                            usrId,
                             req.firstName,
                             req.lastName,
                             req.avatarUrl,
@@ -670,7 +669,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
                     case class Res(
                         status: String,
-                        dsId: Long
+                        id: Long
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
@@ -688,7 +687,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         authenticateAsAdmin(req.accessToken)
         
-                        val newDsId = NCDsManager.addDataSource(
+                        val id = NCDsManager.addDataSource(
                             req.name,
                             req.shortDesc,
                             req.mdlId,
@@ -698,7 +697,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         )
         
                         complete {
-                            Res(API_OK, newDsId)
+                            Res(API_OK, id)
                         }
                     }
                 } ~
@@ -708,7 +707,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         accessToken: String,
         
                         // Update data source.
-                        dsId: Long,
+                        id: Long,
                         name: String,
                         shortDesc: String
                     )
@@ -727,7 +726,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("shortDesc", req.shortDesc, 128)
         
                         NCDsManager.updateDataSource(
-                            req.dsId,
+                            req.id,
                             req.name,
                             req.shortDesc
                         )
@@ -783,7 +782,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "ds" / "delete") {
                     case class Req(
                         accessToken: String,
-                        dsId: Long
+                        id: Long
                     )
                     case class Res(
                         status: String
@@ -797,7 +796,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         authenticateAsAdmin(req.accessToken)
         
-                        NCDsManager.deleteDataSource(req.dsId)
+                        NCDsManager.deleteDataSource(req.id)
         
                         complete {
                             Res(API_OK)
