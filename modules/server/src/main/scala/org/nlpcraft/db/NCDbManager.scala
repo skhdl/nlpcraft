@@ -357,8 +357,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
             s"""
                |SELECT *
                |FROM nc_user
-               |WHERE
-               |    deleted = FALSE
+               |WHERE deleted = FALSE
             """.stripMargin)
     }
     

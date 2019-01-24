@@ -5,8 +5,8 @@
         "version": "0.0.1",
         "title": "NlpCraft REST API"
     },
-    "host": "pubapi.nlpcraft.org",
-    "basePath": "/pub/v1",
+    "host": "localhost",
+    "basePath": "/api/1",
     "tags": [
         {
             "name": "Authentication",
@@ -59,18 +59,13 @@
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             },
                             "dsId": {
                                 "type": "integer",
                                 "format": "int64",
                                 "description": "Data source ID for which to clear conversation context"
-                            },
-                            "userId": {
-                                "type": "integer",
-                                "format": "int64",
-                                "description": "Optional user ID for which to clear conversation context (caller user ID is used if not provided)"
                             }
                         }
                     }
@@ -116,20 +111,8 @@
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
-                            },
-                            "hash": {
-                                "type": "integer",
-                                "format": "int64",
-                                "description": "Optional client hash (if client and server hashes match, the server will not send the payload)"
-                            },
-                            "srvReqIds": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "description": "Optional list of server request identifiers. If this identifiers list defined, only these required server requests statuses returned. If this parameter omitted, statuses returned for all active requests."
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             }
                         }
                     }
@@ -141,7 +124,6 @@
                             "type": "object",
                             "required": [
                                 "status",
-                                "hash",
                                 "states"
                             ],
                             "properties": {
@@ -149,7 +131,7 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
                                 "hash": {
@@ -163,15 +145,11 @@
                                         "type": "object",
                                         "required": [
                                             "srvReqId",
-                                            "userAgent",
                                             "userId",
                                             "dsId",
-                                            "probeId",
                                             "mdlId",
-                                            "text",
-                                            "origin",
                                             "status",
-                                            "responseType",
+                                            "error",
                                             "createTstamp",
                                             "updateTstamp"
                                         ],
@@ -179,10 +157,6 @@
                                             "srvReqId": {
                                                 "type": "string",
                                                 "description": "Server request ID"
-                                            },
-                                            "userAgent": {
-                                                "type": "string",
-                                                "description": "User agent string"
                                             },
                                             "userId": {
                                                 "type": "integer",
@@ -194,49 +168,28 @@
                                                 "format": "int64",
                                                 "description": "ID of the data source for this request"
                                             },
-                                            "probeId": {
-                                                "type": "string",
-                                                "description": "ID of the data probe"
-                                            },
                                             "mdlId": {
                                                 "type": "string",
                                                 "description": "ID of the model"
                                             },
-                                            "text": {
+                                            "probeId": {
                                                 "type": "string",
-                                                "description": "Original text of the request sentence"
-                                            },
-                                            "origin": {
-                                                "type": "string",
-                                                "description": "Origin of the request"
+                                                "description": "ID of the data probe"
                                             },
                                             "status": {
                                                 "type": "string",
-                                                "description": "Current status of this request (ASK_READY indicates that result - error or ok - is ready, ASK_WAIT_LINGUIST indicates that curation was requested by the model)",
+                                                "description": "Current status of this request (QRY_READY indicates that result - error or ok - is ready)",
                                                 "enum": [
-                                                    "ASK_WAIT_REGISTERED",
-                                                    "ASK_WAIT_LINGUIST",
-                                                    "ASK_READY"
+                                                    "QRY_ENLISTED",
+                                                    "QRY_READY"
                                                 ]
                                             },
-                                            "responseType": {
+                                            "resType": {
                                                 "type": "string",
                                                 "description": "Response type",
                                                 "enum": [
-                                                    "INITIAL",
-                                                    "OK",
-                                                    "CURATION",
-                                                    "REJECT",
-                                                    "TRIVIA",
-                                                    "TALKBACK",
-                                                    "VALIDATION",
-                                                    "ERROR"
+                                                    "TODO:?"
                                                 ]
-                                            },
-
-                                            "resType": {
-                                                "type": "string",
-                                                "description": "Optional type of the result if returned by the model (provided only if status is ASK_READY and processing was not rejected or terminated due to an exception)"
                                             },
                                             "resBody": {
                                                 "type": "string",
@@ -292,17 +245,20 @@
                         "type": "object",
                         "required": [
                             "accessToken",
-                            "srvReqId"
+                            "srvReqIds"
                         ],
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             },
-                            "srvReqId": {
-                                "type": "string",
-                                "description": "Server ID of the request to cancel"
+                            "srvReqIds": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Server IDs of the requests to cancel"
                             }
                         }
                     }
@@ -350,22 +306,22 @@
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             },
                             "txt": {
                                 "type": "string",
-                                "description": "Text of the question"
-                            },
-                            "userId": {
-                                "type": "integer",
-                                "format": "int64",
-                                "description": "Optional ID of the user. If not provided the question will be submitted on behalf of the caller"
+                                "description": "Text of the question",
+                                "maxLength": 1024
                             },
                             "dsId": {
                                 "type": "integer",
                                 "format": "int64",
                                 "description": "Data source ID"
+                            },
+                            "isTest": {
+                                "type": "boolean",
+                                "description": "Optional flag. Is request sent for test reasons or not."
                             }
                         }
                     }
@@ -384,7 +340,7 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
                                 "srvReqId": {
@@ -429,8 +385,8 @@
                             ],
                             "properties": {
                                 "accessToken": {
-                                    "maxLength": 32,
-                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "maxLength": 256,
+                                    "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
                                 }
                             }
@@ -444,55 +400,38 @@
                             "type": "object",
                             "required": [
                                 "status",
-                                "allUsers"
+                                "users"
                             ],
                             "properties": {
                                 "status": {
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
-                                "allUsers": {
+                                "users": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
                                         "required": [
                                             "id",
+                                            "email",
                                             "firstName",
                                             "lastName",
-                                            "email",
-                                            "title",
-                                            "department",
-                                            "phone",
                                             "avatarUrl",
-                                            "isActive",
-                                            "isFirstLogin",
-                                            "isAdmin",
-                                            "activeDsId",
-                                            "userOrigin",
-                                            "registrationDate",
-                                            "lastLoginTime",
-                                            "lastQuestionTime",
-                                            "totalQuestionCount",
-                                            "tmzName",
-                                            "tmzAbbr",
-                                            "latitude",
-                                            "longitude",
-                                            "countryName",
-                                            "countryCode",
-                                            "regionName",
-                                            "regionCode",
-                                            "city",
-                                            "zipCode",
-                                            "metroCode"
+                                            "lastDsId",
+                                            "isAdmin"
                                         ],
                                         "properties": {
                                             "id": {
                                                 "description": "User ID",
                                                 "type": "integer",
                                                 "format": "int64"
+                                            },
+                                            "email": {
+                                                "description": "User email",
+                                                "type": "string"
                                             },
                                             "firstName": {
                                                 "description": "User first or given name",
@@ -502,101 +441,18 @@
                                                 "description": "User last name",
                                                 "type": "string"
                                             },
-                                            "email": {
-                                                "description": "User email",
-                                                "type": "string"
-                                            },
-                                            "phone": {
-                                                "description": "User phone number",
-                                                "type": "string"
-                                            },
-                                            "department": {
-                                                "description": "User department",
-                                                "type": "string"
-                                            },
                                             "avatarUrl": {
                                                 "description": "User avatar URL",
                                                 "type": "string"
                                             },
-                                            "isActive": {
-                                                "description": "Whether or not user is enabled",
-                                                "type": "boolean"
-                                            },
-                                            "isFirstLogin": {
-                                                "description": "Whether or not user logged in for the first time",
-                                                "type": "boolean"
-                                            },
-                                            "isAdmin": {
-                                                "description": "Whether or not user has admin privileges",
-                                                "type": "boolean"
-                                            },
-                                            "activeDsId": {
+                                            "lastDsId": {
                                                 "description": "ID of the last used data source",
                                                 "type": "integer",
                                                 "format": "int64"
                                             },
-                                            "userOrigin": {
-                                                "description": "Origin of the user registration",
-                                                "type": "string"
-                                            },
-                                            "registrationDate": {
-                                                "description": "User registration timestamp",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "lastLoginTime": {
-                                                "description": "User last login timestamp",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "lastQuestionTime": {
-                                                "description": "User last question timestamp",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "tmzName": {
-                                                "description": "Last user login timezone name",
-                                                "type": "string"
-                                            },
-                                            "tmzAbbr": {
-                                                "description": "Last user login timezone code",
-                                                "type": "string"
-                                            },
-                                            "latitude": {
-                                                "description": "Last user login latitude",
-                                                "type": "string"
-                                            },
-                                            "longitude": {
-                                                "description": "Last user login longitude",
-                                                "type": "string"
-                                            },
-                                            "countryName": {
-                                                "description": "Last user login country name",
-                                                "type": "string"
-                                            },
-                                            "countryCode": {
-                                                "description": "Last user login country code",
-                                                "type": "string"
-                                            },
-                                            "regionName": {
-                                                "description": "Last user login region name",
-                                                "type": "string"
-                                            },
-                                            "regionCode": {
-                                                "description": "Last user login region code",
-                                                "type": "string"
-                                            },
-                                            "city": {
-                                                "description": "Last user login city name",
-                                                "type": "string"
-                                            },
-                                            "zipCode": {
-                                                "description": "Last user login zip code",
-                                                "type": "string"
-                                            },
-                                            "metroCode": {
-                                                "description": "Last user login metro code",
-                                                "type": "string"
+                                            "isAdmin": {
+                                                "description": "Whether or not user has admin privileges",
+                                                "type": "boolean"
                                             }
                                         }
                                     }
@@ -634,29 +490,21 @@
                         "type": "object",
                         "required": [
                             "accessToken",
-                            "userId",
-                            "email",
+                            "passwd",
                             "firstName",
                             "lastName",
-                            "phone",
-                            "title",
-                            "department"
+                            "isAdmin"
                         ],
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             },
-                            "userId": {
+                            "id": {
+                                "description": "Optional ID of the user to update. Only administrators can provide this parameter. User's own ID by default.",
                                 "type": "integer",
-                                "format": "int64",
-                                "description": "ID of the user to update"
-                            },
-                            "email": {
-                                "type": "string",
-                                "description": "User email",
-                                "maxLength": 64
+                                "format": "int64"
                             },
                             "firstName": {
                                 "type": "string",
@@ -668,25 +516,14 @@
                                 "description": "User last name",
                                 "maxLength": 64
                             },
-                            "phone": {
-                                "type": "string",
-                                "description": "User phone number",
-                                "maxLength": 64
-                            },
-                            "department": {
-                                "type": "string",
-                                "description": "User department name",
-                                "maxLength": 64
-                            },
-                            "title": {
-                                "type": "string",
-                                "description": "User title",
-                                "maxLength": 64
-                            },
                             "avatarUrl": {
                                 "type": "string",
                                 "description": "Optional user avatar URL",
                                 "maxLength": 512000
+                            },
+                            "isAdmin": {
+                                "type": "boolean",
+                                "description": "Admin flag"
                             }
                         }
                     }
@@ -728,18 +565,16 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken",
-                                "userId"
+                                "accessToken"
                             ],
                             "properties": {
                                 "accessToken": {
-                                    "maxLength": 32,
-                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "maxLength": 256,
+                                    "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
                                 },
-                                "userId": {
-                                    "maxLength": 32,
-                                    "description": "ID of the user to delete",
+                                "id": {
+                                    "description": "Optional ID of the user to delete. Only administrators can provide this parameter. User's own ID by default.",
                                     "type": "integer",
                                     "format": "int64"
                                 }
@@ -785,22 +620,25 @@
                         "required": [
                             "accessToken",
                             "email",
+                            "passwd",
                             "firstName",
                             "lastName",
-                            "phone",
-                            "title",
-                            "department"
+                            "isAdmin"
                         ],
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
-                                "maxLength": 32
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
                             },
                             "email": {
                                 "type": "string",
                                 "description": "User email",
                                 "maxLength": 64
+                            },
+                            "passwd": {
+                                "type": "string",
+                                "description": "User password"
                             },
                             "firstName": {
                                 "type": "string",
@@ -812,25 +650,14 @@
                                 "description": "User last name",
                                 "maxLength": 64
                             },
-                            "phone": {
-                                "type": "string",
-                                "description": "User phone number",
-                                "maxLength": 64
-                            },
-                            "department": {
-                                "type": "string",
-                                "description": "User department name",
-                                "maxLength": 64
-                            },
-                            "title": {
-                                "type": "string",
-                                "description": "User title",
-                                "maxLength": 64
-                            },
                             "avatarUrl": {
                                 "type": "string",
                                 "description": "Optional user avatar URL",
                                 "maxLength": 512000
+                            },
+                            "isAdmin": {
+                                "type": "boolean",
+                                "description": "Admin flag"
                             }
                         }
                     }
@@ -849,7 +676,7 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
                                 "userId": {
@@ -889,18 +716,18 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "probeToken",
-                            "email"
+                            "email",
+                            "passwd"
                         ],
                         "properties": {
-                            "probeToken": {
-                                "maxLength": 256,
-                                "description": "Probe token that can be obtained on admin user 'account page'.",
-                                "type": "string"
-                            },
                             "email": {
                                 "maxLength": 64,
                                 "description": "User sign in email.",
+                                "type": "string"
+                            },
+                            "passwd": {
+                                "maxLength": 64,
+                                "description": "User password.",
                                 "type": "string"
                             }
                         }
@@ -920,7 +747,7 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
                                 "accessToken": {
@@ -963,7 +790,7 @@
                         ],
                         "properties": {
                             "accessToken": {
-                                "maxLength": 32,
+                                "maxLength": 256,
                                 "description": "Previously obtained access token to release.",
                                 "type": "string"
                             }
@@ -987,10 +814,132 @@
             }
         },
         "/user/signup": {
-
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Signs out and releases access token.",
+                "description": "Releases previously obtained access token. After this call given access token is no longer valid for authentication.",
+                "operationId": "signOut",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "email",
+                            "passwd",
+                            "firstName",
+                            "lastName"
+                        ],
+                        "properties": {
+                            "email": {
+                                "description": "User email",
+                                "type": "string",
+                                "maxLength": 64
+                            },
+                            "passwd": {
+                                "type": "string",
+                                "description": "User password",
+                                "maxLength": 64
+                            },
+                            "firstName": {
+                                "description": "User first or given name",
+                                "type": "string",
+                                "maxLength": 64
+                            },
+                            "lastName": {
+                                "description": "User last name",
+                                "type": "string",
+                                "maxLength": 64
+                            },
+                            "avatarUrl": {
+                                "description": "User avatar URL",
+                                "type": "string",
+                                "maxLength": 512000
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         },
         "/user/passwd/reset": {
-
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Signs out and releases access token.",
+                "description": "Releases previously obtained access token. After this call given access token is no longer valid for authentication.",
+                "operationId": "signOut",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "newPasswd"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "maxLength": 256,
+                                "description": "Previously obtained access token to release.",
+                                "type": "string"
+                            },
+                            "userId": {
+                                "description": "Optional ID of the user to reset password. Only administrators can provide this parameter. User's own ID by default.",
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "newPasswd": {
+                                "type": "string",
+                                "description": "User password",
+                                "maxLength": 64
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Ok"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         },
         "/probe/stop": {
             "post": {
@@ -1013,20 +962,8 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken",
-                                "probeGuid"
                             ],
                             "properties": {
-                                "accessToken": {
-                                    "maxLength": 32,
-                                    "description": "Access token obtain via '/pub/signin' call",
-                                    "type": "string"
-                                },
-                                "probeGuid": {
-                                    "maxLength": 32,
-                                    "description": "Probe GUID",
-                                    "type": "string"
-                                }
                             }
                         }
                     }
@@ -1068,20 +1005,8 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken",
-                                "probeGuid"
                             ],
                             "properties": {
-                                "accessToken": {
-                                    "maxLength": 32,
-                                    "description": "Access token obtain via '/pub/signin' call",
-                                    "type": "string"
-                                },
-                                "probeGuid": {
-                                    "maxLength": 32,
-                                    "description": "Probe GUID",
-                                    "type": "string"
-                                }
                             }
                         }
                     }
@@ -1123,14 +1048,8 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken"
                             ],
                             "properties": {
-                                "accessToken": {
-                                    "maxLength": 32,
-                                    "description": "Access token obtain via '/pub/signin' call",
-                                    "type": "string"
-                                }
                             }
                         }
                     }
@@ -1141,145 +1060,8 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "status",
-                                "allProbes"
                             ],
                             "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "description": "Status code of this operation",
-                                    "enum": [
-                                        "PUB_API_OK"
-                                    ]
-                                },
-                                "allProbes": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "required": [
-                                            "probeToken",
-                                            "probeId",
-                                            "probeGuid",
-                                            "probeApiVersion",
-                                            "probeApiDate",
-                                            "osVersion",
-                                            "osName",
-                                            "osArch",
-                                            "startTstamp",
-                                            "tmzId",
-                                            "tmzName",
-                                            "userName",
-                                            "javaVersion",
-                                            "javaVendor",
-                                            "hostName",
-                                            "hostAddr",
-                                            "macAddr",
-                                            "models"
-                                        ],
-                                        "properties": {
-                                            "email": {
-                                                "description": "Optional email limiting probe's visibility",
-                                                "type": "string"
-                                            },
-                                            "probeToken": {
-                                                "description": "Probe token",
-                                                "type": "string"
-                                            },
-                                            "probeId": {
-                                                "description": "User defined probe ID",
-                                                "type": "string"
-                                            },
-                                            "probeGuid": {
-                                                "description": "Probe GUID",
-                                                "type": "string"
-                                            },
-                                            "probeApiVersion": {
-                                                "description": "Probe API version",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "probeApiDate": {
-                                                "description": "Probe API release date",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "osName": {
-                                                "description": "Probe OS name",
-                                                "type": "string"
-                                            },
-                                            "osVer": {
-                                                "description": "Probe OS version",
-                                                "type": "string"
-                                            },
-                                            "osArch": {
-                                                "description": "Probe OS architecture",
-                                                "type": "string"
-                                            },
-                                            "startTstamp": {
-                                                "description": "Probe start timestamp",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "tmzId": {
-                                                "description": "Probe timezone ID",
-                                                "type": "string"
-                                            },
-                                            "tmzName": {
-                                                "description": "Probe timezone name",
-                                                "type": "string"
-                                            },
-                                            "userName": {
-                                                "description": "Probe OS system user name",
-                                                "type": "string"
-                                            },
-                                            "javaVersion": {
-                                                "description": "Probe runtime JVM version",
-                                                "type": "string"
-                                            },
-                                            "javaVendor": {
-                                                "description": "Probe runtime JVM vendor",
-                                                "type": "string"
-                                            },
-                                            "hostAddr": {
-                                                "description": "Probe host address",
-                                                "type": "string"
-                                            },
-                                            "hostName": {
-                                                "description": "Probe host local name",
-                                                "type": "string"
-                                            },
-                                            "macAddr": {
-                                                "description": "Probe NIC MAC address",
-                                                "type": "string"
-                                            },
-                                            "models": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "id",
-                                                        "name",
-                                                        "version"
-                                                    ],
-                                                    "properties": {
-                                                        "id": {
-                                                            "description": "Model ID",
-                                                            "type": "string"
-                                                        },
-                                                        "name": {
-                                                            "description": "Model name",
-                                                            "type": "string"
-                                                        },
-                                                        "version": {
-                                                            "description": "Model version",
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     },
@@ -1318,7 +1100,7 @@
                             "properties": {
                                 "accessToken": {
                                     "maxLength": 256,
-                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
                                 }
                             }
@@ -1339,10 +1121,10 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
-                                "allDs": {
+                                "dataSources": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
@@ -1353,7 +1135,7 @@
                                             "mdlId",
                                             "mdlName",
                                             "mdlVer",
-                                            "mdlId"
+                                            "mdlCfg"
                                         ],
                                         "properties": {
                                             "id": {
@@ -1422,16 +1204,15 @@
                             "type": "object",
                             "required": [
                                 "accessToken",
-                                "dsId"
+                                "id"
                             ],
                             "properties": {
                                 "accessToken": {
                                     "maxLength": 256,
-                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
                                 },
-                                "dsId": {
-                                    "maxLength": 32,
+                                "id": {
                                     "description": "ID of the data source to delete",
                                     "type": "integer",
                                     "format": "int64"
@@ -1478,17 +1259,17 @@
                             "type": "object",
                             "required": [
                                 "accessToken",
-                                "dsId",
+                                "id",
                                 "name",
                                 "shortDesc"
                             ],
                             "properties": {
                                 "accessToken": {
                                     "type": "string",
-                                    "description": "Access token obtain via '/pub/signin' call",
+                                    "description": "Access token obtain via '/api/signin' call",
                                     "maxLength": 256
                                 },
-                                "dsId": {
+                                "id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "description": "ID of the data source to update"
@@ -1548,23 +1329,24 @@
                             "shortDesc",
                             "mdlId",
                             "mdlName",
-                            "mdlVer"
+                            "mdlVer",
+                            "mdlCfg"
                         ],
                         "properties": {
                             "accessToken": {
                                 "type": "string",
-                                "description": "Access token obtain via '/pub/signin' call",
+                                "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
                             },
                             "name": {
                                 "type": "string",
                                 "description": "Data source name",
-                                "maxLength": 128
+                                "maxLength": 64
                             },
                             "shortDesc": {
                                 "type": "string",
                                 "description": "Short data source description",
-                                "maxLength": 128
+                                "maxLength": 64
                             },
                             "mdlId": {
                                 "type": "string",
@@ -1574,17 +1356,17 @@
                             "mdlName": {
                                 "type": "string",
                                 "description": "Model name",
-                                "maxLength": 512
+                                "maxLength": 64
                             },
                             "mdlVer": {
                                 "type": "string",
                                 "description": "Model version",
-                                "maxLength": 512
+                                "maxLength": 64
                             },
                             "mdlCfg": {
                                 "type": "string",
                                 "description": "Optional model configuration string",
-                                "maxLength": 5120
+                                "maxLength": 512000
                             }
                         }
                     }
@@ -1603,7 +1385,7 @@
                                     "type": "string",
                                     "description": "Status code of this operation",
                                     "enum": [
-                                        "PUB_API_OK"
+                                        "API_OK"
                                     ]
                                 },
                                 "dsId": {
@@ -1635,7 +1417,7 @@
                     "type": "string",
                     "description": "Status code of this operation",
                     "enum": [
-                        "PUB_API_OK"
+                        "API_OK"
                     ]
                 }
             }
@@ -1650,13 +1432,13 @@
                     "type": "string",
                     "description": "Status code of this error",
                     "enum": [
-                        "API_SYS_FAILURE",
-                        "API_AUTH_FAILED",
-                        "API_ADMIN_REQUIRED",
-                        "API_OFFLINE",
-                        "API_FIELD_INVALID",
-                        "API_FIELD_MISSED",
-                        "USAGE_LIMIT_VIOLATION"
+                        "NC_UNKNOWN_ACCESS_TOKEN",
+                        "NC_SIGNIN_FAILURE",
+                        "NC_NOT_IMPLEMENTED",
+                        "NC_INVALID_FIELD",
+                        "NC_ADMIN_REQUIRED",
+                        "NC_ERROR",
+                        "NC_UNEXPECTED_ERROR"
                     ]
                 },
                 "reason": {

@@ -310,7 +310,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         srvReqId: String,
                         usrId: Long,
                         dsId: Long,
-                        modelId: String,
+                        mdlId: String,
                         probeId: Option[String],
                         status: String,
                         resType: Option[String],
@@ -403,6 +403,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("email", req.email, 64)
+                        checkLength("passwd", req.passwd, 64)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
                         checkLength("avatarUrl", req.avatarUrl, 512000)
