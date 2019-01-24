@@ -191,7 +191,6 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     "PROBE_GUID" → PROBE_GUID,
         
                     // Handshake data,
-                    "PROBE_API_VERSION" → ver.version,
                     "PROBE_API_DATE" → ver.date,
                     "PROBE_API_VER" → ver.version,
                     "PROBE_OS_VER" → sysProps.getProperty("os.version"),
@@ -223,12 +222,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     case "S2P_PROBE_NOT_FOUND" ⇒ err(
                         "Probe failed to start due to unknown error.")
                         
-                    case "S2P_PROBE_MANDATORY_UPDATE" ⇒ err(
-                        "This probe version is no longer supported (update and reinstall probe).")
-                        
-                    case "S2P_PROBE_OPTIONAL_UPDATE" ⇒
-                        logger.warn(
-                            " >>>> This probe version will soon be unsupported - update or reinstall the probe ASAP. <<<<")
+                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(
+                        s"Probe version is unsupported: ${ver.version}")
                         
                     case "S2P_PROBE_OK" ⇒ logger.info("  |=⇒ S2P handshake OK.") // Bingo!
                     

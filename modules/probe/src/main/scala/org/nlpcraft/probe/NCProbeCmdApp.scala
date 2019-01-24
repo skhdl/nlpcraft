@@ -38,7 +38,7 @@ import language._
 import org.nlpcraft._
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.apache.commons.lang3.SystemUtils
-import org.nlpcraft.probe.dev.NCProbeConfig
+import org.nlpcraft.probe.dev._
 
 import scala.collection.JavaConverters._
 import language.postfixOps
@@ -53,14 +53,14 @@ object NCProbeCmdAppChild extends App {
     val downlink = sys.props.getOrElse("__NC_PROBE_DOWNLINK", null) // Optional.
     val jars = sys.props("__NC_PROBE_JARS")
     
-    System.exit(NCProbeRunner.startProbe(new NCProbeConfig(
-        id,
-        token,
-        uplink,
-        downlink,
-        jars,
-        null
-    )))
+    System.exit(NCProbeRunner.startProbe(NCProbeConfigBuilder.newConfig().
+        setId(id).
+        setToken(token).
+        setUpLink(uplink).
+        setDownLink(downlink).
+        setJarsFolder(jars).
+        build()
+    ))
 }
 
 /**
@@ -214,14 +214,13 @@ object NCProbeCmdApp extends App {
         
         // Verify the configuration is valid.
         try
-            new NCProbeConfig(
-                id,
-                token,
-                upLink orNull,
-                downLink orNull,
-                jarsDir,
-                null
-            )
+            NCProbeConfigBuilder.newConfig().
+                setId(id).
+                setToken(token).
+                setUpLink(upLink orNull).
+                setDownLink(downLink orNull).
+                setJarsFolder(jarsDir).
+                build()
         catch {
             case e: IllegalArgumentException ⇒ throw new NCE(e.getMessage)
         }
