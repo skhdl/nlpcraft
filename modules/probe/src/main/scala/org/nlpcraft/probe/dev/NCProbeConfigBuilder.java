@@ -35,7 +35,52 @@ import org.nlpcraft.mdllib.*;
 import org.nlpcraft.util.*;
 
 /**
- * TODO: add description.
+ * Convenient builder for {@link NCProbeConfig} instances. Note that most of the configuration values
+ * have defaults except for {@link #setProvider(NCModelProvider)} model provider} and
+ * {@link #setJarsFolder(String) JARs folder}. Note also that the following system properties
+ * or environment variables can be used to set up the configuration values from outside of the code:
+ * <table class="dl-table" summary="">
+ *     <tr>
+ *         <th>System Property</th>
+ *         <th>Description</th>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_ID}</td>
+ *         <td>
+ *             ID of the probe. See {@link #setId(String)} for more details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_TOKEN}</td>
+ *         <td>
+ *             Probe token. See {@link #setToken(String)} for more details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_DOWNLINK}</td>
+ *         <td>
+ *             Custom downlink endpoint. See {@link #setDownLink(String)}  for more details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_UPLINK}</td>
+ *         <td>
+ *             Custom uplink endpoint. See {@link #setUpLink(String)} for more details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_JARS}</td>
+ *         <td>
+ *             JARs folder. See {@link #setJarsFolder(String)} for more details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code NLPCRAFT_PROBE_SILENT}</td>
+ *         <td>
+ *              Set to {@code true} to disable verbose probe logging mode.
+ *         </td>
+ *     </tr>
+ * </table>
  */
 public class NCProbeConfigBuilder {
     // Default up-link endpoint.
@@ -197,7 +242,9 @@ public class NCProbeConfigBuilder {
     }
 
     /**
-     * Sets probe token. Probe and server should be configured with the same probe token.
+     * Sets probe token. Probe and server should be configured with the same probe token. If you change
+     * the probe token here make sure to change the probe token on the server to the same value.
+     * <br><br>
      * Probe tokens should be kept secure. Note that both probe and the server come with
      * the same default token so everything works out-of-the-box but not secure as any default
      * probe can technically connect to any default server.

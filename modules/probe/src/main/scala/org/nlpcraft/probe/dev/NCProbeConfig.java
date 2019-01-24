@@ -66,6 +66,9 @@ public class NCProbeConfig implements Serializable {
 
     /**
      * Gets probe token. Probe and server should be configured with the same probe token.
+     * If you change the probe token here make sure to change the probe token on the server
+     * to the same value.
+     * <br><br>
      * Probe tokens should be kept secure. Note that both probe and the server come with
      * the same default token so everything works out-of-the-box, however any default
      * probe can technically connect to any default server.
@@ -78,6 +81,9 @@ public class NCProbeConfig implements Serializable {
 
     /**
      * Sets probe token. Probe and server should be configured with the same probe token.
+     * If you change the probe token here make sure to change the probe token on the server
+     * to the same value.
+     * <br><br>
      * Probe tokens should be kept secure. Note that both probe and the server come with
      * the same default token so everything works out-of-the-box, however any default
      * probe can technically connect to any default server.

@@ -107,7 +107,7 @@ public class NCQueryResult implements Serializable {
      * Creates {@code html/raw} result. Result with any arbitrary HTML code snippet. For obvious security reasons
      * models that return this type of result should be verified and trusted.
      *
-     * @param html Any raw HTML code snippet that will be inserted into result HTML page on webapp.
+     * @param html Any raw HTML code snippet.
      * @return Newly created query result.
      */
     public static NCQueryResult htmlRaw(String html) {
@@ -125,7 +125,7 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json/table} result:
+     * Creates {@code json/table} result. Here's the format of the result JavaScript snippet:
      * <pre class="brush: js">
      * {
      *      "border": true, // Whether or not table has border.
