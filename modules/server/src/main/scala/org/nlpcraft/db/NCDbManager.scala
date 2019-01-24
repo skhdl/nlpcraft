@@ -374,8 +374,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
             s"""
                |SELECT *
                |FROM ds_instance
-               |WHERE
-               |    deleted = FALSE
+               |WHERE deleted = FALSE
             """.stripMargin)
     }
 
@@ -540,8 +539,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |SET
               |    status = ?,
               |    cancel_tstamp = ?
-              |WHERE
-              |    srv_req_id = ?
+              |WHERE srv_req_id = ?
             """.stripMargin,
             "QRY_CANCELLED",
             tstamp,
@@ -577,8 +575,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    res_type = ?,
               |    res_body_gzip = ?,
               |    resp_tstamp = ?
-              |WHERE
-              |    srv_req_id = ?
+              |WHERE srv_req_id = ?
                """.stripMargin,
             QRY_READY.toString,
             errMsg,
