@@ -153,7 +153,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             )
     
             // Enrich the user input and send it to the probe.
-            NCProbeManager.forwardToProbe(usr, ds, txt0, NCNlpEnricherManager.enrich(txt0))
+            NCProbeManager.askProbe(usr, ds, txt0, NCNlpEnricherManager.enrich(txt0))
         }
         
         fut onFailure {

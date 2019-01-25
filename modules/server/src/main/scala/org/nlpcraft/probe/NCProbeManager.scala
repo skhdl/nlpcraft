@@ -34,15 +34,17 @@ package org.nlpcraft.probe
 import java.io._
 import java.net.{InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.security.Key
+import java.time.ZoneId
 import java.util.concurrent.{ExecutorService, Executors}
 import java.util.concurrent.atomic.AtomicBoolean
 
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCUserMdo}
+import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.plugin.NCPluginManager
+import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.socket.NCSocket
 
 import scala.collection.mutable
@@ -54,8 +56,8 @@ import scala.concurrent.ExecutionContext
 object NCProbeManager extends NCLifecycle("Probe manager") {
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
-        private val p2sLink = G.splitEndpoint(hocon.getString("links.p2s"))
-        private val s2pLink = G.splitEndpoint(hocon.getString("links.s2p"))
+        private val p2sLink = G.splitEndpoint(hocon.getString("probe.links.p2s"))
+        private val s2pLink = G.splitEndpoint(hocon.getString("probe.links.s2p"))
         
         val p2sHost: String = p2sLink._1
         val p2sPort: Int = p2sLink._2
@@ -130,6 +132,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
     private var pool: ExecutorService = _
     private var isStopping: AtomicBoolean = _
+    private var authPlugin: NCProbeAuthenticationPlugin = _
     
     /**
       *
@@ -141,6 +144,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         Config.check()
     
         isStopping = new AtomicBoolean(false)
+    
+        authPlugin = NCPluginManager.getProbeAuthenticationPlugin
     
         pool = Executors.newFixedThreadPool(Config.poolSize)
     
@@ -371,8 +376,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         // Read header token hash message.
         val tokHash = sock.read[String]()
         
-        val authPlugin = NCPluginManager.getProbeAuthenticationPlugin
-        
         val cryptoKey = authPlugin.acquireKey(tokHash).getOrElse(throw new NCE(s"Unknown probe token hash: $tokHash"))
     
         // Read handshake probe message.
@@ -464,6 +467,18 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     }
     
     /**
+      *
+      * @param probeKey Probe key.
+      */
+    private def isMultipleProbeRegistrations(probeKey: ProbeKey): Boolean =
+        probes.synchronized {
+            probes.values.count(p ⇒
+                p.probeKey.probeToken == probeKey.probeToken &&
+                    p.probeKey.probeId == probeKey.probeId
+            ) > 1
+        }
+    
+    /**
       * Processes socket for sending messages to a probe.
       *
       * @param sock S2P socket to process.
@@ -471,7 +486,129 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     @throws[NCE]
     @throws[IOException]
     private def s2pHandler(sock: NCSocket): Unit = {
+        // Read header probe token hash message.
+        val tokHash = sock.read[String]()
+        
+        val cryptoKey = authPlugin.acquireKey(tokHash) match {
+            case Some(key) ⇒
+                sock.write(NCProbeMessage("S2P_HASH_CHECK_OK"))
+                
+                key
+
+            case None ⇒
+                sock.write(NCProbeMessage("S2P_HASH_CHECK_UNKNOWN"))
     
+                throw new NCE(s"Unknown probe token hash: $tokHash")
+        }
+            
+    
+        // Read handshake probe message.
+        val hsMsg = sock.read[NCProbeMessage](cryptoKey)
+    
+        require(hsMsg.getType == "INIT_HANDSHAKE")
+    
+        // Probe key components.
+        val probeTkn = hsMsg.getProbeToken
+        val probeId = hsMsg.getProbeId
+        val probeGuid = hsMsg.getProbeGuid
+    
+        val probeKey = ProbeKey(probeTkn, probeId, probeGuid)
+    
+        logger.info(s"S2P handshake received [" +
+            s"probeToken=$probeTkn, " +
+            s"probeId=$probeId, " +
+            s"proveGuid=$probeGuid" +
+            s"]")
+    
+        def respond(typ: String, pairs: (String, Serializable)*): Unit = {
+            val msg = NCProbeMessage(typ, pairs:_*)
+        
+            logger.trace(s"Sending to probe ($typ): $msg")
+        
+            sock.write(msg, cryptoKey)
+        }
+    
+        if (isMultipleProbeRegistrations(probeKey))
+            respond("S2P_PROBE_MULTIPLE_INSTANCES")
+        else {
+            val probeApiVer = hsMsg.data[String]("PROBE_API_VERSION")
+            val srvApiVer = NCProbeVersion.getCurrent
+            
+            if (probeApiVer != srvApiVer.version)
+                respond(
+                    "S2P_PROBE_MANDATORY_UPDATE",
+        
+                    // Send current server's version.
+                    "PROBE_API_VERSION" → srvApiVer.version,
+                    "PROBE_API_DATE" → srvApiVer.date,
+                    "PROBE_API_NOTES" → srvApiVer.notes
+                )
+            else {
+                val models =
+                    hsMsg.data[List[(String, String, String)]]("PROBE_MODELS_DS").
+                        map { case (dsId, dsName, dsVer) ⇒
+                            NCProbeModelMdo(
+                                id = dsId,
+                                name = dsName,
+                                version = dsVer
+                            )
+                        }.toSet
+    
+                probes.synchronized {
+                    // Check that this probe's models haven't been already deployed
+                    // by another probe - in which case reject this probe.
+                    // NOTE: model can be deployed only once by a probe.
+                    models.find(mdl ⇒ probes.values.flatMap(_.probe.models).exists(_ == mdl))
+                } match {
+                    case Some(m) ⇒
+                        // Send direct message here.
+                        respond("S2P_PROBE_DUP_MODEL", "PROBE_MODEL_ID" → m.id)
+        
+                    case None ⇒
+                        val probeApiDate = hsMsg.data[java.time.LocalDate]("PROBE_API_DATE")
+                        
+                        val holder = ProbeHolder(
+                            probeKey,
+                            NCProbeMdo(
+                                probeToken = hsMsg.data[String]("PROBE_TOKEN"),
+                                probeId = hsMsg.data[String]("PROBE_ID"),
+                                probeGuid = probeGuid,
+                                probeApiVersion = probeApiVer,
+                                probeApiDate =
+                                    probeApiDate.atTime(0, 0).
+                                        atZone(ZoneId.systemDefault()).
+                                        toInstant.
+                                        toEpochMilli,
+                                osVersion = hsMsg.data[String]("PROBE_OS_VER"),
+                                osName = hsMsg.data[String]("PROBE_OS_NAME"),
+                                osArch = hsMsg.data[String]("PROBE_OS_ARCH"),
+                                startTstamp = hsMsg.data[Long]("PROBE_START_TSTAMP"),
+                                tmzId = hsMsg.data[String]("PROBE_TMZ_ID"),
+                                tmzAbbr = hsMsg.data[String]("PROBE_TMZ_ABBR"),
+                                tmzName = hsMsg.data[String]("PROBE_TMZ_NAME"),
+                                userName = hsMsg.data[String]("PROBE_SYS_USERNAME"),
+                                javaVersion = hsMsg.data[String]("PROBE_JAVA_VER"),
+                                javaVendor = hsMsg.data[String]("PROBE_JAVA_VENDOR"),
+                                hostName = hsMsg.data[String]("PROBE_HOST_NAME"),
+                                hostAddr = hsMsg.data[String]("PROBE_HOST_ADDR"),
+                                macAddr = hsMsg.dataOpt[String]("PROBE_HW_ADDR").getOrElse(""),
+                                models = models
+                            ),
+                            null, // No P2S socket yet.
+                            sock,
+                            null, // No P2S thread yet.
+                            cryptoKey
+                        )
+            
+                        pending.synchronized {
+                            pending += probeKey → holder
+                        }
+            
+                        // Bingo!
+                        respond("S2P_PROBE_OK")
+                }
+            }
+        }
     }
     
     /**
@@ -556,6 +693,22 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         tbl
     }
+    
+    /**
+      *
+      * @param probeMsg Probe message to forward to its probe.
+      */
+    @throws[NCE]
+    @throws[IOException]
+    private def forwardToProbe(probeMsg: NCProbeMessage): Unit =
+        sendToProbe(
+            ProbeKey(
+                probeMsg.getProbeToken,
+                probeMsg.getProbeId,
+                probeMsg.getProbeGuid
+            ),
+            probeMsg
+        )
 
     /**
       * 
@@ -565,7 +718,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param nlpSen
       */
     @throws[NCE]
-    def forwardToProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
+    def askProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
         ensureStarted()
     }
     
