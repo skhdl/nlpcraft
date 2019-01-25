@@ -43,12 +43,10 @@ import org.nlpcraft.nlp.pos._
 import org.nlpcraft.probe.NCSynonymChunkKind._
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.deploy._
-import org.nlpcraft.probe.usage._
 
 import scala.collection.JavaConversions._
 import scala.collection.convert.DecorateAsScala
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
 /**
@@ -57,8 +55,6 @@ import scala.util.control.Exception._
 object NCModelManager extends NCProbeManager("Model manager") with NCDebug with DecorateAsScala {
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
-    // Model usage keyed by model IDs.
-    private val usages = mutable.HashMap.empty[String, NCModelUsage]
 
     // Access mutex.
     private final val mux = new Object()
@@ -97,7 +93,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                         macros.asScala.foreach(t ⇒ parser.addMacro(t._1, t._2))
 
                     val dec = verifyAndDecorate(mdl, parser)
-                    val usage = makeModelUsage(mdl, parser)
 
                     mdl.initialize(new NCProbeContext {
                         override def reloadModel(modelId: String): Unit = new Thread() {
@@ -112,7 +107,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                     })
 
                     models += id → dec
-                    usages += id → usage
                 }
                 catch {
                     case e: NCE ⇒
@@ -643,46 +637,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
         s.exists(_.isWhitespace)
 
     /**
-      * Makes usage holder.
-      *
-      * @param mdl Model.
-      * @param parser Initialized macro parser.
-      */
-    @throws[NCE]
-    private def makeModelUsage(mdl: NCModel, parser: MacroParser): NCModelUsage = {
-        val elements = mutable.HashSet.empty[NCElementUsage]
-
-        // Process elements.
-        for (elm ← mdl.getElements.asScala) {
-            val exampleSyns = nlv(elm.getSynonyms) // Take un-processed synonyms in their original form.
-                .map(_.trim)
-                .take(3)
-                .map(parser.expand(_).head)
-
-            elements += NCElementUsage(
-                id = elm.getId,
-                group = elm.getGroup,
-                description = elm.getDescription,
-                synonyms = exampleSyns
-            )
-        }
-
-        NCModelUsage(
-            id = mdl.getDescriptor.getId,
-            name = mdl.getDescriptor.getName,
-            version = mdl.getDescriptor.getVersion,
-            description = mdl.getDescription,
-            docsUrl = mdl.getDocsUrl,
-            vendorUrl = mdl.getVendorUrl,
-            vendorContact = mdl.getVendorContact,
-            vendorName = mdl.getVendorName,
-            vendorEmail = mdl.getVendorEmail,
-            examples = mdl.getExamples.asScala.toList,
-            elements = elements.toList
-        )
-    }
-
-    /**
       *
       * @param mdl Model.
       */
@@ -792,18 +746,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                 case None ⇒
                     logger.error(s"Failed to reload unknown model: $modelId")
             }
-        }
-    }
-
-    /**
-      *
-      * @return
-      */
-    def getAllUsage: List[NCModelUsage] = {
-        ensureStarted()
-
-        mux.synchronized {
-            usages.values.toList
         }
     }
 }

@@ -204,8 +204,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     "PROBE_HOST_NAME" → localHost.getHostName,
                     "PROBE_HOST_ADDR" → localHost.getHostAddress,
                     "PROBE_HW_ADDR" → hwAddrs,
-                    "PROBE_MODELS_DS" → NCDeployManager.getDescriptors.toList.map(d ⇒ (d.getId, d.getName, d.getVersion)),
-                    "PROBE_MODELS_USAGE" → NCModelManager.getAllUsage
+                    "PROBE_MODELS_DS" → NCDeployManager.getDescriptors.toList.map(d ⇒ (d.getId, d.getName, d.getVersion))
                 ), cryptoKey)
     
                 val resp = sock.read[NCProbeMessage](cryptoKey) // Get handshake response.
@@ -215,13 +214,13 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     case "S2P_PROBE_DUP_MODEL" ⇒ throw new HandshakeError(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
                     case "S2P_PROBE_NOT_FOUND" ⇒ throw new HandshakeError("Probe failed to start due to unknown error.")
                     case "S2P_PROBE_VERSION_MISMATCH" ⇒ throw new HandshakeError(s"Probe version is unsupported: ${ver.version}")
-                    case "S2P_PROBE_OK" ⇒ logger.info("  |=⇒ S2P handshake OK.") // Bingo!
+                    case "S2P_PROBE_OK" ⇒ logger.info("  |==> S2P handshake OK.") // Bingo!
                     case _ ⇒ throw new HandshakeError(s"Unknown server message (you need to update the probe): ${resp.getType}")
                 }
     
                 sock
 
-            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Unknown probe token: ${config.getToken}.")
+            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Sever does not recognize probe token: ${config.getToken}.")
         }
     }
     

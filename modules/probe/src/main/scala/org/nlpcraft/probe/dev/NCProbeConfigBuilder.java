@@ -84,10 +84,10 @@ import org.nlpcraft.util.*;
  */
 public class NCProbeConfigBuilder {
     // Default up-link endpoint.
-    private final static String DFLT_UP_LINK = "localhost:8082";
+    private final static String DFLT_UP_LINK = "localhost:8201";
 
     // Default down-link endpoint.
-    private final static String DFLT_DOWN_LINK = "localhost:8081";
+    private final static String DFLT_DOWN_LINK = "localhost:8202";
 
     // Default probe token shared by the server as well.
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";

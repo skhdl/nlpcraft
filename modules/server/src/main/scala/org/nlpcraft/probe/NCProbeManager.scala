@@ -48,7 +48,8 @@ import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.socket.NCSocket
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Probe manager.
@@ -161,18 +162,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             
                 val pingMsg = NCProbeMessage("S2P_PING")
             
-                val locVar = probes.synchronized {
-                    probes.values
-                }
-            
-                try {
-                    // Ping all probes.
-                    locVar.map(_.probeKey).foreach(sendToProbe(_, pingMsg))
-                }
-                catch {
-                    case _: InterruptedException ⇒
-                    case e: Throwable ⇒ logger.error(s"Caught unexpected exception while pinging (ignoring): ${e.getMessage}")
-                }
+                probes.synchronized { probes.values }.map(_.probeKey).foreach(sendToProbe(_, pingMsg))
             }
         }
     
@@ -212,19 +202,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     case Some(holder) ⇒
                         holder.close()
             
-                        //                val modelsToUndeploy = mutable.ArrayBuffer.empty[(String/*probe ID*/, Long/*company ID*/)]
-                        //
-                        //                modelsToUndeploy ++= holder.probe.models.map(p ⇒ p.id → p.companyId)
-                        //
-                        //                // Fail all pending requests for lost models.
-                        //                modelsToUndeploy.foreach {
-                        //                    case (modelId, companyId) ⇒ DLQueryStateManager.setModelUndeploy(modelId, companyId)
-                        //                }
-                        //
-                        //                usages.synchronized {
-                        //                    usages --= modelsToUndeploy
-                        //                }
-            
                         logger.info(s"Probe closed and removed: $probeKey")
                 }
 
@@ -240,9 +217,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param probeKey Probe key.
       * @param probeMsg Probe message to send.
       */
-    @throws[NCE]
-    @throws[IOException]
-    private def sendToProbe(probeKey: ProbeKey, probeMsg: NCProbeMessage): Boolean = {
+    private def sendToProbe(probeKey: ProbeKey, probeMsg: NCProbeMessage): Unit = {
         val (sock, cryptoKey) = probes.synchronized {
             probes.get(probeKey) match {
                 case None ⇒ (null, null)
@@ -251,39 +226,32 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         }
         
         if (sock != null)
-            try {
-                sock.write(probeMsg, cryptoKey)
-                
-                true
+            Future {
+                try {
+                    sock.write(probeMsg, cryptoKey)
+                }
+                catch {
+                    case _: EOFException ⇒
+                        logger.trace(s"Probe closed connection: $probeKey")
+                        
+                        closeAndRemoveHolder(probeKey)
+        
+                    case e: Throwable ⇒
+                        logger.error(s"S2P socket error [" +
+                            s"sock=$sock, " +
+                            s"probeKey=$probeKey, " +
+                            s"probeMsg=$probeMsg" +
+                            s"error=${e.getLocalizedMessage}" +
+                            s"]")
+                        
+                        closeAndRemoveHolder(probeKey)
+                }
             }
-            catch {
-                case _: EOFException ⇒
-                    logger.trace(s"Probe closed connection: $probeKey")
-                    
-                    closeAndRemoveHolder(probeKey)
-                    
-                    false
-                
-                case e: Throwable ⇒
-                    logger.error(s"S2P socket error [" +
-                        s"sock=$sock, " +
-                        s"probeKey=$probeKey, " +
-                        s"probeMsg=$probeMsg" +
-                        s"error=${e.getLocalizedMessage}" +
-                        s"]")
-                    
-                    closeAndRemoveHolder(probeKey)
-                    
-                    false
-            }
-        else {
+        else
             logger.warn(s"Sending message to unknown probe (ignoring) [" +
                 s"probeKey=$probeKey, " +
                 s"probeMsg=$probeMsg" +
                 s"]")
-            
-            false
-        }
     }
     
     /**
@@ -329,21 +297,16 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                                 throw e
                         }
                         
-                        if (sock != null)
-                            G.asFuture(
-                                _ ⇒ fn(NCSocket(sock, sock.getRemoteSocketAddress.toString))
-                                ,
-                                {
-                                    e: Throwable ⇒ {
-                                        logger.warn(
-                                            s"Ignoring socket error (network error or invalid probe version): ${e.getMessage}"
-                                        )
-                                        
-                                        G.close(sock)
-                                    }
-                                },
-                                (_: Unit) ⇒ ()
-                            )(EC)
+                        if (sock != null) {
+                            val fut = Future {
+                                fn(NCSocket(sock, sock.getRemoteSocketAddress.toString))
+                            }
+                            
+                            fut.onFailure {
+                                case e: NCE ⇒ logger.warn(e.getMessage)
+                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}")
+                            }
+                        }
                     }
                 }
                 catch {
@@ -376,7 +339,9 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         // Read header token hash message.
         val tokHash = sock.read[String]()
         
-        val cryptoKey = authPlugin.acquireKey(tokHash).getOrElse(throw new NCE(s"Unknown probe token hash: $tokHash"))
+        val cryptoKey = authPlugin.acquireKey(tokHash).getOrElse(
+            throw new NCE(s"Rejecting probe connection due to unknown probe token hash: $tokHash")
+        )
     
         // Read handshake probe message.
         val hsMsg = sock.read[NCProbeMessage](cryptoKey)
@@ -498,10 +463,9 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             case None ⇒
                 sock.write(NCProbeMessage("S2P_HASH_CHECK_UNKNOWN"))
     
-                throw new NCE(s"Unknown probe token hash: $tokHash")
+                throw new NCE(s"Rejecting probe connection due to unknown probe token hash: $tokHash")
         }
-            
-    
+        
         // Read handshake probe message.
         val hsMsg = sock.read[NCProbeMessage](cryptoKey)
     
@@ -535,14 +499,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             val srvApiVer = NCProbeVersion.getCurrent
             
             if (probeApiVer != srvApiVer.version)
-                respond(
-                    "S2P_PROBE_MANDATORY_UPDATE",
-        
-                    // Send current server's version.
-                    "PROBE_API_VERSION" → srvApiVer.version,
-                    "PROBE_API_DATE" → srvApiVer.date,
-                    "PROBE_API_NOTES" → srvApiVer.notes
-                )
+                respond("S2P_PROBE_VERSION_MISMATCH")
             else {
                 val models =
                     hsMsg.data[List[(String, String, String)]]("PROBE_MODELS_DS").
@@ -644,8 +601,18 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
     /**
       *
+      * @param probeGuid
+      * @return
       */
-    private def ackStats(): Unit = {
+    private def getProbeForGuid(probeGuid: String): Option[ProbeHolder] =
+        probes.synchronized {
+            probes.values.find(_.probeKey.probeGuid == probeGuid)
+        }
+    
+    /**
+      *
+      */
+    private def ackStats(): Unit =
         probes.synchronized {
             val tbl = mkProbeTable
             
@@ -653,7 +620,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             
             tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
         }
-    }
     
     /**
       *
@@ -693,22 +659,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         tbl
     }
-    
-    /**
-      *
-      * @param probeMsg Probe message to forward to its probe.
-      */
-    @throws[NCE]
-    @throws[IOException]
-    private def forwardToProbe(probeMsg: NCProbeMessage): Unit =
-        sendToProbe(
-            ProbeKey(
-                probeMsg.getProbeToken,
-                probeMsg.getProbeId,
-                probeMsg.getProbeGuid
-            ),
-            probeMsg
-        )
 
     /**
       * 
@@ -729,6 +679,15 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     @throws[NCE]
     def stopProbe(probeGuid: String): Unit = {
         ensureStarted()
+        
+        getProbeForGuid(probeGuid) match {
+            case Some(holder) ⇒
+                sendToProbe(
+                    holder.probeKey,
+                    NCProbeMessage("S2P_STOP_PROBE")
+                )
+            case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
+        }
     }
     
     /**
@@ -738,6 +697,15 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     @throws[NCE]
     def restartProbe(probeGuid: String): Unit = {
         ensureStarted()
+    
+        getProbeForGuid(probeGuid) match {
+            case Some(holder) ⇒
+                sendToProbe(
+                    holder.probeKey,
+                    NCProbeMessage("S2P_RESTART_PROBE")
+                )
+            case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
+        }
     }
     
     /**
@@ -748,5 +716,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     @throws[NCE]
     def clearConversation(usrId: Long, dsId: Long): Unit = {
         ensureStarted()
+        
+        val msg = NCProbeMessage("S2P_CLEAR_CONV",
+            "usrId" → usrId,
+            "dsId" → dsId
+        )
+    
+        // Ping all probes.
+        probes.synchronized { probes.values }.map(_.probeKey).foreach(sendToProbe(_, msg))
     }
 }
