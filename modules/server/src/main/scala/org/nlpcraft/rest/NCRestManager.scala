@@ -487,7 +487,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         id: Option[Long],
                         firstName: String,
                         lastName: String,
-                        avatarUrl: String,
+                        avatarUrl: Option[String],
                         isAdmin: Boolean
                     )
                     case class Res(
@@ -619,13 +619,13 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         email: String,
                         firstName: String,
                         lastName: String,
-                        avatarUrl: String,
+                        avatarUrl: Option[String],
                         lastDsId: Long,
                         isAdmin: Boolean
                     )
                     case class Res(
                         status: String,
-                        users: List[ResUser]
+                        users: Seq[ResUser]
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
@@ -902,7 +902,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                             Res(API_OK, Seq.empty)
                         }
                     }
-
                 }
             }
         }

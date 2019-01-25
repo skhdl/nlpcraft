@@ -217,7 +217,20 @@ object NCDbManager extends NCLifecycle("Database manager") {
 
         NCPsql.markAsDeleted("nc_user", "id", usrId)
     }
-    
+
+    /**
+      * Deletes user record with given email.
+      *
+      * @param email Email.
+      */
+    @throws[NCE]
+    def deleteUser(email: String): Unit = {
+        ensureStarted()
+
+        NCPsql.markAsDeleted("nc_user", "email", email)
+    }
+
+
     /**
       * Deletes data source with given ID.
       *
@@ -242,7 +255,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def updateUser(
         usrId: Long,
-        avatarUrl: String,
+        avatarUrl: Option[String],
         firstName: String,
         lastName: String,
         isAdmin: Boolean
@@ -264,7 +277,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
                 """.stripMargin,
             firstName,
             lastName,
-            avatarUrl,
+            avatarUrl.orNull,
             isAdmin,
             usrId
         )
@@ -391,6 +404,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       */
     @throws[NCE]
     def addUser(
+        id: Long,
         firstName: String,
         lastName: String,
         email: String,
@@ -404,6 +418,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         NCPsql.insertGetKey[Long](
             """
               | INSERT INTO nc_user(
+              |    id,
               |    first_name,
               |    last_name,
               |    email,
@@ -412,7 +427,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    last_ds_id,
               |    is_admin
               | )
-              | VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+            id,
             firstName,
             lastName,
             email,
@@ -584,6 +600,19 @@ object NCDbManager extends NCLifecycle("Database manager") {
             tstamp,
             srvReqId
         )
+    }
+
+    /**
+      * Gets maximum long column value.
+      *
+      * @param table Table name.
+      * @param col Column name.
+      */
+    @throws[NCE]
+    def getMaxColumnValue(table: String, col: String): Option[Long] = {
+        ensureStarted()
+
+        NCPsql.selectSingle[Long](s"SELECT max($col) FROM $table")
     }
 }
 

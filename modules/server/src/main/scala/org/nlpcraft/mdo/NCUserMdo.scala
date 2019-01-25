@@ -45,7 +45,7 @@ case class NCUserMdo(
     @NCMdoField(column = "email") email: String,
     @NCMdoField(column = "first_name") firstName: String,
     @NCMdoField(column = "last_name") lastName: String,
-    @NCMdoField(column = "avatar_url") avatarUrl: String,
+    @NCMdoField(column = "avatar_url") avatarUrl: Option[String],
     @NCMdoField(column = "passwd_salt") passwordSalt: String,
     @NCMdoField(column = "last_ds_id") lastDsId: Long,
     @NCMdoField(column = "is_admin") isAdmin: Boolean,
@@ -58,4 +58,15 @@ case class NCUserMdo(
 object NCUserMdo {
     implicit val x: RsParser[NCUserMdo] =
         NCAnnotatedMdo.mkRsParser(classOf[NCUserMdo])
+
+    def apply(
+        id: Long,
+        email: String,
+        firstName: String,
+        lastName: String,
+        avatarUrl: Option[String],
+        passwordSalt: String,
+        isAdmin: Boolean
+    ): NCUserMdo =
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, null, null)
 }
