@@ -47,7 +47,7 @@ case class NCDataSourceMdo(
     @NCMdoField(column = "model_id") modelId: String,
     @NCMdoField(column = "model_name") modelName: String,
     @NCMdoField(column = "model_ver") modelVersion: String,
-    @NCMdoField(column = "model_cfg") modelConfig: String,
+    @NCMdoField(column = "model_cfg") modelConfig: Option[String],
     
     // Base MDO.
     @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,

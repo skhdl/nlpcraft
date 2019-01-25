@@ -313,7 +313,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         mdlId: String,
                         probeId: Option[String],
                         status: String,
-                        resType: Option[String],
                         resBody: Option[String],
                         error: Option[String],
                         createTstamp: Long,
@@ -325,7 +324,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
+                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat10(QueryState)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -342,7 +341,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                                     p.modelId,
                                     p.probeId,
                                     p.status,
-                                    p.resultType,
                                     p.resultBody,
                                     p.error,
                                     p.createTstamp,
@@ -487,7 +485,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
         
                         // Update user.
                         id: Option[Long],
-                        passwd: String,
                         firstName: String,
                         lastName: String,
                         avatarUrl: String,
@@ -497,7 +494,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         status: String
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
@@ -666,7 +663,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         mdlId: String,
                         mdlName: String,
                         mdlVer: String,
-                        mdlCfg: String
+                        mdlCfg: Option[String]
                     )
                     case class Res(
                         status: String,
@@ -749,7 +746,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         mdlId: String,
                         mdlName: String,
                         mdlVer: String,
-                        mdlCfg: String
+                        mdlCfg: Option[String]
                     )
                     case class Res(
                         status: String,
@@ -805,13 +802,107 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     }
                 } ~
                 path(API / "probe" / "stop") {
-                    throw NotImplemented()
+                    case class Req(
+                        accessToken: String,
+                        guid: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("guid", req.guid, 256)
+
+                        authenticateAsAdmin(req.accessToken)
+
+                        // TODO: implement it.
+
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "probe" / "restart") {
-                    throw NotImplemented()
+                    case class Req(
+                        accessToken: String,
+                        guid: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("guid", req.guid, 256)
+
+                        authenticateAsAdmin(req.accessToken)
+
+                        // TODO: implement it.
+
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
                 } ~
                 path(API / "probe" / "all") {
-                    throw NotImplemented()
+                    case class Req(
+                        accessToken: String
+                    )
+                    case class Model(
+                        id: String,
+                        name: String,
+                        version: String
+                    )
+                    case class Probe(
+                        probeToken: String,
+                        probeId: String,
+                        probeGuid: String,
+                        probeApiVersion: String,
+                        probeApiDate: Long,
+                        osVersion: String,
+                        osName: String,
+                        osArch: String,
+                        startTstamp: Long,
+                        tmzId: String,
+                        tmzAbbr: String,
+                        tmzName: String,
+                        userName: String,
+                        javaVersion: String,
+                        javaVendor: String,
+                        hostName: String,
+                        hostAddr: String,
+                        macAddr: String,
+                        models: Set[Model]
+                    )
+                    case class Res(
+                        status: String,
+                        probes: Seq[Probe]
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val mdlFmt: RootJsonFormat[Model] = jsonFormat3(Model)
+                    implicit val probFmt: RootJsonFormat[Probe] = jsonFormat19(Probe)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
+                        authenticateAsAdmin(req.accessToken)
+
+                        // TODO: implement it.
+
+                        complete {
+                            Res(API_OK, Seq.empty)
+                        }
+                    }
+
                 }
             }
         }

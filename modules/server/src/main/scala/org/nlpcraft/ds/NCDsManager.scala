@@ -104,11 +104,12 @@ object NCDsManager extends NCLifecycle("Data source manager") {
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: String): Long = {
+        mdlCfg: Option[String]
+    ): Long = {
         ensureStarted()
 
         val dsId = NCPsql.sql {
-            NCDbManager.addDataSource(name, desc, mdlId, mdlName, mdlVer, mdlCfg)
+            NCDbManager.addDataSource(name, desc, mdlId, mdlName, mdlVer, mdlCfg.orNull)
         }
     
         // Notification.

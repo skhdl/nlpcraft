@@ -6,7 +6,7 @@
         "title": "NlpCraft REST API"
     },
     "host": "localhost",
-    "basePath": "/api/1",
+    "basePath": "/api/v1",
     "tags": [
         {
             "name": "Authentication",
@@ -182,13 +182,6 @@
                                                 "enum": [
                                                     "QRY_ENLISTED",
                                                     "QRY_READY"
-                                                ]
-                                            },
-                                            "resType": {
-                                                "type": "string",
-                                                "description": "Response type",
-                                                "enum": [
-                                                    "TODO:?"
                                                 ]
                                             },
                                             "resBody": {
@@ -490,7 +483,6 @@
                         "type": "object",
                         "required": [
                             "accessToken",
-                            "passwd",
                             "firstName",
                             "lastName",
                             "isAdmin"
@@ -944,30 +936,40 @@
         "/probe/stop": {
             "post": {
                 "tags": ["Data Probes"],
-                "summary": "Stops data probe.",
-                "description": "Stops data probe with given ID.",
-                "operationId": "stopDataProbe",
+                "summary": "Stops probe.",
+                "description": "Stops probe by given GUID.",
+                "operationId": "probeStop",
                 "produces": [
                     "application/json"
                 ],
                 "consumes": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "Payload body",
-                        "description": "JSON request.",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "required": [
-                            ],
-                            "properties": {
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "guid"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
+                            },
+                            "guid": {
+                                "type": "string",
+                                "description": "Probe GUID.",
+                                "maxLength": 256
                             }
                         }
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "Successful operation.",
@@ -987,30 +989,40 @@
         "/probe/restart": {
             "post": {
                 "tags": ["Data Probes"],
-                "summary": "Restarts data probe.",
-                "description": "Restarts data probe with given ID.",
-                "operationId": "restartDataProbe",
+                "summary": "Restarts probe.",
+                "description": "Restarts probe by given GUID.",
+                "operationId": "probeRestart",
                 "produces": [
                     "application/json"
                 ],
                 "consumes": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "Payload body",
-                        "description": "JSON request.",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "required": [
-                            ],
-                            "properties": {
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "guid"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
+                            },
+                            "guid": {
+                                "type": "string",
+                                "description": "Probe GUID.",
+                                "maxLength": 256
                             }
                         }
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "Successful operation.",
@@ -1030,9 +1042,9 @@
         "/probe/all": {
             "post": {
                 "tags": ["Data Probes"],
-                "summary": "Gets all data probes.",
-                "description": "Gets all started data probes for this company.",
-                "operationId": "getAllDataProbes",
+                "summary": "Gets all probes.",
+                "description": "Gets all probes information.",
+                "operationId": "getAllProbes",
                 "produces": [
                     "application/json"
                 ],
@@ -1048,8 +1060,14 @@
                         "schema": {
                             "type": "object",
                             "required": [
+                                "accessToken"
                             ],
                             "properties": {
+                                "accessToken": {
+                                    "maxLength": 256,
+                                    "description": "Access token obtain via '/api/signin' call",
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -1060,8 +1078,145 @@
                         "schema": {
                             "type": "object",
                             "required": [
+                                "status",
+                                "probes"
                             ],
                             "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "API_OK"
+                                    ]
+                                },
+                                "dataSources": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "probeToken",
+                                            "probeId",
+                                            "probeGuid",
+                                            "probeApiVersion",
+                                            "probeApiDate",
+                                            "osVersion",
+                                            "osName",
+                                            "osArch",
+                                            "startTstamp",
+                                            "tmzId",
+                                            "tmzAbbr",
+                                            "tmzName",
+                                            "userName",
+                                            "javaVersion",
+                                            "javaVendor",
+                                            "hostName",
+                                            "hostAddr",
+                                            "macAddr",
+                                            "models"
+                                        ],
+                                        "properties": {
+                                            "probeToken": {
+                                                "description": "Probe token",
+                                                "type": "string"
+                                            },
+                                            "probeId": {
+                                                "description": "Probe ID",
+                                                "type": "string"
+                                            },
+                                            "probeGuid": {
+                                                "description": "Probe GUID",
+                                                "type": "string"
+                                            },
+                                            "probeApiVersion": {
+                                                "description": "Probe API version",
+                                                "type": "string"
+                                            },
+                                            "probeApiDate": {
+                                                "description": "Probe API date",
+                                                "type": "string"
+                                            },
+                                            "osVersion": {
+                                                "description": "OS version",
+                                                "type": "string"
+                                            },
+                                            "osName": {
+                                                "description": "OS name",
+                                                "type": "string"
+                                            },
+                                            "osArch": {
+                                                "description": "OS architecture",
+                                                "type": "string"
+                                            },
+                                            "startTstamp": {
+                                                "description": "Start time",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "tmzId": {
+                                                "description": "Timezone ID",
+                                                "type": "string"
+                                            },
+                                            "tmzAbbr": {
+                                                "description": "Timezone abbreviation",
+                                                "type": "string"
+                                            },
+                                            "tmzName": {
+                                                "description": "Timezone name",
+                                                "type": "string"
+                                            },
+                                            "userName": {
+                                                "description": "User name",
+                                                "type": "string"
+                                            },
+                                            "javaVersion": {
+                                                "description": "Java version",
+                                                "type": "string"
+                                            },
+                                            "javaVendor": {
+                                                "description": "Java vendor",
+                                                "type": "string"
+                                            },
+                                            "hostName": {
+                                                "description": "Host name",
+                                                "type": "string"
+                                            },
+                                            "hostAddr": {
+                                                "description": "Host address",
+                                                "type": "string"
+                                            },
+                                            "macAddr": {
+                                                "description": "MAC address",
+                                                "type": "string"
+                                            },
+                                            "models": {
+                                                "description": "Models",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "id",
+                                                        "name",
+                                                        "version"
+                                                    ],
+                                                    "properties": {
+                                                        "id": {
+                                                            "description": "Model ID",
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "description": "Model name",
+                                                            "type": "string"
+                                                        },
+                                                        "version": {
+                                                            "description": "Model version",
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
@@ -1329,8 +1484,7 @@
                             "shortDesc",
                             "mdlId",
                             "mdlName",
-                            "mdlVer",
-                            "mdlCfg"
+                            "mdlVer"
                         ],
                         "properties": {
                             "accessToken": {
