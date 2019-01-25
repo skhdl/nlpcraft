@@ -275,7 +275,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 /**/path(API / "cancel") {
                     case class Req(
                         accessToken: String,
-                        srvReqIds: List[String]
+                        srvReqIds: Set[String]
                     )
                     case class Res(
                         status: String
@@ -750,7 +750,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
                     case class Res(
                         status: String,
-                        dataSources: List[ResDs]
+                        dataSources: Seq[ResDs]
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)

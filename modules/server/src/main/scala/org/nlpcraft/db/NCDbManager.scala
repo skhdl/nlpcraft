@@ -247,17 +247,17 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * Updates user.
       *
       * @param usrId ID of the user to update.
-      * @param avatarUrl Avatar URL.
       * @param firstName First name.
       * @param lastName Last name.
+      * @param avatarUrl Avatar URL.
       * @param isAdmin Admin flag.
       */
     @throws[NCE]
     def updateUser(
         usrId: Long,
-        avatarUrl: Option[String],
         firstName: String,
         lastName: String,
+        avatarUrl: Option[String],
         isAdmin: Boolean
     ): Unit = {
         ensureStarted()
@@ -442,6 +442,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     /**
       * Adds new data source instance.
       *
+      * @param id ID.
       * @param name Name.
       * @param desc Description.
       * @param mdlId Model ID.
@@ -451,31 +452,34 @@ object NCDbManager extends NCLifecycle("Database manager") {
       */
     @throws[NCE]
     def addDataSource(
+        id: Long,
         name: String,
         desc: String,
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: String
+        mdlCfg: Option[String]
     ): Long = {
         ensureStarted()
 
         NCPsql.insertGetKey[Long](
             """
               |INSERT INTO ds_instance(
+              |     id,
               |     name,
               |     short_desc,
               |     model_id,
               |     model_name,
               |     model_ver,
               |     model_cfg
-              |) VALUES (?, ?, ?, ?, ?, ?)""".stripMargin,
+              |) VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+            id,
             name,
             desc,
             mdlId,
             mdlName,
             mdlVer,
-            mdlCfg
+            mdlCfg.orNull
         )
     }
     

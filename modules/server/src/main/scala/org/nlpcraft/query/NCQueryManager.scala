@@ -278,13 +278,13 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param srvReqIds
       */
     @throws[NCE]
-    def cancel(srvReqIds: List[String]): Unit = {
+    def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
         val now = System.currentTimeMillis()
     
         NCTxManager.startTx {
-            cache --= srvReqIds.toSet
+            cache --= srvReqIds
 
             for (srvReqId ← srvReqIds)
                 NCProcessLogManager.updateCancel(srvReqId, now)
@@ -308,7 +308,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param srvReqIds
       */
     @throws[NCE]
-    def get(srvReqIds: List[String]): Seq[NCQueryStateMdo] = {
+    def get(srvReqIds: Set[String]): Set[NCQueryStateMdo] = {
         ensureStarted()
 
         srvReqIds.map(cache.get).filter(_!= null)

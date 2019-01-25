@@ -131,6 +131,19 @@
         </property>
     </bean>
 
+    <bean name="ds-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="ds-cache"/>
+        <property name="cacheMode" value="REPLICATED"/>
+        <property name="readThrough" value="true"/>
+        <property name="writeThrough" value="true"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="cacheStoreFactory">
+            <bean class="javax.cache.configuration.FactoryBuilder.ClassFactory">
+                <constructor-arg value="org.nlpcraft.cache.NcDsCacheStore"/>
+            </bean>
+        </property>
+    </bean>
+
     <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <property name="igniteInstanceName" value="nlpcraft"/>
         <property name="localHost" value="127.0.0.1"/>
@@ -162,6 +175,7 @@
                 <ref bean="qry-state-cache"/>
                 <ref bean="sentence-cache"/>
                 <ref bean="user-cache"/>
+                <ref bean="ds-cache"/>
             </list>
         </property>
     </bean>

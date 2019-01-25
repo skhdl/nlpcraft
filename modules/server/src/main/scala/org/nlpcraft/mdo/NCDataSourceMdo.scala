@@ -41,7 +41,7 @@ import org.nlpcraft.mdo.impl._
   */
 @NCMdoEntity(table = "ds_instance")
 case class NCDataSourceMdo(
-    @NCMdoField(column = "id", pk = true)  id: Long,
+    @NCMdoField(column = "id", pk = true) id: Long,
     @NCMdoField(column = "name") name: String,
     @NCMdoField(column = "short_desc") shortDesc: String,
     @NCMdoField(column = "model_id") modelId: String,
@@ -57,4 +57,62 @@ case class NCDataSourceMdo(
 object NCDataSourceMdo {
     implicit val x: RsParser[NCDataSourceMdo] =
         NCAnnotatedMdo.mkRsParser(classOf[NCDataSourceMdo])
+
+    def apply(
+        id: Long,
+        name: String,
+        shortDesc: String,
+        modelId: String,
+        modelName: String,
+        modelVersion: String,
+        modelConfig: Option[String]
+    ): NCDataSourceMdo = {
+        require(name != null, "Name cannot be null.")
+        require(shortDesc != null, "ShortDesc cannot be null.")
+        require(modelId != null, "ModelId cannot be null.")
+        require(modelName != null, "ModelName cannot be null.")
+        require(modelVersion != null, "ModelVersion cannot be null.")
+
+        NCDataSourceMdo(
+            id,
+            name,
+            shortDesc,
+            modelId,
+            modelName,
+            modelVersion,
+            modelConfig,
+            null,
+            null
+        )
+    }
+
+    def apply(
+        id: Long,
+        name: String,
+        shortDesc: String,
+        modelId: String,
+        modelName: String,
+        modelVersion: String,
+        modelConfig: Option[String],
+        createdOn: Timestamp
+    ): NCDataSourceMdo = {
+        require(name != null, "Name cannot be null.")
+        require(shortDesc != null, "ShortDesc cannot be null.")
+        require(modelId != null, "ModelId cannot be null.")
+        require(modelName != null, "ModelName cannot be null.")
+        require(modelVersion != null, "ModelVersion cannot be null.")
+        require(createdOn != null, "CreatedOn cannot be null.")
+
+        NCDataSourceMdo(
+            id,
+            name,
+            shortDesc,
+            modelId,
+            modelName,
+            modelVersion,
+            modelConfig,
+            createdOn,
+            null
+        )
+    }
 }

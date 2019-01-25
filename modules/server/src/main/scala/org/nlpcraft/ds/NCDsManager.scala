@@ -31,16 +31,58 @@
 
 package org.nlpcraft.ds
 
+import org.apache.ignite.cache.CachePeekMode
+import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
+import org.nlpcraft._
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft._
+import org.nlpcraft.ignite.NCIgniteNlpCraft
 import org.nlpcraft.mdo._
 import org.nlpcraft.notification.NCNotificationManager
+
+import scala.collection.JavaConverters._
+import scala.util.control.Exception.catching
 
 /**
   * Datasources manager.
   */
-object NCDsManager extends NCLifecycle("Data source manager") {
+object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNlpCraft{
+    // Caches.
+    @volatile private var dsCache: IgniteCache[Long, NCDataSourceMdo] = _
+    @volatile private var dsSeq: IgniteAtomicSequence = _
+
+    /**
+      * Starts this manager.
+      */
+    override def start(): NCLifecycle = {
+        ensureStopped()
+
+        dsSeq = NCPsql.sqlNoTx {
+            ignite.atomicSequence(
+                "dsSeq",
+                NCDbManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
+                true
+            )
+        }
+
+        dsCache = ignite.cache[Long, NCDataSourceMdo]("ds-cache")
+
+        require(dsCache != null)
+
+        dsCache.localLoadCache(null)
+
+        super.start()
+    }
+
+    /**
+      * Stops this manager.
+      */
+    override def stop(): Unit = {
+        dsCache = null
+
+        super.stop()
+    }
+
     /**
       * Gets data source for given user ID.
       *
@@ -49,12 +91,15 @@ object NCDsManager extends NCLifecycle("Data source manager") {
     @throws[NCE]
     def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
         ensureStarted()
-        
-        NCPsql.sql {
-            NCDbManager.getDataSource(dsId)
+
+        catching(wrapIE) {
+            dsCache.get(dsId) match {
+                case null ⇒ None
+                case ds ⇒ Some(ds)
+            }
         }
     }
-    
+
     /**
       * Updates given data source.
       *
@@ -69,13 +114,25 @@ object NCDsManager extends NCLifecycle("Data source manager") {
         shortDesc: String
     ): Unit = {
         ensureStarted()
-    
-        NCPsql.sql {
-            NCDbManager.getDataSource(dsId) match {
-                case None ⇒ throw new NCE(s"Unknown data source ID: $dsId")
-                case Some(ds) ⇒
-                    NCDbManager.updateDataSource(dsId, name, shortDesc)
-                
+
+        catching(wrapIE) {
+            dsCache.get(dsId) match {
+                case null ⇒ throw new NCE(s"Unknown data source ID: $dsId")
+                case ds ⇒
+                    dsCache.put(
+                        dsId,
+                        NCDataSourceMdo(
+                            ds.id,
+                            name,
+                            shortDesc,
+                            ds.modelId,
+                            ds.modelName,
+                            ds.modelVersion,
+                            ds.modelConfig,
+                            ds.createdOn
+                        )
+                    )
+
                     // Notification.
                     NCNotificationManager.addEvent("NC_DS_UPDATE",
                         "dsId" → dsId,
@@ -85,7 +142,7 @@ object NCDsManager extends NCLifecycle("Data source manager") {
             }
         }
     }
-    
+
     /**
       * Adds new data source.
       *
@@ -108,13 +165,26 @@ object NCDsManager extends NCLifecycle("Data source manager") {
     ): Long = {
         ensureStarted()
 
-        val dsId = NCPsql.sql {
-            NCDbManager.addDataSource(name, desc, mdlId, mdlName, mdlVer, mdlCfg.orNull)
+        val newDsId = dsSeq.incrementAndGet()
+
+        catching(wrapIE) {
+            dsCache.put(
+                newDsId,
+                NCDataSourceMdo(
+                    newDsId,
+                    name,
+                    desc,
+                    mdlId,
+                    mdlName,
+                    mdlVer,
+                    mdlCfg
+                )
+            )
         }
-    
+
         // Notification.
         NCNotificationManager.addEvent("NC_DS_ADD",
-            "dsId" → dsId,
+            "dsId" → newDsId,
             "name" → name,
             "desc" → desc,
             "modelId" → mdlId,
@@ -123,9 +193,9 @@ object NCDsManager extends NCLifecycle("Data source manager") {
             "mdlCfg" → mdlCfg
         )
 
-        dsId
+        newDsId
     }
-    
+
     /**
       * Deletes data source with given DI.
       *
@@ -134,13 +204,13 @@ object NCDsManager extends NCLifecycle("Data source manager") {
     @throws[NCE]
     def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
-    
-        NCPsql.sql {
-            NCDbManager.getDataSource(dsId) match {
-                case None ⇒ throw new NCE(s"Unknown data source ID: $dsId")
-                case Some(ds) ⇒
-                    NCDbManager.deleteDataSource(dsId)
-    
+
+        catching(wrapIE) {
+            dsCache.get(dsId) match {
+                case null ⇒ throw new NCE(s"Unknown data source ID: $dsId")
+                case ds ⇒
+                    dsCache.remove(dsId)
+
                     // Notification.
                     NCNotificationManager.addEvent("NC_DS_DELETE",
                         "dsId" → dsId,
@@ -152,18 +222,19 @@ object NCDsManager extends NCLifecycle("Data source manager") {
                         "mdlCfg" → ds.modelConfig
                     )
             }
+
         }
     }
-    
+
     /**
       * Gets the list of all data sources.
       */
     @throws[NCE]
-    def getAllDataSources: List[NCDataSourceMdo] = {
+    def getAllDataSources: Seq[NCDataSourceMdo] = {
         ensureStarted()
-        
-        NCPsql.sql {
-            NCDbManager.getAllDataSources
+
+        catching(wrapIE) {
+            dsCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue)
         }
     }
 }

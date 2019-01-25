@@ -67,6 +67,31 @@ object NCUserMdo {
         avatarUrl: Option[String],
         passwordSalt: String,
         isAdmin: Boolean
-    ): NCUserMdo =
+    ): NCUserMdo = {
+        require(email != null, "Email cannot be null.")
+        require(firstName != null, "FirstName cannot be null.")
+        require(lastName != null, "LastName cannot be null.")
+        require(passwordSalt != null, "PasswordSalt cannot be null.")
+
         NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, null, null)
+    }
+
+    def apply(
+        id: Long,
+        email: String,
+        firstName: String,
+        lastName: String,
+        avatarUrl: Option[String],
+        passwordSalt: String,
+        isAdmin: Boolean,
+        createdOn: Timestamp
+    ): NCUserMdo = {
+        require(email != null, "Email cannot be null.")
+        require(firstName != null, "FirstName cannot be null.")
+        require(lastName != null, "LastName cannot be null.")
+        require(passwordSalt != null, "PasswordSalt cannot be null.")
+        require(createdOn != null, "CreatedOn cannot be null.")
+
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, createdOn, null)
+    }
 }
