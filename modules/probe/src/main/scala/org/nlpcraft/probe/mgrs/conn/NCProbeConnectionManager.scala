@@ -171,8 +171,6 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     
         logger.info(s"Opening S2P link to '$host:$port'")
     
-        def err(msg: String) = throw new HandshakeError(msg)
-    
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
@@ -213,26 +211,17 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                 val resp = sock.read[NCProbeMessage](cryptoKey) // Get handshake response.
     
                 resp.getType match {
-                    case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err(
-                        "Duplicate probes ID detected. Each probe has to have a unique ID.")
-                        
-                    case "S2P_PROBE_DUP_MODEL" ⇒ err(
-                        s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
-                        
-                    case "S2P_PROBE_NOT_FOUND" ⇒ err(
-                        "Probe failed to start due to unknown error.")
-                        
-                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(
-                        s"Probe version is unsupported: ${ver.version}")
-                        
+                    case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ throw new HandshakeError("Duplicate probes ID detected. Each probe has to have a unique ID.")
+                    case "S2P_PROBE_DUP_MODEL" ⇒ throw new HandshakeError(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
+                    case "S2P_PROBE_NOT_FOUND" ⇒ throw new HandshakeError("Probe failed to start due to unknown error.")
+                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ throw new HandshakeError(s"Probe version is unsupported: ${ver.version}")
                     case "S2P_PROBE_OK" ⇒ logger.info("  |=⇒ S2P handshake OK.") // Bingo!
-                    
-                    case _ ⇒ err(s"Unknown server message (you need to update the probe): ${resp.getType}")
+                    case _ ⇒ throw new HandshakeError(s"Unknown server message (you need to update the probe): ${resp.getType}")
                 }
     
                 sock
 
-            case "S2P_HASH_CHECK_UNKNOWN" ⇒ err(s"Unknown probe token: ${config.getToken}.")
+            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Unknown probe token: ${config.getToken}.")
         }
     }
     

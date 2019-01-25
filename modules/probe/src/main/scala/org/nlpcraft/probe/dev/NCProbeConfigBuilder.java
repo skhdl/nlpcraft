@@ -90,7 +90,7 @@ public class NCProbeConfigBuilder {
     private final static String DFLT_DOWN_LINK = "localhost:8081";
 
     // Default probe token shared by the server as well.
-    private final static String DFLT_PROBE_TOKEN = "3141-5926-5358-9793";
+    private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
     /** */
     private NCProbeConfig impl;
