@@ -41,7 +41,7 @@ case class NCProbeMdo(
     @NCMdoField probeToken: String,
     @NCMdoField probeId: String,
     @NCMdoField probeGuid: String,
-    @NCMdoField probeApiVersion: Int,
+    @NCMdoField probeApiVersion: String,
     @NCMdoField probeApiDate: Long,
     @NCMdoField osVersion: String,
     @NCMdoField osName: String,
@@ -56,8 +56,7 @@ case class NCProbeMdo(
     @NCMdoField hostName: String,
     @NCMdoField hostAddr: String,
     @NCMdoField macAddr: String,
-    @NCMdoField models: Set[NCProbeModelMdo],
-    @NCMdoField email: Option[String]
+    @NCMdoField models: Set[NCProbeModelMdo]
 ) extends NCAnnotatedMdo[NCProbeMdo] {
     override def hashCode(): Int = probeToken.hashCode() * 37 + probeId.hashCode
     override def equals(obj: scala.Any): Boolean =

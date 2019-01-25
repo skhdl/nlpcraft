@@ -66,7 +66,10 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                     NCExitManager.restart()
 
                 case "S2P_CLEAR_CONV" ⇒
-                    NCConversationManager.get(msg.data[Long]("usrId"), msg.data[Long]("dsId")).clear(_ ⇒ true)
+                    NCConversationManager.get(
+                        msg.data[Long]("usrId"),
+                        msg.data[Long]("dsId")
+                    ).clear(_ ⇒ true)
                 
                 case "S2P_ASK" ⇒
                     NCProbeNlpManager.ask(
