@@ -57,7 +57,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
     // Short-Term-Memory.
     private val stm = mutable.TreeSet.empty[NCConversationItem]
     private var ctx = new java.util.HashSet[NCToken]()
-    private var lastUpdateTstamp = System.currentTimeMillis()
+    private var lastUpdateTstamp = G.nowUtcMs()
     
     /**
       *
@@ -79,7 +79,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
       *
       */
     def update(): Unit = stm.synchronized {
-        val now = System.currentTimeMillis()
+        val now = G.nowUtcMs()
     
         if (now - lastUpdateTstamp > CONV_CLEAR_DELAY) {
             if (!IS_PROBE_SILENT)

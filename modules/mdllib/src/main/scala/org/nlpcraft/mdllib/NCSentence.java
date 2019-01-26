@@ -71,9 +71,9 @@ public interface NCSentence extends Serializable {
     String getNormalizedText();
 
     /**
-     * Gets local timestamp in msec when user input was received.
+     * Gets UTC/GMT timestamp in ms when user input was received.
      *
-     * @return Local timestamp in msec when user input was received.
+     * @return UTC/GMT timestamp in ms when user input was received.
      */
     long getReceiveTimestamp();
 

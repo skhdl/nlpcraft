@@ -75,7 +75,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       *
       * @param srvReqId Server request ID.
       * @param txt Text.
-      * @param toks Original tokens.
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
@@ -120,13 +119,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             case e: Throwable ⇒
                 logger.error("Failed to process request.", e)
                 
-                val msg = NCProbeMessage("P2S_ASK_RESULT")
-                
-                msg += "srvReqId" → srvReqId
-                msg += "error" → "Processing failed due to a system error."
-                msg += "dsId" → dsId
-                msg += "dsModelId" → dsModelId
-                msg += "txt" → txt
+                val msg = NCProbeMessage("P2S_ASK_RESULT",
+                    "srvReqId" → srvReqId,
+                    "error" → "Processing failed due to a system error.",
+                    "dsId" → dsId,
+                    "dsModelId" → dsModelId,
+                    "txt" → txt
+                )
                 
                 NCProbeConnectionManager.send(msg)
         }

@@ -51,7 +51,6 @@ class NCProbeMessage(val typ: String) extends mutable.HashMap[String/*Name*/, Se
     
     put("TYPE", typ)
     put("GUID", guid)
-    put("TSTAMP", ZonedDateTime.now())
     
     override def equals(obj: Any): Boolean = obj match {
         case msg: NCProbeMessage ⇒ msg.guid == guid
@@ -63,7 +62,6 @@ class NCProbeMessage(val typ: String) extends mutable.HashMap[String/*Name*/, Se
     // Shortcuts.
     def getType: String = typ
     def getGuid: Long = data[Long]("GUID") // Message GUID.
-    def getTimestamp: ZonedDateTime = data[ZonedDateTime]("TSTAMP")
     def getProbeToken: String = data[String]("PROBE_TOKEN")
     def getProbeId: String = data[String]("PROBE_ID")
     def getProbeGuid: String = data[String]("PROBE_GUID") // Probe GUID.

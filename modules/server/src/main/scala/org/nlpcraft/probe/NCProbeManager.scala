@@ -45,6 +45,7 @@ import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo
 import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
+import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.socket.NCSocket
 
 import scala.collection.{Map, mutable}
@@ -101,7 +102,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         var s2pSocket: NCSocket,
         var p2sThread: Thread, // Separate thread listening for messages from the probe.
         cryptoKey: Key, // Encryption key.
-        timestamp: Long = System.currentTimeMillis()
+        timestamp: Long = G.nowUtcMs()
     ) {
         /**
           *
@@ -580,18 +581,61 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             probeMsg.getProbeGuid
         )
         
-        val regProbe = probes.synchronized {
+        val knownProbe = probes.synchronized {
             probes.contains(probeKey)
         }
         
-        if (!regProbe)
-            logger.error(s"Received message from unregistered probe (ignoring): $probeKey]")
+        if (!knownProbe)
+            logger.error(s"Received message from unknown probe (ignoring): $probeKey]")
         else {
             val typ = probeMsg.getType
             
             typ match {
                 case "P2S_PING" ⇒ ()
-                case "P2S_ASK_RESULT" ⇒ ()
+                
+                case "P2S_ASK_RESULT" ⇒
+                    val srvReqId = probeMsg.data[String]("srvReqId")
+                    
+                    try {
+                        val errOpt = probeMsg.dataOpt[String]("error")
+                        val resTypeOpt = probeMsg.dataOpt[String]("resType")
+                        val resBodyOpt = probeMsg.dataOpt[String]("resBody")
+                        
+                        if (errOpt.isDefined) { // Error.
+                            val err = errOpt.get
+                            
+                            NCQueryManager.setError(
+                                srvReqId,
+                                err
+                            )
+    
+                            logger.trace(s"Error result processed [srvReqId=$srvReqId, error=$err]")
+                        }
+                        else { // OK result.
+                            require(resTypeOpt.isDefined && resBodyOpt.isDefined, "Result defined")
+    
+                            val resType = resTypeOpt.get
+                            val resBody = resBodyOpt.get
+    
+                            NCQueryManager.setResult(
+                                srvReqId,
+                                resType,
+                                resBody
+                            )
+    
+                            logger.trace(s"OK result processed [srvReqId=$srvReqId]")
+                        }
+                    }
+                    catch {
+                        case e: Throwable ⇒
+                            logger.error(s"Failed to process probe message: $typ", e)
+        
+                            NCQueryManager.setError(
+                                srvReqId,
+                                "Processing failed due to a system error."
+                            )
+                    }
+                    
                 
                 case _ ⇒
                     logger.error(s"Received unrecognized probe message (ignoring): $probeMsg")
@@ -656,7 +700,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param hol Probe holder to add.
       */
     private def addProbeToTable(tbl: NCAsciiTable, hol: ProbeHolder): NCAsciiTable = {
-        val delta = (System.currentTimeMillis() / 1000) - (hol.timestamp / 1000)
+        val delta = (G.nowUtcMs() / 1000) - (hol.timestamp / 1000)
         
         tbl += (
             hol.probe.probeId,

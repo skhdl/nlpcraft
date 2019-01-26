@@ -114,7 +114,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         scanner.scheduleAtFixedRate(
             new TimerTask() {
                 def run() {
-                    val now = System.currentTimeMillis()
+                    val now = G.nowUtcMs()
 
                     // Check access tokens for expiration.
                     ignoring(classOf[IgniteException]) {
@@ -266,7 +266,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
                 case null ⇒
                     None
                 case ses: SigninSession ⇒
-                    val now = System.currentTimeMillis()
+                    val now = G.nowUtcMs()
 
                     // Update login session.
                     signinCache.put(acsTkn, SigninSession(
@@ -327,7 +327,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
                                     entry.getValue.acsToken // Already signed in.
                                 case None ⇒
                                     val acsTkn = NCBlowfishHasher.hash(G.genGuid())
-                                    val now = System.currentTimeMillis()
+                                    val now = G.nowUtcMs()
 
                                     signinCache.put(acsTkn,
                                         SigninSession(

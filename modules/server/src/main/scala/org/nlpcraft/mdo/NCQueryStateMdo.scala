@@ -53,11 +53,9 @@ case class NCQueryStateMdo(
     @NCMdoField createTstamp: Long, // Creation timestamp.
     @NCMdoField var updateTstamp: Long, // Last update timestamp.
     @NCMdoField var status: String,
-    @NCMdoField(jsonConverter = "toJsonList") var tokens: Option[Seq[NCToken]] = None, // Optional tokens.
     // Query OK.
     @NCMdoField var resultType: Option[String] = None,
     @NCMdoField var resultBody: Option[String] = None,
-    @NCMdoField var resultMetadata: Option[Map[String, Object]] = None,
     // Query ERROR.
     @NCMdoField var error: Option[String] = None
 ) extends NCAnnotatedMdo[NCQueryStateMdo]

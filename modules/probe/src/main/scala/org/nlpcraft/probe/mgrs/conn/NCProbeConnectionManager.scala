@@ -194,7 +194,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     "PROBE_OS_VER" → sysProps.getProperty("os.version"),
                     "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
                     "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
-                    "PROBE_START_TSTAMP" → System.currentTimeMillis(),
+                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
                     "PROBE_TMZ_ID" → tmz.getID,
                     "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
                     "PROBE_TMZ_NAME" → tmz.getDisplayName(),

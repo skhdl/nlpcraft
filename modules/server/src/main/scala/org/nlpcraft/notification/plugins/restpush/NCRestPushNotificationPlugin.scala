@@ -33,6 +33,7 @@ package org.nlpcraft.notification.plugins.restpush
 
 import java.net.InetAddress
 
+import org.nlpcraft._
 import org.nlpcraft.NCConfigurable
 import org.nlpcraft.plugin.apis.NCNotificationPlugin
 
@@ -85,7 +86,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       */
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
         evts.synchronized {
-            evts += Event(evtName, params, System.currentTimeMillis(), localhost)
+            evts += Event(evtName, params, G.nowUtcMs(), localhost)
         
             if (evts.size > Config.maxBufferSize)
                 flush()
