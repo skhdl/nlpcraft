@@ -303,8 +303,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             }
                             
                             fut.onFailure {
-                                case e: NCE ⇒ logger.warn(e.getMessage)
-                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}")
+                                case e: NCE ⇒ logger.warn(e.getMessage, e)
+                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}", e)
                             }
                         }
                     }
@@ -670,6 +670,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     @throws[NCE]
     def askProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
         ensureStarted()
+        
+        // TODO
     }
     
     /**
