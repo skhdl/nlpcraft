@@ -68,10 +68,10 @@ object NCDataSourceMdo {
         modelConfig: Option[String]
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
-        require(shortDesc != null, "ShortDesc cannot be null.")
-        require(modelId != null, "ModelId cannot be null.")
-        require(modelName != null, "ModelName cannot be null.")
-        require(modelVersion != null, "ModelVersion cannot be null.")
+        require(shortDesc != null, "Short description cannot be null.")
+        require(modelId != null, "Model ID cannot be null.")
+        require(modelName != null, "Model name cannot be null.")
+        require(modelVersion != null, "Model version cannot be null.")
 
         NCDataSourceMdo(
             id,
@@ -97,11 +97,11 @@ object NCDataSourceMdo {
         createdOn: Timestamp
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
-        require(shortDesc != null, "ShortDesc cannot be null.")
-        require(modelId != null, "ModelId cannot be null.")
-        require(modelName != null, "ModelName cannot be null.")
-        require(modelVersion != null, "ModelVersion cannot be null.")
-        require(createdOn != null, "CreatedOn cannot be null.")
+        require(shortDesc != null, "Short description cannot be null.")
+        require(modelId != null, "Model ID cannot be null.")
+        require(modelName != null, "Model name cannot be null.")
+        require(modelVersion != null, "Model version cannot be null.")
+        require(createdOn != null, "Created date cannot be null.")
 
         NCDataSourceMdo(
             id,

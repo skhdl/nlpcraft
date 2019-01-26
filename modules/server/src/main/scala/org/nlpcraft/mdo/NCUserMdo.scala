@@ -69,9 +69,9 @@ object NCUserMdo {
         isAdmin: Boolean
     ): NCUserMdo = {
         require(email != null, "Email cannot be null.")
-        require(firstName != null, "FirstName cannot be null.")
-        require(lastName != null, "LastName cannot be null.")
-        require(passwordSalt != null, "PasswordSalt cannot be null.")
+        require(firstName != null, "First name cannot be null.")
+        require(lastName != null, "Last name cannot be null.")
+        require(passwordSalt != null, "Password salt cannot be null.")
 
         NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, null, null)
     }
@@ -87,10 +87,10 @@ object NCUserMdo {
         createdOn: Timestamp
     ): NCUserMdo = {
         require(email != null, "Email cannot be null.")
-        require(firstName != null, "FirstName cannot be null.")
-        require(lastName != null, "LastName cannot be null.")
-        require(passwordSalt != null, "PasswordSalt cannot be null.")
-        require(createdOn != null, "CreatedOn cannot be null.")
+        require(firstName != null, "First name cannot be null.")
+        require(lastName != null, "Last name cannot be null.")
+        require(passwordSalt != null, "Password salt cannot be null.")
+        require(createdOn != null, "Created date cannot be null.")
 
         NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, createdOn, null)
     }
