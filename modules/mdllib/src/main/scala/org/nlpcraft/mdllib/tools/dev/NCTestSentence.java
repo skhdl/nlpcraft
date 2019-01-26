@@ -76,7 +76,6 @@ public class NCTestSentence {
             }
         }
         
-        
         this.dsName = dsName;
         this.text = text;
         this.expIntentId = expIntentId;
