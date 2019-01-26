@@ -306,13 +306,6 @@ public class NCTestClientBuilder {
         public void setResponseType(String responseType) {
             this.responseType = responseType;
         }
-    
-        @Override
-        public String toString() {
-            return "NCRequestStateJson{" + "serverRequestId='" + serverRequestId + '\'' + ", userId=" + userId + ", "
-                + "dsId=" + dsId + ", text='" + text + '\'' + ", resultType='" + resultType + '\'' +
-                ", resultBody='" + resultBody + '\'' + ", error='" + error + '\'' + ", createTstamp=" + createTstamp + ", updateTstamp=" + updateTstamp + ", resultMetadata=" + resultMetadata + ", responseType='" + responseType + '\'' + '}';
-        }
     }
     
     /**
