@@ -34,7 +34,6 @@ package org.nlpcraft.probe.mgrs.cmd
 import java.io.Serializable
 
 import org.nlpcraft._
-import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
@@ -75,7 +74,6 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                     NCProbeNlpManager.ask(
                         srvReqId = msg.data[String]("srvReqId"),
                         txt = msg.data[String]("txt"),
-                        toks = msg.dataOpt[Seq[NCToken]]("tokens"),
                         nlpSen = msg.data[NCNlpSentence]("sentence"),
                         usrId = msg.data[Long]("userId"),
                         senMeta = msg.data[Map[String, Serializable]]("senMeta"),

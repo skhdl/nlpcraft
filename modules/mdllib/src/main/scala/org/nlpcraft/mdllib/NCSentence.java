@@ -120,21 +120,6 @@ public interface NCSentence extends Serializable {
     long getUserSignupDate();
 
     /**
-     * Gets timestamp of the last request issued by this user.
-     *
-     * @return Timestamp of the last request issued by this user, or {@code 0} (zero) if this
-     *      is the first request.
-     */
-    long getUserLastQTimestamp();
-
-    /**
-     * Gets total number of questions issues by this user.
-     *
-     * @return Total number of questions issues by this user.
-     */
-    int getUserTotalQs();
-
-    /**
      * Tests if given token is part of this sentence.
      *
      * @param tok Token to check.

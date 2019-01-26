@@ -149,11 +149,22 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 "dsId" → dsId,
                 "modelId" → ds.modelId,
                 "txt" → txt0,
+                "userAgent" → usrAgent,
+                "rmtAddr" → rmtAddr,
                 "isTest" → isTest
             )
     
             // Enrich the user input and send it to the probe.
-            NCProbeManager.askProbe(usr, ds, txt0, NCNlpEnricherManager.enrich(txt0))
+            NCProbeManager.askProbe(
+                srvReqId,
+                usr,
+                ds,
+                txt0,
+                NCNlpEnricherManager.enrich(txt0),
+                usrAgent,
+                rmtAddr,
+                isTest
+            )
         }
         
         fut onFailure {

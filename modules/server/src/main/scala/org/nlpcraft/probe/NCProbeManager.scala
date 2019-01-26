@@ -47,7 +47,7 @@ import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.socket.NCSocket
 
-import scala.collection.mutable
+import scala.collection.{Map, mutable}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -611,6 +611,16 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
     /**
       *
+      * @param modelId
+      * @return
+      */
+    private def getProbeForModelId(modelId: String): Option[ProbeHolder] =
+        probes.synchronized {
+            probes.values.find(_.probe.models.exists(_.id == modelId))
+        }
+    
+    /**
+      *
       */
     private def ackStats(): Unit =
         probes.synchronized {
@@ -661,17 +671,62 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     }
 
     /**
-      * 
+      *
+      * @param srvReqId
       * @param usr
       * @param ds
       * @param txt
       * @param nlpSen
+      * @param usrAgent
+      * @param rmtAddr
+      * @param isTest
       */
     @throws[NCE]
-    def askProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
+    def askProbe(
+        srvReqId: String,
+        usr: NCUserMdo,
+        ds: NCDataSourceMdo,
+        txt: String,
+        nlpSen: NCNlpSentence,
+        usrAgent: Option[String],
+        rmtAddr: Option[String],
+        isTest: Boolean): Unit = {
         ensureStarted()
         
-        // TODO
+        val senMeta =
+            Map(
+                "NORMTEXT" → nlpSen.text,
+                "USER_AGENT" → usrAgent.orNull,
+                "REMOTE_ADDR" → rmtAddr.orNull,
+                "RECEIVE_TSTAMP" → G.nowUtcMs(),
+                "FIRST_NAME" → usr.firstName,
+                "LAST_NAME" → usr.lastName,
+                "EMAIL" → usr.email,
+                "SIGNUP_DATE" → usr.createdOn.getTime,
+                "IS_ADMIN" → usr.isAdmin,
+                "AVATAR_URL" → usr.avatarUrl
+            ).map(p ⇒ p._1 → p._2.asInstanceOf[java.io.Serializable])
+        
+        getProbeForModelId(ds.modelId) match {
+            case Some(holder) ⇒
+                sendToProbe(
+                    holder.probeKey,
+                    NCProbeMessage("S2P_ASK",
+                        "srvReqId" → srvReqId,
+                        "txt" → txt,
+                        "nlpSen" → nlpSen.asInstanceOf[java.io.Serializable],
+                        "senMeta" → senMeta.asInstanceOf[java.io.Serializable],
+                        "usrId" → usr.id,
+                        "dsId" → ds.id,
+                        "dsModelId" → ds.modelId,
+                        "dsName" → ds.name,
+                        "dsDesc" → ds.shortDesc,
+                        "dsModelCfg" → ds.modelConfig,
+                        "test" → isTest
+                    )
+                )
+            case None ⇒ throw new NCE(s"Unknown model ID: ${ds.modelId}")
+        }
     }
     
     /**

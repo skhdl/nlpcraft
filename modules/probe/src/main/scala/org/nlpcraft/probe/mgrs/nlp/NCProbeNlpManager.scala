@@ -32,13 +32,11 @@
 package org.nlpcraft.probe.mgrs.nlp
 
 import java.io.Serializable
-import java.lang
 import java.util.concurrent.Executors
 import java.util.function.Predicate
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.impl.NCMetadataImpl
-import org.nlpcraft.mdllib.tools.impl.NCTokenImpl
 import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
@@ -92,7 +90,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     def ask(
         srvReqId: String,
         txt: String,
-        toks: Option[Seq[NCToken]],
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
@@ -109,7 +106,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             ask0(
                 srvReqId,
                 txt,
-                toks,
                 nlpSen,
                 usrId,
                 senMeta,
@@ -152,7 +148,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       *
       * @param srvReqId Server request ID.
       * @param txt Text.
-      * @param toks Original tokens.
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
@@ -167,7 +162,6 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
     private def ask0(
         srvReqId: String,
         txt: String,
-        toks: Option[Seq[NCToken]],
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
@@ -235,7 +229,7 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
             msg += "test" → test
             
             if (resBody.isDefined && resBody.get.length > MAX_RES_BODY_LENGTH)
-                addOptional(msg, "error", Some("Result is too big. Model needs to be corrected."))
+                addOptional(msg, "error", Some("Result is too big. Model results must to be corrected."))
             else {
                 addOptional(msg, "error", errMsg)
                 addOptional(msg, "resType", resType)
