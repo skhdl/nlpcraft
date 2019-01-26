@@ -259,7 +259,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         lastName: String,
         avatarUrl: Option[String],
         isAdmin: Boolean
-    ): Unit = {
+    ): Int = {
         ensureStarted()
 
         NCPsql.update(
@@ -295,7 +295,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         dsId: Long,
         name: String,
         shortDesc: String
-    ): Unit = {
+    ): Int = {
         ensureStarted()
         
         NCPsql.update(

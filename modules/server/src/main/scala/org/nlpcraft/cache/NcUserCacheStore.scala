@@ -48,7 +48,9 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     override protected def put(key: Either[Long, String], usr: NCUserMdo): Unit =
         catching(wrapNCE) {
             NCPsql.sql {
-                if (usr.createdOn == null)
+                val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
+
+                if (updated == 0)
                     NCDbManager.addUser(
                         usr.id,
                         usr.firstName,
@@ -58,8 +60,6 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
                         usr.avatarUrl,
                         usr.isAdmin
                     )
-                else
-                    NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
             }
         }
 

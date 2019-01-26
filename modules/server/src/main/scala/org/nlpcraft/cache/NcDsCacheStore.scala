@@ -48,7 +48,9 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     override protected def put(id: Long, ds: NCDataSourceMdo): Unit =
         catching(wrapNCE) {
             NCPsql.sql {
-                if (ds.createdOn == null)
+                val updated = NCDbManager.updateDataSource(ds.id, ds.name, ds.shortDesc)
+
+                if (updated == 0)
                     NCDbManager.addDataSource(
                         ds.id,
                         ds.name,
@@ -58,8 +60,6 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
                         ds.modelVersion,
                         ds.modelConfig
                     )
-                else
-                    NCDbManager.updateDataSource(ds.id, ds.name, ds.shortDesc)
             }
         }
 
