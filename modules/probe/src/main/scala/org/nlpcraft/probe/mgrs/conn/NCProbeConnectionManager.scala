@@ -190,7 +190,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         
                     // Handshake data,
                     "PROBE_API_DATE" → ver.date,
-                    "PROBE_API_VER" → ver.version,
+                    "PROBE_API_VERSION" → ver.version,
                     "PROBE_OS_VER" → sysProps.getProperty("os.version"),
                     "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
                     "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
