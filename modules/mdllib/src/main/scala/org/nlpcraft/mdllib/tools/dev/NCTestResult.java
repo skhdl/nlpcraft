@@ -36,11 +36,11 @@ package org.nlpcraft.mdllib.tools.dev;
  */
 public interface NCTestResult {
     /**
-     * Gets data source name.
+     * Gets data source ID.
      *
-     * @return Data source name that was used in testing.
+     * @return Data source ID that was used in testing.
      */
-    String getDsName();
+    long getDsId();
     
     /**
      * Gets test sentence text.

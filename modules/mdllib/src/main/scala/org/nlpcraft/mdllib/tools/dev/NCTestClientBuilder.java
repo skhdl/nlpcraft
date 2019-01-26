@@ -616,13 +616,13 @@ public class NCTestClientBuilder {
             if (tests.isEmpty())
                 throw new IllegalArgumentException("Tests cannot be empty");
     
-            List<Pair<String, String>> allTestPairs =
-                tests.stream().map(p -> Pair.of(p.getText(), p.getDsName())).collect(Collectors.toList());
+            List<Pair<String, Long>> allTestPairs =
+                tests.stream().map(p -> Pair.of(p.getText(), p.getDsId())).collect(Collectors.toList());
     
-            List<Pair<String, String>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
+            List<Pair<String, Long>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
     
             if (testsPairs.size() != tests.size()) {
-                for (Pair<String, String> testsPair : testsPairs) {
+                for (Pair<String, Long> testsPair : testsPairs) {
                     allTestPairs.remove(testsPair);
                 }
     
@@ -642,7 +642,7 @@ public class NCTestClientBuilder {
                         // - 'conv/clear' - calls for each data source before test.
                         // - 'ask' for each test
                         // - at least one 'check'
-                        (int)tests.stream().map(NCTestSentence::getDsName).distinct().count() + tests.size() + 1;
+                        (int)tests.stream().map(NCTestSentence::getDsId).distinct().count() + tests.size() + 1;
     
                 
                 // - 3 - 'signin', 'ds/all', 'signout',
@@ -668,64 +668,30 @@ public class NCTestClientBuilder {
             log.debug("Client logged in: {}", cfg.getBaseUrl());
     
             List<NCTestResult> res = new ArrayList<>();
-    
+            
             try {
-                List<NCDataSourceJson> dss =
-                    extract(
-                        post(
-                        cfg.getBaseUrl() + "ds/all",
-                            Pair.of("cliReqId", mkClientRequestId()),
-                            Pair.of("accessToken", auth)
-                        ),
-                        "allDs",
-                        TYPE_DSS
-                    );
-    
-                sleep(delayMs);
-    
-                log.debug("Datasources read: {}", dss.size());
-    
-                Map<String, Long> dssIds = tests.stream().
-                    map(NCTestSentence::getDsName).
-                    distinct().collect(Collectors.
-                    toMap(name -> name, name -> {
-                        Optional<NCDataSourceJson> dsOpt =
-                            dss.stream().filter(p -> p.name.equalsIgnoreCase(name)).findAny();
-            
-                        if (!dsOpt.isPresent())
-                            throw new NCTestClientException("Data source not found: " + name);
-            
-                        NCDataSourceJson ds = dsOpt.get();
-            
-                        if (!ds.isDeployed)
-                            throw new NCTestClientException("Data source not deployed: " + name);
-            
-                        return ds.getId();
-                    }));
-                
-                Map<Long, String> dssNames = dss.stream().
-                    collect(Collectors.toMap(NCDataSourceJson::getId, NCDataSourceJson::getName));
-    
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, dssIds.get(test.getDsName()));
+                        clearConversation(auth, test.getDsId());
         
                         sleep(delayMs);
         
-                        res.addAll(executeAsync(auth, dssNames, dssIds, Collections.singletonList(test)));
+                        res.addAll(executeAsync(auth, Collections.singletonList(test)));
                     }
                 }
                 else {
+                    Set<Long> dsIds = tests.stream().map(NCTestSentence::getDsId).collect(Collectors.toSet());
+                    
                     if (asyncMode) {
-                        clearConversationAllDss(auth, dssIds);
+                        clearConversationAllDss(auth, dsIds);
     
-                        res.addAll(executeAsync(auth, dssNames, dssIds, tests));
+                        res.addAll(executeAsync(auth, tests));
                     }
                     else {
-                        clearConversationAllDss(auth, dssIds);
+                        clearConversationAllDss(auth, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.addAll(executeAsync(auth, dssNames, dssIds, Collections.singletonList(test)));
+                            res.addAll(executeAsync(auth, Collections.singletonList(test)));
         
                             sleep(delayMs);
                         }
@@ -751,7 +717,7 @@ public class NCTestClientBuilder {
                 }
             }
     
-            res.sort(Comparator.comparingInt(o -> testsPairs.indexOf(Pair.of(o.getText(), o.getDsName()))));
+            res.sort(Comparator.comparingInt(o -> testsPairs.indexOf(Pair.of(o.getText(), o.getDsId()))));
     
             printResult(tests, res);
     
@@ -782,7 +748,7 @@ public class NCTestClientBuilder {
     
                 List<Object> row = new ArrayList<>();
     
-                row.add(res.getDsName());
+                row.add(res.getDsId());
                 row.add(res.getText());
                 row.add(test.getExpectedIntentId());
                 row.add(res.getIntentId());
@@ -831,8 +797,8 @@ public class NCTestClientBuilder {
             log.info("Tests statistic:\n" + statTab.mkContent());
         }
     
-        private void clearConversationAllDss(String auth, Map<String, Long> dssIds) throws IOException {
-            for (Long dsId : dssIds.values()) {
+        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException {
+            for (Long dsId : dssIds) {
                 clearConversation(auth, dsId);
             
                 sleep(delayMs);
@@ -840,7 +806,7 @@ public class NCTestClientBuilder {
         }
     
         @SuppressWarnings("unchecked")
-        private void clearConversation(String auth, Long dsId) throws IOException {
+        private void clearConversation(String auth, long dsId) throws IOException {
             checkStatus(
                 gson.fromJson(
                     post(cfg.getBaseUrl() + "clear/conv",
@@ -855,8 +821,6 @@ public class NCTestClientBuilder {
         @SuppressWarnings("unchecked")
         private List<NCTestResult> executeAsync(
             String auth,
-            Map<Long, String> dssNames,
-            Map<String, Long> dssIds,
             List<NCTestSentence> batch
         ) throws IOException {
             int n = batch.size();
@@ -873,7 +837,7 @@ public class NCTestClientBuilder {
                             post(cfg.getBaseUrl() + "ask",
                                 Pair.of("cliReqId", mkClientRequestId()),
                                 Pair.of("accessToken", auth),
-                                Pair.of("dsId", dssIds.get(test.getDsName())),
+                                Pair.of("dsId", test.getDsId()),
                                 Pair.of("text", test.getText()),
                                 Pair.of("test", true)
                             ),
@@ -970,7 +934,7 @@ public class NCTestClientBuilder {
         
                 return new NCTestResult() {
                     private int respStatus = convertResponse(testRes.getResponseType());
-                    private String dsName = dssNames.get(testRes.getDsId());
+                    private long dsId = testRes.getDsId();
                     private String text = test.getText();
                     private long procTime = testRes.getUpdateTstamp() - testRes.getCreateTstamp();
                     private String intentId = (String)testRes.getResultMetadata().get("intentId");
@@ -1006,8 +970,8 @@ public class NCTestClientBuilder {
                     }
             
                     @Override
-                    public String getDsName() {
-                        return dsName;
+                    public long getDsId() {
+                        return dsId;
                     }
             
                     @Override
@@ -1038,7 +1002,7 @@ public class NCTestClientBuilder {
                     @Override
                     public String toString() {
                         return "NCTestResult " +
-                            "[dsName=" + dsName +
+                            "[dsId=" + dsId +
                             ", text=" + text +
                             ", intentId=" + intentId +
                             ", respStatus=" + convertCode(respStatus) +

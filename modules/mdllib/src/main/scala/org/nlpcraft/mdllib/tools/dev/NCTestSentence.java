@@ -42,7 +42,7 @@ import java.util.function.Predicate;
  * {@link NCTestClient#test(NCTestSentence...)} or {@link NCTestClient#test(List)} methods.
  */
 public class NCTestSentence {
-    private String dsName;
+    private long dsId;
     private String text;
     private String expIntentId;
     private int expStatus;
@@ -51,8 +51,7 @@ public class NCTestSentence {
     /**
      * Creates new test sentence with given parameters.
      *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
+     * @param dsId Data source UD.
      * @param text Test sentence text.
      * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
      *      or intent ID check isn't required.
@@ -60,7 +59,7 @@ public class NCTestSentence {
      * @param check Optional result validation predicate. Supply {@code null} if not required.
      */
     public NCTestSentence(
-        String dsName,
+        long dsId,
         String text,
         String expIntentId,
         int expStatus,
@@ -76,7 +75,7 @@ public class NCTestSentence {
             }
         }
         
-        this.dsName = dsName;
+        this.dsId = dsId;
         this.text = text;
         this.expIntentId = expIntentId;
         this.expStatus = expStatus;
@@ -86,36 +85,34 @@ public class NCTestSentence {
     /**
      * Creates new test sentence with given parameters (without optional result check predicate).
      *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
+     * @param dsId Data source ID.
      * @param text Test sentence text.
      * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
      *      or intent ID check isn't required.
      * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
      */
-    public NCTestSentence(String dsName, String text, String expIntentId, int expStatus) {
-        this(dsName, text, expIntentId, expStatus, null);
+    public NCTestSentence(long dsId, String text, String expIntentId, int expStatus) {
+        this(dsId, text, expIntentId, expStatus, null);
     }
 
     /**
      * Creates new test sentence with given parameters (without intent ID and optional result check predicate).
      *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
+     * @param dsId Data source ID.
      * @param text Test sentence text.
      * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
      */
-    public NCTestSentence(String dsName, String text, int expStatus) {
-        this(dsName, text, null, expStatus, null);
+    public NCTestSentence(long dsId, String text, int expStatus) {
+        this(dsId, text, null, expStatus, null);
     }
 
     /**
-     * Gets data source name.
+     * Gets data source ID.
      *
-     * @return Data source name.
+     * @return Data source ID.
      */
-    public String getDsName() {
-        return dsName;
+    public long getDsId() {
+        return dsId;
     }
     
     /**
