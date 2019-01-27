@@ -22,37 +22,37 @@ public class NCTestSentenceBuilder {
         return this;
     }
     
-    public NCTestSentenceBuilder setModelId(String modelId) {
+    public NCTestSentenceBuilder withModelId(String modelId) {
         this.modelId = modelId;
         
         return this;
     }
     
-    public NCTestSentenceBuilder setText(String text) {
+    public NCTestSentenceBuilder withText(String text) {
         this.text = text;
         
         return this;
     }
     
-    public NCTestSentenceBuilder setSuccessful(boolean successful) {
+    public NCTestSentenceBuilder withSuccessfulFlag(boolean successful) {
         this.successful = successful;
         
         return this;
     }
     
-    public NCTestSentenceBuilder setCheckResult(Predicate<NCQueryResult> checkResult) {
+    public NCTestSentenceBuilder withCheckResult(Predicate<NCQueryResult> checkResult) {
         this.checkResult = checkResult;
         
         return this;
     }
     
-    public NCTestSentenceBuilder setCheckError(Predicate<String> checkError) {
+    public NCTestSentenceBuilder withCheckError(Predicate<String> checkError) {
         this.checkError = checkError;
         
         return this;
     }
     
-    public NCTestSentence createNCTestSentence() {
+    public NCTestSentence build() {
         if (text == null)
             throw new IllegalStateException("Text must be defined.");
         
