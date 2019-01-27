@@ -35,6 +35,7 @@ import java.io._
 import java.net.{InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.security.Key
 import java.time.ZoneId
+import java.util.{Timer, TimerTask}
 import java.util.concurrent.{ExecutorService, Executors}
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -57,6 +58,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Probe manager.
   */
 object NCProbeManager extends NCLifecycle("Probe manager") {
+    private final val PROBES_ACK_FREQ_MS = 10 * 60 * 1000
+    
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
         private val p2sLink = G.splitEndpoint(hocon.getString("probe.links.p2s"))
@@ -136,6 +139,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     private var pool: ExecutorService = _
     private var isStopping: AtomicBoolean = _
     private var authPlugin: NCProbeAuthenticationPlugin = _
+    private var timer: Timer = _
     
     /**
       *
@@ -145,6 +149,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         ensureStopped()
         
         Config.check()
+        
+        timer = new Timer()
     
         isStopping = new AtomicBoolean(false)
     
@@ -169,6 +175,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         }
     
         pingSrv.start()
+        
+        timer.schedule(new TimerTask() {
+            override def run(): Unit = {
+                ackStats()
+            }
+        }, PROBES_ACK_FREQ_MS)
     
         super.start()
     }
@@ -178,6 +190,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       */
     override def stop(): Unit = {
         checkStopping()
+        
+        timer.cancel()
     
         isStopping = new AtomicBoolean(true)
     
@@ -667,14 +681,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     /**
       *
       */
-    private def ackStats(): Unit =
-        probes.synchronized {
-            val tbl = mkProbeTable
-            
-            probes.values.toSeq.sortBy(_.timestamp).foreach(addProbeToTable(tbl, _))
-            
-            tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
-        }
+    private def ackStats(): Unit = {
+        val tbl = mkProbeTable
+    
+        probes.synchronized { probes.values }.toSeq.sortBy(_.timestamp).foreach(addProbeToTable(tbl, _))
+        
+        tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
+    }
     
     /**
       *
