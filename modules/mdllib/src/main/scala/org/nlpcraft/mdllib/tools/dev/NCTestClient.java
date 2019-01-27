@@ -34,25 +34,7 @@ package org.nlpcraft.mdllib.tools.dev;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * The main entry API for model testing framework. The instance of test client should be obtained
- * via {@link NCTestClientBuilder}.
- *
- * @see NCTestClientBuilder
- */
 public interface NCTestClient {
-    /** Response status: request successfully answered. */
-    int RESP_OK = 1;
-    
-    /** Response status: request rejected from user code. */
-    int RESP_REJECT = 2;
-    
-    /** Response status: request returned with error due to model validation check. */
-    int RESP_VALIDATION = 6;
-    
-    /** Response status: request returned with error due to user code or system errors. */
-    int RESP_ERROR = 7;
-    
     /**
      * Tests all given sentences and returns corresponding list of results.
      *

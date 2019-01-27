@@ -35,12 +35,8 @@ package org.nlpcraft.mdllib.tools.dev;
  * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
  */
 public interface NCTestResult {
-    /**
-     * Gets data source ID.
-     *
-     * @return Data source ID that was used in testing.
-     */
-    long getDsId();
+    String getResult();
+    String getError();
     
     /**
      * Gets test sentence text.
@@ -50,37 +46,12 @@ public interface NCTestResult {
     String getText();
     
     /**
-     * Gets optional intent ID.
-     *
-     * @return Intent ID or {@code null}.
-     */
-    String getIntentId();
-    
-    /**
-     * Gets result response status. See constants in {@link NCTestClient} interface.
-     *
-     * @return Result response status.
-     */
-    int getResultStatus();
-    
-    /**
      * Gets sentence processing time in milliseconds.
      *
      * @return Processing time in milliseconds.
      */
     long getProcessingTime();
     
-    /**
-     * Gets optional error. Error is not {@code null} when:
-     * <ul>
-     * <li>expected intent ID is defined and doesn't correspond to the actual matched intent ID,</li>
-     * <li>or expected response status doesn't correspond to the actual response one,</li>
-     * <li>or user custom result validation failed the result validation.</li>
-     * </ul>
-     *
-     * @return Optional error or {@code null}.
-     */
-    String getError();
     
     /**
      * Gets error flag.

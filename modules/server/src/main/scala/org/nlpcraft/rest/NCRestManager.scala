@@ -314,6 +314,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         mdlId: String,
                         probeId: Option[String],
                         status: String,
+                        resType: Option[String],
                         resBody: Option[String],
                         error: Option[String],
                         createTstamp: Long,
@@ -325,7 +326,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat10(QueryState)
+                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -342,6 +343,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                                     p.modelId,
                                     p.probeId,
                                     p.status,
+                                    p.resultType,
                                     p.resultBody,
                                     p.error,
                                     p.createTstamp,
