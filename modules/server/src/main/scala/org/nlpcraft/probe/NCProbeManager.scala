@@ -43,6 +43,7 @@ import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.nlp.NCNlpSentence
+import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.query.NCQueryManager
@@ -783,10 +784,20 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         getProbeForGuid(probeGuid) match {
             case Some(holder) ⇒
+                val probeKey = holder.probeKey
+                
                 sendToProbe(
-                    holder.probeKey,
+                    probeKey,
                     NCProbeMessage("S2P_STOP_PROBE")
                 )
+    
+                // Notification.
+                NCNotificationManager.addEvent("NC_PROBE_STOP",
+                    "probeGuid" → probeKey.probeGuid,
+                    "probeId" → probeKey.probeId,
+                    "probeToken" → probeKey.probeToken
+                )
+
             case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
         }
     }
@@ -801,12 +812,34 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         getProbeForGuid(probeGuid) match {
             case Some(holder) ⇒
+                val probeKey = holder.probeKey
+                
                 sendToProbe(
-                    holder.probeKey,
+                    probeKey,
                     NCProbeMessage("S2P_RESTART_PROBE")
                 )
+    
+                // Notification.
+                NCNotificationManager.addEvent("NC_PROBE_RESTART",
+                    "probeGuid" → probeKey.probeGuid,
+                    "probeId" → probeKey.probeId,
+                    "probeToken" → probeKey.probeToken
+                )
+                
             case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
         }
+    }
+    
+    /**
+      * Gets all active probes.
+      * 
+      * @return
+      */
+    @throws[NCE]
+    def getAllProbes: Seq[NCProbeMdo] = {
+        ensureStarted()
+    
+        probes.synchronized { probes.values }.map(_.probe).toSeq
     }
     
     /**
@@ -825,5 +858,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         // Ping all probes.
         probes.synchronized { probes.values }.map(_.probeKey).foreach(sendToProbe(_, msg))
+    
+        // Notification.
+        NCNotificationManager.addEvent("NC_CLEAR_CONV",
+            "usrId" → usrId,
+            "dsId" → dsId
+        )
     }
 }
