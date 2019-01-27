@@ -939,7 +939,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
             case _ ⇒
                 logger.info(
                     s"REST server failed to start on '$url'. " +
-                    s"Use 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
+                    s"Use default config file or 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
                 )
         }
     
