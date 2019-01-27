@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "NlpCraft provides REST API for integration with user applications.",
+        "description": "NlpCraft REST API.",
         "version": "0.0.1",
         "title": "NlpCraft REST API"
     },
@@ -195,12 +195,12 @@
                                             "createTstamp": {
                                                 "type": "integer",
                                                 "format": "int64",
-                                                "description": "Creation timestamp of the request"
+                                                "description": "Creation UTC/GMT timestamp of the request"
                                             },
                                             "updateTstamp": {
                                                 "type": "integer",
                                                 "format": "int64",
-                                                "description": "Last update timestamp of the request"
+                                                "description": "Last update UTC/GMT timestamp of the request"
                                             }
                                         }
                                     }

@@ -71,9 +71,9 @@ public interface NCSentence extends Serializable {
     String getNormalizedText();
 
     /**
-     * Gets local timestamp in msec when user input was received.
+     * Gets UTC/GMT timestamp in ms when user input was received.
      *
-     * @return Local timestamp in msec when user input was received.
+     * @return UTC/GMT timestamp in ms when user input was received.
      */
     long getReceiveTimestamp();
 
@@ -118,21 +118,6 @@ public interface NCSentence extends Serializable {
      * @return Signup date of the user that made the request.
      */
     long getUserSignupDate();
-
-    /**
-     * Gets timestamp of the last request issued by this user.
-     *
-     * @return Timestamp of the last request issued by this user, or {@code 0} (zero) if this
-     *      is the first request.
-     */
-    long getUserLastQTimestamp();
-
-    /**
-     * Gets total number of questions issues by this user.
-     *
-     * @return Total number of questions issues by this user.
-     */
-    int getUserTotalQs();
 
     /**
      * Tests if given token is part of this sentence.

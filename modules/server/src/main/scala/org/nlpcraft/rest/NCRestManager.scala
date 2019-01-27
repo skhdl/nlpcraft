@@ -44,6 +44,7 @@ import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
 import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.{NCConfigurable, NCE, NCException, NCLifecycle}
@@ -370,7 +371,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         val userId = authenticate(req.accessToken).id
 
-                        NCQueryManager.clearConversation(userId, req.dsId)
+                        NCProbeManager.clearConversation(userId, req.dsId)
         
                         complete {
                             Res(API_OK)

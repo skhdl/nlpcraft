@@ -45,9 +45,10 @@ import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo
 import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
+import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.socket.NCSocket
 
-import scala.collection.mutable
+import scala.collection.{Map, mutable}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -101,7 +102,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         var s2pSocket: NCSocket,
         var p2sThread: Thread, // Separate thread listening for messages from the probe.
         cryptoKey: Key, // Encryption key.
-        timestamp: Long = System.currentTimeMillis()
+        timestamp: Long = G.nowUtcMs()
     ) {
         /**
           *
@@ -580,18 +581,61 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             probeMsg.getProbeGuid
         )
         
-        val regProbe = probes.synchronized {
+        val knownProbe = probes.synchronized {
             probes.contains(probeKey)
         }
         
-        if (!regProbe)
-            logger.error(s"Received message from unregistered probe (ignoring): $probeKey]")
+        if (!knownProbe)
+            logger.error(s"Received message from unknown probe (ignoring): $probeKey]")
         else {
             val typ = probeMsg.getType
             
             typ match {
                 case "P2S_PING" ⇒ ()
-                case "P2S_ASK_RESULT" ⇒ ()
+                
+                case "P2S_ASK_RESULT" ⇒
+                    val srvReqId = probeMsg.data[String]("srvReqId")
+                    
+                    try {
+                        val errOpt = probeMsg.dataOpt[String]("error")
+                        val resTypeOpt = probeMsg.dataOpt[String]("resType")
+                        val resBodyOpt = probeMsg.dataOpt[String]("resBody")
+                        
+                        if (errOpt.isDefined) { // Error.
+                            val err = errOpt.get
+                            
+                            NCQueryManager.setError(
+                                srvReqId,
+                                err
+                            )
+    
+                            logger.trace(s"Error result processed [srvReqId=$srvReqId, error=$err]")
+                        }
+                        else { // OK result.
+                            require(resTypeOpt.isDefined && resBodyOpt.isDefined, "Result defined")
+    
+                            val resType = resTypeOpt.get
+                            val resBody = resBodyOpt.get
+    
+                            NCQueryManager.setResult(
+                                srvReqId,
+                                resType,
+                                resBody
+                            )
+    
+                            logger.trace(s"OK result processed [srvReqId=$srvReqId]")
+                        }
+                    }
+                    catch {
+                        case e: Throwable ⇒
+                            logger.error(s"Failed to process probe message: $typ", e)
+        
+                            NCQueryManager.setError(
+                                srvReqId,
+                                "Processing failed due to a system error."
+                            )
+                    }
+                    
                 
                 case _ ⇒
                     logger.error(s"Received unrecognized probe message (ignoring): $probeMsg")
@@ -607,6 +651,16 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     private def getProbeForGuid(probeGuid: String): Option[ProbeHolder] =
         probes.synchronized {
             probes.values.find(_.probeKey.probeGuid == probeGuid)
+        }
+    
+    /**
+      *
+      * @param modelId
+      * @return
+      */
+    private def getProbeForModelId(modelId: String): Option[ProbeHolder] =
+        probes.synchronized {
+            probes.values.find(_.probe.models.exists(_.id == modelId))
         }
     
     /**
@@ -646,7 +700,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param hol Probe holder to add.
       */
     private def addProbeToTable(tbl: NCAsciiTable, hol: ProbeHolder): NCAsciiTable = {
-        val delta = (System.currentTimeMillis() / 1000) - (hol.timestamp / 1000)
+        val delta = (G.nowUtcMs() / 1000) - (hol.timestamp / 1000)
         
         tbl += (
             hol.probe.probeId,
@@ -661,17 +715,62 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     }
 
     /**
-      * 
+      *
+      * @param srvReqId
       * @param usr
       * @param ds
       * @param txt
       * @param nlpSen
+      * @param usrAgent
+      * @param rmtAddr
+      * @param isTest
       */
     @throws[NCE]
-    def askProbe(usr: NCUserMdo, ds: NCDataSourceMdo, txt: String, nlpSen: NCNlpSentence): Unit = {
+    def askProbe(
+        srvReqId: String,
+        usr: NCUserMdo,
+        ds: NCDataSourceMdo,
+        txt: String,
+        nlpSen: NCNlpSentence,
+        usrAgent: Option[String],
+        rmtAddr: Option[String],
+        isTest: Boolean): Unit = {
         ensureStarted()
         
-        // TODO
+        val senMeta =
+            Map(
+                "NORMTEXT" → nlpSen.text,
+                "USER_AGENT" → usrAgent.orNull,
+                "REMOTE_ADDR" → rmtAddr.orNull,
+                "RECEIVE_TSTAMP" → G.nowUtcMs(),
+                "FIRST_NAME" → usr.firstName,
+                "LAST_NAME" → usr.lastName,
+                "EMAIL" → usr.email,
+                "SIGNUP_DATE" → usr.createdOn.getTime,
+                "IS_ADMIN" → usr.isAdmin,
+                "AVATAR_URL" → usr.avatarUrl
+            ).map(p ⇒ p._1 → p._2.asInstanceOf[java.io.Serializable])
+        
+        getProbeForModelId(ds.modelId) match {
+            case Some(holder) ⇒
+                sendToProbe(
+                    holder.probeKey,
+                    NCProbeMessage("S2P_ASK",
+                        "srvReqId" → srvReqId,
+                        "txt" → txt,
+                        "nlpSen" → nlpSen.asInstanceOf[java.io.Serializable],
+                        "senMeta" → senMeta.asInstanceOf[java.io.Serializable],
+                        "usrId" → usr.id,
+                        "dsId" → ds.id,
+                        "dsModelId" → ds.modelId,
+                        "dsName" → ds.name,
+                        "dsDesc" → ds.shortDesc,
+                        "dsModelCfg" → ds.modelConfig,
+                        "test" → isTest
+                    )
+                )
+            case None ⇒ throw new NCE(s"Unknown model ID: ${ds.modelId}")
+        }
     }
     
     /**

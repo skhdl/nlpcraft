@@ -62,15 +62,13 @@ class NCSentenceImpl(
     override lazy val variants: java.util.List[NCVariant] =
         combToks.map(toks ⇒ new NCVariantImpl(toks.asJava).asInstanceOf[NCVariant]).asJava
     override lazy val getNormalizedText: String = meta.getString("NORMTEXT")
-    override lazy val getReceiveTimestamp: Long = meta.getLong("RECEIVE_TSTAMP")
+    override lazy val getReceiveTimestamp: Long = meta.getLong("RECEIVE_TSTAMP") // UTC.
     override lazy val getUserFirstName: String = meta.getString("FIRST_NAME")
     override lazy val getUserLastName: String = meta.getString("LAST_NAME")
     override lazy val getUserEmail: String = meta.getString("EMAIL")
     override lazy val getUserAvatarUrl: String = meta.getString("AVATAR_URL")
     override lazy val isUserAdmin: Boolean = meta.getBoolean("IS_ADMIN")
     override lazy val getUserSignupDate: Long = meta.getLong("SIGNUP_DATE")
-    override lazy val getUserLastQTimestamp: Long = meta.getLong("LAST_Q_TSTAMP")
-    override lazy val getUserTotalQs: Int = meta.getInteger("TOTAL_QS")
     override lazy val getUserClientAgent: Optional[String] = meta.getStringOpt("USER_AGENT")
     override lazy val getRemoteAddress: Optional[String] = meta.getStringOpt("REMOTE_ADDR")
 

@@ -95,7 +95,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
         
         val txt0 = txt.trim()
         
-        val rcvTstamp = System.currentTimeMillis()
+        val rcvTstamp = G.nowUtcMs()
         
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
@@ -149,11 +149,22 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                 "dsId" → dsId,
                 "modelId" → ds.modelId,
                 "txt" → txt0,
+                "userAgent" → usrAgent,
+                "rmtAddr" → rmtAddr,
                 "isTest" → isTest
             )
     
             // Enrich the user input and send it to the probe.
-            NCProbeManager.askProbe(usr, ds, txt0, NCNlpEnricherManager.enrich(txt0))
+            NCProbeManager.askProbe(
+                srvReqId,
+                usr,
+                ds,
+                txt0,
+                NCNlpEnricherManager.enrich(txt0),
+                usrAgent,
+                rmtAddr,
+                isTest
+            )
         }
         
         fut onFailure {
@@ -175,7 +186,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
         
-        val now = System.currentTimeMillis()
+        val now = G.nowUtcMs()
     
         val found = catching(wrapIE) {
             NCTxManager.startTx {
@@ -198,12 +209,18 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             }
         }
         
-        if (found)
+        if (found) {
             NCProcessLogManager.updateReady(
                 srvReqId,
                 now,
                 errMsg = Some(errMsg)
             )
+            
+            NCNotificationManager.addEvent("NC_ERROR_QRY",
+                "srvReqId" → srvReqId,
+                "errMsg" → errMsg
+            )
+        }
     }
     
     /**
@@ -211,13 +228,12 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       * @param srvReqId
       * @param resType
       * @param resBody
-      * @param resMeta
       */
     @throws[NCE]
-    def setResult(srvReqId: String, resType: String, resBody: String, resMeta: Map[String, Object]): Unit = {
+    def setResult(srvReqId: String, resType: String, resBody: String): Unit = {
         ensureStarted()
         
-        val now = System.currentTimeMillis()
+        val now = G.nowUtcMs()
         
         val found = catching(wrapIE) {
             NCTxManager.startTx {
@@ -227,7 +243,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
                         copy.status = QRY_READY
                         copy.resultType = Some(resType)
                         copy.resultBody = Some(resBody)
-                        copy.resultMetadata = Some(resMeta)
                         
                         cache += srvReqId → copy
                         
@@ -242,13 +257,20 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
             }
         }
         
-        if (found)
+        if (found) {
             NCProcessLogManager.updateReady(
                 srvReqId,
                 now,
                 resType = Some(resType),
                 resBody = Some(resBody)
             )
+            
+            NCNotificationManager.addEvent("NC_RESULT_QRY",
+                "srvReqId" → srvReqId,
+                "resType" → resType,
+                "resBody" → resBody
+            )
+        }
     }
 
     /**
@@ -257,21 +279,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
       */
     private def ignore(srvReqId: String): Unit =
         logger.warn(s"Server request not found - safely ignoring (expired or cancelled): $srvReqId")
-    
-    /**
-      *
-      * @param usrId
-      * @param dsId
-      */
-    @throws[NCE]
-    def clearConversation(
-        usrId: Long,
-        dsId: Long
-    ): Unit = {
-        ensureStarted()
-        
-        // TODO
-    }
 
     /**
       *
@@ -281,13 +288,18 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
-        val now = System.currentTimeMillis()
+        val now = G.nowUtcMs()
     
         NCTxManager.startTx {
             cache --= srvReqIds
 
-            for (srvReqId ← srvReqIds)
+            for (srvReqId ← srvReqIds) {
                 NCProcessLogManager.updateCancel(srvReqId, now)
+             
+                NCNotificationManager.addEvent("NC_CANCEL_QRY",
+                    "srvReqId" → srvReqId
+                )
+            }
         }
     }
     
