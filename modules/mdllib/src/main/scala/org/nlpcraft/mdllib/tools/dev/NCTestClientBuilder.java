@@ -265,7 +265,7 @@ public class NCTestClientBuilder {
      * Client implementation.
      */
     private class NCTestClientImpl implements NCTestClient {
-        private final String STATUS_API_OK = "API_OK";
+        private static final String STATUS_API_OK = "API_OK";
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_REQS = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
     
@@ -273,12 +273,7 @@ public class NCTestClientBuilder {
         
         private final NCTestClientConfig cfg;
         private final CloseableHttpClient client;
-    
-        /**
-         * Instantiates a new Dl test client.
-         *
-         * @param cfg the cfg
-         */
+        
         NCTestClientImpl(NCTestClientConfig cfg) {
             this.cfg = cfg;
             this.client = cfg.getClientSupplier().get();
