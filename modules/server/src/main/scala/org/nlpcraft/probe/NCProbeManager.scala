@@ -35,6 +35,7 @@ import java.io._
 import java.net.{InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.security.Key
 import java.time.ZoneId
+import java.util.{Timer, TimerTask}
 import java.util.concurrent.{ExecutorService, Executors}
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -43,6 +44,7 @@ import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.nlp.NCNlpSentence
+import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.query.NCQueryManager
@@ -56,6 +58,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Probe manager.
   */
 object NCProbeManager extends NCLifecycle("Probe manager") {
+    private final val PROBES_ACK_FREQ_MS = 10 * 60 * 1000
+    
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
         private val p2sLink = G.splitEndpoint(hocon.getString("probe.links.p2s"))
@@ -135,6 +139,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     private var pool: ExecutorService = _
     private var isStopping: AtomicBoolean = _
     private var authPlugin: NCProbeAuthenticationPlugin = _
+    private var timer: Timer = _
     
     /**
       *
@@ -144,6 +149,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         ensureStopped()
         
         Config.check()
+        
+        timer = new Timer()
     
         isStopping = new AtomicBoolean(false)
     
@@ -168,6 +175,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         }
     
         pingSrv.start()
+        
+        timer.schedule(new TimerTask() {
+            override def run(): Unit = {
+                ackStats()
+            }
+        }, PROBES_ACK_FREQ_MS)
     
         super.start()
     }
@@ -177,6 +190,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       */
     override def stop(): Unit = {
         checkStopping()
+        
+        timer.cancel()
     
         isStopping = new AtomicBoolean(true)
     
@@ -666,14 +681,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     /**
       *
       */
-    private def ackStats(): Unit =
-        probes.synchronized {
-            val tbl = mkProbeTable
-            
-            probes.values.toSeq.sortBy(_.timestamp).foreach(addProbeToTable(tbl, _))
-            
-            tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
-        }
+    private def ackStats(): Unit = {
+        val tbl = mkProbeTable
+    
+        probes.synchronized { probes.values }.toSeq.sortBy(_.timestamp).foreach(addProbeToTable(tbl, _))
+        
+        tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
+    }
     
     /**
       *
@@ -783,10 +797,20 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         getProbeForGuid(probeGuid) match {
             case Some(holder) ⇒
+                val probeKey = holder.probeKey
+                
                 sendToProbe(
-                    holder.probeKey,
+                    probeKey,
                     NCProbeMessage("S2P_STOP_PROBE")
                 )
+    
+                // Notification.
+                NCNotificationManager.addEvent("NC_PROBE_STOP",
+                    "probeGuid" → probeKey.probeGuid,
+                    "probeId" → probeKey.probeId,
+                    "probeToken" → probeKey.probeToken
+                )
+
             case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
         }
     }
@@ -801,12 +825,34 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         getProbeForGuid(probeGuid) match {
             case Some(holder) ⇒
+                val probeKey = holder.probeKey
+                
                 sendToProbe(
-                    holder.probeKey,
+                    probeKey,
                     NCProbeMessage("S2P_RESTART_PROBE")
                 )
+    
+                // Notification.
+                NCNotificationManager.addEvent("NC_PROBE_RESTART",
+                    "probeGuid" → probeKey.probeGuid,
+                    "probeId" → probeKey.probeId,
+                    "probeToken" → probeKey.probeToken
+                )
+                
             case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
         }
+    }
+    
+    /**
+      * Gets all active probes.
+      * 
+      * @return
+      */
+    @throws[NCE]
+    def getAllProbes: Seq[NCProbeMdo] = {
+        ensureStarted()
+    
+        probes.synchronized { probes.values }.map(_.probe).toSeq
     }
     
     /**
@@ -825,5 +871,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         // Ping all probes.
         probes.synchronized { probes.values }.map(_.probeKey).foreach(sendToProbe(_, msg))
+    
+        // Notification.
+        NCNotificationManager.addEvent("NC_CLEAR_CONV",
+            "usrId" → usrId,
+            "dsId" → dsId
+        )
     }
 }

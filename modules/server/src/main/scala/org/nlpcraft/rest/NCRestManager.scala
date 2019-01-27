@@ -822,7 +822,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
 
                         authenticateAsAdmin(req.accessToken)
 
-                        // TODO: implement it.
+                        NCProbeManager.stopProbe(req.guid)
 
                         complete {
                             Res(API_OK)
@@ -846,8 +846,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("guid", req.guid, 256)
 
                         authenticateAsAdmin(req.accessToken)
-
-                        // TODO: implement it.
+    
+                        NCProbeManager.restartProbe(req.guid)
 
                         complete {
                             Res(API_OK)
@@ -898,11 +898,35 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("accessToken", req.accessToken, 256)
 
                         authenticateAsAdmin(req.accessToken)
-
-                        // TODO: implement it.
-
+    
+                        val probeLst = NCProbeManager.getAllProbes.map(mdo ⇒ Probe(
+                            mdo.probeToken,
+                            mdo.probeId,
+                            mdo.probeGuid,
+                            mdo.probeApiVersion,
+                            mdo.probeApiDate,
+                            mdo.osVersion,
+                            mdo.osName,
+                            mdo.osArch,
+                            mdo.startTstamp,
+                            mdo.tmzId,
+                            mdo.tmzAbbr,
+                            mdo.tmzName,
+                            mdo.userName,
+                            mdo.javaVersion,
+                            mdo.javaVendor,
+                            mdo.hostName,
+                            mdo.hostAddr,
+                            mdo.macAddr,
+                            mdo.models.map(m ⇒ Model(
+                                m.id,
+                                m.name,
+                                m.version
+                            ))
+                        ))
+    
                         complete {
-                            Res(API_OK, Seq.empty)
+                            Res(API_OK, probeLst)
                         }
                     }
                 }
@@ -917,7 +941,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
             case _ ⇒
                 logger.info(
                     s"REST server failed to start on '$url'. " +
-                    s"Use 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
+                    s"Use default config file or 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
                 )
         }
     
