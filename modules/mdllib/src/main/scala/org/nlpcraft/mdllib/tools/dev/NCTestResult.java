@@ -42,11 +42,6 @@ public interface NCTestResult {
      */
     String getText();
     
-    long getDatasourceId();
-    String getModelId();
-    String getResult();
-    String getError();
-    
     /**
      * Gets sentence processing time in milliseconds.
      *
@@ -54,12 +49,9 @@ public interface NCTestResult {
      */
     long getProcessingTime();
     
-    /**
-     * Gets error flag.
-     *
-     * @return Error flag.
-     */
-    default boolean hasError() {
-        return getError() != null;
-    }
+    long getDatasourceId();
+    String getModelId();
+    String getResult();
+    String getError();
+    boolean isValid();
 }

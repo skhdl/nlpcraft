@@ -77,7 +77,6 @@ public class NCTestClientBuilder {
     /** Default client password. */
     public static final String DFLT_PASSWORD = "admin";
     
-    
     /** Default maximum statuses check time, millisecond. */
     public static final long DFLT_MAX_CHECK_TIME = 10 * 1000;
     
@@ -586,7 +585,7 @@ public class NCTestClientBuilder {
             
             row.add(n);
             
-            long passed = results.stream().filter(p -> !p.hasError()).count();
+            long passed = results.stream().filter(NCTestResult::isValid).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -608,13 +607,13 @@ public class NCTestClientBuilder {
             log.info("Tests statistic:\n" + statTab.mkContent());
         }
     
-        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException {
+        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException, NCTestClientException {
             for (Long dsId : dssIds) {
                 clearConversation(auth, dsId);
             }
         }
     
-        private void clearConversation(String auth, long dsId) throws IOException {
+        private void clearConversation(String auth, long dsId) throws IOException, NCTestClientException {
             log.info("`clear/conversation` request sent for datasource: {}", dsId);
             
             checkStatus(
@@ -628,7 +627,7 @@ public class NCTestClientBuilder {
             );
         }
     
-        private void cancel(String auth, Set<String> ids) throws IOException {
+        private void cancel(String auth, Set<String> ids) throws IOException, NCTestClientException {
             log.info("`cancel` request sent for requests: {}", ids);
             
             checkStatus(
@@ -642,7 +641,7 @@ public class NCTestClientBuilder {
             );
         }
     
-        private long createTestDs(String auth, String mdlId, long num) throws IOException {
+        private long createTestDs(String auth, String mdlId, long num) throws IOException, NCTestClientException {
             log.info("`ds/add` request sent for model: {}", mdlId);
             
             long id =
@@ -665,7 +664,7 @@ public class NCTestClientBuilder {
             return id;
         }
         
-        private void deleteTestDs(String auth, long id) throws IOException {
+        private void deleteTestDs(String auth, long id) throws IOException, NCTestClientException {
             log.info("`ds/delete` request sent for model: {}", id);
             
             checkStatus(
@@ -679,7 +678,7 @@ public class NCTestClientBuilder {
             );
         }
     
-        private String signin() throws IOException {
+        private String signin() throws IOException, NCTestClientException {
             log.info("`user/signin` request sent for: {}", email);
             
             return extract(
@@ -694,7 +693,7 @@ public class NCTestClientBuilder {
             );
         }
     
-        private List<NCDsJson> getDss(String auth) throws IOException {
+        private List<NCDsJson> getDss(String auth) throws IOException, NCTestClientException {
             log.info("`ds/all` request sent for: {}", email);
     
             Map<String, Object> m = gson.fromJson(
@@ -709,7 +708,7 @@ public class NCTestClientBuilder {
             return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
         }
     
-        private List<NCRequestStateJson> check(String auth) throws IOException {
+        private List<NCRequestStateJson> check(String auth) throws IOException, NCTestClientException {
             log.info("`check` request sent for: {}", email);
         
             Map<String, Object> m = gson.fromJson(
@@ -724,7 +723,7 @@ public class NCTestClientBuilder {
             return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
         }
     
-        private String ask(String auth, String txt, long dsId) throws IOException {
+        private String ask(String auth, String txt, long dsId) throws IOException, NCTestClientException {
             log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
         
             return extract(
@@ -740,7 +739,7 @@ public class NCTestClientBuilder {
         }
     
     
-        private void signout(String auth) throws IOException {
+        private void signout(String auth) throws IOException, NCTestClientException {
             log.info("`user/signout` request sent for: {}", email);
             
             checkStatus(
@@ -779,7 +778,9 @@ public class NCTestClientBuilder {
     
                 while (testsResMap.size() != testsMap.size()) {
                     if (System.currentTimeMillis() - startTime > maxCheckTime)
-                        throw new NCTestClientException("Timed out (5 minutes) waiting for response.");
+                        throw new NCTestClientException(
+                            String.format("Timed out waiting for response: %d", maxCheckTime)
+                        );
         
                     List<NCRequestStateJson> states = check(auth);
                     
@@ -812,66 +813,115 @@ public class NCTestClientBuilder {
                 NCTestSentence test = testsMap.get(p.getKey());
                 NCRequestStateJson testRes = p.getValue();
     
-                String res;
-                String err = null;
-    
-                if (test.isSuccessful()) {
-                    res = testRes.getResultBody();
-        
-                    if (test.getCheckResult().isPresent()) {
-                        NCQueryResult qRes = new NCQueryResult();
-    
-                        qRes.setType(testRes.getResultType());
-                        qRes.setBody(testRes.getResultBody());
-            
-                        if (!test.getCheckResult().get().test(qRes))
-                            err = "Check result function invocation was not successful";
-                    }
-                }
-                else {
-                    res = testRes.getError();
-        
-                    if (test.getCheckError().isPresent() && !test.getCheckError().get().test(testRes.getError()))
-                        err = "Check error function invocation was not successful";
-                }
-    
-                final String errF = err;
-    
-                return new NCTestResult() {
-                    @Override
-                    public String getResult() {
-                        return res;
-                    }
-    
-                    @Override
-                    public String getError() {
-                        return errF;
-                    }
-    
-                    @Override
-                    public String getText() {
-                        return test.getText();
-                    }
-    
-                    @Override
-                    public long getDatasourceId() {
-                        return testRes.getDsId();
-                    }
-    
-                    @Override
-                    public String getModelId() {
-                        return dssMdlIds.get(testRes.getDsId());
-                    }
-    
-                    @Override
-                    public long getProcessingTime() {
-                        return testRes.getUpdateTstamp() - testRes.getCreateTstamp();
-                    }
-                };
-        
+                return mkResult(test, testRes, dssMdlIds.get(testRes.getDsId()));
             }).collect(Collectors.toList());
         }
     }
+    
+    private NCTestResult mkResult(NCTestSentence test, NCRequestStateJson testRes, String mdlId) {
+        String res = testRes.getResultBody();
+        String err = testRes.getError();
+        
+        if (test.isSuccessful() && testRes.getError() == null && test.getCheckResult().isPresent()) {
+            NCQueryResult qRes = new NCQueryResult();
+
+            qRes.setType(testRes.getResultType());
+            qRes.setBody(testRes.getResultBody());
+
+            if (!test.getCheckResult().get().test(qRes))
+                err = "Check result function invocation was not successful";
+        }
+        else if (
+            !test.isSuccessful() &&
+            testRes.getError() != null &&
+            test.getCheckError().isPresent() &&
+            !test.getCheckError().get().test(err)
+        )
+            err = "Check error function invocation was not successful";
+    
+        final String errF = err;
+    
+        return new NCTestResult() {
+            @Override
+            public String getResult() {
+                return res;
+            }
+        
+            @Override
+            public String getError() {
+                return errF;
+            }
+        
+            @Override
+            public String getText() {
+                return test.getText();
+            }
+        
+            @Override
+            public long getDatasourceId() {
+                return testRes.getDsId();
+            }
+        
+            @Override
+            public String getModelId() {
+                return mdlId;
+            }
+        
+            @Override
+            public long getProcessingTime() {
+                return testRes.getUpdateTstamp() - testRes.getCreateTstamp();
+            }
+    
+            @Override
+            public boolean isValid() {
+                // TODO: wrong.
+                return test.isSuccessful() ?
+                    errF == null :
+                    errF != null;
+            }
+        };
+    }
+    
+    private NCTestResult mkResult(NCTestSentence test, String err, long dsId, String mdlId) {
+        return new NCTestResult() {
+            @Override
+            public String getResult() {
+                return null;
+            }
+            
+            @Override
+            public String getError() {
+                return err;
+            }
+            
+            @Override
+            public String getText() {
+                return test.getText();
+            }
+            
+            @Override
+            public long getDatasourceId() {
+                return dsId;
+            }
+            
+            @Override
+            public String getModelId() {
+                return mdlId;
+            }
+            
+            @Override
+            public long getProcessingTime() {
+                return 0;
+            }
+    
+            @Override
+            public boolean isValid() {
+                return false; // TODO:
+            }
+        };
+        
+    }
+    
     
     private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
         if (val == null)
