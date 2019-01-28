@@ -56,4 +56,7 @@ public interface NCTestResult {
     String getResult();
     String getError();
     Optional<String> getValidationError();
+    default boolean isValid() {
+        return !getValidationError().isPresent();
+    }
 }

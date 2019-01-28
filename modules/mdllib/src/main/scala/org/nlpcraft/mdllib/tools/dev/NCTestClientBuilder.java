@@ -54,12 +54,14 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -298,60 +300,24 @@ public class NCTestClientBuilder {
         }
     }
     
-    private static class NCTestResultImpl implements NCTestResult {
-        private String txt;
+    private static class IdHolder {
         private long dsId;
         private String mdlId;
-        private String res;
-        private String err;
-        private long procTime;
-        private String valErr;
     
-        NCTestResultImpl(String txt, long dsId, String mdlId, String res, String err, long procTime, String valErr) {
-            this.txt = txt;
+        IdHolder(long dsId, String mdlId) {
             this.dsId = dsId;
             this.mdlId = mdlId;
-            this.res = res;
-            this.err = err;
-            this.procTime = procTime;
-            this.valErr = valErr;
         }
     
-        @Override
-        public String getText() {
-            return txt;
-        }
-        
-        @Override
-        public long getProcessingTime() {
-            return procTime;
-        }
-    
-        @Override
-        public long getDatasourceId() {
+        long getDatasourceId() {
             return dsId;
         }
     
-        @Override
-        public String getModelId() {
+        String getModelId() {
             return mdlId;
         }
-    
-        @Override
-        public String getResult() {
-            return res;
-        }
-    
-        @Override
-        public String getError() {
-            return err;
-        }
-    
-        @Override
-        public Optional<String> getValidationError() {
-            return valErr == null ? Optional.empty() : Optional.of(valErr);
-        }
     }
+    
     
     /**
      * Client implementation.
@@ -521,29 +487,34 @@ public class NCTestClientBuilder {
                 newDssIds.put(mdlId, createTestDs(auth, mdlId, num++));
             }
     
-            List<NCTestResult> res = new ArrayList<>();
+            Map<NCTestSentence, NCTestResult> res = new HashMap<>();
             
             try {
                 Map<Long, String> dssMdlIds =
                     getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDatasourceId, NCDsJson::getModelId));
     
-                Map<NCTestSentence, Pair<Long, String>> testsExt =
+                Map<NCTestSentence, IdHolder> testsExt =
                     tests.stream().collect(
                         Collectors.toMap(
                             p -> p,
                             p -> {
-                                long dsId =
-                                    p.getDatasourceId().isPresent() ?
-                                        p.getDatasourceId().get() :
-                                        newDssIds.get(p.getModelId().get());
+                                long dsId;
                                 
-                                return Pair.of(dsId, dssMdlIds.get(dsId));
+                                if (p.getDatasourceId().isPresent())
+                                    dsId = p.getDatasourceId().get();
+                                else {
+                                    assert p.getModelId().isPresent();
+    
+                                    dsId = newDssIds.get(p.getModelId().get());
+                                }
+                                
+                                return new IdHolder(dsId, dssMdlIds.get(dsId));
                             }
                         )
                     );
                 
-                Function<NCTestSentence, Map<NCTestSentence, Pair<Long, String>>> mkSingleMap = (t) -> {
-                    Map<NCTestSentence, Pair<Long, String>> m = new HashMap<>();
+                Function<NCTestSentence, Map<NCTestSentence, IdHolder>> mkSingleMap = (t) -> {
+                    Map<NCTestSentence, IdHolder> m = new HashMap<>();
                     
                     m.put(t, testsExt.get(t));
                     
@@ -552,24 +523,25 @@ public class NCTestClientBuilder {
     
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, testsExt.get(test).getLeft());
+                        clearConversation(auth, testsExt.get(test).getDatasourceId());
         
-                        res.addAll(executeAsync(auth, mkSingleMap.apply(test)));
+                        res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
                     }
                 }
                 else {
-                    Set<Long> dsIds = tests.stream().map(t -> testsExt.get(t).getLeft()).collect(Collectors.toSet());
+                    Set<Long> dsIds =
+                        tests.stream().map(t -> testsExt.get(t).getDatasourceId()).collect(Collectors.toSet());
                     
                     if (asyncMode) {
                         clearConversationAllDss(auth, dsIds);
     
-                        res.addAll(executeAsync(auth, testsExt));
+                        res.putAll(executeAsync(auth, testsExt));
                     }
                     else {
                         clearConversationAllDss(auth, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.addAll(executeAsync(auth, mkSingleMap.apply(test)));
+                            res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
                         }
                     }
                 }
@@ -591,12 +563,16 @@ public class NCTestClientBuilder {
                 }
             }
     
-            // TODO:
-            // res.sort(Comparator.comparingInt(o -> testsPairs.indexOf(Pair.of(o.getText(), o.getDsId()))));
+            List<NCTestResult> list =
+                res.entrySet().
+                    stream().
+                    sorted(Comparator.comparingInt(o -> tests.indexOf(o.getKey()))).
+                    map(Map.Entry::getValue).
+                    collect(Collectors.toList());
+            
+            printResult(tests, list);
     
-            printResult(tests, res);
-    
-            return res;
+            return list;
         }
     
         private void printResult(List<NCTestSentence> tests, List<NCTestResult> results) {
@@ -614,7 +590,8 @@ public class NCTestClientBuilder {
                 "Has checked function",
                 "Result",
                 "Error",
-                "Validation",
+                "Passed",
+                "Comments",
                 "Processing Time (ms)"
             );
     
@@ -624,14 +601,17 @@ public class NCTestClientBuilder {
     
                 List<Object> row = new ArrayList<>();
     
-                row.add(res.getText());
+                String ss = res.getText().substring(0, 100);
+                
+                row.add(ss.equals(res.getText()) ? ss : ss + " ...");
                 row.add(res.getDatasourceId());
                 row.add(res.getModelId());
                 row.add(test.isSuccessful());
                 row.add(test.isSuccessful() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult());
                 row.add(res.getError());
-                row.add(res.getValidationError().isPresent() ? res.getValidationError().get() : "Passed");
+                row.add(res.isValid());
+                row.add(res.getValidationError().orElse(""));
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
@@ -652,7 +632,7 @@ public class NCTestClientBuilder {
             
             row.add(n);
             
-            long passed = results.stream().filter(p -> !p.getValidationError().isPresent()).count();
+            long passed = results.stream().filter(NCTestResult::isValid).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -819,30 +799,32 @@ public class NCTestClientBuilder {
             );
         }
     
-        private List<NCTestResult> executeAsync(
+        private Map<NCTestSentence, NCTestResult> executeAsync(
             String auth,
-            Map<NCTestSentence, Pair<Long, String>> tests
+            Map<NCTestSentence, IdHolder> tests
         ) throws IOException, InterruptedException {
             int n = tests.size();
     
             Map<String, NCTestSentence> testsMap = new HashMap<>(n);
             Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
-            Map<NCTestSentence, String> askErrTests = new HashMap<>();
+            Map<NCTestSentence, Pair<String, Long>> askErrTests = new HashMap<>();
             
             try {
-                for (Map.Entry<NCTestSentence, Pair<Long, String>> entry : tests.entrySet()) {
+                for (Map.Entry<NCTestSentence, IdHolder> entry : tests.entrySet()) {
                     NCTestSentence test = entry.getKey();
-                    Pair<Long, String> ids = entry.getValue();
+                    IdHolder h = entry.getValue();
+                    
+                    long now = System.currentTimeMillis();
     
                     try {
-                        String srvReqId = ask(auth, test.getText(), ids.getLeft());
+                        String srvReqId = ask(auth, test.getText(), h.getDatasourceId());
         
                         log.debug("Sentence sent: {}", srvReqId);
         
                         testsMap.put(srvReqId, test);
                     }
                     catch (NCTestClientException e) {
-                        askErrTests.put(test, e.getMessage());
+                        askErrTests.put(test, Pair.of(e.getMessage(), System.currentTimeMillis() - now));
                     }
                 }
     
@@ -887,43 +869,105 @@ public class NCTestClientBuilder {
                 testsResMap.entrySet().stream().map(p -> {
                     NCTestSentence test = testsMap.get(p.getKey());
                     NCRequestStateJson testRes = p.getValue();
-        
-                    return mkResult(test, testRes, tests.get(test).getRight());
+    
+                    IdHolder h = tests.get(test);
+                    
+                    return
+                        Pair.of(
+                            test,
+                            mkResult(
+                                test,
+                                testRes.getUpdateTstamp() - testRes.getCreateTstamp(),
+                                h.getDatasourceId(),
+                                h.getModelId(),
+                                testRes.getResultBody(),
+                                testRes.getResultType(),
+                                testRes.getError()
+                            )
+                        );
                 }),
                 askErrTests.entrySet().stream().map(p -> {
                     NCTestSentence test = p.getKey();
-                    String err = p.getValue();
+                    String err = p.getValue().getLeft();
+                    long time = p.getValue().getRight();
     
-                    Pair<Long, String> ids = tests.get(test);
+                    IdHolder h = tests.get(test);
     
-                    return new NCTestResultImpl(test.getText(), ids.getLeft(), ids.getRight(), null, err, 0, "");
+                    return Pair.of(
+                        test,
+                        mkResult(
+                            test, time, h.getDatasourceId(), h.getModelId(), null, null, err
+                        )
+                    );
                 })
-            ).collect(Collectors.toList());
+            ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
     }
     
-    private NCTestResult mkResult(NCTestSentence test, NCRequestStateJson testRes, String mdlId) {
-        String res = testRes.getResultBody();
-        String err = testRes.getError();
+    private static NCTestResult mkResult(
+        NCTestSentence test, long procTime, long dsId, String mdlId, String res, String resType, String err
+    ) {
+        AtomicReference<String> s = new AtomicReference<>();
         
-        if (test.isSuccessful() && testRes.getError() == null && test.getCheckResult().isPresent()) {
-            NCQueryResult qRes = new NCQueryResult();
-
-            qRes.setType(testRes.getResultType());
-            qRes.setBody(testRes.getResultBody());
-
-            if (!test.getCheckResult().get().test(qRes))
-                err = "Check result function invocation was not successful";
+        if (test.isSuccessful()) {
+            if (err != null)
+                s.set("Unexpected error");
+            else if (test.getCheckResult().isPresent()) {
+                assert res != null;
+                assert resType != null;
+                
+                NCQueryResult r = new NCQueryResult();
+                
+                r.setBody(res);
+                r.setType(resType);
+                
+                if (!test.getCheckResult().get().test(r))
+                    s.set("Execution ok, but unsuccessful check");
+            }
         }
-        else if (
-            !test.isSuccessful() &&
-            testRes.getError() != null &&
-            test.getCheckError().isPresent() &&
-            !test.getCheckError().get().test(err)
-        )
-            err = "Check error function invocation was not successful";
+        else {
+            if (err == null)
+                s.set("Unexpected successful result");
+            else if (test.getCheckError().isPresent() && !test.getCheckError().get().test(err))
+                s.set("Execution failed, but unsuccessful check");
+        }
+        
+        return new NCTestResult() {
+            @Override
+            public String getText() {
+                return test.getText();
+            }
     
-        return new NCTestResultImpl(test.getText(), testRes.getDatasourceId(),mdlId, res, err, testRes.getUpdateTstamp() - testRes.getCreateTstamp(), "");
+            @Override
+            public long getProcessingTime() {
+                return procTime;
+            }
+    
+            @Override
+            public long getDatasourceId() {
+                return dsId;
+            }
+    
+            @Override
+            public String getModelId() {
+                return mdlId;
+            }
+    
+            @Override
+            public String getResult() {
+                return res;
+            }
+    
+            @Override
+            public String getError() {
+                return err;
+            }
+    
+            @Override
+            public Optional<String> getValidationError() {
+                return s.get() == null ? Optional.empty() : Optional.of(s.get());
+            }
+        };
     }
     
     private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
