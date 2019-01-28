@@ -52,7 +52,6 @@ public interface NCTestResult {
      */
     long getProcessingTime();
     
-    
     /**
      * Gets error flag.
      *
