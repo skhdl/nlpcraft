@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -78,14 +77,9 @@ public class NCTestClientBuilder {
     /** Default client password. */
     public static final String DFLT_PASSWORD = "admin";
     
-    /** Default maximum test time, millisecond. */
-    public static final long DFLT_MAX_TEST_TIME = 60 * 60 * 1000;
     
     /** Default maximum statuses check time, millisecond. */
     public static final long DFLT_MAX_CHECK_TIME = 10 * 1000;
-    
-    /** Default millisecond delay between each request call. */
-    public static final long DFLT_DELAY_MS = 50;
     
     /** Default millisecond delay between result checks. */
     public static final long DFLT_CHECK_INTERVAL_MS = 2000;
@@ -98,11 +92,9 @@ public class NCTestClientBuilder {
     
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
-    private long delayMs = DFLT_DELAY_MS;
     private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
     private boolean clearConv = DFLT_CLEAR_CONVERSATION;
     private boolean asyncMode = DFLT_ASYNC_MODE;
-    private long maxTestTime = DFLT_MAX_TEST_TIME;
     private long maxCheckTime = DFLT_MAX_CHECK_TIME;
     private RequestConfig reqCfg;
     private String baseUrl = DFLT_BASEURL;
@@ -110,6 +102,31 @@ public class NCTestClientBuilder {
     private String pswd = DFLT_PASSWORD;
     private Supplier<CloseableHttpClient> cliSup;
     
+    /**
+     * JSON helper class.
+     */
+    static class NCDsJson {
+        @SerializedName("id") private long datasourceId;
+        @SerializedName("mdlId") private String modelId;
+    
+        public long getDatasourceId() {
+            return datasourceId;
+        }
+    
+        public void setDatasourceId(long datasourceId) {
+            this.datasourceId = datasourceId;
+        }
+    
+        public String getModelId() {
+            return modelId;
+        }
+    
+        public void setModelId(String modelId) {
+            this.modelId = modelId;
+        }
+    }
+        
+        
     /**
      * JSON helper class.
      */
@@ -287,7 +304,8 @@ public class NCTestClientBuilder {
     private class NCTestClientImpl implements NCTestClient {
         private static final String STATUS_API_OK = "API_OK";
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
-        private final Type TYPE_REQS = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
+        private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
+        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
     
         private final Gson gson = new Gson();
         
@@ -432,55 +450,14 @@ public class NCTestClientBuilder {
             checkDups(tests, NCTestSentence::getDatasourceId, "datasource");
             checkDups(tests, NCTestSentence::getModelId, "model");
             
-            long maxTime = System.currentTimeMillis() + maxTestTime;
-    
             Set<String> mdlIds =
                 tests.stream().
-                    filter(p -> p.getModelId() != null).
-                    map(NCTestSentence::getModelId).
+                    filter(p -> p.getModelId().isPresent()).
+                    map(p -> p.getModelId().get()).
                     collect(Collectors.toSet());
             
-            if (delayMs != 0) {
-                int minApiCalls =
-                    clearConv ?
-                        // - for each test: 'conv/clear', 'ask', 'check'.
-                        3 * tests.size() :
-                        // - 'conv/clear' - calls for each data source before test.
-                        // - 'ask' for each test
-                        // - at least one 'check'
-                        (int)tests.stream().map(NCTestSentence::getDatasourceId).distinct().count() + tests.size() + 1;
-    
-                
-                // - 3 - 'signin', 'ds/all', 'signout',
-                minApiCalls += 3;
-                // Create and delete test datasources based on model ID.
-                minApiCalls += mdlIds.size() * 2;
-                
-                if (minApiCalls * delayMs > maxTestTime)
-                    throw new NCTestClientException(
-                        String.format("Test too long, decrease delay or sentences count. Max test time: %d", maxTestTime)
-                    );
-            }
-            
-            Consumer<Long> sleep = (time) -> {
-                if (System.currentTimeMillis() > maxTime)
-                    throw new NCTestClientException(String.format("Test too long. Max test time: %d", maxTestTime));
-                
-                if (time > 0) {
-                    log.debug("Sleep time: {}", time);
-        
-                    try {
-                        Thread.sleep(time);
-                    }
-                    catch (InterruptedException e) {
-                        throw new NCTestClientException("Thread interrupted.", e);
-                    }
-                }
-            };
             
             String auth = signin();
-    
-            sleep.accept(delayMs);
     
             Map<String, Long> newDssIds = new HashMap<>();
             
@@ -488,15 +465,15 @@ public class NCTestClientBuilder {
             
             for (String mdlId : mdlIds) {
                 newDssIds.put(mdlId, createTestDs(auth, mdlId, num++));
-    
-                sleep.accept(delayMs);
             }
-            
-            Function<NCTestSentence, Long> getDsId = (s) -> {
-                if (s.getDatasourceId() != null)
-                    return s.getDatasourceId();
     
-                Long dsId = newDssIds.get(s.getModelId());
+            Function<NCTestSentence, Long> getDsId = (s) -> {
+                if (s.getDatasourceId().isPresent())
+                    return s.getDatasourceId().get();
+                
+                assert s.getModelId().isPresent();
+    
+                Long dsId = newDssIds.get(s.getModelId().get());
                 
                 assert dsId != null;
                 
@@ -506,43 +483,41 @@ public class NCTestClientBuilder {
             List<NCTestResult> res = new ArrayList<>();
             
             try {
+                Map<Long, String> dssMdlIds =
+                    getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDatasourceId, NCDsJson::getModelId));
+    
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
                         clearConversation(auth, getDsId.apply(test));
         
-                        sleep.accept(delayMs);
-        
-                        res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, sleep));
+                        res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, dssMdlIds));
                     }
                 }
                 else {
                     Set<Long> dsIds = tests.stream().map(getDsId).collect(Collectors.toSet());
                     
                     if (asyncMode) {
-                        clearConversationAllDss(auth, dsIds, sleep);
+                        clearConversationAllDss(auth, dsIds);
     
-                        res.addAll(executeAsync(auth, tests, getDsId, sleep));
+                        res.addAll(executeAsync(auth, tests, getDsId, dssMdlIds));
                     }
                     else {
-                        clearConversationAllDss(auth, dsIds, sleep);
+                        clearConversationAllDss(auth, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, sleep));
-        
-                            sleep.accept(delayMs);
+                            res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, dssMdlIds));
                         }
                     }
                 }
             }
+            catch (InterruptedException e) {
+                throw new NCTestClientException("Test interrupted.", e);
+            }
             finally {
                 // This potential error can be ignored. Also it shouldn't override main method errors.
                 try {
-                    sleep.accept(delayMs);
-    
                     for (Long id : newDssIds.values()) {
                         deleteTestDs(auth, id);
-    
-                        sleep.accept(delayMs);
                     }
                     
                     signout(auth);
@@ -569,6 +544,8 @@ public class NCTestClientBuilder {
             
             AsciiTable resTab = new AsciiTable(
                 "Sentence",
+                "Datasource ID",
+                "Model ID",
                 "Expected Result",
                 "Has checked function",
                 "Result",
@@ -583,8 +560,10 @@ public class NCTestClientBuilder {
                 List<Object> row = new ArrayList<>();
     
                 row.add(res.getText());
+                row.add(res.getDatasourceId());
+                row.add(res.getModelId());
                 row.add(test.isSuccessful());
-                row.add(test.isSuccessful() ? test.getCheckResult() != null : test.getCheckError() != null);
+                row.add(test.isSuccessful() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult());
                 row.add(res.getError());
                 row.add(res.getProcessingTime());
@@ -629,11 +608,9 @@ public class NCTestClientBuilder {
             log.info("Tests statistic:\n" + statTab.mkContent());
         }
     
-        private void clearConversationAllDss(String auth, Set<Long> dssIds, Consumer<Long> sleep) throws IOException {
+        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException {
             for (Long dsId : dssIds) {
                 clearConversation(auth, dsId);
-            
-                sleep.accept(delayMs);
             }
         }
     
@@ -717,6 +694,52 @@ public class NCTestClientBuilder {
             );
         }
     
+        private List<NCDsJson> getDss(String auth) throws IOException {
+            log.info("`ds/all` request sent for: {}", email);
+    
+            Map<String, Object> m = gson.fromJson(
+                post(baseUrl + "ds/all",
+                    Pair.of("accessToken", auth)
+                ),
+                TYPE_RESP
+            );
+    
+            checkStatus(m);
+    
+            return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
+        }
+    
+        private List<NCRequestStateJson> check(String auth) throws IOException {
+            log.info("`check` request sent for: {}", email);
+        
+            Map<String, Object> m = gson.fromJson(
+                post(baseUrl + "check",
+                    Pair.of("accessToken", auth)
+                ),
+                TYPE_RESP
+            );
+        
+            checkStatus(m);
+        
+            return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
+        }
+    
+        private String ask(String auth, String txt, long dsId) throws IOException {
+            log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
+        
+            return extract(
+                post(baseUrl + "ask",
+                    Pair.of("accessToken", auth),
+                    Pair.of("txt", txt),
+                    Pair.of("dsId", dsId),
+                    Pair.of("isTest", true)
+                ),
+                "srvReqId",
+                String.class
+            );
+        }
+    
+    
         private void signout(String auth) throws IOException {
             log.info("`user/signout` request sent for: {}", email);
             
@@ -734,25 +757,20 @@ public class NCTestClientBuilder {
             String auth,
             List<NCTestSentence> batch,
             Function<NCTestSentence, Long> getDsId,
-            Consumer<Long> sleep
-        ) throws IOException {
+            Map<Long, String> dssMdlIds
+        ) throws IOException, InterruptedException {
             int n = batch.size();
     
             Map<String, NCTestSentence> testsMap = new HashMap<>(n);
             Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
             
             try {
-                for (int i = 0; i < n; i++) {
-                    NCTestSentence test = batch.get(i);
-    
+                for (NCTestSentence test : batch) {
                     String srvReqId = ask(auth, test.getText(), getDsId.apply(test));
         
                     log.debug("Sentence sent: {}", srvReqId);
         
                     testsMap.put(srvReqId, test);
-    
-                    if (delayMs > 0 && i != n - 1)
-                        sleep.accept(delayMs);
                 }
     
                 log.debug("Sentences sent: {}", testsMap.size());
@@ -760,12 +778,12 @@ public class NCTestClientBuilder {
                 long startTime = System.currentTimeMillis();
     
                 while (testsResMap.size() != testsMap.size()) {
-                    sleep.accept(checkIntervalMs);
-                    
                     if (System.currentTimeMillis() - startTime > maxCheckTime)
                         throw new NCTestClientException("Timed out (5 minutes) waiting for response.");
         
                     List<NCRequestStateJson> states = check(auth);
+                    
+                    Thread.sleep(checkIntervalMs);
     
                     Map<String, NCRequestStateJson> res =
                         states.stream().
@@ -800,20 +818,20 @@ public class NCTestClientBuilder {
                 if (test.isSuccessful()) {
                     res = testRes.getResultBody();
         
-                    if (test.getCheckResult() != null) {
+                    if (test.getCheckResult().isPresent()) {
                         NCQueryResult qRes = new NCQueryResult();
     
                         qRes.setType(testRes.getResultType());
                         qRes.setBody(testRes.getResultBody());
             
-                        if (!test.getCheckResult().test(qRes))
+                        if (!test.getCheckResult().get().test(qRes))
                             err = "Check result function invocation was not successful";
                     }
                 }
                 else {
                     res = testRes.getError();
         
-                    if (test.getCheckError() != null && !test.getCheckError().test(testRes.getError()))
+                    if (test.getCheckError().isPresent() && !test.getCheckError().get().test(testRes.getError()))
                         err = "Check error function invocation was not successful";
                 }
     
@@ -836,42 +854,22 @@ public class NCTestClientBuilder {
                     }
     
                     @Override
+                    public long getDatasourceId() {
+                        return testRes.getDsId();
+                    }
+    
+                    @Override
+                    public String getModelId() {
+                        return dssMdlIds.get(testRes.getDsId());
+                    }
+    
+                    @Override
                     public long getProcessingTime() {
                         return testRes.getUpdateTstamp() - testRes.getCreateTstamp();
                     }
                 };
         
             }).collect(Collectors.toList());
-        }
-    
-        private List<NCRequestStateJson> check(String auth) throws IOException {
-            log.info("`check` request sent for: {}", email);
-            
-            Map<String, Object> m = gson.fromJson(
-                post(baseUrl + "check",
-                    Pair.of("accessToken", auth)
-                ),
-                TYPE_RESP
-            );
-    
-            checkStatus(m);
-    
-            return extract(gson.toJsonTree(getField(m, "states")), TYPE_REQS);
-        }
-    
-        private String ask(String auth, String txt, long dsId) throws IOException {
-            log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
-            
-            return extract(
-                post(baseUrl + "ask",
-                    Pair.of("accessToken", auth),
-                    Pair.of("txt", txt),
-                    Pair.of("dsId", dsId),
-                    Pair.of("isTest", true)
-                ),
-                "srvReqId",
-                String.class
-            );
         }
     }
     
@@ -920,7 +918,6 @@ public class NCTestClientBuilder {
      *
      * @param checkIntervalMs Delay value in milliseconds.
      * @return Builder instance for chaining calls.
-     * @see #withDelay(long)
      */
     public NCTestClientBuilder withCheckInterval(long checkIntervalMs) {
         checkPositive("checkIntervalMs", checkIntervalMs);
@@ -941,22 +938,6 @@ public class NCTestClientBuilder {
     public NCTestClientBuilder withAsyncMode(boolean asyncMode) {
         this.asyncMode = asyncMode;
         
-        return this;
-    }
-    
-    /**
-     * Sets request delay value. This value should be changed only in cases when account's usage quota is exceeded.
-     * Default values is {@link NCTestClientBuilder#DFLT_DELAY_MS}.
-     *
-     * @param delayMs Request delay in milliseconds.
-     * @return Builder instance for chaining calls.
-     * @see #withCheckInterval(long)
-     */
-    public NCTestClientBuilder withDelay(long delayMs) {
-        checkNotNegative("delayMs", delayMs);
-        
-        this.delayMs = delayMs;
-    
         return this;
     }
     
@@ -1003,14 +984,6 @@ public class NCTestClientBuilder {
         
         this.pswd = pswd;
         
-        return this;
-    }
-    
-    public NCTestClientBuilder withMaxTestTime(long maxTestTime) {
-        checkPositive("maxTestTime", maxTestTime);
-        
-        this.maxTestTime = maxTestTime;
-    
         return this;
     }
     

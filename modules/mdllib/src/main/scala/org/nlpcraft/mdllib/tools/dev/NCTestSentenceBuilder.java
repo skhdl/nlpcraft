@@ -2,6 +2,7 @@ package org.nlpcraft.mdllib.tools.dev;
 
 import org.nlpcraft.mdllib.NCQueryResult;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class NCTestSentenceBuilder {
@@ -65,14 +66,37 @@ public class NCTestSentenceBuilder {
         
         if (checkError != null && successful != null && successful)
             throw new IllegalStateException("Check error function can be defined only for unsuccessful results.");
-        
-        return new NCTestSentence(
-            txt,
-            dsId,
-            modelId,
-            successful != null ? successful : checkError == null, // True by default.
-            checkResult,
-            checkError
-        );
+    
+        return new NCTestSentence() {
+            @Override
+            public String getText() {
+                return txt;
+            }
+    
+            @Override
+            public Optional<Long> getDatasourceId() {
+                return dsId == null ? Optional.empty() : Optional.of(dsId);
+            }
+    
+            @Override
+            public Optional<String> getModelId() {
+                return modelId == null ? Optional.empty() : Optional.of(modelId);
+            }
+    
+            @Override
+            public boolean isSuccessful() {
+                return successful != null ? successful : checkError == null; // True by default.;
+            }
+    
+            @Override
+            public Optional<Predicate<NCQueryResult>> getCheckResult() {
+                return checkResult == null ? Optional.empty() : Optional.of(checkResult);
+            }
+    
+            @Override
+            public Optional<Predicate<String>> getCheckError() {
+                return checkError == null ? Optional.empty() : Optional.of(checkError);
+            }
+        };
     }
 }

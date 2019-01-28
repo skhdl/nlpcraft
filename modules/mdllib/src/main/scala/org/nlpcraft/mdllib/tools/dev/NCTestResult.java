@@ -35,15 +35,17 @@ package org.nlpcraft.mdllib.tools.dev;
  * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
  */
 public interface NCTestResult {
-    String getResult();
-    String getError();
-    
     /**
      * Gets test sentence text.
      *
      * @return Test sentence text.
      */
     String getText();
+    
+    long getDatasourceId();
+    String getModelId();
+    String getResult();
+    String getError();
     
     /**
      * Gets sentence processing time in milliseconds.
