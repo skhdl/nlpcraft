@@ -77,7 +77,9 @@ import org.nlpcraft.util.*;
  *     <tr>
  *         <td>{@code NLPCRAFT_PROBE_SILENT}</td>
  *         <td>
- *              Set to {@code true} to disable verbose probe logging mode.
+ *              Set to {@code true} to disable verbose probe logging mode. Note that this can only
+ *              be set via system property or environment variable. Class {@link NCProbeConfig} does
+ *              not provide setter for this.
  *         </td>
  *     </tr>
  * </table>

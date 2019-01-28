@@ -37,15 +37,8 @@ import org.nlpcraft.probe.dev.*;
 /**
  * In-process probe runner for this example.
  * <p>
- * Make sure to setup these system properties:
- * <ul>
- *     <li>
- *         <code>NLPCRAFT_PROBE_ID</code>=<code>probe ID</code> (any user defined name).
- *     </li>
- *     <li>
- *         <code>NLPCRAFT_PROBE_TOKEN</code>=<code>probe token</code>.
- *     </li>
- * </ul>
+ * Note that this probes requires no configuration (it uses all configuration defaults). However, if necessary,
+ * you can set your own configuration properties (see <code>NCProbeConfigBuilder</code> class for details).
  */
 public class TimeProbeRunner {
     /**

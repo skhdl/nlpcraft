@@ -40,7 +40,7 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * Hello World example model provider.
  * <p>
- * This example simply responds with 'Hello World!' on any user input. This is the simplest
+ * This trivial example simply responds with 'Hello World!' on any user input. This is the simplest
  * user model that can be defined.
  */
 @NCActiveModelProvider
@@ -55,10 +55,9 @@ public class HelloWorldProvider extends NCModelProviderAdapter {
         setup(
             // Minimally defined model...
             NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
-                // Return HTML result.
+                // Return the same HTML result for any user input.
                 .setQueryFunction(ctx -> NCQueryResult.html(
-                    "Hello World!<br/>" +
-                    "See more <a target=_new href='https://youtu.be/zecueq-mo4M'>examples</a> of Hello World!"
+                    "Hello World! This model returns the same result for any input..."
                 ))
                 .build()
         );

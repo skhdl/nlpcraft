@@ -75,7 +75,7 @@ public class TimerProvider extends NCModelProviderAdapter {
                 new TERM(
                     new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
                     0,
-                    7 // Supported numeric `datetime` unit types.
+                    7 // Up to 7 numeric `datetime` units.
                 )
             ),
             this::onMatch
