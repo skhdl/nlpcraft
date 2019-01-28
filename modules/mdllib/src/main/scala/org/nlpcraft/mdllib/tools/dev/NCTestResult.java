@@ -31,6 +31,8 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
+import java.util.Optional;
+
 /**
  * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
  */
@@ -53,5 +55,5 @@ public interface NCTestResult {
     String getModelId();
     String getResult();
     String getError();
-    boolean isValid();
+    Optional<String> getValidationError();
 }

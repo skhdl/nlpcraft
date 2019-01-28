@@ -54,10 +54,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.function.Function;
@@ -305,17 +305,16 @@ public class NCTestClientBuilder {
         private String res;
         private String err;
         private long procTime;
-        private boolean isValid;
+        private String valErr;
     
-        NCTestResultImpl(String txt, long dsId, String mdlId, String res, String err, long procTime,
-            boolean isValid) {
+        NCTestResultImpl(String txt, long dsId, String mdlId, String res, String err, long procTime, String valErr) {
             this.txt = txt;
             this.dsId = dsId;
             this.mdlId = mdlId;
             this.res = res;
             this.err = err;
             this.procTime = procTime;
-            this.isValid = isValid;
+            this.valErr = valErr;
         }
     
         @Override
@@ -349,8 +348,8 @@ public class NCTestClientBuilder {
         }
     
         @Override
-        public boolean isValid() {
-            return isValid;
+        public Optional<String> getValidationError() {
+            return valErr == null ? Optional.empty() : Optional.of(valErr);
         }
     }
     
@@ -522,45 +521,55 @@ public class NCTestClientBuilder {
                 newDssIds.put(mdlId, createTestDs(auth, mdlId, num++));
             }
     
-            Function<NCTestSentence, Long> getDsId = (s) -> {
-                if (s.getDatasourceId().isPresent())
-                    return s.getDatasourceId().get();
-                
-                assert s.getModelId().isPresent();
-    
-                Long dsId = newDssIds.get(s.getModelId().get());
-                
-                assert dsId != null;
-                
-                return dsId;
-            };
-    
             List<NCTestResult> res = new ArrayList<>();
             
             try {
                 Map<Long, String> dssMdlIds =
                     getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDatasourceId, NCDsJson::getModelId));
     
+                Map<NCTestSentence, Pair<Long, String>> testsExt =
+                    tests.stream().collect(
+                        Collectors.toMap(
+                            p -> p,
+                            p -> {
+                                long dsId =
+                                    p.getDatasourceId().isPresent() ?
+                                        p.getDatasourceId().get() :
+                                        newDssIds.get(p.getModelId().get());
+                                
+                                return Pair.of(dsId, dssMdlIds.get(dsId));
+                            }
+                        )
+                    );
+                
+                Function<NCTestSentence, Map<NCTestSentence, Pair<Long, String>>> mkSingleMap = (t) -> {
+                    Map<NCTestSentence, Pair<Long, String>> m = new HashMap<>();
+                    
+                    m.put(t, testsExt.get(t));
+                    
+                    return m;
+                };
+    
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, getDsId.apply(test));
+                        clearConversation(auth, testsExt.get(test).getLeft());
         
-                        res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, dssMdlIds));
+                        res.addAll(executeAsync(auth, mkSingleMap.apply(test)));
                     }
                 }
                 else {
-                    Set<Long> dsIds = tests.stream().map(getDsId).collect(Collectors.toSet());
+                    Set<Long> dsIds = tests.stream().map(t -> testsExt.get(t).getLeft()).collect(Collectors.toSet());
                     
                     if (asyncMode) {
                         clearConversationAllDss(auth, dsIds);
     
-                        res.addAll(executeAsync(auth, tests, getDsId, dssMdlIds));
+                        res.addAll(executeAsync(auth, testsExt));
                     }
                     else {
                         clearConversationAllDss(auth, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.addAll(executeAsync(auth, Collections.singletonList(test), getDsId, dssMdlIds));
+                            res.addAll(executeAsync(auth, mkSingleMap.apply(test)));
                         }
                     }
                 }
@@ -605,7 +614,7 @@ public class NCTestClientBuilder {
                 "Has checked function",
                 "Result",
                 "Error",
-                "Valid",
+                "Validation",
                 "Processing Time (ms)"
             );
     
@@ -622,7 +631,7 @@ public class NCTestClientBuilder {
                 row.add(test.isSuccessful() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult());
                 row.add(res.getError());
-                row.add(res.isValid());
+                row.add(res.getValidationError().isPresent() ? res.getValidationError().get() : "Passed");
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
@@ -643,7 +652,7 @@ public class NCTestClientBuilder {
             
             row.add(n);
             
-            long passed = results.stream().filter(NCTestResult::isValid).count();
+            long passed = results.stream().filter(p -> !p.getValidationError().isPresent()).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -812,23 +821,24 @@ public class NCTestClientBuilder {
     
         private List<NCTestResult> executeAsync(
             String auth,
-            List<NCTestSentence> batch,
-            Function<NCTestSentence, Long> getDsId,
-            Map<Long, String> dssMdlIds
+            Map<NCTestSentence, Pair<Long, String>> tests
         ) throws IOException, InterruptedException {
-            int n = batch.size();
+            int n = tests.size();
     
             Map<String, NCTestSentence> testsMap = new HashMap<>(n);
             Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
             Map<NCTestSentence, String> askErrTests = new HashMap<>();
             
             try {
-                for (NCTestSentence test : batch) {
+                for (Map.Entry<NCTestSentence, Pair<Long, String>> entry : tests.entrySet()) {
+                    NCTestSentence test = entry.getKey();
+                    Pair<Long, String> ids = entry.getValue();
+    
                     try {
-                        String srvReqId = ask(auth, test.getText(), getDsId.apply(test));
-    
+                        String srvReqId = ask(auth, test.getText(), ids.getLeft());
+        
                         log.debug("Sentence sent: {}", srvReqId);
-    
+        
                         testsMap.put(srvReqId, test);
                     }
                     catch (NCTestClientException e) {
@@ -878,15 +888,15 @@ public class NCTestClientBuilder {
                     NCTestSentence test = testsMap.get(p.getKey());
                     NCRequestStateJson testRes = p.getValue();
         
-                    return mkResult(test, testRes, dssMdlIds.get(testRes.getDatasourceId()));
+                    return mkResult(test, testRes, tests.get(test).getRight());
                 }),
                 askErrTests.entrySet().stream().map(p -> {
                     NCTestSentence test = p.getKey();
                     String err = p.getValue();
-        
-                    long dsId = getDsId.apply(test);
-                    
-                    return new NCTestResultImpl(test.getText(), dsId, dssMdlIds.get(dsId), null, err, 0, true);
+    
+                    Pair<Long, String> ids = tests.get(test);
+    
+                    return new NCTestResultImpl(test.getText(), ids.getLeft(), ids.getRight(), null, err, 0, "");
                 })
             ).collect(Collectors.toList());
         }
@@ -913,7 +923,7 @@ public class NCTestClientBuilder {
         )
             err = "Check error function invocation was not successful";
     
-        return new NCTestResultImpl(test.getText(), testRes.getDatasourceId(),mdlId, res, err, testRes.getUpdateTstamp() - testRes.getCreateTstamp(), true);
+        return new NCTestResultImpl(test.getText(), testRes.getDatasourceId(),mdlId, res, err, testRes.getUpdateTstamp() - testRes.getCreateTstamp(), "");
     }
     
     private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
