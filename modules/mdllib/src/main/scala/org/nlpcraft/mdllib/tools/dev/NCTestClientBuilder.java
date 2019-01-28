@@ -63,6 +63,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Test client builder for {@link NCTestClient} instances.
@@ -105,23 +106,23 @@ public class NCTestClientBuilder {
      * JSON helper class.
      */
     static class NCDsJson {
-        @SerializedName("id") private long datasourceId;
-        @SerializedName("mdlId") private String modelId;
+        @SerializedName("id") private long dsId;
+        @SerializedName("mdlId") private String mdlId;
     
         public long getDatasourceId() {
-            return datasourceId;
+            return dsId;
         }
     
-        public void setDatasourceId(long datasourceId) {
-            this.datasourceId = datasourceId;
+        public void setDatasourceId(long dsId) {
+            this.dsId = dsId;
         }
     
         public String getModelId() {
-            return modelId;
+            return mdlId;
         }
     
-        public void setModelId(String modelId) {
-            this.modelId = modelId;
+        public void setModelId(String mdlId) {
+            this.mdlId = mdlId;
         }
     }
         
@@ -130,22 +131,22 @@ public class NCTestClientBuilder {
      * JSON helper class.
      */
     static class NCRequestStateJson {
-        @SerializedName("srvReqId") private String serverRequestId;
+        @SerializedName("srvReqId") private String srvReqId;
         @SerializedName("usrId") private long userId;
         @SerializedName("dsId") private long dsId;
-        @SerializedName("resType") private String resultType;
-        @SerializedName("resBody") private String resultBody;
+        @SerializedName("resType") private String resType;
+        @SerializedName("resBody") private String resBody;
         @SerializedName("status") private String status;
         @SerializedName("error") private String error;
         @SerializedName("createTstamp") private long createTstamp;
         @SerializedName("updateTstamp") private long updateTstamp;
     
         public String getServerRequestId() {
-            return serverRequestId;
+            return srvReqId;
         }
     
-        public void setServerRequestId(String serverRequestId) {
-            this.serverRequestId = serverRequestId;
+        public void setServerRequestId(String srvReqId) {
+            this.srvReqId = srvReqId;
         }
     
         public long getUserId() {
@@ -156,11 +157,11 @@ public class NCTestClientBuilder {
             this.userId = userId;
         }
     
-        public long getDsId() {
+        public long getDatasourceId() {
             return dsId;
         }
     
-        public void setDsId(long dsId) {
+        public void setDatasourceId(long dsId) {
             this.dsId = dsId;
         }
     
@@ -173,19 +174,19 @@ public class NCTestClientBuilder {
         }
     
         public String getResultType() {
-            return resultType;
+            return resType;
         }
     
-        public void setResultType(String resultType) {
-            this.resultType = resultType;
+        public void setResultType(String resType) {
+            this.resType = resType;
         }
     
         public String getResultBody() {
-            return resultBody;
+            return resBody;
         }
     
-        public void setResultBody(String resultBody) {
-            this.resultBody = resultBody;
+        public void setResultBody(String resBody) {
+            this.resBody = resBody;
         }
     
         public String getError() {
@@ -294,6 +295,62 @@ public class NCTestClientBuilder {
             writeSeparator(cols, buf);
         
             return buf.toString();
+        }
+    }
+    
+    private static class NCTestResultImpl implements NCTestResult {
+        private String txt;
+        private long dsId;
+        private String mdlId;
+        private String res;
+        private String err;
+        private long procTime;
+        private boolean isValid;
+    
+        NCTestResultImpl(String txt, long dsId, String mdlId, String res, String err, long procTime,
+            boolean isValid) {
+            this.txt = txt;
+            this.dsId = dsId;
+            this.mdlId = mdlId;
+            this.res = res;
+            this.err = err;
+            this.procTime = procTime;
+            this.isValid = isValid;
+        }
+    
+        @Override
+        public String getText() {
+            return txt;
+        }
+        
+        @Override
+        public long getProcessingTime() {
+            return procTime;
+        }
+    
+        @Override
+        public long getDatasourceId() {
+            return dsId;
+        }
+    
+        @Override
+        public String getModelId() {
+            return mdlId;
+        }
+    
+        @Override
+        public String getResult() {
+            return res;
+        }
+    
+        @Override
+        public String getError() {
+            return err;
+        }
+    
+        @Override
+        public boolean isValid() {
+            return isValid;
         }
     }
     
@@ -455,7 +512,6 @@ public class NCTestClientBuilder {
                     map(p -> p.getModelId().get()).
                     collect(Collectors.toSet());
             
-            
             String auth = signin();
     
             Map<String, Long> newDssIds = new HashMap<>();
@@ -549,6 +605,7 @@ public class NCTestClientBuilder {
                 "Has checked function",
                 "Result",
                 "Error",
+                "Valid",
                 "Processing Time (ms)"
             );
     
@@ -565,6 +622,7 @@ public class NCTestClientBuilder {
                 row.add(test.isSuccessful() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult());
                 row.add(res.getError());
+                row.add(res.isValid());
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
@@ -762,14 +820,20 @@ public class NCTestClientBuilder {
     
             Map<String, NCTestSentence> testsMap = new HashMap<>(n);
             Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
+            Map<NCTestSentence, String> askErrTests = new HashMap<>();
             
             try {
                 for (NCTestSentence test : batch) {
-                    String srvReqId = ask(auth, test.getText(), getDsId.apply(test));
-        
-                    log.debug("Sentence sent: {}", srvReqId);
-        
-                    testsMap.put(srvReqId, test);
+                    try {
+                        String srvReqId = ask(auth, test.getText(), getDsId.apply(test));
+    
+                        log.debug("Sentence sent: {}", srvReqId);
+    
+                        testsMap.put(srvReqId, test);
+                    }
+                    catch (NCTestClientException e) {
+                        askErrTests.put(test, e.getMessage());
+                    }
                 }
     
                 log.debug("Sentences sent: {}", testsMap.size());
@@ -791,10 +855,10 @@ public class NCTestClientBuilder {
                         filter(p -> p.getStatus().equals("QRY_READY")).
                         collect(Collectors.toMap(NCRequestStateJson::getServerRequestId, p -> p));
     
+                    testsResMap.putAll(res);
+    
                     long newResps = res.keySet().stream().filter(p -> !testsResMap.containsKey(p)).count();
     
-                    testsResMap.putAll(res);
-                    
                     log.debug("Request processed: {}", newResps);
                 }
             }
@@ -808,13 +872,23 @@ public class NCTestClientBuilder {
                         log.error("Tests request cancel error: " + testsMap.keySet(), e);
                     }
             }
-            
-            return testsResMap.entrySet().stream().map(p -> {
-                NCTestSentence test = testsMap.get(p.getKey());
-                NCRequestStateJson testRes = p.getValue();
     
-                return mkResult(test, testRes, dssMdlIds.get(testRes.getDsId()));
-            }).collect(Collectors.toList());
+            return Stream.concat(
+                testsResMap.entrySet().stream().map(p -> {
+                    NCTestSentence test = testsMap.get(p.getKey());
+                    NCRequestStateJson testRes = p.getValue();
+        
+                    return mkResult(test, testRes, dssMdlIds.get(testRes.getDatasourceId()));
+                }),
+                askErrTests.entrySet().stream().map(p -> {
+                    NCTestSentence test = p.getKey();
+                    String err = p.getValue();
+        
+                    long dsId = getDsId.apply(test);
+                    
+                    return new NCTestResultImpl(test.getText(), dsId, dssMdlIds.get(dsId), null, err, 0, true);
+                })
+            ).collect(Collectors.toList());
         }
     }
     
@@ -839,89 +913,8 @@ public class NCTestClientBuilder {
         )
             err = "Check error function invocation was not successful";
     
-        final String errF = err;
-    
-        return new NCTestResult() {
-            @Override
-            public String getResult() {
-                return res;
-            }
-        
-            @Override
-            public String getError() {
-                return errF;
-            }
-        
-            @Override
-            public String getText() {
-                return test.getText();
-            }
-        
-            @Override
-            public long getDatasourceId() {
-                return testRes.getDsId();
-            }
-        
-            @Override
-            public String getModelId() {
-                return mdlId;
-            }
-        
-            @Override
-            public long getProcessingTime() {
-                return testRes.getUpdateTstamp() - testRes.getCreateTstamp();
-            }
-    
-            @Override
-            public boolean isValid() {
-                // TODO: wrong.
-                return test.isSuccessful() ?
-                    errF == null :
-                    errF != null;
-            }
-        };
+        return new NCTestResultImpl(test.getText(), testRes.getDatasourceId(),mdlId, res, err, testRes.getUpdateTstamp() - testRes.getCreateTstamp(), true);
     }
-    
-    private NCTestResult mkResult(NCTestSentence test, String err, long dsId, String mdlId) {
-        return new NCTestResult() {
-            @Override
-            public String getResult() {
-                return null;
-            }
-            
-            @Override
-            public String getError() {
-                return err;
-            }
-            
-            @Override
-            public String getText() {
-                return test.getText();
-            }
-            
-            @Override
-            public long getDatasourceId() {
-                return dsId;
-            }
-            
-            @Override
-            public String getModelId() {
-                return mdlId;
-            }
-            
-            @Override
-            public long getProcessingTime() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isValid() {
-                return false; // TODO:
-            }
-        };
-        
-    }
-    
     
     private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
         if (val == null)
