@@ -35,11 +35,51 @@ import org.nlpcraft.mdllib.NCQueryResult;
 
 import java.util.function.Predicate;
 
-public interface NCTestSentence {
-    String getModelId();
-    Long getDsId();
-    String getText();
-    boolean isSuccessful();
-    Predicate<NCQueryResult> getCheckResult();
-    Predicate<String> getCheckError();
+public class NCTestSentence {
+    private String txt;
+    private Long dsId;
+    private String modelId;
+    private Boolean successful;
+    private Predicate<NCQueryResult> checkResult;
+    private Predicate<String> checkError;
+    
+    NCTestSentence(
+        String txt,
+        Long dsId,
+        String modelId,
+        Boolean successful,
+        Predicate<NCQueryResult> checkResult,
+        Predicate<String> checkError
+    ) {
+        this.txt = txt;
+        this.dsId = dsId;
+        this.modelId = modelId;
+        this.successful = successful;
+        this.checkResult = checkResult;
+        this.checkError = checkError;
+    }
+    
+    public String getText() {
+        return txt;
+    }
+    
+    public Long getDatasourceId() {
+        return dsId;
+    }
+    
+    public String getModelId() {
+        return modelId;
+    }
+    
+    public Boolean isSuccessful() {
+        return successful;
+    }
+    
+    public Predicate<NCQueryResult> getCheckResult() {
+        return checkResult;
+    }
+    
+    public Predicate<String> getCheckError() {
+        return checkError;
+    }
 }

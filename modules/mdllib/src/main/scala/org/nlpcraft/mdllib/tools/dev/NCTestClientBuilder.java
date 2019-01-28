@@ -44,6 +44,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.slf4j.Logger;
@@ -60,12 +61,19 @@ import java.util.Map;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Test client builder for {@link NCTestClient} instances.
  */
 public class NCTestClientBuilder {
+    /** Default public REST API URL (endpoint). */
+    public static final String DFLT_BASEURL = "http://localhost:8081/api/v1/";
+    
+    public static final String DFLT_EMAIL = "admin@admin.com";
+    public static final String DFLT_PASSWORD = "admin";
+    
     /** Default millisecond delay between result checks. */
     public static final long DFLT_CHECK_INTERVAL_MS = 2000;
     
@@ -89,6 +97,11 @@ public class NCTestClientBuilder {
     private boolean asyncMode = DFLT_ASYNC_MODE;
     
     private RequestConfig reqCfg;
+    
+    private String baseUrl = DFLT_BASEURL;
+    private String email = DFLT_EMAIL;
+    private String pswd = DFLT_PASSWORD;
+    private Supplier<CloseableHttpClient> cliSup;
     
     /**
      * JSON helper class.
@@ -271,12 +284,14 @@ public class NCTestClientBuilder {
     
         private final Gson gson = new Gson();
         
-        private final NCTestClientConfig cfg;
         private final CloseableHttpClient client;
+    
+        NCTestClientImpl() {
+            this.client = mkClient();
+        }
         
-        NCTestClientImpl(NCTestClientConfig cfg) {
-            this.cfg = cfg;
-            this.client = cfg.getClientSupplier().get();
+        private CloseableHttpClient mkClient() {
+            return cliSup != null ? cliSup.get() : HttpClients.createDefault();
         }
     
         @SuppressWarnings("unchecked")
@@ -335,7 +350,8 @@ public class NCTestClientBuilder {
                             collect(Collectors.toMap(Pair::getKey, Pair::getValue))
                     )
                 );
-            
+    
+                post.setHeader("Content-Type", "application/json");
                 post.setEntity(entity);
             
                 log.trace("Request prepared: {}", post);
@@ -351,18 +367,8 @@ public class NCTestClientBuilder {
                         throw new NCTestClientException(String.format("Unexpected empty response [code=%d]", code));
                 
                     switch (code) {
-                        case 200:
-                            return js;
-                        case 400:
-                            Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
-                        
-                            String status = getField(m, "status");
-                            String reason = getField(m, "reason");
-                        
-                            throw new NCTestClientException(
-                                String.format("Server error [status=%s, reason=%s]", status, reason)
-                            );
-                    
+                        case 200: return js;
+                        case 400: throw new NCTestClientException(String.format("Server error: %s", js));
                         default:
                             throw new NCTestClientException(
                                 String.format("Unexpected response [code=%d, text=%s]", code, js)
@@ -388,21 +394,19 @@ public class NCTestClientBuilder {
         
         private <T> void checkDups(
             List<NCTestSentence> tests,
-            Function<NCTestSentence, T> getField,
+            Function<NCTestSentence, T> extractField,
             String fieldName
         ) {
             List<Pair<String, T>> allTestPairs =
                 tests.stream().
-                    map(p -> Pair.of(p.getText(), getField.apply(p))).
+                    map(p -> Pair.of(p.getText(), extractField.apply(p))).
                     filter(p -> p.getRight() != null).
                     collect(Collectors.toList());
     
             List<Pair<String, T>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
     
-            if (testsPairs.size() != tests.size()) {
-                for (Pair<String, T> testsPair : testsPairs) {
-                    allTestPairs.remove(testsPair);
-                }
+            if (testsPairs.size() != allTestPairs.size()) {
+                allTestPairs.removeAll(testsPairs);
         
                 String s =
                     allTestPairs.stream().
@@ -421,7 +425,7 @@ public class NCTestClientBuilder {
             if (tests.isEmpty())
                 throw new IllegalArgumentException("Tests cannot be empty");
     
-            checkDups(tests, NCTestSentence::getDsId, "datasource");
+            checkDups(tests, NCTestSentence::getDatasourceId, "datasource");
             checkDups(tests, NCTestSentence::getModelId, "model");
     
             Set<String> mdlIds =
@@ -438,7 +442,7 @@ public class NCTestClientBuilder {
                         // - 'conv/clear' - calls for each data source before test.
                         // - 'ask' for each test
                         // - at least one 'check'
-                        (int)tests.stream().map(NCTestSentence::getDsId).distinct().count() + tests.size() + 1;
+                        (int)tests.stream().map(NCTestSentence::getDatasourceId).distinct().count() + tests.size() + 1;
     
                 
                 // - 3 - 'signin', 'ds/all', 'signout',
@@ -465,8 +469,8 @@ public class NCTestClientBuilder {
             }
             
             Function<NCTestSentence, Long> getDsId = (s) -> {
-                if (s.getDsId() != null)
-                    return s.getDsId();
+                if (s.getDatasourceId() != null)
+                    return s.getDatasourceId();
     
                 Long dsId = newDssIds.get(s.getModelId());
                 
@@ -615,7 +619,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(cfg.getBaseUrl() + "clear/conversation",
+                    post(baseUrl + "clear/conversation",
                         Pair.of("accessToken", auth),
                         Pair.of("dsId", dsId)
                     ),
@@ -629,7 +633,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(cfg.getBaseUrl() + "cancel",
+                    post(baseUrl + "cancel",
                         Pair.of("accessToken", auth),
                         Pair.of("srvReqIds", ids)
                     ),
@@ -643,13 +647,13 @@ public class NCTestClientBuilder {
             
             long id =
                 extract(
-                    post(cfg.getBaseUrl() + "ds/add",
+                    post(baseUrl + "ds/add",
                         Pair.of("accessToken", auth),
                         Pair.of("name", "test-" + num),
                         Pair.of("shortDesc", "Test datasource"),
                         Pair.of("mdlId", mdlId),
                         Pair.of("mdlName", "Test model"),
-                        Pair.of("mdlVer", "Test model version")
+                        Pair.of("mdlVer", "Test version")
             
                     ),
                     "id",
@@ -666,7 +670,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(cfg.getBaseUrl() + "ds/delete",
+                    post(baseUrl + "ds/delete",
                         Pair.of("accessToken", auth),
                         Pair.of("id", id)
                     ),
@@ -676,13 +680,15 @@ public class NCTestClientBuilder {
         }
     
         private String signin() throws IOException {
-            log.info("`signin` request sent for: {}", cfg.getEmail());
+            log.info("`user/signin` request sent for: {}", email);
             
+            // TODO: check status
             return extract(
                 post(
-                    cfg.getBaseUrl() + "signin",
-                    Pair.of("probeToken", cfg.getProbeToken()),
-                    Pair.of("email", cfg.getEmail())
+                    baseUrl + "user/signin",
+                    Pair.of("email", email),
+                    Pair.of("passwd", pswd)
+                    
                 ),
                 "accessToken",
                 String.class
@@ -690,11 +696,11 @@ public class NCTestClientBuilder {
         }
     
         private void signout(String auth) throws IOException {
-            log.info("`signout` request sent for: {}", cfg.getEmail());
+            log.info("`user/signout` request sent for: {}", email);
             
             checkStatus(
                 gson.fromJson(
-                    post(cfg.getBaseUrl() + "signout",
+                    post(baseUrl + "user/signout",
                         Pair.of("accessToken", auth)
                     ),
                     TYPE_RESP
@@ -816,10 +822,10 @@ public class NCTestClientBuilder {
         }
     
         private List<NCRequestStateJson> check(String auth) throws IOException {
-            log.info("`check` request sent for: {}", cfg.getEmail());
+            log.info("`check` request sent for: {}", email);
             
             Map<String, Object> m = gson.fromJson(
-                post(cfg.getBaseUrl() + "check",
+                post(baseUrl + "check",
                     Pair.of("accessToken", auth)
                 ),
                 TYPE_RESP
@@ -834,7 +840,7 @@ public class NCTestClientBuilder {
             log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
             
             return extract(
-                post(cfg.getBaseUrl() + "ask",
+                post(baseUrl + "ask",
                     Pair.of("accessToken", auth),
                     Pair.of("txt", txt),
                     Pair.of("dsId", dsId),
@@ -951,15 +957,37 @@ public class NCTestClientBuilder {
         return this;
     }
     
+    public NCTestClientBuilder withHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+        this.cliSup = cliSup;
+    
+        return this;
+    }
+    
+    public NCTestClientBuilder withBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    
+        return this;
+    }
+    
+    public NCTestClientBuilder withEmail(String email) {
+        this.email = email;
+    
+        return this;
+    }
+    
+    public NCTestClientBuilder withPassword(String pswd) {
+        this.pswd = pswd;
+        
+        return this;
+    }
+    
+    
     /**
      * Build new configured test client instance.
      *
-     * @param cfg Mandatory test configuration.
      * @return Newly built test client instance.
      */
-    public NCTestClient build(NCTestClientConfig cfg) {
-        notNull("cfg", cfg);
-        
-        return new NCTestClientImpl(cfg);
+    public NCTestClient build() {
+        return new NCTestClientImpl();
     }
 }

@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 public class NCTestSentenceBuilder {
     private Long dsId;
     private String modelId;
-    private String text;
     private Boolean successful;
     private Predicate<NCQueryResult> checkResult;
     private Predicate<String> checkError;
@@ -24,12 +23,6 @@ public class NCTestSentenceBuilder {
     
     public NCTestSentenceBuilder withModelId(String modelId) {
         this.modelId = modelId;
-        
-        return this;
-    }
-    
-    public NCTestSentenceBuilder withText(String text) {
-        this.text = text;
         
         return this;
     }
@@ -52,8 +45,8 @@ public class NCTestSentenceBuilder {
         return this;
     }
     
-    public NCTestSentence build() {
-        if (text == null)
+    public NCTestSentence build(String txt) {
+        if (txt == null)
             throw new IllegalStateException("Text must be defined.");
         
         if (modelId == null && dsId == null)
@@ -73,36 +66,13 @@ public class NCTestSentenceBuilder {
         if (checkError != null && successful != null && successful)
             throw new IllegalStateException("Check error function can be defined only for unsuccessful results.");
         
-        return new NCTestSentence() {
-            @Override
-            public String getModelId() {
-                return modelId;
-            }
-            
-            @Override
-            public Long getDsId() {
-                return dsId;
-            }
-            
-            @Override
-            public String getText() {
-                return text;
-            }
-            
-            @Override
-            public boolean isSuccessful() {
-                return successful != null ? successful : checkError == null; // True by default.
-            }
-            
-            @Override
-            public Predicate<NCQueryResult> getCheckResult() {
-                return checkResult;
-            }
-            
-            @Override
-            public Predicate<String> getCheckError() {
-                return checkError;
-            }
-        };
+        return new NCTestSentence(
+            txt,
+            dsId,
+            modelId,
+            successful != null ? successful : checkError == null, // True by default.
+            checkResult,
+            checkError
+        );
     }
 }

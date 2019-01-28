@@ -1499,17 +1499,17 @@
                             "name": {
                                 "type": "string",
                                 "description": "Data source name",
-                                "maxLength": 64
+                                "maxLength": 128
                             },
                             "shortDesc": {
                                 "type": "string",
                                 "description": "Short data source description",
-                                "maxLength": 64
+                                "maxLength": 128
                             },
                             "mdlId": {
                                 "type": "string",
                                 "description": "Model ID",
-                                "maxLength": 64
+                                "maxLength": 32
                             },
                             "mdlName": {
                                 "type": "string",
@@ -1519,12 +1519,12 @@
                             "mdlVer": {
                                 "type": "string",
                                 "description": "Model version",
-                                "maxLength": 64
+                                "maxLength": 16
                             },
                             "mdlCfg": {
                                 "type": "string",
                                 "description": "Optional model configuration string",
-                                "maxLength": 512000
+                                "maxLength": 5120
                             }
                         }
                     }

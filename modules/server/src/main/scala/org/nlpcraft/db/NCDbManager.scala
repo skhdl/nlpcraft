@@ -31,6 +31,8 @@
 
 package org.nlpcraft.db
 
+import java.sql.Timestamp
+
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
@@ -517,13 +519,13 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |  INTO proc_log (
               |     user_id,
               |     srv_req_id,
-              |     orig_txt,
+              |     txt,
               |     ds_id,
               |     model_id,
               |     status,
               |     is_test,
               |     user_agent,
-              |     rmt_addr,
+              |     rmt_address,
               |     recv_tstamp
               | )
               | VALUES (
@@ -538,7 +540,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
             test,
             usrAgent,
             rmtAddr,
-            rcvTstamp
+            new Timestamp(rcvTstamp)
         )
     }
     

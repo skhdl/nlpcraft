@@ -35,21 +35,15 @@ import org.nlpcraft.mdllib.NCModelSpecBase
 import org.scalatest.FlatSpec
 
 class NCTestClientSpec2 extends FlatSpec with NCModelSpecBase {
-    private val CFG = new NCTestClientConfig()
-
-    // Override default to use localhost - change if required.
-    CFG.setBaseUrl("http://localhost:8081/pub/v1/")
-
     case class TestHolder(test: NCTestSentence, shouldTestPassed: Boolean)
 
-    def test(): Unit = {
-        val client = NCTestClientBuilder.newBuilder().build(CFG)
+    it should "properly work" in {
+        val client = NCTestClientBuilder.newBuilder().build()
 
         client.test(
             NCTestSentenceBuilder.newBuilder().
                 withModelId("nlpcraft.weather.ex").
-                withText("LA weather").
-                build()
+                build("LA weather")
         )
     }
 }
