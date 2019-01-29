@@ -553,9 +553,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
 
+        val emailKey = Right(normEmail)
+
         val (newUsrId, salt) =
             catching(wrapIE) {
-                if (userCache.containsKey(Right(normEmail)))
+                if (userCache.containsKey(emailKey))
                     throw new NCE(s"User with this email already exists: $normEmail")
 
                 val newUsrId = usersSeq.incrementAndGet()
@@ -572,7 +574,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
                 )
 
                 userCache.put(Left(newUsrId), mdo)
-                userCache.put(Right(normEmail), mdo)
+                userCache.put(emailKey, mdo)
 
                 (newUsrId, salt)
             }

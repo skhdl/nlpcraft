@@ -221,19 +221,6 @@ object NCDbManager extends NCLifecycle("Database manager") {
     }
 
     /**
-      * Deletes user record with given email.
-      *
-      * @param email Email.
-      */
-    @throws[NCE]
-    def deleteUser(email: String): Unit = {
-        ensureStarted()
-
-        NCPsql.markAsDeleted("nc_user", "email", email)
-    }
-
-
-    /**
       * Deletes data source with given ID.
       *
       * @param dsId Data source ID.

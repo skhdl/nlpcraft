@@ -46,22 +46,23 @@ import scala.util.control.Exception._
 class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMdo] {
     @throws[IgniteException]
     override protected def put(key: Either[Long, String], usr: NCUserMdo): Unit =
-        catching(wrapNCE) {
-            NCPsql.sql {
-                val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
+        if (key.isLeft)
+            catching(wrapNCE) {
+                NCPsql.sql {
+                    val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
 
-                if (updated == 0)
-                    NCDbManager.addUser(
-                        usr.id,
-                        usr.firstName,
-                        usr.lastName,
-                        usr.email,
-                        usr.passwordSalt,
-                        usr.avatarUrl,
-                        usr.isAdmin
-                    )
+                    if (updated == 0)
+                        NCDbManager.addUser(
+                            usr.id,
+                            usr.firstName,
+                            usr.lastName,
+                            usr.email,
+                            usr.passwordSalt,
+                            usr.avatarUrl,
+                            usr.isAdmin
+                        )
+                }
             }
-        }
 
     @throws[IgniteException]
     override protected def get(key: Either[Long, String]): NCUserMdo =
@@ -76,14 +77,12 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
 
     @throws[IgniteException]
     override protected def remove(key: Either[Long, String]): Unit =
-        catching(wrapNCE) {
-            NCPsql.sql {
-                if (key.isLeft)
+        if (key.isLeft)
+            catching(wrapNCE) {
+                NCPsql.sql {
                     NCDbManager.deleteUser(key.left.get)
-                else
-                    NCDbManager.deleteUser(key.right.get)
+                }
             }
-        }
 
     @throws[IgniteException]
     override def loadCache(clo: IgniteBiInClosure[Either[Long, String], NCUserMdo], args: AnyRef*): Unit =
