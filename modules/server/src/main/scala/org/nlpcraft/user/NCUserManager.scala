@@ -599,5 +599,4 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             newUsrId
         }
     }
-
 }
