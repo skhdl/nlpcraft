@@ -606,10 +606,10 @@ public class NCTestClientBuilder {
                 row.add(ss.equals(res.getText()) ? ss : ss + " ...");
                 row.add(res.getDatasourceId());
                 row.add(res.getModelId());
-                row.add(test.isSuccessful());
-                row.add(test.isSuccessful() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
-                row.add(res.getResult());
-                row.add(res.getError());
+                row.add(test.isExpectedPassed());
+                row.add(test.isExpectedPassed() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
+                row.add(res.getResult().orElse(""));
+                row.add(res.getError().orElse(""));
                 row.add(res.isValid());
                 row.add(res.getValidationError().orElse(""));
                 row.add(res.getProcessingTime());
@@ -909,7 +909,7 @@ public class NCTestClientBuilder {
     ) {
         AtomicReference<String> s = new AtomicReference<>();
         
-        if (test.isSuccessful()) {
+        if (test.isExpectedPassed()) {
             if (err != null)
                 s.set("Unexpected error");
             else if (test.getCheckResult().isPresent()) {
@@ -933,6 +933,10 @@ public class NCTestClientBuilder {
         }
         
         return new NCTestResult() {
+            private Optional<String>convert(String s) {
+                return s == null ? Optional.empty() : Optional.of(s);
+            }
+            
             @Override
             public String getText() {
                 return test.getText();
@@ -954,21 +958,22 @@ public class NCTestClientBuilder {
             }
     
             @Override
-            public String getResult() {
-                return res;
+            public Optional<String> getResult() {
+                return convert(res);
             }
     
             @Override
-            public String getError() {
-                return err;
+            public Optional<String> getError() {
+                return convert(err);
             }
     
             @Override
             public Optional<String> getValidationError() {
-                return s.get() == null ? Optional.empty() : Optional.of(s.get());
+                return convert(s.get());
             }
         };
     }
+    
     
     private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
         if (val == null)
@@ -1052,6 +1057,13 @@ public class NCTestClientBuilder {
         return this;
     }
     
+    /**
+     * Sets {@link CloseableHttpClient} custom supplier.
+     * By default {@link CloseableHttpClient} created with {@link HttpClients#createDefault()}.
+     *
+     * @param cliSup {@link CloseableHttpClient} custom supplier.
+     * @return Builder instance for chaining calls.
+     */
     public NCTestClientBuilder withHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
         checkNotNull("cliSup", cliSup);
         
@@ -1060,6 +1072,13 @@ public class NCTestClientBuilder {
         return this;
     }
     
+    /**
+     * Sets API base URL.
+     * By default used {@link NCTestClientBuilder#DFLT_BASEURL}.
+     *
+     * @param baseUrl API base URL.
+     * @return Builder instance for chaining calls.
+     */
     public NCTestClientBuilder withBaseUrl(String baseUrl) {
         checkNotNull("baseUrl", baseUrl);
         
@@ -1068,22 +1087,31 @@ public class NCTestClientBuilder {
         return this;
     }
     
-    public NCTestClientBuilder withEmail(String email) {
+    /**
+     * Sets user credentials.
+     * By default used {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD}.
+     *
+     * @param email User email.
+     * @param pswd User password.
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder withUser(String email, String pswd) {
         checkNotNull("email", email);
-        
-        this.email = email;
-    
-        return this;
-    }
-    
-    public NCTestClientBuilder withPassword(String pswd) {
         checkNotNull("pswd", pswd);
         
+        this.email = email;
         this.pswd = pswd;
-        
+    
         return this;
     }
     
+    /**
+     * Sets maximum check time. It is maximum time of checking snt request states. TODO:
+     * By default used {@link NCTestClientBuilder#DFLT_MAX_CHECK_TIME}, ms.
+     *
+     * @param maxCheckTime Maximum check time (ms).
+     * @return Builder instance for chaining calls.
+     */
     public NCTestClientBuilder withMaxCheckTime(long maxCheckTime) {
         checkPositive("maxCheckTime", maxCheckTime);
         

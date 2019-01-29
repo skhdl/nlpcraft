@@ -51,11 +51,49 @@ public interface NCTestResult {
      */
     long getProcessingTime();
     
+    /**
+     * Gets datasource ID.
+     *
+     * @return Datasource ID.
+     */
     long getDatasourceId();
+    
+    /**
+     * Gets model ID.
+     *
+     * @return Model ID.
+     */
     String getModelId();
-    String getResult();
-    String getError();
+    
+    /**
+     * Gets optional execution result.
+     *
+     * @return Optional execution result.
+     */
+    Optional<String> getResult();
+    
+    /**
+     * Gets optional execution error.
+     *
+     * @return Optional execution error.
+     */
+    Optional<String> getError();
+    
+    /**
+     * TODO:
+     * Gets optional execution validation error.
+     *
+     * @return Optional execution validation error.
+     */
     Optional<String> getValidationError();
+    
+    /**
+     * TODO:
+     *
+     * Gets execution validation flag.
+     *
+     * @return Execution validation error. `true` if result is expected, `false` otherwise.
+     */
     default boolean isValid() {
         return !getValidationError().isPresent();
     }

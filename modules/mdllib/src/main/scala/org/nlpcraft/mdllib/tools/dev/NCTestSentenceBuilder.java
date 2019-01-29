@@ -36,6 +36,9 @@ import org.nlpcraft.mdllib.NCQueryResult;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * TODO:
+ */
 public class NCTestSentenceBuilder {
     private Long dsId;
     private String modelId;
@@ -43,40 +46,68 @@ public class NCTestSentenceBuilder {
     private Predicate<NCQueryResult> checkResult;
     private Predicate<String> checkError;
     
+    /**
+     *
+     * @return
+     */
     public static NCTestSentenceBuilder newBuilder() {
         return new NCTestSentenceBuilder();
     }
     
-    public NCTestSentenceBuilder setDsId(long dsId) {
+    /**
+     *
+     * @return
+     */
+    public NCTestSentenceBuilder withDsId(long dsId) {
         this.dsId = dsId;
         
         return this;
     }
     
+    /**
+     *
+     * @return
+     */
     public NCTestSentenceBuilder withModelId(String modelId) {
         this.modelId = modelId;
         
         return this;
     }
     
+    /**
+     *
+     * @return
+     */
     public NCTestSentenceBuilder withSuccessfulFlag(boolean successful) {
         this.successful = successful;
         
         return this;
     }
     
+    /**
+     *
+     * @return
+     */
     public NCTestSentenceBuilder withCheckResult(Predicate<NCQueryResult> checkResult) {
         this.checkResult = checkResult;
         
         return this;
     }
     
+    /**
+     *
+     * @return
+     */
     public NCTestSentenceBuilder withCheckError(Predicate<String> checkError) {
         this.checkError = checkError;
         
         return this;
     }
     
+    /**
+     *
+     * @return
+     */
     public NCTestSentence build(String txt) {
         if (txt == null)
             throw new IllegalStateException("Text must be defined.");
@@ -99,6 +130,10 @@ public class NCTestSentenceBuilder {
             throw new IllegalStateException("Check error function can be defined only for unsuccessful results.");
     
         return new NCTestSentence() {
+            private<T> Optional<T> convert(T t) {
+                return t != null ? Optional.of(t) : Optional.empty();
+            }
+            
             @Override
             public String getText() {
                 return txt;
@@ -106,27 +141,28 @@ public class NCTestSentenceBuilder {
     
             @Override
             public Optional<Long> getDatasourceId() {
-                return dsId == null ? Optional.empty() : Optional.of(dsId);
+                return convert(dsId);
             }
     
             @Override
             public Optional<String> getModelId() {
-                return modelId == null ? Optional.empty() : Optional.of(modelId);
+                return convert(modelId);
             }
     
             @Override
-            public boolean isSuccessful() {
-                return successful != null ? successful : checkError == null; // True by default.;
+            public boolean isExpectedPassed() {
+                // True by default;
+                return successful != null ? successful : checkError == null;
             }
     
             @Override
             public Optional<Predicate<NCQueryResult>> getCheckResult() {
-                return checkResult == null ? Optional.empty() : Optional.of(checkResult);
+                return convert(checkResult);
             }
     
             @Override
             public Optional<Predicate<String>> getCheckError() {
-                return checkError == null ? Optional.empty() : Optional.of(checkError);
+                return convert(checkError);
             }
         };
     }

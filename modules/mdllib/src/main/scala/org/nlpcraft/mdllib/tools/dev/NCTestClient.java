@@ -34,6 +34,9 @@ package org.nlpcraft.mdllib.tools.dev;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * TODO:
+ */
 public interface NCTestClient {
     /**
      * Tests all given sentences and returns corresponding list of results.

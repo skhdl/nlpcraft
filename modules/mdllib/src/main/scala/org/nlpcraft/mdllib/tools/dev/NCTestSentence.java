@@ -33,14 +33,59 @@ package org.nlpcraft.mdllib.tools.dev;
 
 import org.nlpcraft.mdllib.NCQueryResult;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * TODO:
+ * Sentence to test. This interface defines a sentence to be tested, its data source as well as its expected
+ * response status and optional result checker. One or more test sentences are passed to
+ * {@link NCTestClient#test(NCTestSentence...)} or {@link NCTestClient#test(List)} methods.
+ */
 public interface NCTestSentence {
+    /**
+     * Gets sentence text.
+     *
+     * @return Sentence text.
+     */
     String getText();
+    
+    
+    /**
+     * TODO:
+     * Gets data source ID. Note that it should return value or {@link NCTestSentence#getModelId()}
+     *
+     * @return Data source ID.
+     */
     Optional<Long> getDatasourceId();
+    
+    /**
+     * TODO:
+     * Gets model ID. Note that it should return value or {@link NCTestSentence#getDatasourceId()}
+     *
+     * @return Model ID.
+     */
     Optional<String> getModelId();
-    boolean isSuccessful();
+    
+    /**
+     * Gets excepted result type flag. TODO:
+     *
+     * @return Excepted result type flag.
+     */
+    boolean isExpectedPassed();
+    
+    /**
+     * Gets optional result validation predicate.
+     *
+     * @return Validation predicate or {@code}.
+     */
     Optional<Predicate<NCQueryResult>> getCheckResult();
+    
+    /**
+     * Gets optional error validation predicate.
+     *
+     * @return Validation predicate or {@code}.
+     */
     Optional<Predicate<String>> getCheckError();
 }
