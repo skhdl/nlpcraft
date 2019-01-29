@@ -34,20 +34,23 @@ package org.nlpcraft.mdllib.tools.dev
 import org.nlpcraft.mdllib.NCModelSpecBase
 import org.scalatest.FlatSpec
 
+/**
+  * TODO: should be removed.
+  */
 class NCTestClientSpec2 extends FlatSpec with NCModelSpecBase {
     case class TestHolder(test: NCTestSentence, shouldTestPassed: Boolean)
 
-//    it should "properly work" in {
-//        val client = NCTestClientBuilder.newBuilder().build()
-//
-//        client.test(
-//            NCTestSentenceBuilder.newBuilder().
-//                withModelId("nlpcraft.weather.ex").
-//                build("LA weather")
-//        )
-//    }
-
     it should "properly work" in {
+        val client = NCTestClientBuilder.newBuilder().build()
+
+        client.test(
+            NCTestSentenceBuilder.newBuilder().
+                withModelId("nlpcraft.weather.ex").
+                build("LA weather")
+        )
+    }
+
+    it should "properly work with errors" in {
         val client = NCTestClientBuilder.newBuilder().build()
 
         client.test(
