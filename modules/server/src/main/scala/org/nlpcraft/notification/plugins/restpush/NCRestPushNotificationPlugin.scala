@@ -66,7 +66,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
             require(endpoints.nonEmpty, s"at least one REST endpoint is required")
         }
         
-        // TODO: validate endpoints?
+        //  TODO: validate endpoints?
     }
     
     Config.check()

@@ -373,7 +373,7 @@ public class NCTestClientBuilder {
             }
         }
     
-        private <T> T extract(String js, String name, Type type) throws NCTestClientException {
+        private <T> T checkAndExtract(String js, String name, Type type) throws NCTestClientException {
             Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
         
             checkStatus(m);
@@ -606,12 +606,12 @@ public class NCTestClientBuilder {
                 row.add(ss.equals(res.getText()) ? ss : ss + " ...");
                 row.add(res.getDatasourceId());
                 row.add(res.getModelId());
-                row.add(test.isExpectedPassed());
-                row.add(test.isExpectedPassed() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
+                row.add(test.shouldPassed());
+                row.add(test.shouldPassed() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult().orElse(""));
-                row.add(res.getError().orElse(""));
-                row.add(res.isValid());
-                row.add(res.getValidationError().orElse(""));
+                row.add(res.getResultError().orElse(""));
+                row.add(res.isTestPassed());
+                row.add(res.getTestError().orElse(""));
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
@@ -632,7 +632,7 @@ public class NCTestClientBuilder {
             
             row.add(n);
             
-            long passed = results.stream().filter(NCTestResult::isValid).count();
+            long passed = results.stream().filter(NCTestResult::isTestPassed).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -692,7 +692,7 @@ public class NCTestClientBuilder {
             log.info("`ds/add` request sent for model: {}", mdlId);
             
             long id =
-                extract(
+                checkAndExtract(
                     post("ds/add",
                         Pair.of("accessToken", auth),
                         Pair.of("name", "test-" + num),
@@ -728,7 +728,7 @@ public class NCTestClientBuilder {
         private String signin() throws IOException, NCTestClientException {
             log.info("`user/signin` request sent for: {}", email);
             
-            return extract(
+            return checkAndExtract(
                 post("user/signin",
                     Pair.of("email", email),
                     Pair.of("passwd", pswd)
@@ -772,7 +772,7 @@ public class NCTestClientBuilder {
         private String ask(String auth, String txt, long dsId) throws IOException, NCTestClientException {
             log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
         
-            return extract(
+            return checkAndExtract(
                 post("ask",
                     Pair.of("accessToken", auth),
                     Pair.of("txt", txt),
@@ -783,7 +783,6 @@ public class NCTestClientBuilder {
                 String.class
             );
         }
-    
     
         private void signout(String auth) throws IOException, NCTestClientException {
             log.info("`user/signout` request sent for: {}", email);
@@ -906,29 +905,34 @@ public class NCTestClientBuilder {
     private static NCTestResult mkResult(
         NCTestSentence test, long procTime, long dsId, String mdlId, String res, String resType, String err
     ) {
+        assert test != null;
+        assert mdlId != null;
+        assert res != null && resType != null ^ err != null;
+        
         AtomicReference<String> s = new AtomicReference<>();
         
-        if (test.isExpectedPassed()) {
+        if (test.shouldPassed()) {
             if (err != null)
                 s.set("Unexpected error");
-            else if (test.getCheckResult().isPresent()) {
-                assert res != null;
-                assert resType != null;
-                
-                NCQueryResult r = new NCQueryResult();
-                
-                r.setBody(res);
-                r.setType(resType);
-                
-                if (!test.getCheckResult().get().test(r))
-                    s.set("Execution ok, but unsuccessful check");
-            }
+            else
+                test.getCheckResult().ifPresent(checker -> {
+                    NCQueryResult qr = new NCQueryResult();
+    
+                    qr.setBody(res);
+                    qr.setType(resType);
+    
+                    if (!checker.test(qr))
+                        s.set("Execution ok, but unsuccessful check");
+                });
         }
         else {
             if (err == null)
                 s.set("Unexpected successful result");
-            else if (test.getCheckError().isPresent() && !test.getCheckError().get().test(err))
-                s.set("Execution failed, but unsuccessful check");
+            else
+                test.getCheckError().ifPresent(checker -> {
+                    if (!checker.test(err))
+                        s.set("Execution failed, but unsuccessful check");
+                });
         }
         
         return new NCTestResult() {
@@ -962,20 +966,19 @@ public class NCTestClientBuilder {
             }
     
             @Override
-            public Optional<String> getError() {
+            public Optional<String> getResultError() {
                 return convert(err);
             }
     
             @Override
-            public Optional<String> getValidationError() {
+            public Optional<String> getTestError() {
                 return convert(s.get());
             }
         };
     }
     
-    
-    private static void checkNotNull(String name, Object val) throws IllegalArgumentException {
-        if (val == null)
+    private static void checkNotNull(String name, Object v) throws IllegalArgumentException {
+        if (v == null)
             throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
     }
     

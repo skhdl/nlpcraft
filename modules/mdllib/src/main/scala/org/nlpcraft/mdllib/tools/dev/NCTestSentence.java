@@ -51,7 +51,6 @@ public interface NCTestSentence {
      */
     String getText();
     
-    
     /**
      * TODO:
      * Gets data source ID. Note that it should return value or {@link NCTestSentence#getModelId()}
@@ -73,7 +72,7 @@ public interface NCTestSentence {
      *
      * @return Excepted result type flag.
      */
-    boolean isExpectedPassed();
+    boolean shouldPassed();
     
     /**
      * Gets optional result validation predicate.

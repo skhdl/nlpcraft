@@ -37,26 +37,33 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * TODO:
+ * Sentences builder for {@link NCTestSentence} instances.
  */
 public class NCTestSentenceBuilder {
+    public static boolean DFLT_SHOULD_PASSED = true;
+    
     private Long dsId;
     private String modelId;
-    private Boolean successful;
+    private boolean shouldPassed = DFLT_SHOULD_PASSED;
     private Predicate<NCQueryResult> checkResult;
     private Predicate<String> checkError;
     
     /**
+     * Creates new default builder instance.
      *
-     * @return
+     * @return Builder instance.
      */
     public static NCTestSentenceBuilder newBuilder() {
         return new NCTestSentenceBuilder();
     }
     
     /**
+     * TODO:
+     * Sets datasource ID.
+     * Datasource with given ID should be already registered in the system.
      *
-     * @return
+     * @param dsId Datasource ID.
+     * @return Builder instance for chaining calls.
      */
     public NCTestSentenceBuilder withDsId(long dsId) {
         this.dsId = dsId;
@@ -65,8 +72,14 @@ public class NCTestSentenceBuilder {
     }
     
     /**
+     * TODO:
+     * Sets model ID.
+     * Temporary datasource for given model will be registered in the system before test and deleted after.
+     * Note that these temporary tests datasources can be remained in the system if tests crushed.
+     * You should delete it from database manually in such cases.
      *
-     * @return
+     * @param modelId User Datasource ID.
+     * @return Builder instance for chaining calls.
      */
     public NCTestSentenceBuilder withModelId(String modelId) {
         this.modelId = modelId;
@@ -75,38 +88,50 @@ public class NCTestSentenceBuilder {
     }
     
     /**
+     * TODO:
+     * Sets test expected behaviour flag.
      *
-     * @return
+     * Default value is {@link NCTestSentenceBuilder#DFLT_SHOULD_PASSED}.
+     *
+     * @param shouldPassed Flag.
+     * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withSuccessfulFlag(boolean successful) {
-        this.successful = successful;
+    public NCTestSentenceBuilder withShouldPassed(boolean shouldPassed) {
+        this.shouldPassed = shouldPassed;
         
         return this;
     }
     
     /**
+     * Sets result validation predicate.
      *
-     * @return
+     * @param checkResult Result validation predicate..
+     * @return Builder instance for chaining calls.
      */
     public NCTestSentenceBuilder withCheckResult(Predicate<NCQueryResult> checkResult) {
         this.checkResult = checkResult;
+        this.shouldPassed = true;
         
         return this;
     }
     
     /**
+     * Sets error validation predicate.
      *
-     * @return
+     * @param checkError Error validation predicate..
+     * @return Builder instance for chaining calls.
      */
     public NCTestSentenceBuilder withCheckError(Predicate<String> checkError) {
         this.checkError = checkError;
+        this.shouldPassed = false;
         
         return this;
     }
     
     /**
+     * Build new configured test sentence instance.
      *
-     * @return
+     * @return Newly built test sentence instance.
      */
     public NCTestSentence build(String txt) {
         if (txt == null)
@@ -123,10 +148,10 @@ public class NCTestSentenceBuilder {
                 "Check result function or check error function can be defined, but not both of them."
             );
         
-        if (checkResult != null && successful != null && !successful)
+        if (checkResult != null && !shouldPassed)
             throw new IllegalStateException("Check result function can be defined only for successful results.");
         
-        if (checkError != null && successful != null && successful)
+        if (checkError != null && shouldPassed)
             throw new IllegalStateException("Check error function can be defined only for unsuccessful results.");
     
         return new NCTestSentence() {
@@ -150,9 +175,8 @@ public class NCTestSentenceBuilder {
             }
     
             @Override
-            public boolean isExpectedPassed() {
-                // True by default;
-                return successful != null ? successful : checkError == null;
+            public boolean shouldPassed() {
+                return shouldPassed;
             }
     
             @Override

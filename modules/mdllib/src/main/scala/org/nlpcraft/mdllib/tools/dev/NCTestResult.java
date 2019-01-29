@@ -77,24 +77,24 @@ public interface NCTestResult {
      *
      * @return Optional execution error.
      */
-    Optional<String> getError();
+    Optional<String> getResultError();
     
     /**
      * TODO:
-     * Gets optional execution validation error.
+     * Gets optional test execution error.
      *
-     * @return Optional execution validation error.
+     * @return Optional test execution error.
      */
-    Optional<String> getValidationError();
+    Optional<String> getTestError();
     
     /**
      * TODO:
      *
-     * Gets execution validation flag.
+     * Gets test execution successful flag.
      *
-     * @return Execution validation error. `true` if result is expected, `false` otherwise.
+     * @return Test execution successful flag.
      */
-    default boolean isValid() {
-        return !getValidationError().isPresent();
+    default boolean isTestPassed() {
+        return !getTestError().isPresent();
     }
 }
