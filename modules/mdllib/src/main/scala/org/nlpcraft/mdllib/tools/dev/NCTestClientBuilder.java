@@ -301,8 +301,8 @@ public class NCTestClientBuilder {
     }
     
     private static class IdHolder {
-        private long dsId;
-        private String mdlId;
+        private final long dsId;
+        private final String mdlId;
     
         IdHolder(long dsId, String mdlId) {
             this.dsId = dsId;
@@ -383,7 +383,7 @@ public class NCTestClientBuilder {
         
         @SafeVarargs
         private final String post(String url, Pair<String, Object>... ps) throws NCTestClientException, IOException {
-            HttpPost post = new HttpPost(url);
+            HttpPost post = new HttpPost(baseUrl + url);
         
             try {
                 if (reqCfg != null)
@@ -665,7 +665,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(baseUrl + "clear/conversation",
+                    post("clear/conversation",
                         Pair.of("accessToken", auth),
                         Pair.of("dsId", dsId)
                     ),
@@ -679,7 +679,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(baseUrl + "cancel",
+                    post("cancel",
                         Pair.of("accessToken", auth),
                         Pair.of("srvReqIds", ids)
                     ),
@@ -693,7 +693,7 @@ public class NCTestClientBuilder {
             
             long id =
                 extract(
-                    post(baseUrl + "ds/add",
+                    post("ds/add",
                         Pair.of("accessToken", auth),
                         Pair.of("name", "test-" + num),
                         Pair.of("shortDesc", "Test datasource"),
@@ -716,7 +716,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(baseUrl + "ds/delete",
+                    post("ds/delete",
                         Pair.of("accessToken", auth),
                         Pair.of("id", id)
                     ),
@@ -729,8 +729,7 @@ public class NCTestClientBuilder {
             log.info("`user/signin` request sent for: {}", email);
             
             return extract(
-                post(
-                    baseUrl + "user/signin",
+                post("user/signin",
                     Pair.of("email", email),
                     Pair.of("passwd", pswd)
                     
@@ -744,7 +743,7 @@ public class NCTestClientBuilder {
             log.info("`ds/all` request sent for: {}", email);
     
             Map<String, Object> m = gson.fromJson(
-                post(baseUrl + "ds/all",
+                post("ds/all",
                     Pair.of("accessToken", auth)
                 ),
                 TYPE_RESP
@@ -759,7 +758,7 @@ public class NCTestClientBuilder {
             log.info("`check` request sent for: {}", email);
         
             Map<String, Object> m = gson.fromJson(
-                post(baseUrl + "check",
+                post("check",
                     Pair.of("accessToken", auth)
                 ),
                 TYPE_RESP
@@ -774,7 +773,7 @@ public class NCTestClientBuilder {
             log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
         
             return extract(
-                post(baseUrl + "ask",
+                post("ask",
                     Pair.of("accessToken", auth),
                     Pair.of("txt", txt),
                     Pair.of("dsId", dsId),
@@ -791,7 +790,7 @@ public class NCTestClientBuilder {
             
             checkStatus(
                 gson.fromJson(
-                    post(baseUrl + "user/signout",
+                    post("user/signout",
                         Pair.of("accessToken", auth)
                     ),
                     TYPE_RESP
@@ -1083,6 +1082,9 @@ public class NCTestClientBuilder {
         checkNotNull("baseUrl", baseUrl);
         
         this.baseUrl = baseUrl;
+        
+        if (!this.baseUrl.endsWith("/"))
+            this.baseUrl += '/';
     
         return this;
     }

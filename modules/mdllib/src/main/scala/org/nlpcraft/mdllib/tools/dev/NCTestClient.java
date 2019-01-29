@@ -35,7 +35,10 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * TODO:
+ * The main entry API for model testing framework. The instance of test client should be obtained
+ * via {@link NCTestClientBuilder}.
+ *
+ * @see NCTestClientBuilder
  */
 public interface NCTestClient {
     /**
