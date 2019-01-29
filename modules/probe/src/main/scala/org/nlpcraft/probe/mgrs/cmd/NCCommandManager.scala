@@ -74,7 +74,7 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                     NCProbeNlpManager.ask(
                         srvReqId = msg.data[String]("srvReqId"),
                         txt = msg.data[String]("txt"),
-                        nlpSen = msg.data[NCNlpSentence]("sentence"),
+                        nlpSen = msg.data[NCNlpSentence]("nlpSen"),
                         usrId = msg.data[Long]("userId"),
                         senMeta = msg.data[Map[String, Serializable]]("senMeta"),
                         dsId = msg.data[Long]("dsId"),
