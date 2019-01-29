@@ -195,7 +195,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue)
+            // Users can be duplicated by their keys (ID and email)
+            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue).distinct
         }
     }
 
