@@ -382,10 +382,10 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     ): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                 case u ⇒
                     val mdo = NCUserMdo(
@@ -399,7 +399,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
                         u.createdOn
                     )
 
-                    userCache.put(key, mdo)
+                    userCache.put(idKey, mdo)
                     userCache.put(Right(u.email), mdo)
             }
         }
@@ -422,13 +422,13 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                 case u ⇒
-                    userCache.remove(key)
+                    userCache.remove(idKey)
                     userCache.remove(Right(u.email))
 
                     // Notification.
