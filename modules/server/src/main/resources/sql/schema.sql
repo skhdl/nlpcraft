@@ -95,7 +95,7 @@ CREATE TABLE ds_instance (
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
-    model_cfg VARCHAR(5120) NULL
+    model_cfg TEXT NULL
 );
 
 --
