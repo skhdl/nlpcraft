@@ -388,19 +388,19 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             userCache.get(key) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                 case u ⇒
-                    userCache.put(
-                        key,
-                        NCUserMdo(
-                            u.id,
-                            u.email,
-                            firstName,
-                            lastName,
-                            avatarUrl,
-                            u.passwordSalt,
-                            isAdmin,
-                            u.createdOn
-                        )
+                    val mdo = NCUserMdo(
+                        u.id,
+                        u.email,
+                        firstName,
+                        lastName,
+                        avatarUrl,
+                        u.passwordSalt,
+                        isAdmin,
+                        u.createdOn
                     )
+
+                    userCache.put(key, mdo)
+                    userCache.put(Right(u.email), mdo)
             }
         }
 
@@ -427,13 +427,16 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         catching(wrapIE) {
             userCache.get(key) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case usr ⇒ userCache.remove(key)
+                case u ⇒
+                    userCache.remove(key)
+                    userCache.remove(Right(u.email))
+
                     // Notification.
                     NCNotificationManager.addEvent("NC_USER_DELETE",
                         "userId" → usrId,
-                        "firstName" → usr.firstName,
-                        "lastName" → usr.lastName,
-                        "email" → usr.email
+                        "firstName" → u.firstName,
+                        "lastName" → u.lastName,
+                        "email" → u.email
                     )
             }
         }
@@ -558,18 +561,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
                 val newUsrId = usersSeq.incrementAndGet()
                 val salt = NCBlowfishHasher.hash(normEmail)
 
-                userCache.put(
-                    Left(newUsrId),
-                    NCUserMdo(
-                        newUsrId,
-                        normEmail,
-                        firstName,
-                        lastName,
-                        avatarUrl,
-                        salt,
-                        isAdmin
-                    )
+                val mdo = NCUserMdo(
+                    newUsrId,
+                    normEmail,
+                    firstName,
+                    lastName,
+                    avatarUrl,
+                    salt,
+                    isAdmin
                 )
+
+                userCache.put(Left(newUsrId), mdo)
+                userCache.put(Right(normEmail), mdo)
 
                 (newUsrId, salt)
             }
