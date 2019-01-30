@@ -31,6 +31,10 @@
 
 package org.nlpcraft
 
+import java.io.IOException
+import java.net.{InetAddress, NetworkInterface}
+import java.util.TimeZone
+
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.ds.NCDsManager
@@ -53,6 +57,9 @@ import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.user.NCUserManager
 import org.nlpcraft.tx.NCTxManager
+import org.nlpcraft.version.NCVersionManager
+
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
 /**
  * Main server entry-point.
@@ -91,6 +98,82 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
 
         // Ack server start.
         ackStart()
+        askVersion()
+    }
+
+
+    /**
+      * Ask server version.
+      */
+    private def askVersion() {
+        val tmz = TimeZone.getDefault
+        val sysProps = System.getProperties
+
+        var localHost: InetAddress = null
+        var netItf: NetworkInterface = null
+
+        try {
+            localHost = InetAddress.getLocalHost
+
+            netItf = NetworkInterface.getByInetAddress(localHost)
+        }
+        catch {
+            case e: IOException ⇒ logger.warn(s"IO error during getting probe info: ${e.getMessage}")
+        }
+
+        var hwAddrs = ""
+
+        if (netItf != null) {
+            val addrs = netItf.getHardwareAddress
+
+            if (addrs != null)
+                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
+        }
+
+        if (netItf != null) {
+            val addrs = netItf.getHardwareAddress
+
+            if (addrs != null)
+                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
+        }
+
+        implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+
+        // TODO:
+        val f =
+            NCVersionManager.askVersion(
+                "-",
+                //cfg.getVersionUrl,
+                "server",
+                Map(
+                    //                    "PROBE_API_DATE" → ver.date,
+                    //                    "PROBE_API_VERSION" → ver.version,
+                    "PROBE_OS_VER" → sysProps.getProperty("os.version"),
+                    "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
+                    "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
+                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
+                    "PROBE_TMZ_ID" → tmz.getID,
+                    "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
+                    "PROBE_TMZ_NAME" → tmz.getDisplayName(),
+                    "PROBE_SYS_USERNAME" → sysProps.getProperty("user.name"),
+                    "PROBE_JAVA_VER" → sysProps.getProperty("java.version"),
+                    "PROBE_JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
+                    "PROBE_HOST_NAME" → localHost.getHostName,
+                    "PROBE_HOST_ADDR" → localHost.getHostAddress,
+                    "PROBE_HW_ADDR" → hwAddrs
+                ).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null))
+            )
+
+        f.onSuccess { case m ⇒
+            logger.info("Version information")
+
+            m.foreach { case (key, v) ⇒ logger.info(s"$key=$v")}
+        }
+
+        f.onFailure {
+            case e: IOException ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
+            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}", e)
+        }
     }
 
     // Stops all managers.
