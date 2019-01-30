@@ -94,6 +94,9 @@ public class NCProbeConfigBuilder {
     // Default probe token shared by the server as well.
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
+    // Default version URL.
+    private final static String DFLT_VERSION_URL = "http://localhost:8080";
+    
     /** */
     private NCProbeConfig impl;
 
@@ -156,6 +159,7 @@ public class NCProbeConfigBuilder {
         impl.setToken(DFLT_PROBE_TOKEN);
         impl.setUpLink(DFLT_UP_LINK);
         impl.setDownLink(DFLT_DOWN_LINK);
+        impl.setVersionUrl(DFLT_VERSION_URL);
 
         // Check overrides from system and environmental variables.
         String x = propOrEnv("NLPCRAFT_PROBE_ID");
@@ -302,4 +306,12 @@ public class NCProbeConfigBuilder {
 
         return this;
     }
+
+    // TODO:
+    public NCProbeConfigBuilder setVersionUrl(String versionUrl) {
+        impl.setVersionUrl(versionUrl);
+        
+        return this;
+    }
+    
 }

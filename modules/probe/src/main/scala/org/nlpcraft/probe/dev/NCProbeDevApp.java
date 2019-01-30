@@ -151,8 +151,8 @@ public class NCProbeDevApp {
             private int handleDone() throws ExecutionException {
                 if (asyncEx != null)
                     throw new ExecutionException(asyncEx);
-                else
-                    return code;
+                
+                return code;
             }
 
             @Override
@@ -173,8 +173,8 @@ public class NCProbeDevApp {
 
                         if (done.get())
                             return handleDone();
-                        else
-                            throw new TimeoutException();
+                        
+                        throw new TimeoutException();
                     }
 
                     return handleDone();

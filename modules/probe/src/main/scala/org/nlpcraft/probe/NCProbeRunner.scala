@@ -31,36 +31,38 @@
 
 package org.nlpcraft.probe
 
+import java.io.IOException
+import java.net.{InetAddress, NetworkInterface}
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Date, TimeZone}
 
+import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.nlp.dict.NCDictionaryManager
+import org.nlpcraft.nlp.numeric.NCNumericManager
+import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.probe.dev.NCProbeConfig
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
+import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
-import org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates.NCCoordinatesEnricher
-import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.probe.mgrs.nlp.enrichers.context.NCContextEnricher
+import org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates.NCCoordinatesEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary.NCDictionaryEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.NCFunctionEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.model.NCModelEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious.NCSuspiciousNounsEnricher
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostEnrichCollapser
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostEnricher
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostChecker
+import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, NCPostEnricher}
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
-import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
-import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.probe.dev.NCProbeConfig
+import org.nlpcraft.version.NCVersionManager
 
 import scala.compat.Platform._
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import scala.util.control.Exception._
 
 /**
@@ -132,6 +134,75 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         
         logger.info("Set '-DNLPCRAFT_PROBE_SILENT=true' JVM system property to turn off verbose probe logging.")
     }
+
+    private def askVersion(cfg: NCProbeConfig): Unit = {
+        val ver = NCProbeVersion.getCurrent
+        val tmz = TimeZone.getDefault
+        val sysProps = System.getProperties
+
+        var localHost: InetAddress = null
+        var netItf: NetworkInterface = null
+
+        try {
+            localHost = InetAddress.getLocalHost
+
+            netItf = NetworkInterface.getByInetAddress(localHost)
+        }
+        catch {
+            case e: IOException ⇒ logger.warn(s"IO error during getting probe info: ${e.getMessage}")
+        }
+
+        var hwAddrs = ""
+
+        if (netItf != null) {
+            val addrs = netItf.getHardwareAddress
+
+            if (addrs != null)
+                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
+        }
+
+        if (netItf != null) {
+            val addrs = netItf.getHardwareAddress
+
+            if (addrs != null)
+                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
+        }
+
+        implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+
+        val f =
+            NCVersionManager.askVersion(
+                cfg.getVersionUrl,
+                "probe",
+                Map(
+                    "PROBE_API_DATE" → ver.date,
+                    "PROBE_API_VERSION" → ver.version,
+                    "PROBE_OS_VER" → sysProps.getProperty("os.version"),
+                    "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
+                    "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
+                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
+                    "PROBE_TMZ_ID" → tmz.getID,
+                    "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
+                    "PROBE_TMZ_NAME" → tmz.getDisplayName(),
+                    "PROBE_SYS_USERNAME" → sysProps.getProperty("user.name"),
+                    "PROBE_JAVA_VER" → sysProps.getProperty("java.version"),
+                    "PROBE_JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
+                    "PROBE_HOST_NAME" → localHost.getHostName,
+                    "PROBE_HOST_ADDR" → localHost.getHostAddress,
+                    "PROBE_HW_ADDR" → hwAddrs
+                )
+            )
+
+        f.onSuccess { case m ⇒
+            logger.info("Version information")
+
+            m.foreach { case (key, v) ⇒ logger.info(s"$key=$v")}
+        }
+
+        f.onFailure {
+            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
+        }
+    }
     
     /**
       *
@@ -141,6 +212,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     def startProbe(cfg: NCProbeConfig): Int = {
         asciiLogo(cfg)
         ackConfig(cfg)
+        askVersion(cfg)
         
         catching(classOf[Throwable]) either startManagers(cfg) match {
             case Left(e) ⇒

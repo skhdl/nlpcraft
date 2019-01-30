@@ -69,16 +69,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.ver}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.ver}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${apache.httpcomponents.ver}</version>
-        </dependency>
     </dependencies>
 
     <build>
