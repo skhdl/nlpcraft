@@ -527,7 +527,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
             test,
             usrAgent,
             rmtAddr,
-            new Timestamp(rcvTstamp)
+            rcvTstamp
         )
     }
     
