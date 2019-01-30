@@ -190,7 +190,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
                     "PROBE_HOST_NAME" → localHost.getHostName,
                     "PROBE_HOST_ADDR" → localHost.getHostAddress,
                     "PROBE_HW_ADDR" → hwAddrs
-                )
+                ).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null))
             )
 
         f.onSuccess { case m ⇒
@@ -200,7 +200,8 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         }
 
         f.onFailure {
-            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
+            case e: IOException ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
+            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}", e)
         }
     }
     

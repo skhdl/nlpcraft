@@ -95,7 +95,7 @@ public class NCProbeConfigBuilder {
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
     // Default version URL.
-    private final static String DFLT_VERSION_URL = "http://localhost:8080";
+    private final static String DFLT_VERSION_URL = "http://localhost:8099/probe";
     
     /** */
     private NCProbeConfig impl;
@@ -186,6 +186,12 @@ public class NCProbeConfigBuilder {
 
         if (!isEmpty(x))
             setJarsFolder(x);
+    
+        x = propOrEnv("NLPCRAFT_PROBE_VERSION_URL");
+    
+        if (!isEmpty(x))
+            setVersionUrl(x);
+    
     }
 
     /**

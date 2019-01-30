@@ -31,7 +31,9 @@
 
 package org.nlpcraft.version
 
+import java.lang.reflect.Type
 import java.util
+import java.util.HashMap
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -44,6 +46,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.nlpcraft.NCE
 
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
 /**
@@ -61,10 +64,10 @@ object NCVersionManager extends LazyLogging {
     def askVersion(
         url: String,
         component: String,
-        params: Map[String, Any]
+        params: Map[String, String]
     ): Future[Map[String, String]] = {
         val gson = new Gson()
-        val typeResp = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
+        val typeResp: Type = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
@@ -75,7 +78,16 @@ object NCVersionManager extends LazyLogging {
 
             try {
                 post.setHeader("Content-Type", "application/json")
-                post.setEntity(new StringEntity(gson.toJson(params)))
+                post.setEntity(
+                    new StringEntity(
+                        gson.toJson(
+                            Map(
+                                "component" → component,
+                                "properties" → params.asJava
+                            ).asJava
+                        )
+                    )
+                )
 
                 logger.trace("Request prepared: {}", post)
 
@@ -95,10 +107,23 @@ object NCVersionManager extends LazyLogging {
                             if (code != 200)
                                 throw new NCE(s"Unexpected response [code=$code, text=$js]")
 
-                            try
-                                gson.fromJson(js, typeResp)
-                            catch {
-                                case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $resp", e)
+                            val m: util.Map[String, AnyRef] =
+                                    try
+                                        gson.fromJson(js, typeResp)
+                                    catch {
+                                        case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $js", e)
+                                    }
+
+                            m.get("status") match {
+                                case null ⇒ throw new NCE(s"Missed status field: $js")
+                                case status ⇒
+                                    if (status != "OK")
+                                        throw new NCE(s"Unexpected response status: $status")
+
+                                    m.get("data") match {
+                                        case null ⇒ throw new NCE(s"Missed data field: $js")
+                                        case data ⇒ data.asInstanceOf[util.Map[String, String]].asScala.toMap
+                                    }
                             }
                         }
                     }
