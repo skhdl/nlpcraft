@@ -1007,7 +1007,7 @@ public class NCTestClientBuilder {
      * @param reqCfg HTTP REST client configuration parameters.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withConfig(RequestConfig reqCfg) {
+    public NCTestClientBuilder setConfig(RequestConfig reqCfg) {
         checkNotNull("reqCfg", reqCfg);
         
         this.reqCfg = reqCfg;
@@ -1023,7 +1023,7 @@ public class NCTestClientBuilder {
      * @param checkIntervalMs Delay value in milliseconds.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withCheckInterval(long checkIntervalMs) {
+    public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
         checkPositive("checkIntervalMs", checkIntervalMs);
         
         this.checkIntervalMs = checkIntervalMs;
@@ -1039,7 +1039,7 @@ public class NCTestClientBuilder {
      * @param asyncMode {@code true} for asynchronous (parallel) mode, {@code false} for synchronous mode.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withAsyncMode(boolean asyncMode) {
+    public NCTestClientBuilder setAsyncMode(boolean asyncMode) {
         this.asyncMode = asyncMode;
         
         return this;
@@ -1053,7 +1053,7 @@ public class NCTestClientBuilder {
      * @param clearConv Whether or not to clear conversation after each test request.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withClearConversation(boolean clearConv) {
+    public NCTestClientBuilder setClearConversation(boolean clearConv) {
         this.clearConv = clearConv;
         
         return this;
@@ -1066,7 +1066,7 @@ public class NCTestClientBuilder {
      * @param cliSup {@link CloseableHttpClient} custom supplier.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+    public NCTestClientBuilder setHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
         checkNotNull("cliSup", cliSup);
         
         this.cliSup = cliSup;
@@ -1081,7 +1081,7 @@ public class NCTestClientBuilder {
      * @param baseUrl API base URL.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withBaseUrl(String baseUrl) {
+    public NCTestClientBuilder setBaseUrl(String baseUrl) {
         checkNotNull("baseUrl", baseUrl);
         
         this.baseUrl = baseUrl;
@@ -1100,7 +1100,7 @@ public class NCTestClientBuilder {
      * @param pswd User password.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withUser(String email, String pswd) {
+    public NCTestClientBuilder setUser(String email, String pswd) {
         checkNotNull("email", email);
         checkNotNull("pswd", pswd);
         
@@ -1117,7 +1117,7 @@ public class NCTestClientBuilder {
      * @param maxCheckTime Maximum check time (ms).
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withMaxCheckTime(long maxCheckTime) {
+    public NCTestClientBuilder setMaxCheckTime(long maxCheckTime) {
         checkPositive("maxCheckTime", maxCheckTime);
         
         this.maxCheckTime = maxCheckTime;

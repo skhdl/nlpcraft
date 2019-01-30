@@ -65,7 +65,7 @@ public class NCTestSentenceBuilder {
      * @param dsId Datasource ID.
      * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withDsId(long dsId) {
+    public NCTestSentenceBuilder setDsId(long dsId) {
         this.dsId = dsId;
         
         return this;
@@ -81,7 +81,7 @@ public class NCTestSentenceBuilder {
      * @param modelId User Datasource ID.
      * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withModelId(String modelId) {
+    public NCTestSentenceBuilder setModelId(String modelId) {
         this.modelId = modelId;
         
         return this;
@@ -96,7 +96,7 @@ public class NCTestSentenceBuilder {
      * @param shouldPassed Flag.
      * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withShouldPassed(boolean shouldPassed) {
+    public NCTestSentenceBuilder setShouldPassed(boolean shouldPassed) {
         this.shouldPassed = shouldPassed;
         
         return this;
@@ -108,7 +108,7 @@ public class NCTestSentenceBuilder {
      * @param checkResult Result validation predicate..
      * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withCheckResult(Predicate<NCQueryResult> checkResult) {
+    public NCTestSentenceBuilder setCheckResult(Predicate<NCQueryResult> checkResult) {
         this.checkResult = checkResult;
         this.shouldPassed = true;
         
@@ -121,7 +121,7 @@ public class NCTestSentenceBuilder {
      * @param checkError Error validation predicate..
      * @return Builder instance for chaining calls.
      */
-    public NCTestSentenceBuilder withCheckError(Predicate<String> checkError) {
+    public NCTestSentenceBuilder setCheckError(Predicate<String> checkError) {
         this.checkError = checkError;
         this.shouldPassed = false;
         
