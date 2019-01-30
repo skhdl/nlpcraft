@@ -36,10 +36,6 @@
 --
 -- NOTE: database 'nlpcraft' should be created and owned by 'nlpcraft' user.
 --
--- Supported types:
---
--- VARCHAR 1, 32, 64, 256, 512, 1024, 5120
--- BOOLEAN, DATE, TIMESTAMP, INTEGER, BIGINT(SERIAL), TEXT, BYTEA
 
 -- Base entity type.
 DROP TABLE IF EXISTS base;
