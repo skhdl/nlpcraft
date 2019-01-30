@@ -31,6 +31,8 @@
 
 package org.nlpcraft.mdo
 
+import java.sql.Timestamp
+
 import org.nlpcraft.db.postgres.NCPsql.Implicits.RsParser
 import org.nlpcraft.mdllib.NCToken
 import org.nlpcraft.mdo.impl._
@@ -50,8 +52,8 @@ case class NCQueryStateMdo(
     @NCMdoField text: String, // Text of the initial question.
     @NCMdoField userAgent: Option[String],
     @NCMdoField remoteAddress: Option[String],
-    @NCMdoField createTstamp: Long, // Creation timestamp.
-    @NCMdoField var updateTstamp: Long, // Last update timestamp.
+    @NCMdoField createTstamp: Timestamp, // Creation timestamp.
+    @NCMdoField var updateTstamp: Timestamp, // Last update timestamp.
     @NCMdoField var status: String,
     // Query OK.
     @NCMdoField var resultType: Option[String] = None,
