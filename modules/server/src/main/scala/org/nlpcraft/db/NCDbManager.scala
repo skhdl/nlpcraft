@@ -477,7 +477,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       *
       * @param usrId User Id.
       * @param srvReqId Server request ID.
-      * @param origTxt Original text.
+      * @param txt Original text.
       * @param dsId Data source ID.
       * @param mdlId Data source model ID.
       * @param test Test flag.
@@ -489,14 +489,14 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def newProcessingLog(
         usrId: Long,
         srvReqId: String,
-        origTxt: String,
+        txt: String,
         dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
         test: Boolean,
         usrAgent: String,
         rmtAddr: String,
-        rcvTstamp: Long
+        rcvTstamp: Timestamp
     ): Unit = {
         ensureStarted()
         
@@ -520,7 +520,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               | )""".stripMargin,
             usrId,
             srvReqId,
-            origTxt,
+            txt,
             dsId,
             mdlId,
             status.toString,
@@ -571,7 +571,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         errMsg: String,
         resType: String,
         resBody: String,
-        tstamp: Long
+        tstamp: Timestamp
     ): Unit = {
         ensureStarted()
         

@@ -38,7 +38,7 @@ import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.{DecimalFormat, DecimalFormatSymbols}
-import java.time.{ZoneId, ZonedDateTime}
+import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.concurrent.{ExecutorService, TimeUnit}
 import java.util.jar.JarFile
 import java.util.stream.Collectors
@@ -176,7 +176,7 @@ object NCGlobals extends NCDebug with LazyLogging {
     /**
       * Gets now in UTC timezone in milliseconds representation.
       */
-    def nowUtcMs(): Long = ZonedDateTime.now(UTC).toInstant.toEpochMilli
+    def nowUtcMs(): Long = Instant.now().toEpochMilli
     
     /**
       * Escapes given string for JSON according to RFC 4627 http://www.ietf.org/rfc/rfc4627.txt.

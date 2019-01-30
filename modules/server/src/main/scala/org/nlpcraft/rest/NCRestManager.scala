@@ -31,6 +31,8 @@
 
 package org.nlpcraft.rest
 
+import java.sql.Timestamp
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -93,8 +95,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 val errMsg = e.getLocalizedMessage
     
                 NCNotificationManager.addEvent("NC_UNKNOWN_ACCESS_TOKEN",
-                    "errMsg" → errMsg,
-                    "acsTok" → e.acsTkn
+                    "errMsg" → errMsg
                 )
                 
                 complete(StatusCodes.Unauthorized, errMsg)
@@ -139,6 +140,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                 
                 NCNotificationManager.addEvent("NC_ERROR", "errMsg" → errMsg)
                 
+                logger.error(s"Unexpected error: $errMsg", e)
+                
                 complete(StatusCodes.BadRequest, errMsg)
             
             // Unexpected errors.
@@ -149,6 +152,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     "exception" → e.getClass.getSimpleName,
                     "errMsg" → errMsg
                 )
+    
+                logger.error(s"Unexpected system error: $errMsg", e)
                 
                 complete(InternalServerError, errMsg)
         }
@@ -346,8 +351,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                                     p.resultType,
                                     p.resultBody,
                                     p.error,
-                                    p.createTstamp,
-                                    p.updateTstamp
+                                    p.createTstamp.getTime,
+                                    p.updateTstamp.getTime
                                 )
                         )
                         

@@ -31,6 +31,8 @@
 
 package org.nlpcraft.proclog
 
+import java.sql.Timestamp
+
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.db.NCDbManager
@@ -73,7 +75,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     @throws[NCE]
     def updateReady(
         srvReqId: String,
-        tstamp: Long,
+        tstamp: Timestamp,
         errMsg: Option[String] = None,
         resType: Option[String] = None,
         resBody: Option[String] = None
@@ -116,7 +118,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         test: Boolean,
         usrAgent: String,
         rmtAddr: String,
-        rcvTstamp: Long
+        rcvTstamp: Timestamp
     ): Unit = {
         ensureStarted()
         

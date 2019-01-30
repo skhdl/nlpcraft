@@ -774,12 +774,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         "txt" → txt,
                         "nlpSen" → nlpSen.asInstanceOf[java.io.Serializable],
                         "senMeta" → senMeta.asInstanceOf[java.io.Serializable],
-                        "usrId" → usr.id,
+                        "userId" → usr.id,
                         "dsId" → ds.id,
                         "dsModelId" → ds.modelId,
                         "dsName" → ds.name,
                         "dsDesc" → ds.shortDesc,
-                        "dsModelCfg" → ds.modelConfig,
+                        "dsModelCfg" → ds.modelConfig.orNull,
                         "test" → isTest
                     )
                 )
