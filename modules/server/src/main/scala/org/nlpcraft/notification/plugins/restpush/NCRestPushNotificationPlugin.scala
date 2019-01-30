@@ -32,14 +32,18 @@
 package org.nlpcraft.notification.plugins.restpush
 
 import java.net.InetAddress
+import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 
-import org.nlpcraft._
-import org.nlpcraft.NCConfigurable
+import com.google.gson.Gson
+import org.apache.http.client.methods.HttpPost
 import org.nlpcraft.plugin.apis.NCNotificationPlugin
+import org.nlpcraft.{NCConfigurable, _}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Notification plugin using buffered HTTP REST push to a set of pre-configured endpoints.
@@ -54,29 +58,64 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     
     // Configuration prefix.
     private final val CFG = "org.nlpcraft.notification.plugins.restpush.NCRestPushNotificationPlugin"
-    
+
+    private final val EC = ExecutionContext.fromExecutor(
+        Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors())
+    )
+
+    private final val GSON = new Gson
+
+    // Bounded buffer of events to be flushed.
+    private val evts: ArrayBuffer[Event] = new ArrayBuffer[Event](Config.maxBufferSize)
+
+    // Local host.
+    private val localhost: String = InetAddress.getLocalHost.toString
+
+    @volatile private var timer: ScheduledExecutorService = _
+
     private object Config extends NCConfigurable {
         val endpoints: List[String] = hocon.getStringList(s"$CFG.endpoints").asScala.toList
-        val flushMsec = hocon.getLong(s"$CFG.flushSecs") * 1000
-        val maxBufferSize = hocon.getInt(s"$CFG.maxBufferSize")
+        val flushMsec: Long = hocon.getLong(s"$CFG.flushSecs") * 1000
+        val maxBufferSize: Int = hocon.getInt(s"$CFG.maxBufferSize")
+        val period: Long = hocon.getInt(s"$CFG.period")
         
         override def check(): Unit = {
             require(flushMsec > 0 , s"flush interval ($flushMsec) must be > 0")
             require(maxBufferSize > 0 , s"maximum buffer size ($maxBufferSize) must be > 0")
+            require(period > 0 , s"check period ($period) must be > 0")
             require(endpoints.nonEmpty, s"at least one REST endpoint is required")
+
+            // Endpoints are not validated to simplify communication protocol.
         }
-        
-        // TODO: validate endpoints?
     }
     
     Config.check()
-    
-    // Bounded buffer of events to be flushed.
-    private val evts: ArrayBuffer[Event] = new ArrayBuffer[Event](Config.maxBufferSize)
-    
-    // Local host.
-    private val localhost: String = InetAddress.getLocalHost.toString
-    
+
+    override def start(): Unit = {
+        super.start()
+
+        timer = Executors.newSingleThreadScheduledExecutor
+
+        timer.scheduleWithFixedDelay(() ⇒ flush(), Config.period, Config.period, TimeUnit.MILLISECONDS)
+
+        logger.info("Notification timer started.")
+    }
+
+    override def stop(): Unit = {
+        if (timer != null) {
+            timer.shutdown()
+
+            try
+                timer.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
+            catch {
+                case e: InterruptedException ⇒ logger.warn("Failed to await notification timer.")
+            }
+
+            timer = null
+        }
+
+        super.stop()
+    }
     /**
       * Adds event with given name and optional parameters to the buffer. Buffer will be pushed to configured
       * endpoints periodically.
@@ -85,25 +124,33 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       * @param params Optional set of named parameters.
       */
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
-        evts.synchronized {
-            evts += Event(evtName, params, G.nowUtcMs(), localhost)
-        
-            if (evts.size > Config.maxBufferSize)
-                flush()
-        }
-        
-        // TODO: need a timer job to periodically flush accumulated events.
+        val size =
+            evts.synchronized {
+                evts += Event(evtName, params, G.nowUtcMs(), localhost)
+
+                evts.size
+            }
+
+        if (evts.size > Config.maxBufferSize)
+            flush()
     }
     
     /**
       * Flushes accumulated events, if any, to the registered REST endpoints.
       */
     private def flush(): Unit = {
-        var copy = mutable.ArrayBuffer.empty[Event]
+        val copy = mutable.ArrayBuffer.empty[Event]
         
         evts.synchronized {
             copy ++= evts
         }
+
+        Config.endpoints.map(ep ⇒ {
+            Future {
+                val post = new HttpPost(ep)
+
+            }
+        })
     
         // TODO: add push to each configured endpoint in a separate thread.
     }
