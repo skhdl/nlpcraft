@@ -33,13 +33,11 @@ package org.nlpcraft.db
 
 import java.sql.Timestamp
 
-import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode._
+import org.nlpcraft.db.postgres.NCPsql
+import org.nlpcraft.db.postgres.NCPsql.Implicits._
 import org.nlpcraft.mdo._
-
-import scala.util.control.Exception._
 
 /**
   * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
@@ -101,9 +99,6 @@ object NCDbManager extends NCLifecycle("Database manager") {
                         split(";"). // Split by SQL statements.
                         map(_.trim).
                         foreach(sql ⇒ NCPsql.ddl(sql))
-
-                    // Mark the current schema as just created.
-                    NCPsql.ddl("CREATE TABLE new_schema()")
                 }
                 
                 logger.info("DB schema has been created.")
@@ -113,42 +108,6 @@ object NCDbManager extends NCLifecycle("Database manager") {
                     throw new NCE(s"Failed to auto-create database schema - " +
                         s"clear existing tables and create schema manually using '$SCHEMA_PATH' file.", e)
             }
-        else
-            // Clean up in case of previous failed start.
-            ignoring(classOf[NCE]) {
-                NCPsql.sql {
-                    NCPsql.ddl("DROP TABLE new_schema")
-                }
-            }
-    }
-    
-    /**
-      * Whether or not DB schema was just created by the current JVM process.
-      *
-      * @return
-      */
-    @throws[NCE]
-    def isNewSchema: Boolean = {
-        ensureStarted()
-    
-        try {
-            NCPsql.selectSingle[String]("SELECT NULL FROM new_schema LIMIT 1")
-        
-            true
-        }
-        catch {
-            case _: NCE ⇒ false
-        }
-    }
-    
-    /**
-      * Clears the "new DB schema" flag from database.
-      */
-    @throws[NCE]
-    def clearNewSchemaFlag(): Unit = {
-        ensureStarted()
-    
-        NCPsql.ddl("DROP TABLE new_schema")
     }
 
     /**
