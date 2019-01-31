@@ -31,8 +31,8 @@
 
 package org.nlpcraft.probe.dev;
 
-import org.nlpcraft.mdllib.*;
-import org.nlpcraft.util.*;
+import org.nlpcraft.mdllib.NCModelProvider;
+import org.nlpcraft.util.NCGlobals;
 
 /**
  * Convenient builder for {@link NCProbeConfig} instances. Note that most of the configuration values
@@ -94,8 +94,8 @@ public class NCProbeConfigBuilder {
     // Default probe token shared by the server as well.
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
-    // Default version URL.
-    private final static String DFLT_VERSION_URL = "http://localhost:8099/probe";
+    // Default probe token shared by the server as well.
+    private final static boolean DFLT_VERSION_ASK_ENABLED = true;
     
     /** */
     private NCProbeConfig impl;
@@ -159,7 +159,7 @@ public class NCProbeConfigBuilder {
         impl.setToken(DFLT_PROBE_TOKEN);
         impl.setUpLink(DFLT_UP_LINK);
         impl.setDownLink(DFLT_DOWN_LINK);
-        impl.setVersionUrl(DFLT_VERSION_URL);
+        impl.setVersionAskEnabled(DFLT_VERSION_ASK_ENABLED);
 
         // Check overrides from system and environmental variables.
         String x = propOrEnv("NLPCRAFT_PROBE_ID");
@@ -187,11 +187,10 @@ public class NCProbeConfigBuilder {
         if (!isEmpty(x))
             setJarsFolder(x);
     
-        x = propOrEnv("NLPCRAFT_PROBE_VERSION_URL");
+        x = propOrEnv("NLPCRAFT_VERSION_ASK_ENABLED");
     
         if (!isEmpty(x))
-            setVersionUrl(x);
-    
+            setVersionAskEnabled(Boolean.parseBoolean(x));
     }
 
     /**
@@ -312,12 +311,15 @@ public class NCProbeConfigBuilder {
 
         return this;
     }
-
-    // TODO:
-    public NCProbeConfigBuilder setVersionUrl(String versionUrl) {
-        impl.setVersionUrl(versionUrl);
+    
+    /**
+     * TODO:
+     * @param enabled
+     * @return
+     */
+    public NCProbeConfigBuilder setVersionAskEnabled(boolean enabled) {
+        impl.setVersionAskEnabled(enabled);
         
         return this;
     }
-    
 }

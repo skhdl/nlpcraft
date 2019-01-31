@@ -166,7 +166,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     
         val (host, port) = G.splitEndpoint(config.getDownLink)
         val cryptoKey = NCCipher.makeTokenKey(config.getToken)
-        val ver = NCProbeVersion.getCurrent
+        val ver = NCVersion.getCurrent
         val tmz = TimeZone.getDefault
     
         logger.info(s"Opening S2P link to '$host:$port'")

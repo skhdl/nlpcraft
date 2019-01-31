@@ -31,16 +31,10 @@
 
 package org.nlpcraft
 
-import java.io.IOException
-import java.net.{InetAddress, NetworkInterface}
-import java.util.TimeZone
-
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.geo.NCGeoManager
-import org.nlpcraft.rest.NCRestManager
-import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
 import org.nlpcraft.nlp.dict.NCDictionaryManager
 import org.nlpcraft.nlp.enrichers._
@@ -55,17 +49,46 @@ import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
-import org.nlpcraft.user.NCUserManager
+import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.tx.NCTxManager
+import org.nlpcraft.user.NCUserManager
+import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.version.NCVersionManager
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
-
 /**
- * Main server entry-point.
- */
+  * Main server entry-point.
+  */
 object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging {
     override def name() = "NlpCraft Server"
+
+    /**
+      * Code to execute within Ignite node.
+      */
+    override def start() {
+        super.start()
+
+        initialize()
+
+        try {
+            NCGlobals.ignoreInterrupt {
+                lifecycle.await()
+            }
+        }
+        finally {
+            stop()
+        }
+    }
+
+    /**
+      * Initializes server without blocking thread.
+      */
+    private[nlpcraft] def initialize() {
+        startComponents()
+
+        // Ack server start.
+        ackStart()
+        askVersion()
+    }
 
     // Starts all managers.
     private def startComponents(): Unit = {
@@ -91,89 +114,43 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     }
 
     /**
-      * Initializes server without blocking thread.
-      */
-    private[nlpcraft] def initialize() {
-        startComponents()
-
-        // Ack server start.
-        ackStart()
-        askVersion()
-    }
-
-
-    /**
       * Ask server version.
       */
-    private def askVersion() {
-        val tmz = TimeZone.getDefault
-        val sysProps = System.getProperties
+    private def askVersion(): Unit = {
+        def propOrEnv(key: String): Option[String] =
+            System.getProperty(key) match {
+                case null ⇒
+                    System.getenv(key) match {
+                        case null ⇒ None
+                        case v ⇒ Some(v)
+                    }
+                case v ⇒ Some(v)
+            }
 
-        var localHost: InetAddress = null
-        var netItf: NetworkInterface = null
+        val enabled =
+            propOrEnv("NLPCRAFT_VERSION_ASK_ENABLED") match {
+                case Some(v) ⇒ java.lang.Boolean.parseBoolean(v)
+                case None ⇒ true
+            }
 
-        try {
-            localHost = InetAddress.getLocalHost
-
-            netItf = NetworkInterface.getByInetAddress(localHost)
-        }
-        catch {
-            case e: IOException ⇒ logger.warn(s"IO error during getting probe info: ${e.getMessage}")
-        }
-
-        var hwAddrs = ""
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
-        implicit val ec: ExecutionContextExecutor = ExecutionContext.global
-
-        // TODO:
-        val f =
-            NCVersionManager.askVersion(
-                "-",
-                //cfg.getVersionUrl,
+        if (enabled)
+            NCVersionManager.ask(
                 "server",
+                // Additional parameters. Server.
                 Map(
-                    //                    "PROBE_API_DATE" → ver.date,
-                    //                    "PROBE_API_VERSION" → ver.version,
-                    "PROBE_OS_VER" → sysProps.getProperty("os.version"),
-                    "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
-                    "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
-                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
-                    "PROBE_TMZ_ID" → tmz.getID,
-                    "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
-                    "PROBE_TMZ_NAME" → tmz.getDisplayName(),
-                    "PROBE_SYS_USERNAME" → sysProps.getProperty("user.name"),
-                    "PROBE_JAVA_VER" → sysProps.getProperty("java.version"),
-                    "PROBE_JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
-                    "PROBE_HOST_NAME" → localHost.getHostName,
-                    "PROBE_HOST_ADDR" → localHost.getHostAddress,
-                    "PROBE_HW_ADDR" → hwAddrs
-                ).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null))
+                    "ignite.version" → ignite.version().toString,
+                    "ignite.version" → ignite.cluster().nodes().size()
+                )
             )
+    }
 
-        f.onSuccess { case m ⇒
-            logger.info("Version information")
+    /**
+      * Stops the server by counting down (i.e. releasing) the lifecycle latch.
+      */
+    override def stop(): Unit = {
+        stopComponents()
 
-            m.foreach { case (key, v) ⇒ logger.info(s"$key=$v")}
-        }
-
-        f.onFailure {
-            case e: IOException ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
-            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}", e)
-        }
+        super.stop()
     }
 
     // Stops all managers.
@@ -196,30 +173,5 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCDbManager.stop()
         NCTxManager.stop()
         NCPluginManager.stop()
-    }
-
-    /**
-     * Stops the server by counting down (i.e. releasing) the lifecycle latch.
-     */
-    override def stop(): Unit = {
-        stopComponents()
-
-        super.stop()
-    }
-
-    /**
-     * Code to execute within Ignite node.
-     */
-    override def start() {
-        super.start()
-
-        initialize()
-
-        try
-            NCGlobals.ignoreInterrupt {
-                lifecycle.await()
-            }
-        finally
-            stop()
     }
 }

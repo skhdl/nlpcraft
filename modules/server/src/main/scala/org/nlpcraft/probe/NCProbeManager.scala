@@ -512,7 +512,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             respond("S2P_PROBE_MULTIPLE_INSTANCES")
         else {
             val probeApiVer = hsMsg.data[String]("PROBE_API_VERSION")
-            val srvApiVer = NCProbeVersion.getCurrent
+            val srvApiVer = NCVersion.getCurrent
             
             if (probeApiVer != srvApiVer.version)
                 respond("S2P_PROBE_VERSION_MISMATCH")

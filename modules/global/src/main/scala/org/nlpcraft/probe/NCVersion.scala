@@ -37,9 +37,9 @@ import org.nlpcraft._
 import com.typesafe.scalalogging.LazyLogging
 
 /**
-  * Probe version manager.
+  * Version manager.
   */
-object NCProbeVersion extends LazyLogging {
+object NCVersion extends LazyLogging {
     /**
       *
       * @param version Sequentially increasing internal version of the probe.

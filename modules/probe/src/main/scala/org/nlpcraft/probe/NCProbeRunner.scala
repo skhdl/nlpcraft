@@ -31,10 +31,8 @@
 
 package org.nlpcraft.probe
 
-import java.io.IOException
-import java.net.{InetAddress, NetworkInterface}
 import java.text.SimpleDateFormat
-import java.util.{Date, TimeZone}
+import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
@@ -62,7 +60,6 @@ import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
 import org.nlpcraft.version.NCVersionManager
 
 import scala.compat.Platform._
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import scala.util.control.Exception._
 
 /**
@@ -118,7 +115,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     private def ackConfig(cfg: NCProbeConfig): Unit = {
         val tbl = NCAsciiTable()
         
-        val ver = NCProbeVersion.getCurrent
+        val ver = NCVersion.getCurrent
         
         def nvl(obj: Any): String = if (obj == null) "" else obj.toString
         
@@ -135,76 +132,16 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         logger.info("Set '-DNLPCRAFT_PROBE_SILENT=true' JVM system property to turn off verbose probe logging.")
     }
 
-    private def askVersion(cfg: NCProbeConfig): Unit = {
-        val ver = NCProbeVersion.getCurrent
-        val tmz = TimeZone.getDefault
-        val sysProps = System.getProperties
-
-        var localHost: InetAddress = null
-        var netItf: NetworkInterface = null
-
-        try {
-            localHost = InetAddress.getLocalHost
-
-            netItf = NetworkInterface.getByInetAddress(localHost)
-        }
-        catch {
-            case e: IOException ⇒ logger.warn(s"IO error during getting probe info: ${e.getMessage}")
-        }
-
-        var hwAddrs = ""
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
-        implicit val ec: ExecutionContextExecutor = ExecutionContext.global
-
-        val f =
-            NCVersionManager.askVersion(
-                cfg.getVersionUrl,
+    private def askVersion(cfg: NCProbeConfig): Unit =
+        if (cfg.isVersionAskEnabled)
+            NCVersionManager.ask(
                 "probe",
+                // Additional parameters. Probe.
                 Map(
-                    "PROBE_API_DATE" → ver.date,
-                    "PROBE_API_VERSION" → ver.version,
-                    "PROBE_OS_VER" → sysProps.getProperty("os.version"),
-                    "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
-                    "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
-                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
-                    "PROBE_TMZ_ID" → tmz.getID,
-                    "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
-                    "PROBE_TMZ_NAME" → tmz.getDisplayName(),
-                    "PROBE_SYS_USERNAME" → sysProps.getProperty("user.name"),
-                    "PROBE_JAVA_VER" → sysProps.getProperty("java.version"),
-                    "PROBE_JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
-                    "PROBE_HOST_NAME" → localHost.getHostName,
-                    "PROBE_HOST_ADDR" → localHost.getHostAddress,
-                    "PROBE_HW_ADDR" → hwAddrs
-                ).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null))
+                    "probe.id" → cfg.getId
+                )
             )
 
-        f.onSuccess { case m ⇒
-            logger.info("Version information")
-
-            m.foreach { case (key, v) ⇒ logger.info(s"$key=$v")}
-        }
-
-        f.onFailure {
-            case e: IOException ⇒ logger.warn(s"Error reading version: ${e.getMessage}")
-            case e: Throwable ⇒ logger.warn(s"Error reading version: ${e.getMessage}", e)
-        }
-    }
-    
     /**
       *
       * @param cfg Probe configuration to start with.
