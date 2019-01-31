@@ -138,7 +138,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
                 "probe",
                 // Additional parameters. Probe.
                 Map(
-                    "probe.id" → cfg.getId
+                    "PROBE_ID" → cfg.getId
                 )
             )
 

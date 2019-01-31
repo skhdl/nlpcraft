@@ -138,8 +138,8 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
                 "server",
                 // Additional parameters. Server.
                 Map(
-                    "ignite.version" → ignite.version().toString,
-                    "ignite.version" → ignite.cluster().nodes().size()
+                    "IGNITE_VERSION" → ignite.version().toString,
+                    "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
                 )
             )
     }
