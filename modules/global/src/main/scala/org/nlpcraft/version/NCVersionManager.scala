@@ -32,7 +32,6 @@
 package org.nlpcraft.version
 
 import java.io.IOException
-import java.lang.reflect.Type
 import java.net.{InetAddress, NetworkInterface}
 import java.util
 import java.util.TimeZone
@@ -46,8 +45,8 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import org.nlpcraft.{NCE, _}
 import org.nlpcraft.probe.NCVersion
+import org.nlpcraft.{NCE, _}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
@@ -56,6 +55,7 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
   * Version manager.
   */
 object NCVersionManager extends LazyLogging {
+    // TODO:
     private final val URL = "http://localhost:8099/version"
 
     /**
@@ -118,7 +118,7 @@ object NCVersionManager extends LazyLogging {
         )
 
         val gson = new Gson()
-        val typeResp: Type = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
+        val typeResp = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
@@ -152,7 +152,6 @@ object NCVersionManager extends LazyLogging {
                         new ResponseHandler[String] {
                             override def handleResponse(resp: HttpResponse): String = {
                                 val code = resp.getStatusLine.getStatusCode
-
                                 val e = resp.getEntity
 
                                 if (e == null)
@@ -195,8 +194,8 @@ object NCVersionManager extends LazyLogging {
         f.onSuccess { case s ⇒ logger.info(s"Version information: $s") }
 
         f.onFailure {
-            case e: IOException ⇒ logger.info(s"Error reading version: ${e.getMessage}")
-            case e: Throwable ⇒ logger.info(s"Error reading version: ${e.getMessage}, error=${e.getMessage}")
+            case _: IOException ⇒ logger.info(s"IO error reading version")
+            case e: Throwable ⇒ logger.info(s"Error reading version: ${e.getMessage}")
         }
     }
 }
