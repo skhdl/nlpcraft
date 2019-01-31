@@ -32,6 +32,7 @@
 package org.nlpcraft.db
 
 import java.sql.Timestamp
+import java.time.LocalDate
 
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.db.postgres.NCPsql.Implicits._
@@ -591,6 +592,99 @@ object NCDbManager extends NCLifecycle("Database manager") {
             resType,
             resBody,
             tstamp,
+            srvReqId
+        )
+    }
+    
+    /**
+      * Updates processing log.
+      *
+      * @param srvReqId
+      * @param probeToken
+      * @param probeId
+      * @param probeGuid
+      * @param probeApiVersion
+      * @param probeApiDate
+      * @param osVersion
+      * @param osName
+      * @param osArch
+      * @param startTstamp
+      * @param tmzId
+      * @param tmzAbbr
+      * @param tmzName
+      * @param userName
+      * @param javaVersion
+      * @param javaVendor
+      * @param hostName
+      * @param hostAddr
+      * @param macAddr
+      */
+    @throws[NCE]
+    def updateProbeProcessingLog(
+        srvReqId: String,
+        probeToken: String,
+        probeId: String,
+        probeGuid: String,
+        probeApiVersion: String,
+        probeApiDate: LocalDate,
+        osVersion: String,
+        osName: String,
+        osArch: String,
+        startTstamp: Timestamp,
+        tmzId: String,
+        tmzAbbr: String,
+        tmzName: String,
+        userName: String,
+        javaVersion: String,
+        javaVendor: String,
+        hostName: String,
+        hostAddr: String,
+        macAddr: String
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.insertSingle(
+            """
+              |UPDATE proc_log
+              |SET
+              |    probe_token = ?,
+              |    probe_id = ?,
+              |    probe_guid = ?,
+              |    probe_api_version = ?,
+              |    probe_api_date = ?,
+              |    probe_os_version = ?,
+              |    probe_os_name = ?,
+              |    probe_os_arch = ?,
+              |    probe_start_tstamp = ?,
+              |    probe_tmz_id = ?,
+              |    probe_tmz_abbr = ?,
+              |    probe_tmz_name = ?,
+              |    probe_user_name = ?,
+              |    probe_java_version = ?,
+              |    probe_java_vendor = ?,
+              |    probe_host_name = ?,
+              |    probe_host_addr = ?,
+              |    probe_mac_addr = ?
+              |WHERE srv_req_id = ?
+            """.stripMargin,
+            probeToken,
+            probeId,
+            probeGuid,
+            probeApiVersion,
+            probeApiDate,
+            osVersion,
+            osName,
+            osArch,
+            startTstamp,
+            tmzId,
+            tmzAbbr,
+            tmzName,
+            userName,
+            javaVersion,
+            javaVendor,
+            hostName,
+            hostAddr,
+            macAddr,
             srvReqId
         )
     }

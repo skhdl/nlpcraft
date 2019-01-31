@@ -81,7 +81,7 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
                         dsModelId = msg.data[String]("dsModelId"),
                         dsName = msg.data[String]("dsName"),
                         dsDesc = msg.data[String]("dsDesc"),
-                        dsModelCfg = msg.data[String]("dsModelCfg"),
+                        dsModelCfg = msg.dataOpt[String]("dsModelCfg").orNull,
                         test = msg.data[Boolean]("test")
                     )
 

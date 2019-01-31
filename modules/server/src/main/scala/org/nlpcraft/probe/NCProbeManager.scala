@@ -34,7 +34,6 @@ package org.nlpcraft.probe
 import java.io._
 import java.net.{InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.security.Key
-import java.time.ZoneId
 import java.util.{Timer, TimerTask}
 import java.util.concurrent.{ExecutorService, Executors}
 import java.util.concurrent.atomic.AtomicBoolean
@@ -47,6 +46,7 @@ import org.nlpcraft.nlp.NCNlpSentence
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
+import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.socket.NCSocket
 
@@ -547,15 +547,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                                 probeId = hsMsg.data[String]("PROBE_ID"),
                                 probeGuid = probeGuid,
                                 probeApiVersion = probeApiVer,
-                                probeApiDate =
-                                    probeApiDate.atTime(0, 0).
-                                        atZone(ZoneId.systemDefault()).
-                                        toInstant.
-                                        toEpochMilli,
+                                probeApiDate = probeApiDate,
                                 osVersion = hsMsg.data[String]("PROBE_OS_VER"),
                                 osName = hsMsg.data[String]("PROBE_OS_NAME"),
                                 osArch = hsMsg.data[String]("PROBE_OS_ARCH"),
-                                startTstamp = hsMsg.data[Long]("PROBE_START_TSTAMP"),
+                                startTstamp = new java.sql.Timestamp(hsMsg.data[Long]("PROBE_START_TSTAMP")),
                                 tmzId = hsMsg.data[String]("PROBE_TMZ_ID"),
                                 tmzAbbr = hsMsg.data[String]("PROBE_TMZ_ABBR"),
                                 tmzName = hsMsg.data[String]("PROBE_TMZ_NAME"),
@@ -783,6 +779,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         "test" → isTest
                     )
                 )
+
+                NCProcessLogManager.updateProbe(
+                    srvReqId,
+                    holder.probe
+                )
+
             case None ⇒ throw new NCE(s"Unknown model ID: ${ds.modelId}")
         }
     }
