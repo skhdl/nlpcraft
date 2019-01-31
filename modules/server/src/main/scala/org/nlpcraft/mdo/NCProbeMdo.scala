@@ -31,6 +31,9 @@
 
 package org.nlpcraft.mdo
 
+import java.sql.Timestamp
+import java.time.LocalDate
+
 import org.nlpcraft.mdo.impl._
 
 /**
@@ -42,11 +45,11 @@ case class NCProbeMdo(
     @NCMdoField probeId: String,
     @NCMdoField probeGuid: String,
     @NCMdoField probeApiVersion: String,
-    @NCMdoField probeApiDate: Long,
+    @NCMdoField probeApiDate: LocalDate,
     @NCMdoField osVersion: String,
     @NCMdoField osName: String,
     @NCMdoField osArch: String,
-    @NCMdoField startTstamp: Long,
+    @NCMdoField startTstamp: Timestamp,
     @NCMdoField tmzId: String,
     @NCMdoField tmzAbbr: String,
     @NCMdoField tmzName: String,
