@@ -73,28 +73,16 @@ public interface NCTestResult {
     Optional<String> getResult();
     
     /**
+     * Gets optional execution result type.
+     *
+     * @return Optional execution result type.
+     */
+    Optional<String> getResultType();
+    
+    /**
      * Gets optional execution error.
      *
      * @return Optional execution error.
      */
     Optional<String> getResultError();
-    
-    /**
-     * TODO:
-     * Gets optional test execution error.
-     *
-     * @return Optional test execution error.
-     */
-    Optional<String> getTestError();
-    
-    /**
-     * TODO:
-     *
-     * Gets test execution successful flag.
-     *
-     * @return Test execution successful flag.
-     */
-    default boolean isTestPassed() {
-        return !getTestError().isPresent();
-    }
 }

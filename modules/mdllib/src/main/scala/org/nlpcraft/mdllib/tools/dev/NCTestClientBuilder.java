@@ -46,7 +46,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.nlpcraft.mdllib.NCQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -96,15 +94,7 @@ public class NCTestClientBuilder {
     
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
-    private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
-    private boolean clearConv = DFLT_CLEAR_CONVERSATION;
-    private boolean asyncMode = DFLT_ASYNC_MODE;
-    private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
-    private RequestConfig reqCfg;
-    private String baseUrl = DFLT_BASEURL;
-    private String email = DFLT_EMAIL;
-    private String pswd = DFLT_PASSWORD;
-    private Supplier<CloseableHttpClient> cliSup;
+    private NCTestClientImpl impl;
     
     /**
      * JSON helper class.
@@ -328,15 +318,96 @@ public class NCTestClientBuilder {
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
-    
         private final Gson gson = new Gson();
-        
         private final CloseableHttpClient client;
+    
+        private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
+        private boolean clearConv = DFLT_CLEAR_CONVERSATION;
+        private boolean asyncMode = DFLT_ASYNC_MODE;
+        private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
+        private RequestConfig reqCfg;
+        private String baseUrl = DFLT_BASEURL;
+        private String email = DFLT_EMAIL;
+        private String pswd = DFLT_PASSWORD;
+        private Supplier<CloseableHttpClient> cliSup;
+    
     
         NCTestClientImpl() {
             this.client = mkClient();
         }
-        
+    
+        long getCheckInterval() {
+            return checkIntervalMs;
+        }
+    
+        boolean isClearConversation() {
+            return clearConv;
+        }
+    
+        boolean isAsyncMode() {
+            return asyncMode;
+        }
+    
+        long getMaxCheckTime() {
+            return maxCheckTimeMs;
+        }
+    
+        RequestConfig getRequestConfig() {
+            return reqCfg;
+        }
+    
+        String getBaseUrl() {
+            return baseUrl;
+        }
+    
+        String getEmail() {
+            return email;
+        }
+    
+        String getPassword() {
+            return pswd;
+        }
+    
+        Supplier<CloseableHttpClient> getClientSupplier() {
+            return cliSup;
+        }
+    
+        void setCheckInterval(long checkIntervalMs) {
+            this.checkIntervalMs = checkIntervalMs;
+        }
+    
+        void setClearConversation(boolean clearConv) {
+            this.clearConv = clearConv;
+        }
+    
+        void setAsyncMode(boolean asyncMode) {
+            this.asyncMode = asyncMode;
+        }
+    
+        void setMaxCheckTime(long maxCheckTimeMs) {
+            this.maxCheckTimeMs = maxCheckTimeMs;
+        }
+    
+        void setRequestConfig(RequestConfig reqCfg) {
+            this.reqCfg = reqCfg;
+        }
+    
+        void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+    
+        void setEmail(String email) {
+            this.email = email;
+        }
+    
+        void setPasword(String pswd) {
+            this.pswd = pswd;
+        }
+    
+        void setClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+            this.cliSup = cliSup;
+        }
+    
         private CloseableHttpClient mkClient() {
             return cliSup != null ? cliSup.get() : HttpClients.createDefault();
         }
@@ -587,32 +658,21 @@ public class NCTestClientBuilder {
                 "Sentence",
                 "Datasource ID",
                 "Model ID",
-                "Expected Result",
-                "Has checked function",
                 "Result",
                 "Error",
-                "Passed",
-                "Comments",
                 "Processing Time (ms)"
             );
     
-            for (int i = 0; i < n; i++) {
-                NCTestSentence test = tests.get(i);
-                NCTestResult res = results.get(i);
-    
+            for (NCTestResult res : results) {
                 List<Object> row = new ArrayList<>();
     
                 String ss = res.getText().substring(0, 100);
-                
+    
                 row.add(ss.equals(res.getText()) ? ss : ss + " ...");
                 row.add(res.getDatasourceId());
                 row.add(res.getModelId());
-                row.add(test.shouldPassed());
-                row.add(test.shouldPassed() ? test.getCheckResult().isPresent() : test.getCheckError().isPresent());
                 row.add(res.getResult().orElse(""));
                 row.add(res.getResultError().orElse(""));
-                row.add(res.isTestPassed());
-                row.add(res.getTestError().orElse(""));
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
@@ -633,7 +693,7 @@ public class NCTestClientBuilder {
             
             row.add(n);
             
-            long passed = results.stream().filter(NCTestResult::isTestPassed).count();
+            long passed = results.stream().filter(p -> !p.getResultError().isPresent()).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -908,33 +968,7 @@ public class NCTestClientBuilder {
     ) {
         assert test != null;
         assert mdlId != null;
-        assert res != null && resType != null ^ err != null;
-        
-        AtomicReference<String> s = new AtomicReference<>();
-        
-        if (test.shouldPassed()) {
-            if (err != null)
-                s.set("Unexpected error");
-            else
-                test.getCheckResult().ifPresent(checker -> {
-                    NCQueryResult qr = new NCQueryResult();
-    
-                    qr.setBody(res);
-                    qr.setType(resType);
-    
-                    if (!checker.test(qr))
-                        s.set("Execution ok, but unsuccessful check");
-                });
-        }
-        else {
-            if (err == null)
-                s.set("Unexpected successful result");
-            else
-                test.getCheckError().ifPresent(checker -> {
-                    if (!checker.test(err))
-                        s.set("Execution failed, but unsuccessful check");
-                });
-        }
+        assert (res != null && resType != null) ^ err != null;
         
         return new NCTestResult() {
             private Optional<String>convert(String s) {
@@ -967,13 +1001,13 @@ public class NCTestClientBuilder {
             }
     
             @Override
+            public Optional<String> getResultType() {
+                return convert(resType);
+            }
+            
+            @Override
             public Optional<String> getResultError() {
                 return convert(err);
-            }
-    
-            @Override
-            public Optional<String> getTestError() {
-                return convert(s.get());
             }
         };
     }
@@ -988,18 +1022,15 @@ public class NCTestClientBuilder {
             throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));
     }
     
-    private static void checkNotNegative(String name, long v) throws IllegalArgumentException {
-        if (v < 0)
-            throw new IllegalArgumentException(String.format("Argument '%s' shouldn't be negative: %d", name, v));
-    }
-    
     /**
      * Creates new default builder instance.
      *
      * @return Builder instance.
      */
-    public static NCTestClientBuilder newBuilder() {
-        return new NCTestClientBuilder();
+    public NCTestClientBuilder newBuilder() {
+        impl = new NCTestClientImpl();
+        
+        return this;
     }
     
     /**
@@ -1009,7 +1040,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setConfig(RequestConfig reqCfg) {
-        this.reqCfg = reqCfg;
+        impl.setRequestConfig(reqCfg);
         
         return this;
     }
@@ -1022,7 +1053,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
-        this.checkIntervalMs = checkIntervalMs;
+        impl.setCheckInterval(checkIntervalMs);
         
         return this;
     }
@@ -1036,7 +1067,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setAsyncMode(boolean asyncMode) {
-        this.asyncMode = asyncMode;
+        impl.setAsyncMode(asyncMode);
         
         return this;
     }
@@ -1050,7 +1081,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setClearConversation(boolean clearConv) {
-        this.clearConv = clearConv;
+        impl.setClearConversation(clearConv);
         
         return this;
     }
@@ -1063,7 +1094,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
-        this.cliSup = cliSup;
+        impl.setClientSupplier(cliSup);
     
         return this;
     }
@@ -1076,10 +1107,12 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        String s = baseUrl;
         
-        if (!this.baseUrl.endsWith("/"))
-            this.baseUrl += '/';
+        if (!s.endsWith("/"))
+            s += '/';
+        
+        impl.setBaseUrl(s);
     
         return this;
     }
@@ -1093,9 +1126,9 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setUser(String email, String pswd) {
-        this.email = email;
-        this.pswd = pswd;
-    
+        impl.setEmail(email);
+        impl.setPasword(pswd);
+     
         return this;
     }
     
@@ -1107,7 +1140,7 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setMaxCheckTime(long maxCheckTimeMs) {
-        this.maxCheckTimeMs = maxCheckTimeMs;
+        impl.setMaxCheckTime(maxCheckTimeMs);
     
         return this;
     }
@@ -1118,12 +1151,12 @@ public class NCTestClientBuilder {
      * @return Newly built test client instance.
      */
     public NCTestClient build() {
-        checkPositive("maxCheckTimeMs", maxCheckTimeMs);
-        checkNotNull("email", email);
-        checkNotNull("pswd", pswd);
-        checkNotNull("baseUrl", baseUrl);
-        checkPositive("checkIntervalMs", checkIntervalMs);;
+        checkPositive("maxCheckTimeMs", impl.getMaxCheckTime());
+        checkNotNull("email", impl.getEmail());
+        checkNotNull("pswd", impl.getPassword());
+        checkNotNull("baseUrl", impl.getBaseUrl());
+        checkPositive("checkIntervalMs", impl.getCheckInterval());
 
-        return new NCTestClientImpl();
+        return impl;
     }
 }
