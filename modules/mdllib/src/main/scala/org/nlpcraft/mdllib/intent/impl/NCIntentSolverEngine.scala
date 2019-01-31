@@ -87,7 +87,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         def ++=(that: Weight): Weight = {
             val newW = new Weight()
     
-            for (i ← 0 to 5)
+            for (i ← 0 until 5)
                 newW.setWeight(i, this.weights(i) + that.weights(i))
             
             newW
