@@ -31,25 +31,43 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import org.nlpcraft.mdllib.NCQueryResult;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * TODO:
- * Sentence to test. This interface defines a sentence to be tested, its data source as well as its expected
- * response status and optional result checker. One or more test sentences are passed to
- * {@link NCTestClient#test(NCTestSentence...)} or {@link NCTestClient#test(List)} methods.
  */
-public interface NCTestSentence {
+public class NCTestSentence {
+    private String txt;
+    private Long dsId;
+    private String mdlId;
+    
+    public NCTestSentence(String txt, long dsId) {
+        if (txt == null)
+            throw new IllegalStateException("Text must be defined.");
+    
+        this.txt = txt;
+        this.dsId = dsId;
+    }
+    
+    public NCTestSentence(String txt, String mdlId) {
+        if (txt == null)
+            throw new IllegalStateException("Text must be defined.");
+    
+        if (mdlId == null)
+            throw new IllegalStateException("Model ID must be defined.");
+    
+        this.txt = txt;
+        this.mdlId = mdlId;
+    }
+    
     /**
      * Gets sentence text.
      *
      * @return Sentence text.
      */
-    String getText();
+    public String getText() {
+        return txt;
+    }
     
     /**
      * TODO:
@@ -57,7 +75,9 @@ public interface NCTestSentence {
      *
      * @return Data source ID.
      */
-    Optional<Long> getDatasourceId();
+    public Optional<Long> getDatasourceId() {
+        return dsId != null ? Optional.of(dsId) : Optional.empty();
+    }
     
     /**
      * TODO:
@@ -65,26 +85,7 @@ public interface NCTestSentence {
      *
      * @return Model ID.
      */
-    Optional<String> getModelId();
-    
-    /**
-     * Gets excepted result type flag. TODO:
-     *
-     * @return Excepted result type flag.
-     */
-    boolean shouldPassed();
-    
-    /**
-     * Gets optional result validation predicate.
-     *
-     * @return Validation predicate or {@code}.
-     */
-    Optional<Predicate<NCQueryResult>> getCheckResult();
-    
-    /**
-     * Gets optional error validation predicate.
-     *
-     * @return Validation predicate or {@code}.
-     */
-    Optional<Predicate<String>> getCheckError();
+    public Optional<String> getModelId() {
+        return mdlId != null ? Optional.of(mdlId) : Optional.empty();
+    }
 }
