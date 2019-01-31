@@ -122,6 +122,8 @@ object NCVersionManager extends LazyLogging {
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
+        val props = (m ++ addParams).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
+
         val f =
             Future {
                 val client = HttpClients.createDefault
@@ -130,13 +132,14 @@ object NCVersionManager extends LazyLogging {
 
                 try {
                     post.setHeader("Content-Type", "application/json")
+
                     post.setEntity(
                         new StringEntity(
                             gson.toJson(
                                 Map(
                                     "name" → name,
                                     "version" → ver.version,
-                                    "properties" → (m ++ addParams).asJava
+                                    "properties" → props
                                 ).asJava
                             )
                         )
