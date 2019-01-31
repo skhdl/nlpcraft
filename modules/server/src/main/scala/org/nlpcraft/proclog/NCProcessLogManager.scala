@@ -37,6 +37,7 @@ import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
+import org.nlpcraft.mdo.NCProbeMdo
 
 /**
   * Process log manager.
@@ -93,6 +94,44 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         }
     }
     
+    /**
+      * Updates log entry with given result parameters.
+      *
+      * @param srvReqId ID of the server request to update.
+      * @param probe
+      */
+    @throws[NCE]
+    def updateProbe(
+        srvReqId: String,
+        probe: NCProbeMdo
+    ): Unit = {
+        ensureStarted()
+        
+        NCPsql.sql {
+            NCDbManager.updateProbeProcessingLog(
+                srvReqId,
+                probe.probeToken,
+                probe.probeId,
+                probe.probeGuid,
+                probe.probeApiVersion,
+                probe.probeApiDate,
+                probe.osVersion,
+                probe.osName,
+                probe.osArch,
+                probe.startTstamp,
+                probe.tmzId,
+                probe.tmzAbbr,
+                probe.tmzName,
+                probe.userName,
+                probe.javaVersion,
+                probe.javaVendor,
+                probe.hostName,
+                probe.hostAddr,
+                probe.macAddr
+            )
+        }
+    }
+
     /**
       * Adds new processing log entry.
       * 

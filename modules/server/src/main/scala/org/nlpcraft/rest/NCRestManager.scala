@@ -31,8 +31,6 @@
 
 package org.nlpcraft.rest
 
-import java.sql.Timestamp
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -873,7 +871,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         probeId: String,
                         probeGuid: String,
                         probeApiVersion: String,
-                        probeApiDate: Long,
+                        probeApiDate: String,
                         osVersion: String,
                         osName: String,
                         osArch: String,
@@ -909,11 +907,11 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                             mdo.probeId,
                             mdo.probeGuid,
                             mdo.probeApiVersion,
-                            mdo.probeApiDate,
+                            mdo.probeApiDate.toString,
                             mdo.osVersion,
                             mdo.osName,
                             mdo.osArch,
-                            mdo.startTstamp,
+                            mdo.startTstamp.getTime,
                             mdo.tmzId,
                             mdo.tmzAbbr,
                             mdo.tmzName,
