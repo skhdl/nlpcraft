@@ -62,10 +62,10 @@ object NCVersionManager extends LazyLogging {
       * Asks version info and prints it to log info.
       *
       * @param name Component name.
-      * @param addParams Component additional parameters.
+      * @param compParams Component related parameters.
       */
     @throws[NCE]
-    def ask(name: String, addParams: Map[String, Any]): Unit = {
+    def ask(name: String, compParams: Map[String, Any]): Unit = {
         val tmz = TimeZone.getDefault
         val sysProps = System.getProperties
 
@@ -122,7 +122,7 @@ object NCVersionManager extends LazyLogging {
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
-        val props = (m ++ addParams).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
+        val props = (m ++ compParams).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
 
         val f =
             Future {

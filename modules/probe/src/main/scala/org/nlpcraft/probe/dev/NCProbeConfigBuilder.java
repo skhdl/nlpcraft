@@ -94,7 +94,7 @@ public class NCProbeConfigBuilder {
     // Default probe token shared by the server as well.
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
-    // Default probe token shared by the server as well.
+    // Default flag value.
     private final static boolean DFLT_VERSION_ASK_ENABLED = true;
     
     /** */
