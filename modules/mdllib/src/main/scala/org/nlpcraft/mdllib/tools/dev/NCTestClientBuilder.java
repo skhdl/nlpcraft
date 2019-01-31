@@ -68,7 +68,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Test client builder for {@link NCTestClient} instances.
+ * Test client builder for {@link NCTestClient} instances. Note that all configuration values
+ * have sensible defaults. Most of the time only user {@link #setUser(String, String) credentials}
+ * will have to be changed if not testing with default account.
  */
 public class NCTestClientBuilder {
     /** Default public REST API URL (endpoint). */
@@ -97,7 +99,7 @@ public class NCTestClientBuilder {
     private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
     private boolean clearConv = DFLT_CLEAR_CONVERSATION;
     private boolean asyncMode = DFLT_ASYNC_MODE;
-    private long maxCheckTime = DFLT_MAX_CHECK_TIME;
+    private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
     private RequestConfig reqCfg;
     private String baseUrl = DFLT_BASEURL;
     private String email = DFLT_EMAIL;
@@ -127,8 +129,7 @@ public class NCTestClientBuilder {
             this.mdlId = mdlId;
         }
     }
-        
-        
+
     /**
      * JSON helper class.
      */
@@ -831,9 +832,9 @@ public class NCTestClientBuilder {
                 long startTime = System.currentTimeMillis();
     
                 while (testsResMap.size() != testsMap.size()) {
-                    if (System.currentTimeMillis() - startTime > maxCheckTime)
+                    if (System.currentTimeMillis() - startTime > maxCheckTimeMs)
                         throw new NCTestClientException(
-                            String.format("Timed out waiting for response: %d", maxCheckTime)
+                            String.format("Timed out waiting for response: %d", maxCheckTimeMs)
                         );
         
                     List<NCRequestStateJson> states = check(auth);
@@ -1002,14 +1003,12 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets HTTP REST client configuration parameters.
+     * Sets optional HTTP REST client configuration parameters.
      *
      * @param reqCfg HTTP REST client configuration parameters.
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setConfig(RequestConfig reqCfg) {
-        checkNotNull("reqCfg", reqCfg);
-        
         this.reqCfg = reqCfg;
         
         return this;
@@ -1017,22 +1016,19 @@ public class NCTestClientBuilder {
     
     /**
      * Sets check result delay value in milliseconds.
-     * Default values is {@link NCTestClientBuilder#DFLT_CHECK_INTERVAL_MS}. This value should be changed
-     * only in cases when account's usage quota is exceeded.
+     * Default values is {@link NCTestClientBuilder#DFLT_CHECK_INTERVAL_MS}.
      *
-     * @param checkIntervalMs Delay value in milliseconds.
+     * @param checkIntervalMs Result check delay value in milliseconds.
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
-        checkPositive("checkIntervalMs", checkIntervalMs);
-        
         this.checkIntervalMs = checkIntervalMs;
         
         return this;
     }
     
     /**
-     * Sets whether or not test sentences will be processed in parallel (async mode) or one by one (sync mode).
+     * Sets whether or not process sentences in parallel (async mode) or one by one (sync mode).
      * Note that only synchronous mode make sense when testing with conversation support. Default values
      * is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
      *
@@ -1047,7 +1043,7 @@ public class NCTestClientBuilder {
     
     /**
      * Sets whether or not to clear conversation after each test request.
-     * Note, that if this flag set as {@code false}, requests always sent in synchronous (one-by-one) mode.
+     * Note that if this flag set to {@code false}, requests always sent in synchronous (one-by-one) mode.
      * Default values is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
      *
      * @param clearConv Whether or not to clear conversation after each test request.
@@ -1067,8 +1063,6 @@ public class NCTestClientBuilder {
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
-        checkNotNull("cliSup", cliSup);
-        
         this.cliSup = cliSup;
     
         return this;
@@ -1076,14 +1070,12 @@ public class NCTestClientBuilder {
     
     /**
      * Sets API base URL.
-     * By default used {@link NCTestClientBuilder#DFLT_BASEURL}.
+     * By default {@link NCTestClientBuilder#DFLT_BASEURL} is used.
      *
      * @param baseUrl API base URL.
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setBaseUrl(String baseUrl) {
-        checkNotNull("baseUrl", baseUrl);
-        
         this.baseUrl = baseUrl;
         
         if (!this.baseUrl.endsWith("/"))
@@ -1094,16 +1086,13 @@ public class NCTestClientBuilder {
     
     /**
      * Sets user credentials.
-     * By default used {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD}.
+     * By default {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD} are used.
      *
      * @param email User email.
      * @param pswd User password.
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setUser(String email, String pswd) {
-        checkNotNull("email", email);
-        checkNotNull("pswd", pswd);
-        
         this.email = email;
         this.pswd = pswd;
     
@@ -1111,16 +1100,14 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets maximum check time. It is maximum time of checking snt request states. TODO:
-     * By default used {@link NCTestClientBuilder#DFLT_MAX_CHECK_TIME}, ms.
+     * Sets maximum check time. It is maximum time for waiting for the processing completion.
+     * By default {@link NCTestClientBuilder#DFLT_MAX_CHECK_TIME} is used.
      *
-     * @param maxCheckTime Maximum check time (ms).
+     * @param maxCheckTimeMs Maximum check time (ms).
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder setMaxCheckTime(long maxCheckTime) {
-        checkPositive("maxCheckTime", maxCheckTime);
-        
-        this.maxCheckTime = maxCheckTime;
+    public NCTestClientBuilder setMaxCheckTime(long maxCheckTimeMs) {
+        this.maxCheckTimeMs = maxCheckTimeMs;
     
         return this;
     }
@@ -1131,6 +1118,12 @@ public class NCTestClientBuilder {
      * @return Newly built test client instance.
      */
     public NCTestClient build() {
+        checkPositive("maxCheckTimeMs", maxCheckTimeMs);
+        checkNotNull("email", email);
+        checkNotNull("pswd", pswd);
+        checkNotNull("baseUrl", baseUrl);
+        checkPositive("checkIntervalMs", checkIntervalMs);;
+
         return new NCTestClientImpl();
     }
 }

@@ -45,16 +45,16 @@ public interface NCTestResult {
     String getText();
     
     /**
-     * Gets sentence processing time in milliseconds.
+     * Gets total sentence processing time in milliseconds.
      *
      * @return Processing time in milliseconds.
      */
     long getProcessingTime();
     
     /**
-     * Gets datasource ID.
+     * Gets data source ID.
      *
-     * @return Datasource ID.
+     * @return Data source ID.
      */
     long getDatasourceId();
     
