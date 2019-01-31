@@ -540,7 +540,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def updateCancelProcessingLog(
         srvReqId: String,
-        tstamp: Long
+        tstamp: Timestamp
     ): Unit = {
         ensureStarted()
         NCPsql.insertSingle(

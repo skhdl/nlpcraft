@@ -78,11 +78,11 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
-      * @param dsId Datasource ID.
+      * @param dsId Data source ID.
       * @param dsModelId Model ID.
-      * @param dsName Datasource name.
-      * @param dsDesc Datasource description.
-      * @param dsModelCfg Datasource model config.
+      * @param dsName Data source name.
+      * @param dsDesc Data source description.
+      * @param dsModelCfg Data source model config.
       * @param test Test flag.
       */
     @throws[NCE]

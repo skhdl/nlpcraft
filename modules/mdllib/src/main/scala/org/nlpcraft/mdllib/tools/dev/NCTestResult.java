@@ -31,10 +31,13 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
+ *
+ * @see NCTestClient#test(NCTestSentence...)
+ * @see NCTestClient#test(List)
  */
 public interface NCTestResult {
     /**
@@ -56,7 +59,7 @@ public interface NCTestResult {
      *
      * @return Data source ID.
      */
-    long getDatasourceId();
+    long getDataSourceId();
     
     /**
      * Gets model ID.

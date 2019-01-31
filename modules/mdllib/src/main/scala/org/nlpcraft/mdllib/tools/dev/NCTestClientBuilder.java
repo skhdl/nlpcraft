@@ -103,11 +103,11 @@ public class NCTestClientBuilder {
         @SerializedName("id") private long dsId;
         @SerializedName("mdlId") private String mdlId;
     
-        public long getDatasourceId() {
+        public long getDataSourceId() {
             return dsId;
         }
     
-        public void setDatasourceId(long dsId) {
+        public void setDataSourceId(long dsId) {
             this.dsId = dsId;
         }
     
@@ -150,11 +150,11 @@ public class NCTestClientBuilder {
             this.userId = userId;
         }
     
-        public long getDatasourceId() {
+        public long getDataSourceId() {
             return dsId;
         }
     
-        public void setDatasourceId(long dsId) {
+        public void setDataSourceId(long dsId) {
             this.dsId = dsId;
         }
     
@@ -300,7 +300,7 @@ public class NCTestClientBuilder {
             this.mdlId = mdlId;
         }
     
-        long getDatasourceId() {
+        long getDsId() {
             return dsId;
         }
     
@@ -318,7 +318,7 @@ public class NCTestClientBuilder {
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
         private final Gson gson = new Gson();
-        private final CloseableHttpClient client;
+        private final CloseableHttpClient httpCli;
     
         private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
         private boolean clearConv = DFLT_CLEAR_CONVERSATION;
@@ -330,9 +330,8 @@ public class NCTestClientBuilder {
         private String pswd = DFLT_PASSWORD;
         private Supplier<CloseableHttpClient> cliSup;
     
-    
         NCTestClientImpl() {
-            this.client = mkClient();
+            httpCli = mkClient();
         }
     
         long getCheckInterval() {
@@ -399,7 +398,7 @@ public class NCTestClientBuilder {
             this.email = email;
         }
     
-        void setPasword(String pswd) {
+        void setPassword(String pswd) {
             this.pswd = pswd;
         }
     
@@ -493,7 +492,7 @@ public class NCTestClientBuilder {
                     }
                 };
             
-                String s = client.execute(post, h);
+                String s = httpCli.execute(post, h);
             
                 log.trace("Response received: {}", s);
             
@@ -539,7 +538,7 @@ public class NCTestClientBuilder {
             throws NCTestClientException, IOException {
             checkNotNull("tests", tests);
             
-            checkDups(tests, NCTestSentence::getDatasourceId, "datasource");
+            checkDups(tests, NCTestSentence::getDataSourceId, "datasource");
             checkDups(tests, NCTestSentence::getModelId, "model");
             
             Set<String> mdlIds =
@@ -562,7 +561,7 @@ public class NCTestClientBuilder {
             
             try {
                 Map<Long, String> dssMdlIds =
-                    getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDatasourceId, NCDsJson::getModelId));
+                    getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
     
                 Map<NCTestSentence, IdHolder> testsExt =
                     tests.stream().collect(
@@ -571,8 +570,8 @@ public class NCTestClientBuilder {
                             p -> {
                                 long dsId;
                                 
-                                if (p.getDatasourceId().isPresent())
-                                    dsId = p.getDatasourceId().get();
+                                if (p.getDataSourceId().isPresent())
+                                    dsId = p.getDataSourceId().get();
                                 else {
                                     assert p.getModelId().isPresent();
     
@@ -594,14 +593,14 @@ public class NCTestClientBuilder {
     
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, testsExt.get(test).getDatasourceId());
+                        clearConversation(auth, testsExt.get(test).getDsId());
         
                         res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
                     }
                 }
                 else {
                     Set<Long> dsIds =
-                        tests.stream().map(t -> testsExt.get(t).getDatasourceId()).collect(Collectors.toSet());
+                        tests.stream().map(t -> testsExt.get(t).getDsId()).collect(Collectors.toSet());
                     
                     if (asyncMode) {
                         clearConversationAllDss(auth, dsIds);
@@ -655,7 +654,7 @@ public class NCTestClientBuilder {
             
             AsciiTable resTab = new AsciiTable(
                 "Sentence",
-                "Datasource ID",
+                "Data source ID",
                 "Model ID",
                 "Result",
                 "Error",
@@ -668,7 +667,7 @@ public class NCTestClientBuilder {
                 String ss = res.getText().substring(0, 100);
     
                 row.add(ss.equals(res.getText()) ? ss : ss + " ...");
-                row.add(res.getDatasourceId());
+                row.add(res.getDataSourceId());
                 row.add(res.getModelId());
                 row.add(res.getResult().orElse(""));
                 row.add(res.getResultError().orElse(""));
@@ -875,7 +874,7 @@ public class NCTestClientBuilder {
                     long now = System.currentTimeMillis();
     
                     try {
-                        String srvReqId = ask(auth, test.getText(), h.getDatasourceId());
+                        String srvReqId = ask(auth, test.getText(), h.getDsId());
         
                         log.debug("Sentence sent: {}", srvReqId);
         
@@ -936,7 +935,7 @@ public class NCTestClientBuilder {
                             mkResult(
                                 test,
                                 testRes.getUpdateTstamp() - testRes.getCreateTstamp(),
-                                h.getDatasourceId(),
+                                h.getDsId(),
                                 h.getModelId(),
                                 testRes.getResultBody(),
                                 testRes.getResultType(),
@@ -954,7 +953,7 @@ public class NCTestClientBuilder {
                     return Pair.of(
                         test,
                         mkResult(
-                            test, time, h.getDatasourceId(), h.getModelId(), null, null, err
+                            test, time, h.getDsId(), h.getModelId(), null, null, err
                         )
                     );
                 })
@@ -985,7 +984,7 @@ public class NCTestClientBuilder {
             }
     
             @Override
-            public long getDatasourceId() {
+            public long getDataSourceId() {
                 return dsId;
             }
     
@@ -1126,7 +1125,7 @@ public class NCTestClientBuilder {
      */
     public NCTestClientBuilder setUser(String email, String pswd) {
         impl.setEmail(email);
-        impl.setPasword(pswd);
+        impl.setPassword(pswd);
      
         return this;
     }

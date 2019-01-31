@@ -290,7 +290,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft
     def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
-        val now = G.nowUtcMs()
+        val now = new Timestamp(G.nowUtcMs())
     
         NCTxManager.startTx {
             cache --= srvReqIds
