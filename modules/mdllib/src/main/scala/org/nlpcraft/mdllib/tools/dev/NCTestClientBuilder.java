@@ -318,8 +318,7 @@ public class NCTestClientBuilder {
             return mdlId;
         }
     }
-    
-    
+
     /**
      * Client implementation.
      */
@@ -1122,7 +1121,7 @@ public class NCTestClientBuilder {
         checkNotNull("email", email);
         checkNotNull("pswd", pswd);
         checkNotNull("baseUrl", baseUrl);
-        checkPositive("checkIntervalMs", checkIntervalMs);;
+        checkPositive("checkIntervalMs", checkIntervalMs);
 
         return new NCTestClientImpl();
     }
