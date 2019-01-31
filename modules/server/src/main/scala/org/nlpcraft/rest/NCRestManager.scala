@@ -308,7 +308,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         }
                     }
                 } ~
-                path(API / "check") {
+                /**/path(API / "check") {
                     case class Req(
                         accessToken: String
                     )
