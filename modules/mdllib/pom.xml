@@ -19,7 +19,7 @@
    required by the License must also include this Commons Clause License
    Condition notice.
 
-   Software:    NlpCraft
+   Software:    NLPCraft
    License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
    Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
 
@@ -123,7 +123,7 @@
                     <stylesheetfile>${project.basedir}/../../javadoc/stylesheet.css</stylesheetfile>
                     <bottom>
                         <![CDATA[
-                            Copyright &#169; 2013-{currentYear} NlpCraft Project. All rights reserved.
+                            Copyright &#169; 2013-{currentYear} NLPCraft Project. All rights reserved.
                         ]]>
                     </bottom>
                     <top>
@@ -163,12 +163,12 @@
                     </groups>
                     <header>
                         <![CDATA[
-                            NlpCraft ${project.version} API <a href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
+                            NLPCraft ${project.version} API <a href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
                         ]]>
                     </header>
                     <footer>
                         <![CDATA[
-                            NlpCraft ${project.version} API
+                            NLPCraft ${project.version} API
                             <script type="text/javascript">
                                 SyntaxHighlighter.defaults["auto-links"] = false;
                                 SyntaxHighlighter.defaults["tab-size"] = 2;
@@ -189,10 +189,10 @@
                     </footer>
                     <doctitle>
                         <![CDATA[
-                            NlpCraft ${project.version} API Specification
+                            NLPCraft ${project.version} API Specification
                         ]]>
                     </doctitle>
-                    <windowtitle>NlpCraft ${project.version} API</windowtitle>
+                    <windowtitle>NLPCraft ${project.version} API</windowtitle>
                     <show>public</show>
                     <verbose>false</verbose>
                 </configuration>
