@@ -20,25 +20,25 @@ functional standalone NLP system and opened to the community in 2019.
 How does it work?
 
 You start by defining a model with a simple Data Model API using any JVM-based 
-language like Java, Scala, Groovy, etc. A model-as-a-code specifies how to interpret user input 
-(e.g. intents), how to query or control a particular data source, and finally how to format the 
-result (JSON, HTML, text, etc.). 
+language like Java, Scala, Groovy, etc. For a particular data source, a model-as-a-code specifies 
+how to interpret user input 
+(e.g. intents), how to query or control this data source, and how to format the 
+final result back. 
 
-Once you defined your model you will need to deploy it into a NLPCraft Data Probe - an application that 
-connects to NLPCraft Server. Its purpose is to deploy and manage 
-user data models. Each data probe can host multiple models, and you can have multiple data probes. 
-Data probes can be deployed anywhere as long as there is an outbound connectivity, and 
-are typically deployed in DMZ or close to your private data sources. 
+Once your model is defined you will need to deploy it into a NLPCraft Data Probe - an application that 
+connects to NLPCraft Server. Its purpose is to host user data models. You can have multiple data
+probes and each data probe can host multiple data models. Data probes are typically deployed in 
+DMZ or close to your private data sources. 
 
-Once your model is defined and deployed into a data probe, you can start NLPCraft Server and call 
-REST API to ask natural language questions and get results back.
+Once your model is defined and deployed, you can start NLPCraft Server and use its 
+REST API to ask natural language questions and get results back from your configured data source.
  
 ### License
 
 [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) with [Commons Clause](https://commonsclause.com/).
 
 ### Prerequisites
-Here's what you will need to get started with `nlpcraft`:
+Here's what you will need to get started with NLPCraft:
  - [Java SE Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (JRE) ver. 8 or later installed.
  - Latest [Git](https://git-scm.com/downloads) and [Maven](https://maven.apache.org/install.html).
  
