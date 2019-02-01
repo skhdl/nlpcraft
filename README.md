@@ -19,19 +19,19 @@ functional standalone NLP system and opened to the community in 2019.
 ### Introduction
 How does it work?
 
-You start by defining a model with simple Data Model APIs using any JVM-based 
+You start by defining a model with a simple Data Model API using any JVM-based 
 language like Java, Scala, Groovy, etc. A model-as-a-code specifies how to interpret user input 
 (e.g. intents), how to query or control a particular data source, and finally how to format the 
-result back to the user. 
+result (JSON, HTML, text, etc.). 
 
 Once you defined your model you will need to deploy it into a NLPCraft Data Probe - an application that 
 connects to NLPCraft Server. Its purpose is to deploy and manage 
 user data models. Each data probe can host multiple models, and you can have multiple data probes. 
-Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and 
+Data probes can be deployed anywhere as long as there is an outbound connectivity, and 
 are typically deployed in DMZ or close to your private data sources. 
 
 Once your model is defined and deployed into a data probe, you can start NLPCraft Server and call 
-REST APIs to ask natural language questions and get results back.
+REST API to ask natural language questions and get results back.
  
 ### License
 
