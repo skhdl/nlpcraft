@@ -4,8 +4,8 @@ email: info@datalingvo.com
 description: >-
   Copyright (C) 2013-2019 DataLingvo, Inc.
   All Rights Reserved.
-baseurl: ""
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/nlpcraft"
+url: "https://vic64.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: nlpcraft
 github_username:  vic64
 
