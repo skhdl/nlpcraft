@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -40,7 +40,7 @@ import org.nlpcraft._
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 
@@ -50,7 +50,7 @@ import scala.util.control.Exception._
 /**
   * User management (signup, add, delete, update) manager.
   */
-object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
+object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     // Static email validator.
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
 

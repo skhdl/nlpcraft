@@ -1,4 +1,4 @@
-NlpCraft Abbreviation Rules.
+NLPCraft Abbreviation Rules.
 
 <table>
 <tr><th>Name</th><th>Abbreviation</th></tr>

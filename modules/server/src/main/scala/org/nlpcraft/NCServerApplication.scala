@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -58,7 +58,7 @@ import org.nlpcraft.tx.NCTxManager
  * Main server entry-point.
  */
 object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging {
-    override def name() = "NlpCraft Server"
+    override def name() = "NLPCraft Server"
 
     // Starts all managers.
     private def startComponents(): Unit = {
