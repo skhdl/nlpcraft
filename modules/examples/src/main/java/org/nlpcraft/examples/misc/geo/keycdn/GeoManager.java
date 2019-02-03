@@ -69,6 +69,7 @@ public class GeoManager {
     private static final Gson GSON = new Gson();
     
     private Map<String, GeoDataBean> cache = new HashMap<>();
+    private String externalIp = null;
     
     /**
      * Gets optional geo data by given sentence.
@@ -85,14 +86,18 @@ public class GeoManager {
         String host = sen.getRemoteAddress().get();
     
         if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
-            try {
-                host = getExternalIp();
+            if (externalIp == null) {
+                try {
+                    externalIp = getExternalIp();
+                }
+                catch (IOException e) {
+                    System.err.println("External IP cannot be detected for localhost.");
+        
+                    return Optional.empty();
+                }
             }
-            catch (IOException e) {
-                System.err.println("External IP cannot be detected for localhost.");
     
-                return Optional.empty();
-            }
+            host = externalIp;
         }
     
         try {
