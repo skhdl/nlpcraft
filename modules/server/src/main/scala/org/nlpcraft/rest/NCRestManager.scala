@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -53,7 +53,7 @@ import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
+object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     // Akka intestines.
     private implicit val SYSTEM: ActorSystem = ActorSystem()
     private implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()

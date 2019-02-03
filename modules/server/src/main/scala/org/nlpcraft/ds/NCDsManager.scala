@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -36,7 +36,7 @@ import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft._
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo._
 import org.nlpcraft.notification.NCNotificationManager
 
@@ -46,7 +46,7 @@ import scala.util.control.Exception.catching
 /**
   * Datasources manager.
   */
-object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNlpCraft{
+object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCraft{
     // Caches.
     @volatile private var dsCache: IgniteCache[Long, NCDataSourceMdo] = _
     @volatile private var dsSeq: IgniteAtomicSequence = _

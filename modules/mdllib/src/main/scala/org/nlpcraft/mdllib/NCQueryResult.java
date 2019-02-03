@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -75,7 +75,7 @@ import java.util.stream.*;
  *     </tr>
  * </table>
  * Note that all of these types have specific meaning <b>only</b> for REST applications that interpret them
- * accordingly. For example, the REST client interfacing between NlpCraft and Amazon Alexa or Apple HomeKit can only
+ * accordingly. For example, the REST client interfacing between NLPCraft and Amazon Alexa or Apple HomeKit can only
  * accept {@code text} result type and ignore everything else.
  */
 public class NCQueryResult implements Serializable {

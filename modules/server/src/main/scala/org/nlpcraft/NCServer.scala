@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -41,7 +41,7 @@ import org.nlpcraft.ascii.NCAsciiTable
 import scala.compat.Platform._
 
 /**
- * Basic NlpCraft server component trait.
+ * Basic NLPCraft server component trait.
  */
 trait NCServer extends LazyLogging {
     // Copyright blurb. Can be changed at build time.

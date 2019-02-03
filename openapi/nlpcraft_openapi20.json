@@ -1,9 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "NlpCraft REST API.",
+        "description": "NLPCraft REST API.",
         "version": "0.0.1",
-        "title": "NlpCraft REST API"
+        "title": "NLPCraft REST API"
     },
     "host": "localhost",
     "basePath": "/api/v1",

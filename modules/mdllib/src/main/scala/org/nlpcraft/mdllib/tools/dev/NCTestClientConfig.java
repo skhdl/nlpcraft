@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -177,19 +177,19 @@ public class NCTestClientConfig {
     }
 
     /**
-     * Gets the previously set base URL for NlpCraft REST APIs.
+     * Gets the previously set base URL for NLPCraft REST APIs.
      *
-     * @return Previously set base URL for NlpCraft REST APIs.
+     * @return Previously set base URL for NLPCraft REST APIs.
      */
     public String getBaseUrl() {
         return baseUrl;
     }
 
     /**
-     * Sets optional base URL for NlpCraft REST APIs. Note that
+     * Sets optional base URL for NLPCraft REST APIs. Note that
      * this property can be set via {@code NLPCRAFT_TEST_BASEURL} system property or environment variable.
      *
-     * @param baseUrl Base URL for NlpCraft REST APIs.
+     * @param baseUrl Base URL for NLPCraft REST APIs.
      * @see #DFLT_BASEURL
      */
     public void setBaseUrl(String baseUrl) {

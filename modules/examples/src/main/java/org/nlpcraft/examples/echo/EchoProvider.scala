@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -45,7 +45,7 @@ import scala.collection.Seq
   * <p>
   * This example for any user input replies with JSON representation query context
   * corresponding to that input. This is a simple demonstration of the JSON output
-  * and all NlpCraft-provided information that a user defined model can operate on.
+  * and all NLPCraft-provided information that a user defined model can operate on.
   */
 @NCActiveModelProvider
 class EchoProvider extends NCModelProviderAdapter {
@@ -203,7 +203,7 @@ class EchoProvider extends NCModelProviderAdapter {
               |    "name": "Echo Example Model",
               |    "version": "1.0",
               |    "description": "Echo example model.",
-              |    "vendorName": "NlpCraft",
+              |    "vendorName": "NLPCraft",
               |    "vendorUrl": "https://www.nlpcraft.org",
               |    "vendorContact": "Support",
               |    "vendorEmail": "info@nlpcraft.org",

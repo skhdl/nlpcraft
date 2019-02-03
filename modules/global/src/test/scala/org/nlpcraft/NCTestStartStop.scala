@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -32,7 +32,7 @@
 package org.nlpcraft
 
 /**
-  * NlpCraft lifecycle components test helper.
+  * NLPCraft lifecycle components test helper.
   */
 trait NCTestStartStop {
     private val srvs = scala.collection.mutable.Buffer.empty[NCLifecycle]
