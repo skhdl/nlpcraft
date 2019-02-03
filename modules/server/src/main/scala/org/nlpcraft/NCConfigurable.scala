@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -53,6 +53,6 @@ trait NCConfigurable {
 object NCConfigurable {
     private final val cfgFile = G.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
     
-    // Singleton to load full NlpCraft configuration (only once).
+    // Singleton to load full NLPCraft configuration (only once).
     protected lazy val cfg: Config = ConfigFactory.load(cfgFile)
 }

@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -41,8 +41,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +69,7 @@ public class GeoManager {
     private static final Gson GSON = new Gson();
     
     private Map<String, GeoDataBean> cache = new HashMap<>();
+    private String externalIp = null;
     
     /**
      * Gets optional geo data by given sentence.
@@ -71,24 +77,37 @@ public class GeoManager {
      * @return Geo data. Optional.
      */
     public Optional<GeoDataBean> get(NCSentence sen) {
-        Optional<String> remAddr = sen.getRemoteAddress();
-
-        if (!remAddr.isPresent()) {
+        if (!sen.getRemoteAddress().isPresent()) {
             System.err.println("Geo data can't be found because remote address is not available in the sentence.");
 
             return Optional.empty();
         }
     
-        String host = remAddr.get();
+        String host = sen.getRemoteAddress().get();
+    
+        if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
+            if (externalIp == null) {
+                try {
+                    externalIp = getExternalIp();
+                }
+                catch (IOException e) {
+                    System.err.println("External IP cannot be detected for localhost.");
         
-        GeoDataBean geo = cache.get(host);
-        
-        if (geo != null)
-            return Optional.of(geo);
+                    return Optional.empty();
+                }
+            }
+    
+            host = externalIp;
+        }
     
         try {
+            GeoDataBean geo = cache.get(host);
+    
+            if (geo != null)
+                return Optional.of(geo);
+            
             HttpURLConnection conn = (HttpURLConnection)(new URL(URL + host).openConnection());
-
+    
             // This service requires "User-Agent" property for some reasons.
             conn.setRequestProperty("User-Agent", "rest");
     
@@ -109,18 +128,30 @@ public class GeoManager {
                     );
         
                 geo = resp.getData().getGeo();
-        
+                
                 cache.put(host, geo);
         
                 return Optional.of(geo);
             }
         }
         catch (Exception e) {
-            System.err.println("Unable to answer due to IP Location Finder (keycdn) error.");
+            System.err.println(
+                MessageFormat.format(
+                    "Unable to answer due to IP Location Finder (keycdn) error for host: {0}",
+                    host
+                )
+            );
     
             e.printStackTrace(System.err);
     
             return Optional.empty();
+        }
+    }
+    
+    private static String getExternalIp() throws IOException {
+        try (BufferedReader in =
+            new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream()))) {
+            return in.readLine();
         }
     }
     
