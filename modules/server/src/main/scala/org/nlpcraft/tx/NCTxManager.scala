@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -36,7 +36,7 @@ import java.sql.Connection
 import org.apache.ignite.IgniteTransactions
 import org.apache.ignite.lang.IgniteUuid
 import org.apache.ignite.transactions.{Transaction, TransactionConcurrency, TransactionIsolation}
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.{NCE, NCLifecycle, _}
 
 import scala.collection.mutable
@@ -46,7 +46,7 @@ import scala.util.control.Exception.catching
   * Transaction manager based on Ignite transaction management. It manages both Ignite cache
   * and JDBC operations, and allows for multi-threaded transactions.
   */
-object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNlpCraft {
+object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNLPCraft {
     // Internal log switch.
     private final val LOG_TX = false
     

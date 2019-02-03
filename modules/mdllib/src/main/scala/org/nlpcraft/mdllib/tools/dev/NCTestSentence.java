@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -31,30 +31,47 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
- * TODO:
+ * Sentence to test. List of sentences is passed to {@link NCTestClient} methods.
+ *
+ * @see NCTestClient#test(NCTestSentence...)
+ * @see NCTestClient#test(List)
  */
 public class NCTestSentence {
     private String txt;
     private Long dsId;
     private String mdlId;
-    
+
+    /**
+     * Creates new test sentence with given parameters. Note that if you don't already have
+     * pre-created data source you can use {@link #NCTestSentence(String, String)} constructor
+     * that takes ID of the model instead and automatically creates temporary data source on the fly.
+     *
+     * @param txt Sentence text.
+     * @param dsId Data source ID to test with.
+     */
     public NCTestSentence(String txt, long dsId) {
         if (txt == null)
-            throw new IllegalStateException("Text must be defined.");
+            throw new IllegalStateException("Sentence text cannot be null.");
     
         this.txt = txt;
         this.dsId = dsId;
     }
-    
+
+    /**
+     * Creates new test sentence with given parameters.
+     *
+     * @param txt Sentence text.
+     * @param mdlId Model ID to test with. Note that a temporary data source will be created for this model ID.
+     */
     public NCTestSentence(String txt, String mdlId) {
         if (txt == null)
-            throw new IllegalStateException("Text must be defined.");
+            throw new IllegalStateException("Sentence text cannot be null.");
     
         if (mdlId == null)
-            throw new IllegalStateException("Model ID must be defined.");
+            throw new IllegalStateException("Model ID cannot be null.");
     
         this.txt = txt;
         this.mdlId = mdlId;
@@ -70,18 +87,16 @@ public class NCTestSentence {
     }
     
     /**
-     * TODO:
-     * Gets data source ID. Note that it should return value or {@link NCTestSentence#getModelId()}
+     * Gets data source ID. Note that either data source ID or model ID is set, but not both.
      *
      * @return Data source ID.
      */
-    public Optional<Long> getDatasourceId() {
+    public Optional<Long> getDataSourceId() {
         return dsId != null ? Optional.of(dsId) : Optional.empty();
     }
     
     /**
-     * TODO:
-     * Gets model ID. Note that it should return value or {@link NCTestSentence#getDatasourceId()}
+     * Gets model ID. Note that either data source ID or model ID is set, but not both.
      *
      * @return Model ID.
      */
