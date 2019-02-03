@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -36,7 +36,7 @@ import org.nlpcraft.NCServer
 /**
  * Ignite-based server (starts server inside of initialized Ignite node).
  */
-abstract class NCIgniteServer(val ggCfg: String) extends App with NCServer with NCIgniteNlpCraft {
+abstract class NCIgniteServer(val ggCfg: String) extends App with NCServer with NCIgniteNLPCraft {
     NCIgniteRunner.runWith(ggCfg, start())
 
     // Exit JVM.

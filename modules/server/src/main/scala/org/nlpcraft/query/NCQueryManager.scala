@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -38,7 +38,7 @@ import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite.NCIgniteHelpers._
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.notification.NCNotificationManager
@@ -54,7 +54,7 @@ import scala.util.control.Exception._
 /**
   * Query state machine.
   */
-object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNlpCraft {
+object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft {
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
     
     private final val MAX_WORDS = 100

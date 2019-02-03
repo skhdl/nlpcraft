@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -663,8 +663,11 @@ public class NCTestClientBuilder {
     
             for (NCTestResult res : results) {
                 List<Object> row = new ArrayList<>();
-    
-                String ss = res.getText().substring(0, 100);
+                
+                String ss = res.getText();
+                
+                if (ss.length() > 100)
+                    ss = ss.substring(0, 100);
     
                 row.add(ss.equals(res.getText()) ? ss : ss + " ...");
                 row.add(res.getDataSourceId());

@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -33,7 +33,7 @@ package org.nlpcraft.nlp.enrichers
 
 import org.apache.ignite.IgniteCache
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.{NCE, NCLifecycle}
 import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.nlp.enrichers.basenlp.NCBaseNlpEnricher
@@ -48,7 +48,7 @@ import org.nlpcraft.ignite.NCIgniteHelpers._
 /**
   * Enrichment pipeline manager.
   */
-object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgniteNlpCraft {
+object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgniteNLPCraft {
     // NOTE: this cache is independent from datasource.
     @volatile private var cache: IgniteCache[String, NCNlpSentence] = _
     
