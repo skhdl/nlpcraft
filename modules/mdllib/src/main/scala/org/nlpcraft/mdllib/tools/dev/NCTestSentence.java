@@ -45,7 +45,9 @@ public class NCTestSentence {
     private String mdlId;
 
     /**
-     * Creates new test sentence with given parameters.
+     * Creates new test sentence with given parameters. Note that if you don't already have
+     * pre-created data source you can use {@link #NCTestSentence(String, String)} constructor
+     * that takes ID of the model instead and automatically creates temporary data source on the fly.
      *
      * @param txt Sentence text.
      * @param dsId Data source ID to test with.

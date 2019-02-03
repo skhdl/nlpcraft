@@ -538,7 +538,7 @@ public class NCTestClientBuilder {
             throws NCTestClientException, IOException {
             checkNotNull("tests", tests);
             
-            checkDups(tests, NCTestSentence::getDataSourceId, "datasource");
+            checkDups(tests, NCTestSentence::getDataSourceId, "data source");
             checkDups(tests, NCTestSentence::getModelId, "model");
             
             Set<String> mdlIds =
@@ -658,7 +658,7 @@ public class NCTestClientBuilder {
                 "Model ID",
                 "Result",
                 "Error",
-                "Processing Time (ms)"
+                "Time (ms)"
             );
     
             for (NCTestResult res : results) {
@@ -685,9 +685,9 @@ public class NCTestClientBuilder {
                 "Tests Count",
                 "Passed",
                 "Failed",
-                "Min Processing Time (ms)",
-                "Max Processing Time (ms)",
-                "Avg Processing Time (ms)"
+                "Min Time (ms)",
+                "Max Time (ms)",
+                "Avg Time (ms)"
             );
     
             List<Object> row = new ArrayList<>();
@@ -723,7 +723,7 @@ public class NCTestClientBuilder {
         }
     
         private void clearConversation(String auth, long dsId) throws IOException, NCTestClientException {
-            log.info("`clear/conversation` request sent for datasource: {}", dsId);
+            log.info("`clear/conversation` request sent for data source: {}", dsId);
             
             checkStatus(
                 gson.fromJson(
@@ -758,7 +758,7 @@ public class NCTestClientBuilder {
                     post("ds/add",
                         Pair.of("accessToken", auth),
                         Pair.of("name", "test-" + num),
-                        Pair.of("shortDesc", "Test datasource"),
+                        Pair.of("shortDesc", "Test data source"),
                         Pair.of("mdlId", mdlId),
                         Pair.of("mdlName", "Test model"),
                         Pair.of("mdlVer", "Test version")
@@ -768,13 +768,13 @@ public class NCTestClientBuilder {
                     Long.class
                );
     
-            log.info("Temporary test datasource created: {}", id);
+            log.info("Temporary test data source created: {}", id);
             
             return id;
         }
         
         private void deleteTestDs(String auth, long id) throws IOException, NCTestClientException {
-            log.info("`ds/delete` request sent for model: {}", id);
+            log.info("`ds/delete` request sent for temporary data source: {}", id);
             
             checkStatus(
                 gson.fromJson(
@@ -832,7 +832,7 @@ public class NCTestClientBuilder {
         }
     
         private String ask(String auth, String txt, long dsId) throws IOException, NCTestClientException {
-            log.info("`ask` request sent: {} to datasource: {}", txt, dsId);
+            log.info("`ask` request sent: {} to data source: {}", txt, dsId);
         
             return checkAndExtract(
                 post("ask",
