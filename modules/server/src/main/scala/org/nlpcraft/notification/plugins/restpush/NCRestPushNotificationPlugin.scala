@@ -142,6 +142,13 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         )
     }
 
+    /**
+      * Sends events batch to endpoint and clear endpoint queue if sending successful.
+      *
+      * @param ep Endpoint.
+      * @param queue Endpoint queue.
+      * @param batch Batch to send.
+      */
     private def send(ep: String, queue: java.util.LinkedList[Event], batch: java.util.List[Event]): Unit = {
         val post = new HttpPost(ep)
 
@@ -169,8 +176,9 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     }
 
     /**
+      * Flash accumulated endpoints events.
       *
-      * @param ep
+      * @param ep Endpoint.
       */
     private def flush(ep: String): Unit = {
         val queue = queues(ep)
@@ -187,27 +195,26 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
             new util.ArrayList(queue)
         }
 
-        if (!copy.isEmpty) {
+        if (!copy.isEmpty)
             try {
                 val size = copy.size()
 
-                val step = size / Config.batchSize
+                val n = size / Config.batchSize
                 val delta = size % Config.batchSize
 
                 var i = 0
 
-                while (i < size) {
-                    send(ep, queue, copy.subList(i, Config.batchSize))
+                while (i < n) {
+                    send(ep, queue, copy.subList(i * n, Config.batchSize))
 
-                    i = i + step * Config.batchSize
+                    i = i + 1
                 }
 
                 if (delta != 0)
-                    send(ep, queue, copy.subList((i - step) * Config.batchSize, delta))
+                    send(ep, queue, copy.subList(n * Config.batchSize, delta))
             }
             catch {
                 case e: Exception ⇒ logger.warn(s"Error during flush data to: $ep", e)
             }
-        }
     }
 }
