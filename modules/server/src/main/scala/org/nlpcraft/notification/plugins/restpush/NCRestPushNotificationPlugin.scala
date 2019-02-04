@@ -96,6 +96,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     override def start(): Unit = {
         super.start()
 
+        // One timer per endpoint.
         timers = Config.endpoints.map(ep ⇒ {
             val timer = Executors.newSingleThreadScheduledExecutor
 
@@ -149,27 +150,31 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       * @param queue Endpoint queue.
       * @param batch Batch to send.
       */
-    private def send(ep: String, queue: java.util.LinkedList[Event], batch: java.util.List[Event]): Unit = {
+    private def sendBatch(ep: String, queue: java.util.LinkedList[Event], batch: java.util.List[Event]): Unit = {
         val post = new HttpPost(ep)
 
         try {
             post.setHeader("Content-Type", "application/json")
             post.setEntity(new StringEntity(GSON.toJson(batch)))
 
-            httpClient.execute(post, new ResponseHandler[Unit] {
-                override def handleResponse(resp: HttpResponse): Unit = {
-                    val code = resp.getStatusLine.getStatusCode
+            httpClient.execute(
+                post,
+                new ResponseHandler[Unit] {
+                    override def handleResponse(resp: HttpResponse): Unit = {
+                        val code = resp.getStatusLine.getStatusCode
 
-                    if (code != 200)
-                        throw new NCE(s"Unexpected result code [endpoint=$ep, code=$code]")
+                        if (code != 200)
+                            throw new NCE(s"Unexpected result code [endpoint=$ep, code=$code]")
+                    }
                 }
-            })
+            )
 
-            logger.debug(s"Request sent [endpoint=$ep, batchSize=${batch.size()}]")
+            val size = batch.size()
 
-            queue.synchronized {
-                (0 until batch.size()).foreach(_ ⇒ queue.removeFirst())
-            }
+            logger.debug(s"Request sent [endpoint=$ep, batchSize=$size]")
+
+            // Clears queue (removes `size` first records.)
+            queue.synchronized { (0 until size).foreach(_ ⇒ queue.removeFirst()) }
         }
         finally
             post.releaseConnection()
@@ -186,6 +191,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         val copy: util.List[Event] = queue.synchronized {
             val overSize = queue.size() - Config.maxBufferSize
 
+            // Removes first records if queue is too long.
             (0 until overSize).foreach(_ ⇒ {
                 val deleted = queue.removeFirst()
 
@@ -196,22 +202,17 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         }
 
         if (!copy.isEmpty)
+            // Splits data to batches and sends them one by one.
             try {
                 val size = copy.size()
 
                 val n = size / Config.batchSize
                 val delta = size % Config.batchSize
 
-                var i = 0
-
-                while (i < n) {
-                    send(ep, queue, copy.subList(i * n, Config.batchSize))
-
-                    i = i + 1
-                }
+                (0 until n).foreach(i ⇒ sendBatch(ep, queue, copy.subList(i * Config.batchSize, Config.batchSize)))
 
                 if (delta != 0)
-                    send(ep, queue, copy.subList(n * Config.batchSize, delta))
+                    sendBatch(ep, queue, copy.subList(n * Config.batchSize, delta))
             }
             catch {
                 case e: Exception ⇒ logger.warn(s"Error during flush data to: $ep", e)
