@@ -1037,6 +1037,17 @@ object NCGlobals extends NCDebug with LazyLogging {
     def sysEnv(s: String): Option[String] =
         sysProps.get(s).orElse(sys.env.get(s))
     
+    /**
+      * Returns `true` if given system property, or environment variable is provided and has value
+      * 'true'. In all other cases returns `false`.
+      *
+      * @param s Name of the system property or environment variable.
+      */
+    def isSysEnvTrue(s: String): Boolean =
+        sysEnv(s) match {
+            case None ⇒ false
+            case Some(v) ⇒ java.lang.Boolean.valueOf(v) == java.lang.Boolean.TRUE
+        }
     
     /**
       * Gets random value from given sequence.
@@ -1044,7 +1055,6 @@ object NCGlobals extends NCDebug with LazyLogging {
       * @param seq Sequence.
       */
     def getRandom[T](seq: Seq[T]): T = seq(RND.nextInt(seq.size))
-    
     
     /**
       * Makes random filled sequence with given length from initial.

@@ -108,13 +108,19 @@
     <packaging>pom</packaging>
 
     <url>https://www.nlpcraft.org</url>
-    <description>Natural language interface platform.</description>
+    <description>An API to convert natural language into actions.</description>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
             <comments>A business-friendly OSS license</comments>
+        </license>
+        <license>
+            <name>The Commons Clause</name>
+            <url>https://commonsclause.com/</url>
+            <distribution>repo</distribution>
+            <comments>A safer business-friendly OSS license</comments>
         </license>
     </licenses>
 

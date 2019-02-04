@@ -37,6 +37,7 @@ import java.util.concurrent.CountDownLatch
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.ascii.NCAsciiTable
+
 import scala.compat.Platform._
 
 /**

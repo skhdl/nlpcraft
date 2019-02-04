@@ -34,31 +34,30 @@ package org.nlpcraft.probe
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.nlp.dict.NCDictionaryManager
+import org.nlpcraft.nlp.numeric.NCNumericManager
+import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.probe.dev.NCProbeConfig
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
+import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
-import org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates.NCCoordinatesEnricher
-import org.nlpcraft.nlp.numeric.NCNumericManager
 import org.nlpcraft.probe.mgrs.nlp.enrichers.context.NCContextEnricher
+import org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates.NCCoordinatesEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary.NCDictionaryEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.NCFunctionEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.model.NCModelEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious.NCSuspiciousNounsEnricher
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostEnrichCollapser
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostEnricher
-import org.nlpcraft.probe.mgrs.nlp.post.NCPostChecker
+import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, NCPostEnricher}
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
-import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
-import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.probe.dev.NCProbeConfig
+import org.nlpcraft.version.{NCVersion, NCVersionManager}
 
 import scala.compat.Platform._
 import scala.util.control.Exception._
@@ -116,7 +115,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     private def ackConfig(cfg: NCProbeConfig): Unit = {
         val tbl = NCAsciiTable()
         
-        val ver = NCProbeVersion.getCurrent
+        val ver = NCVersion.getCurrent
         
         def nvl(obj: Any): String = if (obj == null) "" else obj.toString
         
@@ -133,6 +132,20 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         logger.info("Set '-DNLPCRAFT_PROBE_SILENT=true' JVM system property to turn off verbose probe logging.")
     }
     
+    /**
+      *
+      * @param cfg
+      */
+    private def checkVersion(cfg: NCProbeConfig): Unit =
+        NCVersionManager.checkForUpdates(
+            "probe",
+            // Additional parameters.
+            Map(
+                "PROBE_ID" → cfg.getId,
+                "PROBE_MODELS_NUM" → NCModelManager.getAllModels.size
+            )
+        )
+
     /**
       *
       * @param cfg Probe configuration to start with.
@@ -156,6 +169,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
             // No exception on managers start - continue...
             case _ ⇒
                 ackStart()
+                checkVersion(cfg)
     
                 // Block & wait for the exit.
                 val exitCode = NCExitManager.awaitExit()
@@ -186,6 +200,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
       */
     private def startManagers(cfg: NCProbeConfig): Unit = {
         // Order is important!
+        NCVersionManager.start()
         NCNlpManager.start()
         NCNumericManager.start()
         NCExitManager .startWithConfig(cfg)
@@ -235,5 +250,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         NCExitManager.stop()
         NCNumericManager.stop()
         NCNlpManager.stop()
+        NCVersionManager.stop()
     }
 }

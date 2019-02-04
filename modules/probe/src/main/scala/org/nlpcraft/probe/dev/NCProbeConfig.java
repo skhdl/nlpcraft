@@ -45,6 +45,7 @@ public class NCProbeConfig implements Serializable {
     private String downLink;
     private String jarsFolder;
     private NCModelProvider provider;
+    private boolean versionAskEnabled;
 
     /**
      * Gets probe unique ID.
@@ -167,17 +168,17 @@ public class NCProbeConfig implements Serializable {
     public void setProvider(NCModelProvider provider) {
         this.provider = provider;
     }
-
+    
     @Override
     public String toString() {
         return String.format("Probe configuration [" +
-                "id=%s, " +
-                "token=%s, " +
-                "upLink=%s, " +
-                "downLink=%s, " +
-                "jarsFolder=%s, " +
-                "provider=%s" +
-                "]",
+            "id=%s, " +
+            "token=%s, " +
+            "upLink=%s, " +
+            "downLink=%s, " +
+            "jarsFolder=%s, " +
+            "provider=%s" +
+            "]",
             id, token, upLink, downLink, jarsFolder, provider);
     }
 }

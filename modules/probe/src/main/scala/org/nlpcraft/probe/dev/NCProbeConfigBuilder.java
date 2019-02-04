@@ -31,8 +31,8 @@
 
 package org.nlpcraft.probe.dev;
 
-import org.nlpcraft.mdllib.*;
-import org.nlpcraft.util.*;
+import org.nlpcraft.mdllib.NCModelProvider;
+import org.nlpcraft.util.NCGlobals;
 
 /**
  * Convenient builder for {@link NCProbeConfig} instances. Note that most of the configuration values

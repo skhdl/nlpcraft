@@ -44,6 +44,7 @@ import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.socket._
+import org.nlpcraft.version.NCVersion
 import org.nlpcraft.{NCLifecycle, _}
 
 import scala.collection.mutable
@@ -166,7 +167,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     
         val (host, port) = G.splitEndpoint(config.getDownLink)
         val cryptoKey = NCCipher.makeTokenKey(config.getToken)
-        val ver = NCProbeVersion.getCurrent
+        val ver = NCVersion.getCurrent
         val tmz = TimeZone.getDefault
     
         logger.info(s"Opening S2P link to '$host:$port'")
