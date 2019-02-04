@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -66,7 +66,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
             require(endpoints.nonEmpty, s"at least one REST endpoint is required")
         }
         
-        // TODO: validate endpoints?
+        //  TODO: validate endpoints?
     }
     
     Config.check()

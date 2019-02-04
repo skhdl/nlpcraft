@@ -17,7 +17,7 @@
 --   required by the License must also include this Commons Clause License
 --   Condition notice.
 --
---   Software:    NlpCraft
+--   Software:    NLPCraft
 --   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
 --   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
 --
@@ -29,13 +29,8 @@
 --          /_/
 --
 
---
--- Drop all existing user tables.
---
-DO $$ DECLARE
-  r RECORD;
-BEGIN
-  FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
-    EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-  END LOOP;
-END $$;
+DROP TABLE IF EXISTS proc_log CASCADE;
+DROP TABLE IF EXISTS ds_instance CASCADE;
+DROP TABLE IF EXISTS nc_user CASCADE;
+DROP TABLE IF EXISTS passwd_pool CASCADE;
+DROP TABLE IF EXISTS base;

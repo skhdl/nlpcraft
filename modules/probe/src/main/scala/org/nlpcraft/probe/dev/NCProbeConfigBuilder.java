@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -36,7 +36,7 @@ import org.nlpcraft.util.NCGlobals;
 
 /**
  * Convenient builder for {@link NCProbeConfig} instances. Note that most of the configuration values
- * have defaults except for {@link #setProvider(NCModelProvider)} model provider} and
+ * have defaults except for {@link #setProvider(NCModelProvider) model provider} and
  * {@link #setJarsFolder(String) JARs folder}. Note also that the following system properties
  * or environment variables can be used to set up the configuration values from outside of the code:
  * <table class="dl-table" summary="">
@@ -194,7 +194,8 @@ public class NCProbeConfigBuilder {
     }
 
     /**
-     *
+     * Builds and validates new probe configuration instance.
+     * 
      * @return Newly created and validated probe configuration.
      * @throws IllegalArgumentException Thrown in case of any validation errors.
      */

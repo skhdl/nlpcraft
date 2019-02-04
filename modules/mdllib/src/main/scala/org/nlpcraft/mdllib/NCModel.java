@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -360,7 +360,7 @@ public interface NCModel {
      * If using JSON model presentation this is set by <code>vendorName</code> JSON properties:
      * <pre class="brush: js">
      * {
-     *      "vendorName": "NlpCraft"
+     *      "vendorName": "NLPCraft"
      * }
      * </pre>
      *
@@ -985,7 +985,7 @@ public interface NCModel {
      * semantic meaning to the sentence. For example, 'the', 'wow', or 'hm' provide no semantic meaning to the
      * sentence and can be safely excluded from semantic analysis.
      * <br><br>
-     * NlpCraft comes with a carefully selected list of English stopwords which should be sufficient
+     * NLPCraft comes with a carefully selected list of English stopwords which should be sufficient
      * for a majority of use cases. However, you can add additional stopwords to this list. The typical
      * use for user-defined stopwords are jargon parasite words that are specific to the model's domain.
      * <br><br>

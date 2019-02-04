@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -53,7 +53,7 @@ import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
+object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     // Akka intestines.
     private implicit val SYSTEM: ActorSystem = ActorSystem()
     private implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
@@ -317,6 +317,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         mdlId: String,
                         probeId: Option[String],
                         status: String,
+                        resType: Option[String],
                         resBody: Option[String],
                         error: Option[String],
                         createTstamp: Long,
@@ -328,7 +329,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat10(QueryState)
+                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -345,6 +346,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                                     p.modelId,
                                     p.probeId,
                                     p.status,
+                                    p.resultType,
                                     p.resultBody,
                                     p.error,
                                     p.createTstamp.getTime,
@@ -682,9 +684,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNlpCraft {
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
 
-                        checkLength("mdlId", req.mdlId, 64)
-                        checkLength("mdlName", req.mdlName, 512)
-                        checkLength("mdlVer", req.mdlVer, 512)
+                        checkLength("mdlId", req.mdlId, 32)
+                        checkLength("mdlName", req.mdlName, 64)
+                        checkLength("mdlVer", req.mdlVer, 16)
                         checkLength("mdlCfg", req.mdlCfg, 512000)
 
                         authenticateAsAdmin(req.accessToken)

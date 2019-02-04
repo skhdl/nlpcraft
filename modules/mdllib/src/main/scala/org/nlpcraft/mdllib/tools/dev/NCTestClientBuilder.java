@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -31,13 +31,11 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import org.nlpcraft.mdllib.NCQueryResult;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
@@ -45,7 +43,9 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.nlpcraft.ascii.NCAsciiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,27 +53,38 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Set;
-import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * Test client builder for {@link NCTestClient} instances.
+ * Test client builder for {@link NCTestClient} instances. Note that all configuration values
+ * have sensible defaults. Most of the time only user {@link #setUser(String, String) credentials}
+ * will have to be changed if not testing with default account.
  */
 public class NCTestClientBuilder {
+    /** Default public REST API URL (endpoint). */
+    public static final String DFLT_BASEURL = "http://localhost:8081/api/v1/";
+    
+    /** Default client email. */
+    public static final String DFLT_EMAIL = "admin@admin.com";
+    
+    /** Default client password. */
+    public static final String DFLT_PASSWORD = "admin";
+    
+    /** Default maximum statuses check time, millisecond. */
+    public static final long DFLT_MAX_CHECK_TIME = 10 * 1000;
+    
     /** Default millisecond delay between result checks. */
     public static final long DFLT_CHECK_INTERVAL_MS = 2000;
-    
-    /** Default millisecond delay between each request call. */
-    public static final long DFLT_DELAY_MS = 50;
     
     /** Default clear conversation flag value. */
     public static final boolean DFLT_CLEAR_CONVERSATION = false;
@@ -81,402 +92,238 @@ public class NCTestClientBuilder {
     /** Default asynchronous mode flag value. */
     public static final boolean DFLT_ASYNC_MODE = true;
     
-    private static final long HOUR = 60 * 60 * 1000;
-    private static final long MINS_5 = 5 * 60 * 1000;
-    
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
-    private long delayMs = DFLT_DELAY_MS;
-    private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
-    private boolean clearConv = DFLT_CLEAR_CONVERSATION;
-    private boolean asyncMode = DFLT_ASYNC_MODE;
+    private NCTestClientImpl impl;
     
-    private RequestConfig reqCfg;
+    /**
+     * JSON helper class.
+     */
+    static class NCDsJson {
+        @SerializedName("id") private long dsId;
+        @SerializedName("mdlId") private String mdlId;
     
+        public long getDataSourceId() {
+            return dsId;
+        }
+    
+        public void setDataSourceId(long dsId) {
+            this.dsId = dsId;
+        }
+    
+        public String getModelId() {
+            return mdlId;
+        }
+    
+        public void setModelId(String mdlId) {
+            this.mdlId = mdlId;
+        }
+    }
+
     /**
      * JSON helper class.
      */
     static class NCRequestStateJson {
-        @SerializedName("srvReqId") private String serverRequestId;
-        @SerializedName("userId") private long userId;
+        @SerializedName("srvReqId") private String srvReqId;
+        @SerializedName("usrId") private long userId;
         @SerializedName("dsId") private long dsId;
-        @SerializedName("text") private String text;
-        @SerializedName("resType") private String resultType;
-        @SerializedName("resBody") private String resultBody;
+        @SerializedName("resType") private String resType;
+        @SerializedName("resBody") private String resBody;
+        @SerializedName("status") private String status;
         @SerializedName("error") private String error;
         @SerializedName("createTstamp") private long createTstamp;
         @SerializedName("updateTstamp") private long updateTstamp;
-        @SerializedName("resMetadata") private Map<String, Object> resultMetadata;
-        @SerializedName("responseType") private String responseType;
     
-        /**
-         * Gets server request id.
-         *
-         * @return the server request id
-         */
         public String getServerRequestId() {
-            return serverRequestId;
+            return srvReqId;
         }
     
-        /**
-         * Sets server request id.
-         *
-         * @param serverRequestId the server request id
-         */
-        public void setServerRequestId(String serverRequestId) {
-            this.serverRequestId = serverRequestId;
+        public void setServerRequestId(String srvReqId) {
+            this.srvReqId = srvReqId;
         }
     
-        /**
-         * Gets data source id.
-         *
-         * @return the data source id
-         */
-        public long getDsId() {
-            return dsId;
-        }
-    
-        /**
-         * Sets data source id.
-         *
-         * @param dsId the data source id
-         */
-        public void setDsId(long dsId) {
-            this.dsId = dsId;
-        }
-    
-        /**
-         * Gets user id.
-         *
-         * @return the user id
-         */
         public long getUserId() {
             return userId;
         }
     
-        /**
-         * Sets user id.
-         *
-         * @param userId the user id
-         */
         public void setUserId(long userId) {
             this.userId = userId;
         }
     
-        /**
-         * Gets text.
-         *
-         * @return the text
-         */
-        public String getText() {
-            return text;
+        public long getDataSourceId() {
+            return dsId;
         }
     
-        /**
-         * Sets text.
-         *
-         * @param text the text
-         */
-        public void setText(String text) {
-            this.text = text;
+        public void setDataSourceId(long dsId) {
+            this.dsId = dsId;
         }
     
-        /**
-         * Gets result type.
-         *
-         * @return the result type
-         */
+        public String getStatus() {
+            return status;
+        }
+    
+        public void setStatus(String status) {
+            this.status = status;
+        }
+    
         public String getResultType() {
-            return resultType;
+            return resType;
         }
     
-        /**
-         * Sets result type.
-         *
-         * @param resultType the result type
-         */
-        public void setResultType(String resultType) {
-            this.resultType = resultType;
+        public void setResultType(String resType) {
+            this.resType = resType;
         }
     
-        /**
-         * Gets result body.
-         *
-         * @return the result body
-         */
         public String getResultBody() {
-            return resultBody;
+            return resBody;
         }
     
-        /**
-         * Sets result body.
-         *
-         * @param resultBody the result body
-         */
-        public void setResultBody(String resultBody) {
-            this.resultBody = resultBody;
+        public void setResultBody(String resBody) {
+            this.resBody = resBody;
         }
     
-        /**
-         * Gets error.
-         *
-         * @return the error
-         */
         public String getError() {
             return error;
         }
     
-        /**
-         * Sets error.
-         *
-         * @param error the error
-         */
         public void setError(String error) {
             this.error = error;
         }
     
-        /**
-         * Gets result metadata.
-         *
-         * @return the result metadata
-         */
-        public Map<String, Object> getResultMetadata() {
-            return resultMetadata != null ? resultMetadata : Collections.emptyMap();
-        }
-    
-        /**
-         * Sets result metadata.
-         *
-         * @param resultMetadata the result metadata
-         */
-        public void setResultMetadata(Map<String, Object> resultMetadata) {
-            this.resultMetadata = resultMetadata;
-        }
-    
-        /**
-         * Gets create tstamp.
-         *
-         * @return the create tstamp
-         */
         public long getCreateTstamp() {
             return createTstamp;
         }
     
-        /**
-         * Sets create tstamp.
-         *
-         * @param createTstamp the create tstamp
-         */
         public void setCreateTstamp(long createTstamp) {
             this.createTstamp = createTstamp;
         }
     
-        /**
-         * Gets update tstamp.
-         *
-         * @return the update tstamp
-         */
         public long getUpdateTstamp() {
             return updateTstamp;
         }
     
-        /**
-         * Sets update tstamp.
-         *
-         * @param updateTstamp the update tstamp
-         */
         public void setUpdateTstamp(long updateTstamp) {
             this.updateTstamp = updateTstamp;
         }
-    
-        /**
-         * Gets state type.
-         *
-         * @return the state type
-         */
-        public String getResponseType() {
-            return responseType;
-        }
-    
-        /**
-         * Sets state type.
-         *
-         * @param responseType the state type
-         */
-        public void setResponseType(String responseType) {
-            this.responseType = responseType;
-        }
     }
     
-    /**
-     * JSON helper class.
-     */
-    static class NCDataSourceJson {
-        @SerializedName("dsId") private long id;
-        @SerializedName("dsName") private String name;
-        @SerializedName("isDeployed") private boolean isDeployed;
+    private static class IdHolder {
+        private final long dsId;
+        private final String mdlId;
     
-        /**
-         * Gets id.
-         *
-         * @return the id
-         */
-        public long getId() {
-            return id;
+        IdHolder(long dsId, String mdlId) {
+            this.dsId = dsId;
+            this.mdlId = mdlId;
         }
     
-        /**
-         * Sets id.
-         *
-         * @param id the id
-         */
-        public void setId(long id) {
-            this.id = id;
+        long getDsId() {
+            return dsId;
         }
     
-        /**
-         * Gets name.
-         *
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-    
-        /**
-         * Sets name.
-         *
-         * @param name the name
-         */
-        public void setName(String name) {
-            this.name = name;
-        }
-    
-        /**
-         * Is deployed boolean.
-         *
-         * @return the boolean
-         */
-        public boolean isDeployed() {
-            return isDeployed;
-        }
-    
-        /**
-         * Sets deployed.
-         *
-         * @param isDeployed the is deployed
-         */
-        public void setDeployed(boolean isDeployed) {
-            this.isDeployed = isDeployed;
+        String getModelId() {
+            return mdlId;
         }
     }
-    
-    private class AsciiTable {
-        private final List<Pair<String, Integer>> cols;
-        private final List<List<String>> rows;
-        
-        AsciiTable(String... cols) {
-            this.cols = Arrays.stream(cols).map(p -> MutablePair.of(p, 0)).collect(Collectors.toList());
-            this.rows = new ArrayList<>();
-        }
-        
-        private void writeColumnNames(List<Pair<String, Integer>> cols, StringBuilder buf) {
-            buf.append('|');
-            
-            for (Pair<String, Integer> col : cols) {
-                buf.append(String.format(" %-" + col.getValue() + 's', col.getKey()));
-                
-                buf.append('|');
-            }
-            
-            buf.append('\n');
-        }
-        
-        private void writeSeparator(List<Pair<String, Integer>> cols, StringBuilder buf) {
-            buf.append('+');
-            
-            for (Pair<String, Integer> col : cols) {
-                buf.append(String.format("%-" + (col.getValue() + 1) + 's', "").replace(' ', '-'));
-                
-                buf.append('+');
-            }
-            
-            buf.append('\n');
-        }
-        
-        private void writeValues(List<Pair<String, Integer>> cols, List<List<String>> rows, StringBuilder buf) {
-            for (List<String> row : rows) {
-                int idx = 0;
-                
-                buf.append('|');
-                
-                for (String cell : row) {
-                    buf.append(String.format(" %-" + cols.get(idx).getValue() + 's', cell));
-                    
-                    buf.append('|');
-                    
-                    idx++;
-                }
-                
-                buf.append('\n');
-            }
-        }
-        
-        void addRow(List<Object> row) {
-            rows.add(row.stream().map(p -> p != null ? p.toString() : "").collect(Collectors.toList()));
-        }
-    
-        String mkContent() {
-            cols.forEach(col -> col.setValue(col.getKey().length() + 1));
-        
-            for (List<String> row : rows) {
-                int i = 0;
-            
-                for (String cell : row) {
-                    if (cell != null) {
-                        Pair<String, Integer> col = cols.get(i);
-                    
-                        col.setValue(Math.max(col.getValue(), cell.length() + 1));
-                    
-                        i++;
-                    }
-                }
-            }
-        
-            StringBuilder buf = new StringBuilder();
-        
-            writeSeparator(cols, buf);
-            writeColumnNames(cols, buf);
-            writeSeparator(cols, buf);
-            writeValues(cols, rows, buf);
-            writeSeparator(cols, buf);
-        
-            return buf.toString();
-        }
-    }
-    
+
     /**
      * Client implementation.
      */
     private class NCTestClientImpl implements NCTestClient {
-        private final String STATUS_API_OK = "PUB_API_OK";
+        private static final String STATUS_API_OK = "API_OK";
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
-        private final Type TYPE_REQS = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
-        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDataSourceJson>>() {}.getType();
-    
+        private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
+        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
         private final Gson gson = new Gson();
-        
-        private final NCTestClientConfig cfg;
-        private final CloseableHttpClient client;
+        private final CloseableHttpClient httpCli;
     
-        /**
-         * Instantiates a new Dl test client.
-         *
-         * @param cfg the cfg
-         */
-        NCTestClientImpl(NCTestClientConfig cfg) {
-            this.cfg = cfg;
-            this.client = cfg.getClientSupplier().get();
+        private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
+        private boolean clearConv = DFLT_CLEAR_CONVERSATION;
+        private boolean asyncMode = DFLT_ASYNC_MODE;
+        private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
+        private RequestConfig reqCfg;
+        private String baseUrl = DFLT_BASEURL;
+        private String email = DFLT_EMAIL;
+        private String pswd = DFLT_PASSWORD;
+        private Supplier<CloseableHttpClient> cliSup;
+    
+        NCTestClientImpl() {
+            httpCli = mkClient();
+        }
+    
+        long getCheckInterval() {
+            return checkIntervalMs;
+        }
+    
+        boolean isClearConversation() {
+            return clearConv;
+        }
+    
+        boolean isAsyncMode() {
+            return asyncMode;
+        }
+    
+        long getMaxCheckTime() {
+            return maxCheckTimeMs;
+        }
+    
+        RequestConfig getRequestConfig() {
+            return reqCfg;
+        }
+    
+        String getBaseUrl() {
+            return baseUrl;
+        }
+    
+        String getEmail() {
+            return email;
+        }
+    
+        String getPassword() {
+            return pswd;
+        }
+    
+        Supplier<CloseableHttpClient> getClientSupplier() {
+            return cliSup;
+        }
+    
+        void setCheckInterval(long checkIntervalMs) {
+            this.checkIntervalMs = checkIntervalMs;
+        }
+    
+        void setClearConversation(boolean clearConv) {
+            this.clearConv = clearConv;
+        }
+    
+        void setAsyncMode(boolean asyncMode) {
+            this.asyncMode = asyncMode;
+        }
+    
+        void setMaxCheckTime(long maxCheckTimeMs) {
+            this.maxCheckTimeMs = maxCheckTimeMs;
+        }
+    
+        void setRequestConfig(RequestConfig reqCfg) {
+            this.reqCfg = reqCfg;
+        }
+    
+        void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+    
+        void setEmail(String email) {
+            this.email = email;
+        }
+    
+        void setPassword(String pswd) {
+            this.pswd = pswd;
+        }
+    
+        void setClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+            this.cliSup = cliSup;
+        }
+    
+        private CloseableHttpClient mkClient() {
+            return cliSup != null ? cliSup.get() : HttpClients.createDefault();
         }
     
         @SuppressWarnings("unchecked")
@@ -512,7 +359,7 @@ public class NCTestClientBuilder {
             }
         }
     
-        private <T> T extract(String js, String name, Type type) throws NCTestClientException {
+        private <T> T checkAndExtract(String js, String name, Type type) throws NCTestClientException {
             Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
         
             checkStatus(m);
@@ -520,8 +367,9 @@ public class NCTestClientBuilder {
             return extract(gson.toJsonTree(getField(m, name)), type);
         }
         
-        private String post(String url, Pair<String, Object>... ps) throws NCTestClientException, IOException {
-            HttpPost post = new HttpPost(url);
+        @SafeVarargs
+        private final String post(String url, Pair<String, Object>... ps) throws NCTestClientException, IOException {
+            HttpPost post = new HttpPost(baseUrl + url);
         
             try {
                 if (reqCfg != null)
@@ -534,7 +382,8 @@ public class NCTestClientBuilder {
                             collect(Collectors.toMap(Pair::getKey, Pair::getValue))
                     )
                 );
-            
+    
+                post.setHeader("Content-Type", "application/json");
                 post.setEntity(entity);
             
                 log.trace("Request prepared: {}", post);
@@ -550,18 +399,8 @@ public class NCTestClientBuilder {
                         throw new NCTestClientException(String.format("Unexpected empty response [code=%d]", code));
                 
                     switch (code) {
-                        case 200:
-                            return js;
-                        case 400:
-                            Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
-                        
-                            String status = getField(m, "status");
-                            String reason = getField(m, "reason");
-                        
-                            throw new NCTestClientException(
-                                String.format("Server error [status=%s, reason=%s]", status, reason)
-                            );
-                    
+                        case 200: return js;
+                        case 400: throw new NCTestClientException(js);
                         default:
                             throw new NCTestClientException(
                                 String.format("Unexpected response [code=%d, text=%s]", code, js)
@@ -569,7 +408,7 @@ public class NCTestClientBuilder {
                     }
                 };
             
-                String s = client.execute(post, h);
+                String s = httpCli.execute(post, h);
             
                 log.trace("Response received: {}", s);
             
@@ -580,182 +419,146 @@ public class NCTestClientBuilder {
             }
         }
     
-        private int convertResponse(String respType) {
-            switch (respType.toUpperCase()) {
-                case "RESP_OK": return RESP_OK;
-                case "RESP_VALIDATION": return RESP_VALIDATION;
-                case "RESP_ERROR": return RESP_ERROR;
-            
-                default:
-                    throw new IllegalArgumentException("Unexpected state:" + respType);
-            }
-        }
-    
-        private String convertCode(int code) {
-            switch (code) {
-                case RESP_OK: return "RESP_OK";
-                case RESP_VALIDATION: return "RESP_VALIDATION";
-                case RESP_ERROR: return "RESP_ERROR";
-            
-                default:
-                    throw new IllegalArgumentException("Unexpected state:" + code);
-            }
-        }
-    
         @Override
         public List<NCTestResult> test(NCTestSentence... tests) throws NCTestClientException, IOException {
             return test(Arrays.asList(tests));
         }
+        
+        private <T> void checkDups(
+            List<NCTestSentence> tests,
+            Function<NCTestSentence, T> extractField,
+            String fieldName
+        ) {
+            List<Pair<String, T>> allTestPairs =
+                tests.stream().
+                    map(p -> Pair.of(p.getText(), extractField.apply(p))).
+                    filter(p -> p.getRight() != null).
+                    collect(Collectors.toList());
     
-        @SuppressWarnings("unchecked")
+            List<Pair<String, T>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
+    
+            if (testsPairs.size() != allTestPairs.size()) {
+                allTestPairs.removeAll(testsPairs);
+        
+                String s =
+                    allTestPairs.stream().
+                        map(p -> "sentence=" + p.getLeft() + ", " + fieldName + "=" + p.getRight()).
+                        collect(Collectors.joining(";", "[", "]"));
+        
+                throw new NCTestClientException("Sentences texts cannot be duplicated within same " + fieldName + ": " + s);
+            }
+        }
+    
         @Override
         public synchronized List<NCTestResult> test(List<NCTestSentence> tests)
             throws NCTestClientException, IOException {
-            notNull("tests", tests);
+            checkNotNull("tests", tests);
             
-            if (tests.isEmpty())
-                throw new IllegalArgumentException("Tests cannot be empty");
-    
-            List<Pair<String, String>> allTestPairs =
-                tests.stream().map(p -> Pair.of(p.getText(), p.getDsName())).collect(Collectors.toList());
-    
-            List<Pair<String, String>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
-    
-            if (testsPairs.size() != tests.size()) {
-                for (Pair<String, String> testsPair : testsPairs) {
-                    allTestPairs.remove(testsPair);
-                }
-    
-                String s =
-                    allTestPairs.stream().
-                        map(p -> "sentence=" + p.getLeft() + ", datasource=" + p.getRight()).
-                        collect(Collectors.joining(";", "[", "]"));
-    
-                throw new NCTestClientException("Sentences texts cannot be duplicated within same datasource: " + s);
-            }
-
-            if (delayMs != 0) {
-                int minApiCalls =
-                    clearConv ?
-                        // - for each test: 'conv/clear', 'ask', 'check'.
-                        3 * tests.size() :
-                        // - 'conv/clear' - calls for each data source before test.
-                        // - 'ask' for each test
-                        // - at least one 'check'
-                        (int)tests.stream().map(NCTestSentence::getDsName).distinct().count() + tests.size() + 1;
-    
-                
-                // - 3 - 'signin', 'ds/all', 'signout',
-                minApiCalls += 3;
-                
-                if (minApiCalls * delayMs > HOUR)
-                    throw new NCTestClientException("Test too long, decrease delay or sentences count");
-            }
+            checkDups(tests, NCTestSentence::getDataSourceId, "data source");
+            checkDups(tests, NCTestSentence::getModelId, "model");
             
-            String auth =
-                extract(
-                    post(
-                        cfg.getBaseUrl() + "signin",
-                        Pair.of("probeToken", cfg.getProbeToken()),
-                        Pair.of("email", cfg.getEmail())
-                    ),
-                    "accessToken",
-                    String.class
-                );
+            Set<String> mdlIds =
+                tests.stream().
+                    filter(p -> p.getModelId().isPresent()).
+                    map(p -> p.getModelId().get()).
+                    collect(Collectors.toSet());
+            
+            String auth = signin();
     
-            sleep(delayMs);
+            Map<String, Long> newDssIds = new HashMap<>();
+            
+            int num = 0;
+            
+            for (String mdlId : mdlIds) {
+                newDssIds.put(mdlId, createTestDs(auth, mdlId, num++));
+            }
     
-            log.debug("Client logged in: {}", cfg.getBaseUrl());
-    
-            List<NCTestResult> res = new ArrayList<>();
-    
+            Map<NCTestSentence, NCTestResult> res = new HashMap<>();
+            
             try {
-                List<NCDataSourceJson> dss =
-                    extract(
-                        post(
-                        cfg.getBaseUrl() + "ds/all",
-                            Pair.of("cliReqId", mkClientRequestId()),
-                            Pair.of("accessToken", auth)
-                        ),
-                        "allDs",
-                        TYPE_DSS
+                Map<Long, String> dssMdlIds =
+                    getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
+    
+                Map<NCTestSentence, IdHolder> testsExt =
+                    tests.stream().collect(
+                        Collectors.toMap(
+                            p -> p,
+                            p -> {
+                                long dsId;
+                                
+                                if (p.getDataSourceId().isPresent())
+                                    dsId = p.getDataSourceId().get();
+                                else {
+                                    assert p.getModelId().isPresent();
+    
+                                    dsId = newDssIds.get(p.getModelId().get());
+                                }
+                                
+                                return new IdHolder(dsId, dssMdlIds.get(dsId));
+                            }
+                        )
                     );
-    
-                sleep(delayMs);
-    
-                log.debug("Datasources read: {}", dss.size());
-    
-                Map<String, Long> dssIds = tests.stream().
-                    map(NCTestSentence::getDsName).
-                    distinct().collect(Collectors.
-                    toMap(name -> name, name -> {
-                        Optional<NCDataSourceJson> dsOpt =
-                            dss.stream().filter(p -> p.name.equalsIgnoreCase(name)).findAny();
-            
-                        if (!dsOpt.isPresent())
-                            throw new NCTestClientException("Data source not found: " + name);
-            
-                        NCDataSourceJson ds = dsOpt.get();
-            
-                        if (!ds.isDeployed)
-                            throw new NCTestClientException("Data source not deployed: " + name);
-            
-                        return ds.getId();
-                    }));
                 
-                Map<Long, String> dssNames = dss.stream().
-                    collect(Collectors.toMap(NCDataSourceJson::getId, NCDataSourceJson::getName));
+                Function<NCTestSentence, Map<NCTestSentence, IdHolder>> mkSingleMap = (t) -> {
+                    Map<NCTestSentence, IdHolder> m = new HashMap<>();
+                    
+                    m.put(t, testsExt.get(t));
+                    
+                    return m;
+                };
     
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, dssIds.get(test.getDsName()));
+                        clearConversation(auth, testsExt.get(test).getDsId());
         
-                        sleep(delayMs);
-        
-                        res.addAll(executeAsync(auth, dssNames, dssIds, Collections.singletonList(test)));
+                        res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
                     }
                 }
                 else {
+                    Set<Long> dsIds =
+                        tests.stream().map(t -> testsExt.get(t).getDsId()).collect(Collectors.toSet());
+                    
                     if (asyncMode) {
-                        clearConversationAllDss(auth, dssIds);
+                        clearConversationAllDss(auth, dsIds);
     
-                        res.addAll(executeAsync(auth, dssNames, dssIds, tests));
+                        res.putAll(executeAsync(auth, testsExt));
                     }
                     else {
-                        clearConversationAllDss(auth, dssIds);
+                        clearConversationAllDss(auth, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.addAll(executeAsync(auth, dssNames, dssIds, Collections.singletonList(test)));
-        
-                            sleep(delayMs);
+                            res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
                         }
                     }
                 }
             }
+            catch (InterruptedException e) {
+                throw new NCTestClientException("Test interrupted.", e);
+            }
             finally {
                 // This potential error can be ignored. Also it shouldn't override main method errors.
                 try {
-                    sleep(delayMs);
+                    for (Long id : newDssIds.values()) {
+                        deleteTestDs(auth, id);
+                    }
                     
-                    checkStatus(
-                        gson.fromJson(
-                            post(cfg.getBaseUrl() + "signout",
-                                Pair.of("accessToken", auth)
-                            ),
-                            TYPE_RESP
-                        )
-                    );
+                    signout(auth);
                 }
                 catch (Exception e) {
                     log.error("Signout error.", e);
                 }
             }
     
-            res.sort(Comparator.comparingInt(o -> testsPairs.indexOf(Pair.of(o.getText(), o.getDsName()))));
+            List<NCTestResult> list =
+                res.entrySet().
+                    stream().
+                    sorted(Comparator.comparingInt(o -> tests.indexOf(o.getKey()))).
+                    map(Map.Entry::getValue).
+                    collect(Collectors.toList());
+            
+            printResult(tests, list);
     
-            printResult(tests, res);
-    
-            return res;
+            return list;
         }
     
         private void printResult(List<NCTestSentence> tests, List<NCTestResult> results) {
@@ -765,51 +568,54 @@ public class NCTestClientBuilder {
             
             int n = tests.size();
             
-            AsciiTable resTab = new AsciiTable(
-                "Data Source",
-                "Sentence",
-                "Expected Intent",
-                "Intent",
-                "Expected Result",
-                "Result",
-                "Error",
-                "Processing Time (ms)"
+            NCAsciiTable resTab = new NCAsciiTable();
+    
+            resTab.addHeaders(
+                Arrays.asList(
+                    "Sentence",
+                    "Data source ID",
+                    "Model ID",
+                    "Result",
+                    "Error",
+                    "Time (ms)"
+                )
             );
     
-            for (int i = 0; i < n; i++) {
-                NCTestSentence test = tests.get(i);
-                NCTestResult res = results.get(i);
-    
+            for (NCTestResult res : results) {
                 List<Object> row = new ArrayList<>();
-    
-                row.add(res.getDsName());
-                row.add(res.getText());
-                row.add(test.getExpectedIntentId());
-                row.add(res.getIntentId());
-                row.add(convertCode(test.getExpectedStatus()));
-                row.add(convertCode(res.getResultStatus()));
-                row.add(res.getError());
+                
+                String txt = res.getText();
+                
+                row.add(txt.length() > 100 ? txt.substring(0, 100) + "..." : txt);
+                row.add(res.getDataSourceId());
+                row.add(res.getModelId());
+                row.add(res.getResult().orElse(""));
+                row.add(res.getResultError().orElse(""));
                 row.add(res.getProcessingTime());
     
                 resTab.addRow(row);
             }
     
-            log.info("Test result:\n" + resTab.mkContent());
+            log.info("Test result:\n" + resTab.toString());
     
-            AsciiTable statTab = new AsciiTable(
-                "Tests Count",
-                "Passed",
-                "Failed",
-                "Min Processing Time (ms)",
-                "Max Processing Time (ms)",
-                "Avg Processing Time (ms)"
+            NCAsciiTable statTab = new NCAsciiTable();
+            
+            statTab.addHeaders(
+                Arrays.asList(
+                    "Tests Count",
+                    "Passed",
+                    "Failed",
+                    "Min Time (ms)",
+                    "Max Time (ms)",
+                    "Avg Time (ms)"
+                )
             );
     
             List<Object> row = new ArrayList<>();
             
             row.add(n);
             
-            long passed = results.stream().filter(p -> !p.hasError()).count();
+            long passed = results.stream().filter(p -> !p.getResultError().isPresent()).count();
             
             row.add(passed);
             row.add(n - passed);
@@ -828,22 +634,21 @@ public class NCTestClientBuilder {
     
             statTab.addRow(row);
     
-            log.info("Tests statistic:\n" + statTab.mkContent());
+            log.info("Tests statistic:\n" + statTab.toString());
         }
     
-        private void clearConversationAllDss(String auth, Map<String, Long> dssIds) throws IOException {
-            for (Long dsId : dssIds.values()) {
+        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException, NCTestClientException {
+            for (Long dsId : dssIds) {
                 clearConversation(auth, dsId);
-            
-                sleep(delayMs);
             }
         }
     
-        @SuppressWarnings("unchecked")
-        private void clearConversation(String auth, Long dsId) throws IOException {
+        private void clearConversation(String auth, long dsId) throws IOException, NCTestClientException {
+            log.info("`clear/conversation` request sent for data source: {}", dsId);
+            
             checkStatus(
                 gson.fromJson(
-                    post(cfg.getBaseUrl() + "clear/conv",
+                    post("clear/conversation",
                         Pair.of("accessToken", auth),
                         Pair.of("dsId", dsId)
                     ),
@@ -852,225 +657,291 @@ public class NCTestClientBuilder {
             );
         }
     
-        @SuppressWarnings("unchecked")
-        private List<NCTestResult> executeAsync(
+        private void cancel(String auth, Set<String> ids) throws IOException, NCTestClientException {
+            log.info("`cancel` request sent for requests: {}", ids);
+            
+            checkStatus(
+                gson.fromJson(
+                    post("cancel",
+                        Pair.of("accessToken", auth),
+                        Pair.of("srvReqIds", ids)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+    
+        private long createTestDs(String auth, String mdlId, long num) throws IOException, NCTestClientException {
+            log.info("`ds/add` request sent for model: {}", mdlId);
+            
+            long id =
+                checkAndExtract(
+                    post("ds/add",
+                        Pair.of("accessToken", auth),
+                        Pair.of("name", "test-" + num),
+                        Pair.of("shortDesc", "Test data source"),
+                        Pair.of("mdlId", mdlId),
+                        Pair.of("mdlName", "Test model"),
+                        Pair.of("mdlVer", "Test version")
+            
+                    ),
+                    "id",
+                    Long.class
+               );
+    
+            log.info("Temporary test data source created: {}", id);
+            
+            return id;
+        }
+        
+        private void deleteTestDs(String auth, long id) throws IOException, NCTestClientException {
+            log.info("`ds/delete` request sent for temporary data source: {}", id);
+            
+            checkStatus(
+                gson.fromJson(
+                    post("ds/delete",
+                        Pair.of("accessToken", auth),
+                        Pair.of("id", id)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+    
+        private String signin() throws IOException, NCTestClientException {
+            log.info("`user/signin` request sent for: {}", email);
+            
+            return checkAndExtract(
+                post("user/signin",
+                    Pair.of("email", email),
+                    Pair.of("passwd", pswd)
+                    
+                ),
+                "accessToken",
+                String.class
+            );
+        }
+    
+        private List<NCDsJson> getDss(String auth) throws IOException, NCTestClientException {
+            log.info("`ds/all` request sent for: {}", email);
+    
+            Map<String, Object> m = gson.fromJson(
+                post("ds/all",
+                    Pair.of("accessToken", auth)
+                ),
+                TYPE_RESP
+            );
+    
+            checkStatus(m);
+    
+            return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
+        }
+    
+        private List<NCRequestStateJson> check(String auth) throws IOException, NCTestClientException {
+            log.info("`check` request sent for: {}", email);
+        
+            Map<String, Object> m = gson.fromJson(
+                post("check",
+                    Pair.of("accessToken", auth)
+                ),
+                TYPE_RESP
+            );
+        
+            checkStatus(m);
+        
+            return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
+        }
+    
+        private String ask(String auth, String txt, long dsId) throws IOException, NCTestClientException {
+            log.info("`ask` request sent: {} to data source: {}", txt, dsId);
+        
+            return checkAndExtract(
+                post("ask",
+                    Pair.of("accessToken", auth),
+                    Pair.of("txt", txt),
+                    Pair.of("dsId", dsId),
+                    Pair.of("isTest", true)
+                ),
+                "srvReqId",
+                String.class
+            );
+        }
+    
+        private void signout(String auth) throws IOException, NCTestClientException {
+            log.info("`user/signout` request sent for: {}", email);
+            
+            checkStatus(
+                gson.fromJson(
+                    post("user/signout",
+                        Pair.of("accessToken", auth)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+    
+        private Map<NCTestSentence, NCTestResult> executeAsync(
             String auth,
-            Map<Long, String> dssNames,
-            Map<String, Long> dssIds,
-            List<NCTestSentence> batch
-        ) throws IOException {
-            int n = batch.size();
+            Map<NCTestSentence, IdHolder> tests
+        ) throws IOException, InterruptedException {
+            int n = tests.size();
     
             Map<String, NCTestSentence> testsMap = new HashMap<>(n);
             Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
+            Map<NCTestSentence, Pair<String, Long>> askErrTests = new HashMap<>();
             
             try {
-                for (int i = 0; i < n; i++) {
-                    NCTestSentence test = batch.get(i);
+                for (Map.Entry<NCTestSentence, IdHolder> entry : tests.entrySet()) {
+                    NCTestSentence test = entry.getKey();
+                    IdHolder h = entry.getValue();
+                    
+                    long now = System.currentTimeMillis();
     
-                    String srvReqId =
-                        extract(
-                            post(cfg.getBaseUrl() + "ask",
-                                Pair.of("cliReqId", mkClientRequestId()),
-                                Pair.of("accessToken", auth),
-                                Pair.of("dsId", dssIds.get(test.getDsName())),
-                                Pair.of("text", test.getText()),
-                                Pair.of("test", true)
-                            ),
-                            "srvReqId",
-                            String.class
-                        );
+                    try {
+                        String srvReqId = ask(auth, test.getText(), h.getDsId());
         
-                    log.debug("Sentence sent: {}", srvReqId);
+                        log.debug("Sentence sent: {}", srvReqId);
         
-                    testsMap.put(srvReqId, test);
-    
-                    if (delayMs > 0 && i != n - 1)
-                        sleep(delayMs);
+                        testsMap.put(srvReqId, test);
+                    }
+                    catch (NCTestClientException e) {
+                        askErrTests.put(test, Pair.of(e.getMessage(), System.currentTimeMillis() - now));
+                    }
                 }
     
                 log.debug("Sentences sent: {}", testsMap.size());
     
-                Long cliHash = null;
-                
                 long startTime = System.currentTimeMillis();
     
                 while (testsResMap.size() != testsMap.size()) {
-                    sleep(checkIntervalMs);
-                    
-                    if (System.currentTimeMillis() - startTime > MINS_5)
-                        throw new NCTestClientException("Timed out (5 minutes) waiting for response.");
-        
-                    Set<String> ids = new HashSet(testsMap.keySet());
-        
-                    ids.removeAll(testsResMap.keySet());
-        
-                    Map<String, Object> data =
-                        gson.fromJson(
-                            post(cfg.getBaseUrl() + "check",
-                                Pair.of("cliReqId", mkClientRequestId()),
-                                Pair.of("accessToken", auth),
-                                Pair.of("hash", cliHash),
-                                Pair.of("srvReqIds", ids)
-                            ),
-                            TYPE_RESP
+                    if (System.currentTimeMillis() - startTime > maxCheckTimeMs)
+                        throw new NCTestClientException(
+                            String.format("Timed out waiting for response: %d", maxCheckTimeMs)
                         );
         
-                    log.debug("Check request sent");
-        
-                    checkStatus(data);
-        
-                    long srvHash = extract(gson.toJsonTree(getField(data, "hash")), Long.class);
-        
-                    if (cliHash == null || srvHash != cliHash) {
-                        List<NCRequestStateJson> reqStates =
-                            extract(gson.toJsonTree(getField(data, "states")), TYPE_REQS);
+                    List<NCRequestStateJson> states = check(auth);
+                    
+                    Thread.sleep(checkIntervalMs);
     
-                        reqStates.forEach(p -> log.debug("Request state: " + p));
+                    Map<String, NCRequestStateJson> res =
+                        states.stream().
+                        filter(p -> p.getStatus().equals("QRY_READY")).
+                        collect(Collectors.toMap(NCRequestStateJson::getServerRequestId, p -> p));
     
-                        reqStates = reqStates.
-                            stream().
-                            filter(p -> !p.getResponseType().toUpperCase().equals("RESP_INITIAL")).
-                            collect(Collectors.toList());
-            
-                        if (!reqStates.isEmpty()) testsResMap.putAll(reqStates.stream().
-                            collect(Collectors.toMap(NCRequestStateJson::getServerRequestId, p -> p)));
+                    testsResMap.putAll(res);
     
-                        log.debug("Request processed: {}", reqStates.size());
-                    }
-                    else
-                        log.debug("Requests state is not changed.");
-        
-                    cliHash = srvHash;
+                    long newResps = res.keySet().stream().filter(p -> !testsResMap.containsKey(p)).count();
+    
+                    log.debug("Request processed: {}", newResps);
                 }
             }
             finally {
                 if (!testsMap.isEmpty())
                     // This potential error can be ignored. Also it shouldn't override main method errors.
                     try {
-                        checkStatus(
-                            gson.fromJson(
-                                post(cfg.getBaseUrl() + "cancelAll",
-                                    Pair.of("cliReqId", mkClientRequestId()),
-                                    Pair.of("accessToken", auth),
-                                    Pair.of("srvReqIds", testsMap.keySet())
-                                ),
-                                TYPE_RESP
-                            )
-                        );
+                        cancel(auth, testsMap.keySet());
                     }
                     catch (Exception e) {
                         log.error("Tests request cancel error: " + testsMap.keySet(), e);
                     }
             }
-            
-            return testsResMap.entrySet().stream().map(p -> {
-                NCTestSentence test = testsMap.get(p.getKey());
-                NCRequestStateJson testRes = p.getValue();
-        
-                return new NCTestResult() {
-                    private int respStatus = convertResponse(testRes.getResponseType());
-                    private String dsName = dssNames.get(testRes.getDsId());
-                    private String text = test.getText();
-                    private long procTime = testRes.getUpdateTstamp() - testRes.getCreateTstamp();
-                    private String intentId = (String)testRes.getResultMetadata().get("intentId");
-                    private String err = null;
-            
-                    {
-                        if (test.getExpectedIntentId() != null && !test.getExpectedIntentId().equals(intentId))
-                            err = "Invalid intent "
-                                + "ID [expected=" + test.getExpectedIntentId() +
-                                ", actual=" + intentId +
-                                ']';
-                        else if (test.getExpectedStatus() != respStatus)
-                            err = "Invalid response status " +
-                                "[expected=" + convertCode(test.getExpectedStatus())  +
-                                ", actual=" + convertCode(respStatus) +
-                                ']';
-                        else if (test.getCheck() != null) {
-                            String body = testRes.getResultBody();
-                            String type = testRes.getResultType();
     
-                            if (body == null || type == null)
-                                err = "Result cannot be checked [body=" + body  + ", type=" + type + ']';
-                            else {
-                                NCQueryResult res = new NCQueryResult();
+            return Stream.concat(
+                testsResMap.entrySet().stream().map(p -> {
+                    NCTestSentence test = testsMap.get(p.getKey());
+                    NCRequestStateJson testRes = p.getValue();
     
-                                res.setBody(body);
-                                res.setType(type);
+                    IdHolder h = tests.get(test);
+                    
+                    return
+                        Pair.of(
+                            test,
+                            mkResult(
+                                test,
+                                testRes.getUpdateTstamp() - testRes.getCreateTstamp(),
+                                h.getDsId(),
+                                h.getModelId(),
+                                testRes.getResultBody(),
+                                testRes.getResultType(),
+                                testRes.getError()
+                            )
+                        );
+                }),
+                askErrTests.entrySet().stream().map(p -> {
+                    NCTestSentence test = p.getKey();
+                    String err = p.getValue().getLeft();
+                    long time = p.getValue().getRight();
     
-                                if (!test.getCheck().test(res))
-                                    err = "Result has not satisfied user validation";
-                            }
-                        }
-                    }
-            
-                    @Override
-                    public String getDsName() {
-                        return dsName;
-                    }
-            
-                    @Override
-                    public String getText() {
-                        return text;
-                    }
-            
-                    @Override
-                    public int getResultStatus() {
-                        return respStatus;
-                    }
-            
-                    @Override
-                    public long getProcessingTime() {
-                        return procTime;
-                    }
-            
-                    @Override
-                    public String getError() {
-                        return err;
-                    }
-            
-                    @Override
-                    public String getIntentId() {
-                        return intentId;
-                    }
-            
-                    @Override
-                    public String toString() {
-                        return "NCTestResult " +
-                            "[dsName=" + dsName +
-                            ", text=" + text +
-                            ", intentId=" + intentId +
-                            ", respStatus=" + convertCode(respStatus) +
-                            ", procTime=" + procTime +
-                            ", err=" + err +
-                            ']';
-                    }
-                };
-            }).collect(Collectors.toList());
-        }
+                    IdHolder h = tests.get(test);
     
-        private String mkClientRequestId() {
-            return UUID.randomUUID().toString();
-        }
-    
-        private void sleep(long time) {
-            if (time > 0) {
-                log.debug("Sleep time: {}", time);
-                
-                try {
-                    Thread.sleep(time);
-                }
-                catch (InterruptedException e) {
-                    throw new NCTestClientException("Thread interrupted.", e);
-                }
-            }
+                    return Pair.of(
+                        test,
+                        mkResult(
+                            test, time, h.getDsId(), h.getModelId(), null, null, err
+                        )
+                    );
+                })
+            ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
     }
     
-    private static void notNull(String name, Object val) throws IllegalArgumentException {
-        if (val == null)
-            throw new IllegalArgumentException(String.format("Argument cannot be null: %s", name));
+    private static NCTestResult mkResult(
+        NCTestSentence test, long procTime, long dsId, String mdlId, String res, String resType, String err
+    ) {
+        assert test != null;
+        assert mdlId != null;
+        assert (res != null && resType != null) ^ err != null;
+        
+        return new NCTestResult() {
+            private Optional<String>convert(String s) {
+                return s == null ? Optional.empty() : Optional.of(s);
+            }
+            
+            @Override
+            public String getText() {
+                return test.getText();
+            }
+    
+            @Override
+            public long getProcessingTime() {
+                return procTime;
+            }
+    
+            @Override
+            public long getDataSourceId() {
+                return dsId;
+            }
+    
+            @Override
+            public String getModelId() {
+                return mdlId;
+            }
+    
+            @Override
+            public Optional<String> getResult() {
+                return convert(res);
+            }
+    
+            @Override
+            public Optional<String> getResultType() {
+                return convert(resType);
+            }
+            
+            @Override
+            public Optional<String> getResultError() {
+                return convert(err);
+            }
+        };
+    }
+    
+    private static void checkNotNull(String name, Object v) throws IllegalArgumentException {
+        if (v == null)
+            throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
+    }
+    
+    private static void checkPositive(String name, long v) throws IllegalArgumentException {
+        if (v <= 0)
+            throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));
     }
     
     /**
@@ -1078,96 +949,136 @@ public class NCTestClientBuilder {
      *
      * @return Builder instance.
      */
-    public static NCTestClientBuilder newBuilder() {
-        return new NCTestClientBuilder();
+    public NCTestClientBuilder newBuilder() {
+        impl = new NCTestClientImpl();
+        
+        return this;
     }
     
     /**
-     * Sets HTTP REST client configuration parameters.
+     * Sets optional HTTP REST client configuration parameters.
      *
      * @param reqCfg HTTP REST client configuration parameters.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withConfig(RequestConfig reqCfg) {
-        notNull("reqCfg", reqCfg);
-        
-        this.reqCfg = reqCfg;
+    public NCTestClientBuilder setConfig(RequestConfig reqCfg) {
+        impl.setRequestConfig(reqCfg);
         
         return this;
     }
     
     /**
      * Sets check result delay value in milliseconds.
-     * Default values is {@link NCTestClientBuilder#DFLT_CHECK_INTERVAL_MS}. This value should be changed
-     * only in cases when account's usage quota is exceeded.
+     * Default values is {@link NCTestClientBuilder#DFLT_CHECK_INTERVAL_MS}.
      *
-     * @param checkIntervalMs Delay value in milliseconds.
+     * @param checkIntervalMs Result check delay value in milliseconds.
      * @return Builder instance for chaining calls.
-     * @see #withDelay(long)
      */
-    public NCTestClientBuilder withCheckInterval(long checkIntervalMs) {
-        if (checkIntervalMs <= 0)
-            throw new IllegalArgumentException(String.format("Parameter must be positive: %d", checkIntervalMs));
-        
-        this.checkIntervalMs = checkIntervalMs;
+    public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
+        impl.setCheckInterval(checkIntervalMs);
         
         return this;
     }
     
     /**
-     * Sets whether or not test sentences will be processed in parallel (async mode) or one by one (sync mode).
+     * Sets whether or not process sentences in parallel (async mode) or one by one (sync mode).
      * Note that only synchronous mode make sense when testing with conversation support. Default values
      * is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
      *
      * @param asyncMode {@code true} for asynchronous (parallel) mode, {@code false} for synchronous mode.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withAsyncMode(boolean asyncMode) {
-        this.asyncMode = asyncMode;
+    public NCTestClientBuilder setAsyncMode(boolean asyncMode) {
+        impl.setAsyncMode(asyncMode);
         
-        return this;
-    }
-    
-    /**
-     * Sets request delay value. This value should be changed only in cases when account's usage quota is exceeded.
-     * Default values is {@link NCTestClientBuilder#DFLT_DELAY_MS}.
-     *
-     * @param delayMs Request delay in milliseconds.
-     * @return Builder instance for chaining calls.
-     * @see #withCheckInterval(long)
-     */
-    public NCTestClientBuilder withDelay(long delayMs) {
-        if (delayMs < 0)
-            throw new IllegalArgumentException(String.format("Parameter must not be negative: %d", delayMs));
-        
-        this.delayMs = delayMs;
-    
         return this;
     }
     
     /**
      * Sets whether or not to clear conversation after each test request.
-     * Note, that if this flag set as {@code false}, requests always sent in synchronous (one-by-one) mode.
+     * Note that if this flag set to {@code false}, requests always sent in synchronous (one-by-one) mode.
      * Default values is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
      *
      * @param clearConv Whether or not to clear conversation after each test request.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder withClearConversation(boolean clearConv) {
-        this.clearConv = clearConv;
+    public NCTestClientBuilder setClearConversation(boolean clearConv) {
+        impl.setClearConversation(clearConv);
         
+        return this;
+    }
+    
+    /**
+     * Sets {@link CloseableHttpClient} custom supplier.
+     * By default {@link CloseableHttpClient} created with {@link HttpClients#createDefault()}.
+     *
+     * @param cliSup {@link CloseableHttpClient} custom supplier.
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder setHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+        impl.setClientSupplier(cliSup);
+    
+        return this;
+    }
+    
+    /**
+     * Sets API base URL.
+     * By default {@link NCTestClientBuilder#DFLT_BASEURL} is used.
+     *
+     * @param baseUrl API base URL.
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder setBaseUrl(String baseUrl) {
+        String s = baseUrl;
+        
+        if (!s.endsWith("/"))
+            s += '/';
+        
+        impl.setBaseUrl(s);
+    
+        return this;
+    }
+    
+    /**
+     * Sets user credentials.
+     * By default {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD} are used.
+     *
+     * @param email User email.
+     * @param pswd User password.
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder setUser(String email, String pswd) {
+        impl.setEmail(email);
+        impl.setPassword(pswd);
+     
+        return this;
+    }
+    
+    /**
+     * Sets maximum check time. It is maximum time for waiting for the processing completion.
+     * By default {@link NCTestClientBuilder#DFLT_MAX_CHECK_TIME} is used.
+     *
+     * @param maxCheckTimeMs Maximum check time (ms).
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder setMaxCheckTime(long maxCheckTimeMs) {
+        impl.setMaxCheckTime(maxCheckTimeMs);
+    
         return this;
     }
     
     /**
      * Build new configured test client instance.
      *
-     * @param cfg Mandatory test configuration.
      * @return Newly built test client instance.
      */
-    public NCTestClient build(NCTestClientConfig cfg) {
-        notNull("cfg", cfg);
-        
-        return new NCTestClientImpl(cfg);
+    public NCTestClient build() {
+        checkPositive("maxCheckTimeMs", impl.getMaxCheckTime());
+        checkNotNull("email", impl.getEmail());
+        checkNotNull("pswd", impl.getPassword());
+        checkNotNull("baseUrl", impl.getBaseUrl());
+        checkPositive("checkIntervalMs", impl.getCheckInterval());
+
+        return impl;
     }
 }
