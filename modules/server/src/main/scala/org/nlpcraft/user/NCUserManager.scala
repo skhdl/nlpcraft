@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -40,7 +40,7 @@ import org.nlpcraft._
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
-import org.nlpcraft.ignite.NCIgniteNlpCraft
+import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 
@@ -50,7 +50,7 @@ import scala.util.control.Exception._
 /**
   * User management (signup, add, delete, update) manager.
   */
-object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
+object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     // Static email validator.
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
 
@@ -195,7 +195,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue)
+            // Users can be duplicated by their keys (ID and email)
+            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue).distinct
         }
     }
 
@@ -381,25 +382,25 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     ): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                 case u ⇒
-                    userCache.put(
-                        key,
-                        NCUserMdo(
-                            u.id,
-                            u.email,
-                            firstName,
-                            lastName,
-                            avatarUrl,
-                            u.passwordSalt,
-                            isAdmin,
-                            u.createdOn
-                        )
+                    val mdo = NCUserMdo(
+                        u.id,
+                        u.email,
+                        firstName,
+                        lastName,
+                        avatarUrl,
+                        u.passwordSalt,
+                        isAdmin,
+                        u.createdOn
                     )
+
+                    userCache.put(idKey, mdo)
+                    userCache.put(Right(u.email), mdo)
             }
         }
 
@@ -421,18 +422,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case usr ⇒ userCache.remove(key)
+                case u ⇒
+                    userCache.remove(idKey)
+                    userCache.remove(Right(u.email))
+
                     // Notification.
                     NCNotificationManager.addEvent("NC_USER_DELETE",
                         "userId" → usrId,
-                        "firstName" → usr.firstName,
-                        "lastName" → usr.lastName,
-                        "email" → usr.email
+                        "firstName" → u.firstName,
+                        "lastName" → u.lastName,
+                        "email" → u.email
                     )
             }
         }
@@ -549,26 +553,28 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
 
+        val emailKey = Right(normEmail)
+
         val (newUsrId, salt) =
             catching(wrapIE) {
-                if (userCache.containsKey(Right(normEmail)))
+                if (userCache.containsKey(emailKey))
                     throw new NCE(s"User with this email already exists: $normEmail")
 
                 val newUsrId = usersSeq.incrementAndGet()
                 val salt = NCBlowfishHasher.hash(normEmail)
 
-                userCache.put(
-                    Left(newUsrId),
-                    NCUserMdo(
-                        newUsrId,
-                        normEmail,
-                        firstName,
-                        lastName,
-                        avatarUrl,
-                        salt,
-                        isAdmin
-                    )
+                val mdo = NCUserMdo(
+                    newUsrId,
+                    normEmail,
+                    firstName,
+                    lastName,
+                    avatarUrl,
+                    salt,
+                    isAdmin
                 )
+
+                userCache.put(Left(newUsrId), mdo)
+                userCache.put(emailKey, mdo)
 
                 (newUsrId, salt)
             }
@@ -598,5 +604,4 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNlpCraft {
             newUsrId
         }
     }
-
 }

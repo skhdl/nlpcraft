@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -80,77 +80,18 @@ case class NCSocket(socket: Socket, host: String, soTimeout: Int = 20000) extend
         if (!socket.isConnected || socket.isInputShutdown)
             throw new EOFException()
 
-        @throws[NCE]
-        @throws[EOFException]
-        def readLine(): String = {
-            require(Thread.holdsLock(mux))
-
-            val line = reader.readLine()
-
-            if (line == null)
-                throw new EOFException()
-
-            line.trim
-        }
-
-        @throws[NCE]
-        @throws[EOFException]
-        def readHeaders(): Seq[String] = {
-            require(Thread.holdsLock(mux))
-
-            val lines = scala.collection.mutable.ArrayBuffer.empty[String]
-
-            var line = readLine()
-
-            // Between headers and content should be empty line.
-            while (line.nonEmpty) {
-                lines += line
-
-                line = readLine()
-            }
-
-            lines
-        }
-
         val arr =
             mux.synchronized {
-                val firstLine = readLine()
+                val line = reader.readLine()
 
-                if (!firstLine.startsWith("POST")) {
-                    // GETs processed special way to avoid stacktrace in errors log.
-                    if (firstLine.startsWith("GET")) {
-                        // Tries to answer.
-                        if (firstLine.contains("robots.txt"))
-                            try {
-                                writer.write("User-agent: *\r\n")
-                                writer.write("Allow: /")
-
-                                writer.flush()
-
-                                logger.trace("GET robots.txt request answered.")
-                            }
-                            catch {
-                                case e: EOFException ⇒ throw e
-                                case e: Exception ⇒ logger.trace("Error sending data.", e)
-                            }
-
-                        throw new EOFException()
-                    }
-                    else
-                        throw new NCE(s"Unexpected line [line=$firstLine, expected-line-start='POST']")
-                }
-
-                val headers = readHeaders()
+                if (line == null)
+                    throw new EOFException()
 
                 val len =
-                    headers.find(_.startsWith("Content-Length:")) match {
-                        case Some(line) ⇒
-                            try
-                                Integer.parseInt(line.substring("Content-Length:".length).trim)
-                            catch {
-                                case e: NumberFormatException ⇒ throw new NCE(s"Unexpected `Content-Length`: $line", e)
-                            }
-                        case None ⇒ throw new NCE("`Content-Length` is not found")
+                    try
+                        Integer.parseInt(line.trim)
+                    catch {
+                        case e: NumberFormatException ⇒ throw new NCE(s"Unexpected content length: $line", e)
                     }
 
                 if (len <= 0)
@@ -210,16 +151,7 @@ case class NCSocket(socket: Socket, host: String, soTimeout: Int = 20000) extend
             }
 
         mux.synchronized {
-            // HTTP proto.
-            writer.write("POST /socket HTTP/1.1\r\n")
-
-            if (host != null)
-                writer.write(s"Host: $host\r\n")
-
-            writer.write(s"Content-Length: ${data.length}\r\n")
-            writer.write("Content-Type: application/x-www-form-urlencoded\r\n")
-            writer.write("\r\n")
-
+            writer.write(s"${data.length}\r\n")
             writer.write(data)
 
             writer.flush()

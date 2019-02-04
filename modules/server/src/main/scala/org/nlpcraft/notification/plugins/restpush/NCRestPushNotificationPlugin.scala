@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -151,7 +151,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
             }
         })
-    
+
         // TODO: add push to each configured endpoint in a separate thread.
     }
 }

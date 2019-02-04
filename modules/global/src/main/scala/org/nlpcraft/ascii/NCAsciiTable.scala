@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -37,6 +37,7 @@ import NCAsciiTable._
 import com.typesafe.scalalogging.Logger
 import org.nlpcraft.NCE
 import resource._
+import scala.collection.JavaConverters._
 
 /**
  * `ASCII`-based table with minimal styling support.
@@ -208,6 +209,21 @@ class NCAsciiTable {
     }
 
     /**
+      * Adds row.
+      *
+      * @param cells Row cells.
+      */
+    def addRow(cells: java.util.List[Any]): NCAsciiTable = {
+        startRow()
+
+        cells.asScala.foreach(p ⇒ addRowCell(p))
+
+        endRow()
+
+        this
+    }
+
+    /**
      * Adds header (one or more header cells).
      *
      * @param cells Header cells. For multi-line cells - use `Seq(...)`.
@@ -217,6 +233,17 @@ class NCAsciiTable {
             case i: Iterable[_] ⇒ addHeaderCell(i.iterator.toSeq: _*)
             case a ⇒ addHeaderCell(a)
         }
+
+        this
+    }
+
+    /**
+      * Adds headers.
+      *
+      * @param cells Header cells.
+      */
+    def addHeaders(cells: java.util.List[Any]): NCAsciiTable = {
+        cells.asScala.foreach(p ⇒ addHeaderCell(p))
 
         this
     }

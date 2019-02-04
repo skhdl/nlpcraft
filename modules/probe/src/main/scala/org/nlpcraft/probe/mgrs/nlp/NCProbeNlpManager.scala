@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -78,11 +78,11 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
-      * @param dsId Datasource ID.
+      * @param dsId Data source ID.
       * @param dsModelId Model ID.
-      * @param dsName Datasource name.
-      * @param dsDesc Datasource description.
-      * @param dsModelCfg Datasource model config.
+      * @param dsName Data source name.
+      * @param dsDesc Data source description.
+      * @param dsModelCfg Data source model config.
       * @param test Test flag.
       */
     @throws[NCE]

@@ -17,7 +17,7 @@
  * required by the License must also include this Commons Clause License
  * Condition notice.
  *
- * Software:    NlpCraft
+ * Software:    NLPCraft
  * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
  * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
  *
@@ -35,24 +35,14 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * The main entry API for model testing framework. The instance of test client should be obtained
+ * Model testing client. This client can be used for convienient unit testing of the models together
+ * with any popular unit testing framework like <a href="http://www.testng.org">TestNG</a> or
+ * <a href="https://junit.org">JUnit</a>. The instance of test client should be obtained
  * via {@link NCTestClientBuilder}.
  *
  * @see NCTestClientBuilder
  */
 public interface NCTestClient {
-    /** Response status: request successfully answered. */
-    int RESP_OK = 1;
-    
-    /** Response status: request rejected from user code. */
-    int RESP_REJECT = 2;
-    
-    /** Response status: request returned with error due to model validation check. */
-    int RESP_VALIDATION = 6;
-    
-    /** Response status: request returned with error due to user code or system errors. */
-    int RESP_ERROR = 7;
-    
     /**
      * Tests all given sentences and returns corresponding list of results.
      *
