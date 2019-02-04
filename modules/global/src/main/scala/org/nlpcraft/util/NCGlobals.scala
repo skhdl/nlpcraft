@@ -33,7 +33,7 @@ package org.nlpcraft.util
 
 import java.io._
 import java.math.RoundingMode
-import java.net.{ServerSocket, Socket, URLDecoder}
+import java.net.{Inet4Address, InetAddress, NetworkInterface, ServerSocket, Socket, URL, URLDecoder}
 import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
@@ -45,21 +45,21 @@ import java.util.stream.Collectors
 import java.util.zip.{ZipInputStream, GZIPInputStream ⇒ GIS, GZIPOutputStream ⇒ GOS}
 import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar ⇒ C}
 
-import org.nlpcraft._
 import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
+import org.nlpcraft._
 import resource._
 
+import scala.collection.JavaConverters._
+import scala.collection._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.language.implicitConversions
 import scala.sys.SystemProperties
 import scala.util.control.Exception.ignoring
-import scala.collection.JavaConverters._
-import scala.collection._
 
 /**
   * Project-wide, global utilities ans miscellaneous functions.
@@ -735,8 +735,6 @@ object NCGlobals extends NCDebug with LazyLogging {
         managed(new PrintStream(file)) acquireAndGet {
             ps ⇒
                 import java.util._
-                
-                val year = Calendar.getInstance.get(Calendar.YEAR)
                 
                 // Could be long for large sequences...
                 val seq =
@@ -1515,5 +1513,47 @@ object NCGlobals extends NCDebug with LazyLogging {
             throw new NCE(s"Invalid uplink endpoint: $ep")
         else
             ep.substring(0, idx) → ep.substring(idx + 1).toInt
+    }
+
+    /**
+      * Gets external IP.
+      */
+    @throws[IOException]
+    def getExternalIp: String =
+        managed(new URL("http://checkip.amazonaws.com").openStream()) acquireAndGet { is ⇒
+            managed(new InputStreamReader(is)) acquireAndGet { reader ⇒
+                managed(new BufferedReader(reader)) acquireAndGet { bufReader ⇒
+                    bufReader.readLine()
+                }
+            }
+        }
+
+    /**
+      * Gets internal IP.
+      */
+    @throws[IOException]
+    def getInternalIp: String = {
+        var res: Option[String] = None
+
+        val en = NetworkInterface.getNetworkInterfaces
+
+        while (en.hasMoreElements && res.isEmpty) {
+            val nic = en.nextElement
+
+            if (nic != null && nic.isUp) {
+                val as = nic.getInetAddresses
+
+                while (as.hasMoreElements && res.isEmpty) {
+                    val addr = as.nextElement
+
+                    if (
+                        !addr.isLoopbackAddress && !addr.isLinkLocalAddress && addr.isInstanceOf[Inet4Address]
+                    )
+                        res = Some(addr.getHostAddress)
+                }
+            }
+        }
+
+        res.getOrElse(InetAddress.getLocalHost.getHostAddress)
     }
 }

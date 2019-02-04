@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.ResponseBean;
 import org.nlpcraft.mdllib.NCSentence;
+import org.nlpcraft.util.NCGlobals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class GeoManager {
         if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
             if (externalIp == null) {
                 try {
-                    externalIp = getExternalIp();
+                    externalIp = NCGlobals.getExternalIp();
                 }
                 catch (IOException e) {
                     System.err.println("External IP cannot be detected for localhost.");
@@ -145,13 +146,6 @@ public class GeoManager {
             e.printStackTrace(System.err);
     
             return Optional.empty();
-        }
-    }
-    
-    private static String getExternalIp() throws IOException {
-        try (BufferedReader in =
-            new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream()))) {
-            return in.readLine();
         }
     }
     

@@ -34,7 +34,7 @@ package org.nlpcraft.probe
 import java.util.regex.Pattern
 
 import org.nlpcraft.mdllib._
-import org.nlpcraft.nlp.{NCNlpSentenceToken, NCNlpSentenceTokenBuffer}
+import org.nlpcraft.nlp.NCNlpSentenceTokenBuffer
 
 import scala.collection.mutable.ArrayBuffer
 
