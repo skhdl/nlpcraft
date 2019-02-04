@@ -171,8 +171,6 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
             val size = batch.size()
 
-            logger.debug(s"Request sent [endpoint=$ep, batchSize=$size]")
-
             // Clears queue (removes `size` first records.)
             queue.synchronized { (0 until size).foreach(_ ⇒ queue.removeFirst()) }
         }
@@ -195,7 +193,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
             (0 until overSize).foreach(_ ⇒ {
                 val deleted = queue.removeFirst()
 
-                logger.warn(s"Event lost because too long queue [endpoint=$ep, event=$deleted]")
+                logger.warn(s"Notification event lost due to queue size limit: $deleted")
             })
 
             new util.ArrayList(queue)
