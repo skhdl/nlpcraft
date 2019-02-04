@@ -31,91 +31,50 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import org.nlpcraft.mdllib.NCQueryResult;
-
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
- * Sentence to test. This class defines a sentence to be tested, its data source as well as its expected
- * response status and optional result checker. One or more test sentences are passed to
- * {@link NCTestClient#test(NCTestSentence...)} or {@link NCTestClient#test(List)} methods.
+ * Sentence to test. List of sentences is passed to {@link NCTestClient} methods.
+ *
+ * @see NCTestClient#test(NCTestSentence...)
+ * @see NCTestClient#test(List)
  */
 public class NCTestSentence {
-    private String dsName;
-    private String text;
-    private String expIntentId;
-    private int expStatus;
-    private Predicate<NCQueryResult> check;
+    private String txt;
+    private Long dsId;
+    private String mdlId;
+
+    /**
+     * Creates new test sentence with given parameters. Note that if you don't already have
+     * pre-created data source you can use {@link #NCTestSentence(String, String)} constructor
+     * that takes ID of the model instead and automatically creates temporary data source on the fly.
+     *
+     * @param txt Sentence text.
+     * @param dsId Data source ID to test with.
+     */
+    public NCTestSentence(String txt, long dsId) {
+        if (txt == null)
+            throw new IllegalStateException("Sentence text cannot be null.");
     
+        this.txt = txt;
+        this.dsId = dsId;
+    }
+
     /**
      * Creates new test sentence with given parameters.
      *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
-     * @param text Test sentence text.
-     * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
-     *      or intent ID check isn't required.
-     * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
-     * @param check Optional result validation predicate. Supply {@code null} if not required.
+     * @param txt Sentence text.
+     * @param mdlId Model ID to test with. Note that a temporary data source will be created for this model ID.
      */
-    public NCTestSentence(
-        String dsName,
-        String text,
-        String expIntentId,
-        int expStatus,
-        Predicate<NCQueryResult> check
-    ) {
-        if (expIntentId != null) {
-            switch (expStatus) {
-                case NCTestClient.RESP_VALIDATION:
-                    throw new IllegalArgumentException(
-                        "Intent ID can only be specified for the following responses: RESP_OK, RESP_REJECT."
-                    );
-                default: // No-op.
-            }
-        }
-        
-        this.dsName = dsName;
-        this.text = text;
-        this.expIntentId = expIntentId;
-        this.expStatus = expStatus;
-        this.check = check;
-    }
+    public NCTestSentence(String txt, String mdlId) {
+        if (txt == null)
+            throw new IllegalStateException("Sentence text cannot be null.");
     
-    /**
-     * Creates new test sentence with given parameters (without optional result check predicate).
-     *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
-     * @param text Test sentence text.
-     * @param expIntentId Optional expected intent ID. Supply {@code null} if intent based matching isn't used
-     *      or intent ID check isn't required.
-     * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
-     */
-    public NCTestSentence(String dsName, String text, String expIntentId, int expStatus) {
-        this(dsName, text, expIntentId, expStatus, null);
-    }
-
-    /**
-     * Creates new test sentence with given parameters (without intent ID and optional result check predicate).
-     *
-     * @param dsName Data source name. This data source (and its probe) should be deployed and accessible for
-     *      testing user account. See {@link NCTestClientConfig#getEmail()} to see how to configure testing account.
-     * @param text Test sentence text.
-     * @param expStatus Expected result status. See constants in {@link NCTestClient} interface.
-     */
-    public NCTestSentence(String dsName, String text, int expStatus) {
-        this(dsName, text, null, expStatus, null);
-    }
-
-    /**
-     * Gets data source name.
-     *
-     * @return Data source name.
-     */
-    public String getDsName() {
-        return dsName;
+        if (mdlId == null)
+            throw new IllegalStateException("Model ID cannot be null.");
+    
+        this.txt = txt;
+        this.mdlId = mdlId;
     }
     
     /**
@@ -124,33 +83,24 @@ public class NCTestSentence {
      * @return Sentence text.
      */
     public String getText() {
-        return text;
+        return txt;
     }
     
     /**
-     * Gets expected response status.
+     * Gets data source ID. Note that either data source ID or model ID is set, but not both.
      *
-     * @return Expected status. See constants in {@link NCTestClient} interface.
+     * @return Data source ID.
      */
-    public int getExpectedStatus() {
-        return expStatus;
+    public Optional<Long> getDataSourceId() {
+        return dsId != null ? Optional.of(dsId) : Optional.empty();
     }
     
     /**
-     * Gets optional expected intent ID.
+     * Gets model ID. Note that either data source ID or model ID is set, but not both.
      *
-     * @return Intent ID or {@code null}.
+     * @return Model ID.
      */
-    public String getExpectedIntentId() {
-        return expIntentId;
-    }
-    
-    /**
-     * Gets optional result validation predicate.
-     *
-     * @return Validation predicate or {@code}.
-     */
-    public Predicate<NCQueryResult> getCheck() {
-        return check;
+    public Optional<String> getModelId() {
+        return mdlId != null ? Optional.of(mdlId) : Optional.empty();
     }
 }

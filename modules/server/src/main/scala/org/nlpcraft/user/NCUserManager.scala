@@ -195,7 +195,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue)
+            // Users can be duplicated by their keys (ID and email)
+            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue).distinct
         }
     }
 
@@ -381,25 +382,25 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     ): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                 case u ⇒
-                    userCache.put(
-                        key,
-                        NCUserMdo(
-                            u.id,
-                            u.email,
-                            firstName,
-                            lastName,
-                            avatarUrl,
-                            u.passwordSalt,
-                            isAdmin,
-                            u.createdOn
-                        )
+                    val mdo = NCUserMdo(
+                        u.id,
+                        u.email,
+                        firstName,
+                        lastName,
+                        avatarUrl,
+                        u.passwordSalt,
+                        isAdmin,
+                        u.createdOn
                     )
+
+                    userCache.put(idKey, mdo)
+                    userCache.put(Right(u.email), mdo)
             }
         }
 
@@ -421,18 +422,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        val key = Left(usrId)
+        val idKey = Left(usrId)
 
         catching(wrapIE) {
-            userCache.get(key) match {
+            userCache.get(idKey) match {
                 case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case usr ⇒ userCache.remove(key)
+                case u ⇒
+                    userCache.remove(idKey)
+                    userCache.remove(Right(u.email))
+
                     // Notification.
                     NCNotificationManager.addEvent("NC_USER_DELETE",
                         "userId" → usrId,
-                        "firstName" → usr.firstName,
-                        "lastName" → usr.lastName,
-                        "email" → usr.email
+                        "firstName" → u.firstName,
+                        "lastName" → u.lastName,
+                        "email" → u.email
                     )
             }
         }
@@ -549,26 +553,28 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
 
+        val emailKey = Right(normEmail)
+
         val (newUsrId, salt) =
             catching(wrapIE) {
-                if (userCache.containsKey(Right(normEmail)))
+                if (userCache.containsKey(emailKey))
                     throw new NCE(s"User with this email already exists: $normEmail")
 
                 val newUsrId = usersSeq.incrementAndGet()
                 val salt = NCBlowfishHasher.hash(normEmail)
 
-                userCache.put(
-                    Left(newUsrId),
-                    NCUserMdo(
-                        newUsrId,
-                        normEmail,
-                        firstName,
-                        lastName,
-                        avatarUrl,
-                        salt,
-                        isAdmin
-                    )
+                val mdo = NCUserMdo(
+                    newUsrId,
+                    normEmail,
+                    firstName,
+                    lastName,
+                    avatarUrl,
+                    salt,
+                    isAdmin
                 )
+
+                userCache.put(Left(newUsrId), mdo)
+                userCache.put(emailKey, mdo)
 
                 (newUsrId, salt)
             }
@@ -598,5 +604,4 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             newUsrId
         }
     }
-
 }

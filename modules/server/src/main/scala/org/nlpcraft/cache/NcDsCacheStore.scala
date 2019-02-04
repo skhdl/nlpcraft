@@ -41,7 +41,7 @@ import org.nlpcraft.mdo.NCDataSourceMdo
 import scala.util.control.Exception._
 
 /**
- * Datasource cache storage.
+ * Data source cache storage.
  */
 class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     @throws[IgniteException]

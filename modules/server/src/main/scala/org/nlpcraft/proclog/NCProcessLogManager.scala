@@ -51,7 +51,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     @throws[NCE]
     def updateCancel(
         srvReqId: String,
-        tstamp: Long
+        tstamp: Timestamp
     )
     : Unit = {
         ensureStarted()

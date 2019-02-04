@@ -36,10 +36,6 @@
 --
 -- NOTE: database 'nlpcraft' should be created and owned by 'nlpcraft' user.
 --
--- Supported types:
---
--- VARCHAR 1, 32, 64, 256, 512, 1024, 5120
--- BOOLEAN, DATE, TIMESTAMP, INTEGER, BIGINT(SERIAL), TEXT, BYTEA
 
 -- Base entity type.
 DROP TABLE IF EXISTS base;
@@ -95,7 +91,7 @@ CREATE TABLE ds_instance (
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
-    model_cfg VARCHAR(5120) NULL
+    model_cfg TEXT NULL
 );
 
 --

@@ -184,13 +184,17 @@
                                                     "QRY_READY"
                                                 ]
                                             },
+                                            "resType": {
+                                                "type": "string",
+                                                "description": "Optional result type if returned by model (provided only if status is QRY_READY and processing was not rejected or terminated due to an exception)"
+                                            },
                                             "resBody": {
                                                 "type": "string",
-                                                "description": "Optional body of the result if returned by model (provided only if status is ASK_READY and processing was not rejected or terminated due to an exception)"
+                                                "description": "Optional body of the result if returned by model (provided only if status is QRY_READY and processing was not rejected or terminated due to an exception)"
                                             },
                                             "error": {
                                                 "type": "string",
-                                                "description": "Optional error if returned by model (provided only if status is ASK_READY and processing was rejected or terminated due to an exception)"
+                                                "description": "Optional error if returned by model (provided only if status is QRY_READY and processing was rejected or terminated due to an exception)"
                                             },
                                             "createTstamp": {
                                                 "type": "integer",
@@ -1495,17 +1499,17 @@
                             "name": {
                                 "type": "string",
                                 "description": "Data source name",
-                                "maxLength": 64
+                                "maxLength": 128
                             },
                             "shortDesc": {
                                 "type": "string",
                                 "description": "Short data source description",
-                                "maxLength": 64
+                                "maxLength": 128
                             },
                             "mdlId": {
                                 "type": "string",
                                 "description": "Model ID",
-                                "maxLength": 64
+                                "maxLength": 32
                             },
                             "mdlName": {
                                 "type": "string",
@@ -1515,12 +1519,12 @@
                             "mdlVer": {
                                 "type": "string",
                                 "description": "Model version",
-                                "maxLength": 64
+                                "maxLength": 16
                             },
                             "mdlCfg": {
                                 "type": "string",
                                 "description": "Optional model configuration string",
-                                "maxLength": 512000
+                                "maxLength": 5120
                             }
                         }
                     }

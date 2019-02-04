@@ -317,6 +317,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         mdlId: String,
                         probeId: Option[String],
                         status: String,
+                        resType: Option[String],
                         resBody: Option[String],
                         error: Option[String],
                         createTstamp: Long,
@@ -328,7 +329,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                     )
     
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat10(QueryState)
+                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -345,6 +346,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                                     p.modelId,
                                     p.probeId,
                                     p.status,
+                                    p.resultType,
                                     p.resultBody,
                                     p.error,
                                     p.createTstamp.getTime,
@@ -682,9 +684,9 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
 
-                        checkLength("mdlId", req.mdlId, 64)
-                        checkLength("mdlName", req.mdlName, 512)
-                        checkLength("mdlVer", req.mdlVer, 512)
+                        checkLength("mdlId", req.mdlId, 32)
+                        checkLength("mdlName", req.mdlName, 64)
+                        checkLength("mdlVer", req.mdlVer, 16)
                         checkLength("mdlCfg", req.mdlCfg, 512000)
 
                         authenticateAsAdmin(req.accessToken)

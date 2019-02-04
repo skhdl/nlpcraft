@@ -44,7 +44,7 @@ import scala.collection.JavaConverters._
 import scala.util.control.Exception.catching
 
 /**
-  * Datasources manager.
+  * Data sources manager.
   */
 object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCraft{
     // Caches.
