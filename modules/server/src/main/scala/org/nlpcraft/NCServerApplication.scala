@@ -87,11 +87,12 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
 
         // Ack server start.
         ackStart()
-        askVersion()
+        checkVersion()
     }
 
     // Starts all managers.
     private def startComponents(): Unit = {
+        NCVersionManager.start()
         NCPluginManager.start()
         NCTxManager.start()
         NCDbManager.start()
@@ -114,35 +115,17 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     }
 
     /**
-      * Ask server version.
+      * Checks server version for update.
       */
-    private def askVersion(): Unit = {
-        def propOrEnv(key: String): Option[String] =
-            System.getProperty(key) match {
-                case null ⇒
-                    System.getenv(key) match {
-                        case null ⇒ None
-                        case v ⇒ Some(v)
-                    }
-                case v ⇒ Some(v)
-            }
-
-        val enabled =
-            propOrEnv("NLPCRAFT_VERSION_ASK_ENABLED") match {
-                case Some(v) ⇒ java.lang.Boolean.parseBoolean(v)
-                case None ⇒ true
-            }
-
-        if (enabled)
-            NCVersionManager.ask(
-                "server",
-                // Additional parameters. Server.
-                Map(
-                    "IGNITE_VERSION" → ignite.version().toString,
-                    "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
-                )
+    private def checkVersion(): Unit =
+        NCVersionManager.checkForUpdates(
+            "server",
+            // Additional parameters. 
+            Map(
+                "IGNITE_VERSION" → ignite.version().toString,
+                "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
             )
-    }
+        )
 
     /**
       * Stops the server by counting down (i.e. releasing) the lifecycle latch.
@@ -173,5 +156,6 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCDbManager.stop()
         NCTxManager.stop()
         NCPluginManager.stop()
+        NCVersionManager.stop()
     }
 }

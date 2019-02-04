@@ -131,16 +131,20 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         
         logger.info("Set '-DNLPCRAFT_PROBE_SILENT=true' JVM system property to turn off verbose probe logging.")
     }
-
-    private def askVersion(cfg: NCProbeConfig): Unit =
-        if (cfg.isVersionAskEnabled)
-            NCVersionManager.ask(
-                "probe",
-                // Additional parameters. Probe.
-                Map(
-                    "PROBE_ID" → cfg.getId
-                )
+    
+    /**
+      *
+      * @param cfg
+      */
+    private def checkVersion(cfg: NCProbeConfig): Unit =
+        NCVersionManager.checkForUpdates(
+            "probe",
+            // Additional parameters.
+            Map(
+                "PROBE_ID" → cfg.getId,
+                "PROBE_MODELS_NUM" → NCModelManager.getAllModels.size
             )
+        )
 
     /**
       *
@@ -150,7 +154,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
     def startProbe(cfg: NCProbeConfig): Int = {
         asciiLogo(cfg)
         ackConfig(cfg)
-        askVersion(cfg)
         
         catching(classOf[Throwable]) either startManagers(cfg) match {
             case Left(e) ⇒
@@ -166,6 +169,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
             // No exception on managers start - continue...
             case _ ⇒
                 ackStart()
+                checkVersion(cfg)
     
                 // Block & wait for the exit.
                 val exitCode = NCExitManager.awaitExit()
@@ -196,6 +200,7 @@ object NCProbeRunner extends LazyLogging with NCDebug {
       */
     private def startManagers(cfg: NCProbeConfig): Unit = {
         // Order is important!
+        NCVersionManager.start()
         NCNlpManager.start()
         NCNumericManager.start()
         NCExitManager .startWithConfig(cfg)
@@ -245,5 +250,6 @@ object NCProbeRunner extends LazyLogging with NCDebug {
         NCExitManager.stop()
         NCNumericManager.stop()
         NCNlpManager.stop()
+        NCVersionManager.stop()
     }
 }

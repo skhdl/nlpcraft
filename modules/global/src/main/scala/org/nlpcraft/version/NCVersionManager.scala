@@ -38,8 +38,8 @@ import java.util.TimeZone
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.typesafe.scalalogging.LazyLogging
 import org.apache.http.HttpResponse
+import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
@@ -52,18 +52,26 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 /**
   * Version check manager.
   */
-object NCVersionManager extends LazyLogging {
+object NCVersionManager extends NCLifecycle("Version manager") {
     // TODO:
     private final val URL = "http://localhost:8099/version"
+    
+    // Whether or not version check is disabled.
+    private final val enabled = !G.isSysEnvTrue("NLPCRAFT_VERSION_CHECK_DISABLED")
 
     /**
       * Check for version update and prints it.
       *
       * @param name Component name.
-      * @param params Component related parameters.
+      * @param params Additional component related parameters.
       */
     @throws[NCE]
     def checkForUpdates(name: String, params: Map[String, Any]): Unit = {
+        ensureStarted()
+        
+        if (!enabled)
+            return
+        
         val tmz = TimeZone.getDefault
         val sysProps = System.getProperties
     
@@ -130,35 +138,39 @@ object NCVersionManager extends LazyLogging {
 
                     client.execute(
                         post,
-                        (resp: HttpResponse) => {
-                            val code = resp.getStatusLine.getStatusCode
-                            
-                            if (code != 200)
-                                throw new NCE(s"Unexpected response code: $code")
-                            
-                            val e = resp.getEntity
-                            
-                            if (e == null)
-                                throw new NCE(s"Unexpected empty response.")
-                            
-                            val js = EntityUtils.toString(e)
-                            
-                            val m: util.Map[String, AnyRef] =
-                                try
-                                    gson.fromJson(js, typeResp)
-                                catch {
-                                    case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $js", e)
-                                }
-                            
-                            m.get("status") match {
-                                case null ⇒ throw new NCE(s"Missed status field: $js")
-                                case status ⇒
-                                    if (status != "OK")
-                                        throw new NCE(s"Unexpected response status: $status")
-                                    m.get("data") match {
-                                        case null ⇒ throw new NCE(s"Missed data field: $js")
-                                        case data ⇒ data.asInstanceOf[String]
+                        new ResponseHandler[String] {
+                            override def handleResponse(resp: HttpResponse): String = {
+                                val code = resp.getStatusLine.getStatusCode
+                                
+                                if (code != 200)
+                                    throw new NCE(s"Unexpected response code: $code")
+                                
+                                val e = resp.getEntity
+                                
+                                if (e == null)
+                                    throw new NCE(s"Unexpected empty response.")
+                                
+                                val js = EntityUtils.toString(e)
+                                
+                                val m: util.Map[String, AnyRef] =
+                                    try
+                                        gson.fromJson(js, typeResp)
+                                    catch {
+                                        case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $js", e)
                                     }
+                                
+                                m.get("status") match {
+                                    case null ⇒ throw new NCE(s"Missed status field: $js")
+                                    
+                                    case status ⇒
+                                        if (status != "OK")
+                                            throw new NCE(s"Unexpected response status: $status")
+                                        
+                                        m.get("data") match {
+                                            case null ⇒ throw new NCE(s"Missed data field: $js")
+                                            case data ⇒ data.asInstanceOf[String]
+                                        }
+                                }
                             }
                         }
                     )
@@ -171,6 +183,5 @@ object NCVersionManager extends LazyLogging {
             }
 
         f.onSuccess { case s ⇒ logger.info(s) }
-        f.onFailure { case e: Throwable ⇒ logger.trace(s"Version check failed: ${e.getLocalizedMessage}") }
     }
 }
