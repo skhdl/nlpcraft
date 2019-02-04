@@ -36,7 +36,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
@@ -46,6 +45,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.nlpcraft.ascii.NCAsciiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,90 +204,6 @@ public class NCTestClientBuilder {
     
         public void setUpdateTstamp(long updateTstamp) {
             this.updateTstamp = updateTstamp;
-        }
-    }
-    
-    private static class AsciiTable {
-        private final List<Pair<String, Integer>> cols;
-        private final List<List<String>> rows;
-        
-        AsciiTable(String... cols) {
-            this.cols = Arrays.stream(cols).map(p -> MutablePair.of(p, 0)).collect(Collectors.toList());
-            this.rows = new ArrayList<>();
-        }
-        
-        private void writeColumnNames(List<Pair<String, Integer>> cols, StringBuilder buf) {
-            buf.append('|');
-            
-            for (Pair<String, Integer> col : cols) {
-                buf.append(String.format(" %-" + col.getValue() + 's', col.getKey()));
-                
-                buf.append('|');
-            }
-            
-            buf.append('\n');
-        }
-        
-        private void writeSeparator(List<Pair<String, Integer>> cols, StringBuilder buf) {
-            buf.append('+');
-            
-            for (Pair<String, Integer> col : cols) {
-                buf.append(String.format("%-" + (col.getValue() + 1) + 's', "").replace(' ', '-'));
-                
-                buf.append('+');
-            }
-            
-            buf.append('\n');
-        }
-        
-        private void writeValues(List<Pair<String, Integer>> cols, List<List<String>> rows, StringBuilder buf) {
-            for (List<String> row : rows) {
-                int idx = 0;
-                
-                buf.append('|');
-                
-                for (String cell : row) {
-                    buf.append(String.format(" %-" + cols.get(idx).getValue() + 's', cell));
-                    
-                    buf.append('|');
-                    
-                    idx++;
-                }
-                
-                buf.append('\n');
-            }
-        }
-        
-        void addRow(List<Object> row) {
-            rows.add(row.stream().map(p -> p != null ? p.toString() : "").collect(Collectors.toList()));
-        }
-    
-        String mkContent() {
-            cols.forEach(col -> col.setValue(col.getKey().length() + 1));
-        
-            for (List<String> row : rows) {
-                int i = 0;
-            
-                for (String cell : row) {
-                    if (cell != null) {
-                        Pair<String, Integer> col = cols.get(i);
-                    
-                        col.setValue(Math.max(col.getValue(), cell.length() + 1));
-                    
-                        i++;
-                    }
-                }
-            }
-        
-            StringBuilder buf = new StringBuilder();
-        
-            writeSeparator(cols, buf);
-            writeColumnNames(cols, buf);
-            writeSeparator(cols, buf);
-            writeValues(cols, rows, buf);
-            writeSeparator(cols, buf);
-        
-            return buf.toString();
         }
     }
     
@@ -652,24 +568,25 @@ public class NCTestClientBuilder {
             
             int n = tests.size();
             
-            AsciiTable resTab = new AsciiTable(
-                "Sentence",
-                "Data source ID",
-                "Model ID",
-                "Result",
-                "Error",
-                "Time (ms)"
+            NCAsciiTable resTab = new NCAsciiTable();
+    
+            resTab.addHeaders(
+                Arrays.asList(
+                    "Sentence",
+                    "Data source ID",
+                    "Model ID",
+                    "Result",
+                    "Error",
+                    "Time (ms)"
+                )
             );
     
             for (NCTestResult res : results) {
                 List<Object> row = new ArrayList<>();
                 
-                String ss = res.getText();
+                String txt = res.getText();
                 
-                if (ss.length() > 100)
-                    ss = ss.substring(0, 100);
-    
-                row.add(ss.equals(res.getText()) ? ss : ss + " ...");
+                row.add(txt.length() > 100 ? txt.substring(0, 100) + "..." : txt);
                 row.add(res.getDataSourceId());
                 row.add(res.getModelId());
                 row.add(res.getResult().orElse(""));
@@ -679,15 +596,19 @@ public class NCTestClientBuilder {
                 resTab.addRow(row);
             }
     
-            log.info("Test result:\n" + resTab.mkContent());
+            log.info("Test result:\n" + resTab.toString());
     
-            AsciiTable statTab = new AsciiTable(
-                "Tests Count",
-                "Passed",
-                "Failed",
-                "Min Time (ms)",
-                "Max Time (ms)",
-                "Avg Time (ms)"
+            NCAsciiTable statTab = new NCAsciiTable();
+            
+            statTab.addHeaders(
+                Arrays.asList(
+                    "Tests Count",
+                    "Passed",
+                    "Failed",
+                    "Min Time (ms)",
+                    "Max Time (ms)",
+                    "Avg Time (ms)"
+                )
             );
     
             List<Object> row = new ArrayList<>();
@@ -713,7 +634,7 @@ public class NCTestClientBuilder {
     
             statTab.addRow(row);
     
-            log.info("Tests statistic:\n" + statTab.mkContent());
+            log.info("Tests statistic:\n" + statTab.toString());
         }
     
         private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException, NCTestClientException {
