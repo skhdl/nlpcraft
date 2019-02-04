@@ -49,6 +49,7 @@ import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.socket.NCSocket
+import org.nlpcraft.version.NCVersion
 
 import scala.collection.{Map, mutable}
 import scala.concurrent.{ExecutionContext, Future}
@@ -512,7 +513,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             respond("S2P_PROBE_MULTIPLE_INSTANCES")
         else {
             val probeApiVer = hsMsg.data[String]("PROBE_API_VERSION")
-            val srvApiVer = NCProbeVersion.getCurrent
+            val srvApiVer = NCVersion.getCurrent
             
             if (probeApiVer != srvApiVer.version)
                 respond("S2P_PROBE_VERSION_MISMATCH")
