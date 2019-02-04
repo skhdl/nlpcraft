@@ -49,6 +49,7 @@ import org.nlpcraft.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.socket.NCSocket
+import org.nlpcraft.version.NCVersion
 
 import scala.collection.{Map, mutable}
 import scala.concurrent.{ExecutionContext, Future}

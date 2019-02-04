@@ -32,7 +32,7 @@
 package org.nlpcraft.version
 
 import java.io.IOException
-import java.net.{InetAddress, NetworkInterface}
+import java.net.InetAddress
 import java.util
 import java.util.TimeZone
 
@@ -40,81 +40,64 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.http.HttpResponse
-import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import org.nlpcraft.probe.NCVersion
 import org.nlpcraft.{NCE, _}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
 /**
-  * Version manager.
+  * Version check manager.
   */
 object NCVersionManager extends LazyLogging {
     // TODO:
     private final val URL = "http://localhost:8099/version"
 
     /**
-      * Asks version info and prints it to log info.
+      * Check for version update and prints it.
       *
       * @param name Component name.
-      * @param compParams Component related parameters.
+      * @param params Component related parameters.
       */
     @throws[NCE]
-    def ask(name: String, compParams: Map[String, Any]): Unit = {
+    def checkForUpdates(name: String, params: Map[String, Any]): Unit = {
         val tmz = TimeZone.getDefault
         val sysProps = System.getProperties
-
-        var localHost: InetAddress = null
-        var netItf: NetworkInterface = null
-
+    
+        // Collect basic environment data.
+        var hostName = ""
+        var hostAddr = ""
+        
         try {
-            localHost = InetAddress.getLocalHost
+            val localhost = InetAddress.getLocalHost
 
-            netItf = NetworkInterface.getByInetAddress(localHost)
+            hostName = localhost.getHostName
+            hostAddr = localhost.getHostAddress
         }
         catch {
-            case e: IOException ⇒ logger.warn(s"IO error during getting probe info: ${e.getMessage}")
+            case e: IOException ⇒ logger.warn(s"Error during network info: ${e.getMessage}")
         }
-
-        var hwAddrs = ""
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
-        if (netItf != null) {
-            val addrs = netItf.getHardwareAddress
-
-            if (addrs != null)
-                hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
-        }
-
+        
         val ver = NCVersion.getCurrent
-
+        
         val m = Map(
-            "PROBE_API_DATE" → ver.date,
-            "PROBE_API_VERSION" → ver.version,
-            "PROBE_OS_VER" → sysProps.getProperty ("os.version"),
-            "PROBE_OS_NAME" → sysProps.getProperty ("os.name"),
-            "PROBE_OS_ARCH" → sysProps.getProperty ("os.arch"),
-            "PROBE_START_TSTAMP" → G.nowUtcMs(),
-            "PROBE_TMZ_ID" → tmz.getID,
-            "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
-            "PROBE_TMZ_NAME" → tmz.getDisplayName(),
-            "PROBE_SYS_USERNAME" → sysProps.getProperty ("user.name"),
-            "PROBE_JAVA_VER" → sysProps.getProperty ("java.version"),
-            "PROBE_JAVA_VENDOR" → sysProps.getProperty ("java.vendor"),
-            "PROBE_HOST_NAME" → localHost.getHostName,
-            "PROBE_HOST_ADDR" → localHost.getHostAddress,
-            "PROBE_HW_ADDR" → hwAddrs
+            "API_DATE" → ver.date,
+            "API_VERSION" → ver.version,
+            "OS_VER" → sysProps.getProperty("os.version"),
+            "OS_NAME" → sysProps.getProperty("os.name"),
+            "OS_ARCH" → sysProps.getProperty("os.arch"),
+            "START_TSTAMP" → G.nowUtcMs(),
+            "TMZ_ID" → tmz.getID,
+            "TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
+            "TMZ_NAME" → tmz.getDisplayName(),
+            "SYS_USERNAME" → sysProps.getProperty("user.name"),
+            "JAVA_VER" → sysProps.getProperty("java.version"),
+            "JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
+            "HOST_NAME" → hostName,
+            "HOST_ADDR" → hostAddr
         )
 
         val gson = new Gson()
@@ -122,7 +105,7 @@ object NCVersionManager extends LazyLogging {
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
-        val props = (m ++ compParams).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
+        val props = (m ++ params).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
 
         val f =
             Future {
@@ -145,41 +128,37 @@ object NCVersionManager extends LazyLogging {
                         )
                     )
 
-                    logger.trace("Request prepared: {}", post)
-
                     client.execute(
                         post,
-                        new ResponseHandler[String] {
-                            override def handleResponse(resp: HttpResponse): String = {
-                                val code = resp.getStatusLine.getStatusCode
-                                val e = resp.getEntity
-
-                                if (e == null)
-                                    throw new NCE(s"Unexpected empty response code=$code")
-
-                                val js = EntityUtils.toString(e)
-
-                                if (code != 200)
-                                    throw new NCE(s"Unexpected response [code=$code, text=$js]")
-
-                                val m: util.Map[String, AnyRef] =
-                                    try
-                                        gson.fromJson(js, typeResp)
-                                    catch {
-                                        case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $js", e)
-                                    }
-
-                                m.get("status") match {
-                                    case null ⇒ throw new NCE(s"Missed status field: $js")
-                                    case status ⇒
-                                        if (status != "OK")
-                                            throw new NCE(s"Unexpected response status: $status")
-
-                                        m.get("data") match {
-                                            case null ⇒ throw new NCE(s"Missed data field: $js")
-                                            case data ⇒ data.asInstanceOf[String]
-                                        }
+                        (resp: HttpResponse) => {
+                            val code = resp.getStatusLine.getStatusCode
+                            
+                            if (code != 200)
+                                throw new NCE(s"Unexpected response code: $code")
+                            
+                            val e = resp.getEntity
+                            
+                            if (e == null)
+                                throw new NCE(s"Unexpected empty response.")
+                            
+                            val js = EntityUtils.toString(e)
+                            
+                            val m: util.Map[String, AnyRef] =
+                                try
+                                    gson.fromJson(js, typeResp)
+                                catch {
+                                    case e: Exception ⇒ throw new NCE(s"Response cannot be parsed: $js", e)
                                 }
+                            
+                            m.get("status") match {
+                                case null ⇒ throw new NCE(s"Missed status field: $js")
+                                case status ⇒
+                                    if (status != "OK")
+                                        throw new NCE(s"Unexpected response status: $status")
+                                    m.get("data") match {
+                                        case null ⇒ throw new NCE(s"Missed data field: $js")
+                                        case data ⇒ data.asInstanceOf[String]
+                                    }
                             }
                         }
                     )
@@ -191,11 +170,7 @@ object NCVersionManager extends LazyLogging {
                 }
             }
 
-        f.onSuccess { case s ⇒ logger.info(s"Version information: $s") }
-
-        f.onFailure {
-            case _: IOException ⇒ logger.info(s"IO error reading version")
-            case e: Throwable ⇒ logger.info(s"Error reading version: ${e.getMessage}")
-        }
+        f.onSuccess { case s ⇒ logger.info(s) }
+        f.onFailure { case e: Throwable ⇒ logger.trace(s"Version check failed: ${e.getLocalizedMessage}") }
     }
 }

@@ -169,22 +169,6 @@ public class NCProbeConfig implements Serializable {
         this.provider = provider;
     }
     
-    /**
-     * TODO:
-     * @param versionAskEnabled
-     */
-    public void setVersionAskEnabled(boolean versionAskEnabled) {
-        this.versionAskEnabled = versionAskEnabled;
-    }
-    
-    /**
-     * TODO:
-     * @return
-     */
-    public boolean isVersionAskEnabled() {
-        return versionAskEnabled;
-    }
-    
     @Override
     public String toString() {
         return String.format("Probe configuration [" +
@@ -193,9 +177,8 @@ public class NCProbeConfig implements Serializable {
             "upLink=%s, " +
             "downLink=%s, " +
             "jarsFolder=%s, " +
-            "provider=%s," +
-            "versionAskEnabled=%s" +
+            "provider=%s" +
             "]",
-            id, token, upLink, downLink, jarsFolder, provider, versionAskEnabled);
+            id, token, upLink, downLink, jarsFolder, provider);
     }
 }

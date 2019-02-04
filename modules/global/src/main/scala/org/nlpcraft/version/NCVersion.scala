@@ -29,21 +29,22 @@
  *        /_/
  */
 
-package org.nlpcraft.probe
+package org.nlpcraft.version
 
 import java.time.LocalDate
 
-import org.nlpcraft._
 import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft._
 
 /**
-  * Version manager.
+  * Release version holder. Note that this is manually changing property. For every official
+  * release the new version will be added to this object manually.
   */
 object NCVersion extends LazyLogging {
     /**
       *
-      * @param version Sequentially increasing internal version of the probe.
-      * @param date Date of this version release.
+      * @param version Semver-based release version of the NLPCraft.
+      * @param date Date of this release.
       * @param notes Release notes.
       */
     case class Version(
@@ -51,25 +52,25 @@ object NCVersion extends LazyLogging {
         date: LocalDate,
         notes: String
     ) {
-        override def toString = s"Probe version [version=$version, notes=$notes, date=$date]"
+        override def toString = s"Version [version=$version, notes=$notes, date=$date]"
     }
     
-    // +=========================================================================+
-    // | UPDATE THIS SEQUENCE FOR EACH NON-BACKWARD-COMPATIBLE RELEASE MANUALLY. |
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // +=================================================+
+    // | UPDATE THIS SEQUENCE FOR EACH RELEASE MANUALLY. |
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     private final val VERSIONS = Seq(
         Version("1.0.0", LocalDate.of(2018, 12, 5), "Initial release.")
     ).sortBy(_.version)
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    // | UPDATE THIS SEQUENCE FOR EACH NON-BACKWARD-COMPATIBLE RELEASE MANUALLY. |
-    // +=========================================================================+
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // | UPDATE THIS SEQUENCE FOR EACH RELEASE MANUALLY. |
+    // +=================================================+
     
     if (G.distinct(VERSIONS.map(_.version).toList).lengthCompare(VERSIONS.size) != 0)
-        throw new AssertionError(s"Probe versions are NOT unique.")
+        throw new AssertionError(s"Versions are NOT unique.")
     
     /**
       * Gets current version.
       */
-    def getCurrent: Version = VERSIONS.last
+    lazy val getCurrent: Version = VERSIONS.last
 }
 

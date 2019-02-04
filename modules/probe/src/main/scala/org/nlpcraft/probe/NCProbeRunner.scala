@@ -57,7 +57,7 @@ import org.nlpcraft.probe.mgrs.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious.NCSuspiciousNounsEnricher
 import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, NCPostEnricher}
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
-import org.nlpcraft.version.NCVersionManager
+import org.nlpcraft.version.{NCVersion, NCVersionManager}
 
 import scala.compat.Platform._
 import scala.util.control.Exception._

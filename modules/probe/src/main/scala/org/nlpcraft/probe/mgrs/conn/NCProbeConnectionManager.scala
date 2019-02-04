@@ -44,6 +44,7 @@ import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.socket._
+import org.nlpcraft.version.NCVersion
 import org.nlpcraft.{NCLifecycle, _}
 
 import scala.collection.mutable

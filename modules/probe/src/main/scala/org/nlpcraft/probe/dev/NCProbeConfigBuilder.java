@@ -94,9 +94,6 @@ public class NCProbeConfigBuilder {
     // Default probe token shared by the server as well.
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
-    // Default flag value.
-    private final static boolean DFLT_VERSION_ASK_ENABLED = true;
-    
     /** */
     private NCProbeConfig impl;
 
@@ -159,7 +156,6 @@ public class NCProbeConfigBuilder {
         impl.setToken(DFLT_PROBE_TOKEN);
         impl.setUpLink(DFLT_UP_LINK);
         impl.setDownLink(DFLT_DOWN_LINK);
-        impl.setVersionAskEnabled(DFLT_VERSION_ASK_ENABLED);
 
         // Check overrides from system and environmental variables.
         String x = propOrEnv("NLPCRAFT_PROBE_ID");
@@ -186,11 +182,6 @@ public class NCProbeConfigBuilder {
 
         if (!isEmpty(x))
             setJarsFolder(x);
-    
-        x = propOrEnv("NLPCRAFT_VERSION_ASK_ENABLED");
-    
-        if (!isEmpty(x))
-            setVersionAskEnabled(Boolean.parseBoolean(x));
     }
 
     /**
@@ -310,17 +301,6 @@ public class NCProbeConfigBuilder {
     public NCProbeConfigBuilder setProvider(NCModelProvider provider) {
         impl.setProvider(provider);
 
-        return this;
-    }
-    
-    /**
-     * TODO:
-     * @param enabled
-     * @return
-     */
-    public NCProbeConfigBuilder setVersionAskEnabled(boolean enabled) {
-        impl.setVersionAskEnabled(enabled);
-        
         return this;
     }
 }
