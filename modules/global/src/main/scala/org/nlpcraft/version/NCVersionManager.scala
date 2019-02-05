@@ -52,8 +52,8 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
   * Version check manager.
   */
 object NCVersionManager extends NCLifecycle("Version manager") {
-    // TODO:
-    private final val URL = "http://localhost:8099/version"
+    // Version info URL.
+    private final val URL = "http://datalingvo.com:8099/version"
     
     // Whether or not version check is disabled.
     private final val enabled = !G.isSysEnvTrue("NLPCRAFT_VERSION_CHECK_DISABLED")
