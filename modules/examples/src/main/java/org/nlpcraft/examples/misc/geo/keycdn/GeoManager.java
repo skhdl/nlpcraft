@@ -35,20 +35,14 @@ import com.google.gson.Gson;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.ResponseBean;
 import org.nlpcraft.mdllib.NCSentence;
-import org.nlpcraft.util.NCGlobals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.NetworkInterface;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,7 +83,7 @@ public class GeoManager {
         if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
             if (externalIp == null) {
                 try {
-                    externalIp = NCGlobals.getExternalIp();
+                    externalIp = getExternalIp();
                 }
                 catch (IOException e) {
                     System.err.println("External IP cannot be detected for localhost.");
@@ -146,6 +140,18 @@ public class GeoManager {
             e.printStackTrace(System.err);
     
             return Optional.empty();
+        }
+    }
+    
+    /**
+     * Gets external IP.
+     * @return External IP.
+     * @throws IOException If any errors occur.
+     */
+    private static String getExternalIp() throws IOException {
+        try (BufferedReader in =
+                 new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream()))) {
+            return in.readLine();
         }
     }
     
