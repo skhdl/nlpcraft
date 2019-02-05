@@ -35,8 +35,6 @@ import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.geo.NCGeoManager
-import org.nlpcraft.rest.NCRestManager
-import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.ignite.NCIgniteServer
 import org.nlpcraft.nlp.dict.NCDictionaryManager
 import org.nlpcraft.nlp.enrichers._
@@ -51,17 +49,50 @@ import org.nlpcraft.plugin.NCPluginManager
 import org.nlpcraft.probe.NCProbeManager
 import org.nlpcraft.proclog.NCProcessLogManager
 import org.nlpcraft.query.NCQueryManager
-import org.nlpcraft.user.NCUserManager
+import org.nlpcraft.rest.NCRestManager
 import org.nlpcraft.tx.NCTxManager
+import org.nlpcraft.user.NCUserManager
+import org.nlpcraft.util.NCGlobals
+import org.nlpcraft.version.NCVersionManager
 
 /**
- * Main server entry-point.
- */
+  * Main server entry-point.
+  */
 object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging {
     override def name() = "NLPCraft Server"
 
+    /**
+      * Code to execute within Ignite node.
+      */
+    override def start() {
+        super.start()
+
+        initialize()
+
+        try {
+            NCGlobals.ignoreInterrupt {
+                lifecycle.await()
+            }
+        }
+        finally {
+            stop()
+        }
+    }
+
+    /**
+      * Initializes server without blocking thread.
+      */
+    private[nlpcraft] def initialize() {
+        startComponents()
+
+        // Ack server start.
+        ackStart()
+        checkVersion()
+    }
+
     // Starts all managers.
     private def startComponents(): Unit = {
+        NCVersionManager.start()
         NCPluginManager.start()
         NCTxManager.start()
         NCDbManager.start()
@@ -84,13 +115,25 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     }
 
     /**
-      * Initializes server without blocking thread.
+      * Checks server version for update.
       */
-    private[nlpcraft] def initialize() {
-        startComponents()
+    private def checkVersion(): Unit =
+        NCVersionManager.checkForUpdates(
+            "server",
+            // Additional parameters. 
+            Map(
+                "IGNITE_VERSION" → ignite.version().toString,
+                "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
+            )
+        )
 
-        // Ack server start.
-        ackStart()
+    /**
+      * Stops the server by counting down (i.e. releasing) the lifecycle latch.
+      */
+    override def stop(): Unit = {
+        stopComponents()
+
+        super.stop()
     }
 
     // Stops all managers.
@@ -113,30 +156,6 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCDbManager.stop()
         NCTxManager.stop()
         NCPluginManager.stop()
-    }
-
-    /**
-     * Stops the server by counting down (i.e. releasing) the lifecycle latch.
-     */
-    override def stop(): Unit = {
-        stopComponents()
-
-        super.stop()
-    }
-
-    /**
-     * Code to execute within Ignite node.
-     */
-    override def start() {
-        super.start()
-
-        initialize()
-
-        try
-            NCGlobals.ignoreInterrupt {
-                lifecycle.await()
-            }
-        finally
-            stop()
+        NCVersionManager.stop()
     }
 }

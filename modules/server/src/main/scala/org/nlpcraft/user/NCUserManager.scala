@@ -141,25 +141,13 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
 
-        val isNewDbSchema = NCPsql.sql {
-            NCDbManager.isNewSchema
-        }
-
-        if (isNewDbSchema) {
+        if (userCache.localEntries(CachePeekMode.ALL).asScala.isEmpty)
             try {
                 addDefaultUser()
             }
             catch {
                 case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
             }
-
-            // Clean up.
-            ignoring(classOf[NCE]) {
-                NCPsql.sql {
-                    NCDbManager.clearNewSchemaFlag()
-                }
-            }
-        }
 
         super.start()
     }
