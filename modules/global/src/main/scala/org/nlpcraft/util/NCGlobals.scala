@@ -1542,8 +1542,8 @@ object NCGlobals extends NCDebug with LazyLogging {
       * Gets internal IP.
       */
     @throws[IOException]
-    def getInternalIp: String = {
-        var res: Option[String] = None
+    def getInternalAddress: InetAddress = {
+        var res: Option[InetAddress] = None
 
         val en = NetworkInterface.getNetworkInterfaces
 
@@ -1559,11 +1559,11 @@ object NCGlobals extends NCDebug with LazyLogging {
                     if (
                         !addr.isLoopbackAddress && !addr.isLinkLocalAddress && addr.isInstanceOf[Inet4Address]
                     )
-                        res = Some(addr.getHostAddress)
+                        res = Some(addr)
                 }
             }
         }
 
-        res.getOrElse(InetAddress.getLocalHost.getHostAddress)
+        res.getOrElse(InetAddress.getLocalHost)
     }
 }

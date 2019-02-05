@@ -32,7 +32,6 @@
 package org.nlpcraft.version
 
 import java.io.IOException
-import java.net.InetAddress
 import java.util
 import java.util.TimeZone
 
@@ -80,13 +79,13 @@ object NCVersionManager extends NCLifecycle("Version manager") {
         var hostAddr = ""
         
         try {
-            val localhost = InetAddress.getLocalHost
+            val localhost = G.getInternalAddress
 
             hostName = localhost.getHostName
             hostAddr = localhost.getHostAddress
         }
         catch {
-            case e: IOException ⇒ logger.warn(s"Error during network info: ${e.getMessage}")
+            case e: IOException ⇒ logger.warn(s"Error during receiving network info: ${e.getMessage}")
         }
         
         val ver = NCVersion.getCurrent

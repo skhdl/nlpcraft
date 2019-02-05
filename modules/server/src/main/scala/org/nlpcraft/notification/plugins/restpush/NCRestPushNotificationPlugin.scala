@@ -86,7 +86,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     private final val queues = Config.endpoints.map(ep ⇒ ep → new util.LinkedList[Event]()).toMap
 
     // Local hosts.
-    private final val intlIp = G.getInternalIp
+    private final val intlIp = G.getInternalAddress.getHostAddress
     private final val extIp = G.getExternalIp
 
     private final val httpClient = HttpClients.createDefault
