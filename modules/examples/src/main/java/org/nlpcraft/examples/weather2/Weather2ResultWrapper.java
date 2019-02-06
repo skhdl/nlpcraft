@@ -29,28 +29,43 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
+package org.nlpcraft.examples.weather2;
 
 /**
- * REST parsing bean.
+ * Weather result wrapper.
+ *
+ * @param <T> the type parameter
  */
-public class RangeResponse {
-    private Location location;
-    private DaysList forecast;
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public DaysList getForecast() {
-        return forecast;
+public class Weather2ResultWrapper<T> {
+    private String intentId;
+    private T result;
+    
+    /**
+     * Instantiates new bean instance.
+     *
+     * @param intentId Intent ID.
+     * @param result Execution result bean.
+     */
+    public Weather2ResultWrapper(String intentId, T result) {
+        this.intentId = intentId;
+        this.result = result;
     }
     
-    public void setForecast(DaysList forecast) {
-        this.forecast = forecast;
+    /**
+     * Gets intent id.
+     *
+     * @return Intent id.
+     */
+    public String getIntentId() {
+        return intentId;
+    }
+    
+    /**
+     * Gets execution result bean.
+     *
+     * @return Execution result bean.
+     */
+    public T getResult() {
+        return result;
     }
 }

@@ -29,46 +29,28 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
+package org.nlpcraft.examples.weather2;
+
+import org.nlpcraft.NCException;
+import org.nlpcraft.probe.dev.NCProbeConfigBuilder;
+import org.nlpcraft.probe.dev.NCProbeDevApp;
 
 /**
- * REST parsing bean.
+ * In-process probe runner for this example.
+ * <p>
+ * Note that this probes requires no configuration (it uses all configuration defaults). However, if necessary,
+ * you can set your own configuration properties (see <code>NCProbeConfigBuilder</code> class for details).
  */
-public class Astro {
-    private String sunrise;
-    private String sunset;
-    private String moonrise;
-    private String moonset;
-
-    public String getSunrise() {
-        return sunrise;
-    }
-
-    public void setSunrise(String sunrise) {
-        this.sunrise = sunrise;
-    }
-
-    public String getSunset() {
-        return sunset;
-    }
-
-    public void setSunset(String sunset) {
-        this.sunset = sunset;
-    }
-
-    public String getMoonrise() {
-        return moonrise;
-    }
-
-    public void setMoonrise(String moonrise) {
-        this.moonrise = moonrise;
-    }
-
-    public String getMoonset() {
-        return moonset;
-    }
-
-    public void setMoonset(String moonset) {
-        this.moonset = moonset;
+public class Weather2ProbeRunner {
+    /**
+     * In-process probe entry point.
+     *
+     * @param args Command like arguments (none are required).
+     */
+    public static void main(String[] args) throws NCException {
+        // 1. Create probe configuration with the provider instance.
+        // 2. Start probe.
+        // 3. Wait synchronously for its exit code.
+        System.exit(NCProbeDevApp.start(NCProbeConfigBuilder.newConfig(new Weather2Provider()).build()));
     }
 }

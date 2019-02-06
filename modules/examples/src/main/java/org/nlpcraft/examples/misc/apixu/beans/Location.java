@@ -29,48 +29,76 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
+package org.nlpcraft.examples.misc.apixu.beans;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
  * REST parsing bean.
  */
-public class DayInfo {
-    private String date;
-    @SerializedName("date_epoch") private String dateEpoch;
-    private Day day;
-    private Astro astro;
+public class Location {
+    private String name;
+    private String region;
+    @SerializedName("lat") private String latitude;
+    @SerializedName("lon") private String longitude;
+    @SerializedName("tz_id") private String tzId;
+    @SerializedName("localtime_epoch") private String localtimeEpoch;
+    private String localtime;
 
-    public String getDate() {
-        return date;
+    public String getName() {
+        return name;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDateEpoch() {
-        return dateEpoch;
+    public String getRegion() {
+        return region;
     }
 
-    public void setDateEpoch(String dateEpoch) {
-        this.dateEpoch = dateEpoch;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
-    public Day getDay() {
-        return day;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setDay(Day day) {
-        this.day = day;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
-    public Astro getAstro() {
-        return astro;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setAstro(Astro astro) {
-        this.astro = astro;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getTzId() {
+        return tzId;
+    }
+
+    public void setTzId(String tzId) {
+        this.tzId = tzId;
+    }
+
+    public String getLocaltimeEpoch() {
+        return localtimeEpoch;
+    }
+
+    public void setLocaltimeEpoch(String localtimeEpoch) {
+        this.localtimeEpoch = localtimeEpoch;
+    }
+
+    public String getLocaltime() {
+        return localtime;
+    }
+
+    public void setLocaltime(String localtime) {
+        this.localtime = localtime;
     }
 }
+

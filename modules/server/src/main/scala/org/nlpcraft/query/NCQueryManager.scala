@@ -171,7 +171,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         
         fut onFailure {
             case e: Throwable ⇒
-                logger.error(s"System error processing query: ${e.getLocalizedMessage}")
+                logger.error(s"System error processing query: ${e.getLocalizedMessage}", e)
                 
                 setError(srvReqId, "Processing failed due to a system error.")
         }

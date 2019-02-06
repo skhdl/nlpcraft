@@ -29,18 +29,46 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib.tools.dev
-
-import org.nlpcraft.mdllib.NCModelSpecBase
-import org.scalatest.FlatSpec
+package org.nlpcraft.examples.misc.apixu.beans;
 
 /**
-  * Spec for test client.
-  */
-class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
-    it should "properly work" in {
-        val client = new NCTestClientBuilder().newBuilder().build()
+ * REST parsing bean.
+ */
+public class Astro {
+    private String sunrise;
+    private String sunset;
+    private String moonrise;
+    private String moonset;
 
-        client.test(new NCTestSentence("LA weather", "nlpcraft.weather.ex"))
+    public String getSunrise() {
+        return sunrise;
+    }
+
+    public void setSunrise(String sunrise) {
+        this.sunrise = sunrise;
+    }
+
+    public String getSunset() {
+        return sunset;
+    }
+
+    public void setSunset(String sunset) {
+        this.sunset = sunset;
+    }
+
+    public String getMoonrise() {
+        return moonrise;
+    }
+
+    public void setMoonrise(String moonrise) {
+        this.moonrise = moonrise;
+    }
+
+    public String getMoonset() {
+        return moonset;
+    }
+
+    public void setMoonset(String moonset) {
+        this.moonset = moonset;
     }
 }

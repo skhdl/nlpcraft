@@ -86,6 +86,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
     case class NotImplemented() extends NCE("Not implemented.")
     case class OutOfRangeField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
+    case class EmptyField(fn: String, max: Int) extends NCE(s"API field '$fn' value cannot be empty.")
     
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
@@ -116,6 +117,13 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                 complete(StatusCodes.NotImplemented, errMsg)
 
             case e: OutOfRangeField ⇒
+                val errMsg = e.getLocalizedMessage
+
+                NCNotificationManager.addEvent("NC_INVALID_FIELD")
+
+                complete(StatusCodes.BadRequest, errMsg)
+
+            case e: EmptyField ⇒
                 val errMsg = e.getLocalizedMessage
 
                 NCNotificationManager.addEvent("NC_INVALID_FIELD")
@@ -192,11 +200,14 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
       * @param name Field name.
       * @param v Field value.
       * @param maxLen Maximum length.
+      * @param minLen Minimum length.
       */
     @throws[OutOfRangeField]
-    private def checkLength(name: String, v: String, maxLen: Int): Unit =
+    private def checkLength(name: String, v: String, maxLen: Int, minLen: Int = 1): Unit =
         if (v.length > maxLen)
             throw OutOfRangeField(name, maxLen)
+        else if (v.length < minLen)
+            throw EmptyField(name, minLen)
 
     /**
       * Checks length of field value.
@@ -204,11 +215,12 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
       * @param name Field name.
       * @param v Field value.
       * @param maxLen Maximum length.
+      * @param minLen Minimum length.
       */
     @throws[OutOfRangeField]
-    private def checkLength(name: String, v: Option[String], maxLen: Int): Unit =
+    private def checkLengthOpt(name: String, v: Option[String], maxLen: Int, minLen: Int = 1): Unit =
         if (v.isDefined)
-            checkLength(name, v.get, maxLen)
+            checkLength(name, v.get, maxLen, minLen)
 
     /**
       * Checks operation permissions and gets user ID.
@@ -410,7 +422,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         checkLength("passwd", req.passwd, 64)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
-                        checkLength("avatarUrl", req.avatarUrl, 512000)
+                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
 
                         authenticateAsAdmin(req.accessToken)
                         
@@ -507,7 +519,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
-                        checkLength("avatarUrl", req.avatarUrl, 512000)
+                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
 
                         val initiatorUsr = authenticate(req.accessToken)
                         val usrId = getUserId(initiatorUsr, req.id)
@@ -547,7 +559,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         checkLength("passwd", req.passwd, 64)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
-                        checkLength("avatarUrl", req.avatarUrl, 512000)
+                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
 
                         NCUserManager.signup(
                             req.email,
@@ -687,7 +699,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         checkLength("mdlId", req.mdlId, 32)
                         checkLength("mdlName", req.mdlName, 64)
                         checkLength("mdlVer", req.mdlVer, 16)
-                        checkLength("mdlCfg", req.mdlCfg, 512000)
+                        checkLengthOpt("mdlCfg", req.mdlCfg, 512000)
 
                         authenticateAsAdmin(req.accessToken)
         

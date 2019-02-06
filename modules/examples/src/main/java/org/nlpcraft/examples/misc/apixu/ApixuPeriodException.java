@@ -29,21 +29,13 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
-
-import com.google.gson.annotations.SerializedName;
+package org.nlpcraft.examples.misc.apixu;
 
 /**
- * REST parsing bean.
+ * APIXU date period limitation exception.
  */
-public class DaysList {
-    @SerializedName("forecastday") private DayInfo[] forecastDay;
-
-    public DayInfo[] getForecastDay() {
-        return forecastDay;
-    }
-
-    public void setForecastDay(DayInfo[] forecastDay) {
-        this.forecastDay = forecastDay;
+public class ApixuPeriodException extends Exception {
+    public ApixuPeriodException(String message) {
+        super(message);
     }
 }

@@ -29,13 +29,13 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu;
+package org.nlpcraft.examples.misc.apixu;
 
 import org.nlpcraft.NCException;
-import org.nlpcraft.examples.weather.apixu.beans.CurrentResponse;
-import org.nlpcraft.examples.weather.apixu.beans.DayInfo;
-import org.nlpcraft.examples.weather.apixu.beans.DaysList;
-import org.nlpcraft.examples.weather.apixu.beans.RangeResponse;
+import org.nlpcraft.examples.misc.apixu.beans.CurrentResponse;
+import org.nlpcraft.examples.misc.apixu.beans.DayInfo;
+import org.nlpcraft.examples.misc.apixu.beans.DaysList;
+import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
 import org.nlpcraft.mdllib.NCRejection;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.Pair;

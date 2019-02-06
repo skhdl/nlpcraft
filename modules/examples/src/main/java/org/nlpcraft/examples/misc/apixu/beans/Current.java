@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
+package org.nlpcraft.examples.misc.apixu.beans;
 
 import com.google.gson.annotations.SerializedName;
 

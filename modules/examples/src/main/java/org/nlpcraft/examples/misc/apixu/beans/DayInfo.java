@@ -29,28 +29,48 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather.apixu.beans;
+package org.nlpcraft.examples.misc.apixu.beans;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * REST parsing bean.
  */
-public class CurrentResponse {
-    private Location location;
-    private Current current;
+public class DayInfo {
+    private String date;
+    @SerializedName("date_epoch") private String dateEpoch;
+    private Day day;
+    private Astro astro;
 
-    public Location getLocation() {
-        return location;
+    public String getDate() {
+        return date;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public Current getCurrent() {
-        return current;
+    public String getDateEpoch() {
+        return dateEpoch;
     }
 
-    public void setCurrent(Current current) {
-        this.current = current;
+    public void setDateEpoch(String dateEpoch) {
+        this.dateEpoch = dateEpoch;
+    }
+
+    public Day getDay() {
+        return day;
+    }
+
+    public void setDay(Day day) {
+        this.day = day;
+    }
+
+    public Astro getAstro() {
+        return astro;
+    }
+
+    public void setAstro(Astro astro) {
+        this.astro = astro;
     }
 }

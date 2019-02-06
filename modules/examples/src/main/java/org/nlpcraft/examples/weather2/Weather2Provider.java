@@ -29,19 +29,18 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.weather;
+package org.nlpcraft.examples.weather2;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
-import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.examples.misc.apixu.ApixuPeriodException;
 import org.nlpcraft.examples.misc.apixu.ApixuWeatherService;
 import org.nlpcraft.examples.misc.apixu.beans.Current;
 import org.nlpcraft.examples.misc.apixu.beans.CurrentResponse;
-import org.nlpcraft.examples.misc.apixu.beans.Day;
 import org.nlpcraft.examples.misc.apixu.beans.Location;
 import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
-import org.nlpcraft.examples.weather2.Weather2Provider;
+import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
+import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.NCQueryResult;
@@ -56,9 +55,6 @@ import org.nlpcraft.mdllib.intent.NCIntentSolverContext;
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 import org.nlpcraft.mdllib.utils.NCTokenUtils;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -68,7 +64,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
 
@@ -79,26 +74,25 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  * intent matching logic. It uses https://www.apixu.com REST service for the actual
  * weather information.
  *
- * Note that this class in exact copy from {@link Weather2Provider} except output formatting.
- * This implementation uses HTML.
+ * Note that this class in exact copy from {@link org.nlpcraft.examples.weather.WeatherProvider} except output formatting.
+ * This implementation uses JSON.
+ * Also it return to end user intent ID together with execution result.
  */
-@NCActiveModelProvider
 @SuppressWarnings("Duplicates")
-public class WeatherProvider extends NCModelProviderAdapter {
+@NCActiveModelProvider
+public class Weather2Provider extends NCModelProviderAdapter {
     // It is demo token and its usage has some restrictions (history data contains one day only, etc).
     // Please register your own account at https://www.apixu.com/pricing.aspx and
     // replace this demo token with your own.
     private final ApixuWeatherService srv = new ApixuWeatherService("3f9b7de2d3894eb6b27150825171909");
     // Geo manager.
     private final GeoManager geoMrg = new GeoManager();
-    // Date formats.
-    private final static DateFormat inFmt = new SimpleDateFormat("yyyy-MM-dd");
-    // We'll use string substitution here for '___' piece...
-    private final static DateFormat outFmt = new SimpleDateFormat("EE'<br/><span style=___>'MMM dd'</span>'");
-    // Base CSS.
-    private static final String CSS = "style='display: inline-block; min-width: 120px'";
+    
+    private static final Gson gson = new Gson();
+    
     // Maximum free words left before rejection.
     private static final int MAX_FREE_WORDS = 4;
+    
     // Keywords for 'local' weather.
     private static final Set<String> LOCAL_WORDS = new HashSet<>(Arrays.asList("my", "local", "hometown"));
     
@@ -113,138 +107,29 @@ public class WeatherProvider extends NCModelProviderAdapter {
     }
 
     /**
-     * Makes Google static map fragment for given coordinates.
-     *
-     * @param lat Latitude.
-     * @param lon Longitude.
-     * @return Query result fragment.
-     */
-    private NCQueryResult makeMap(String lat, String lon) {
-        double dLat = Double.parseDouble(lat);
-        double dLon = Double.parseDouble(lon);
-
-        return NCQueryResult.jsonGmap(
-            String.format(
-                "{" +
-                    "\"cssStyle\": {" +
-                        "\"width\": \"600px\", " +
-                        "\"height\": \"300px\"" +
-                    "}," +
-                    "\"gmap\": {" +
-                        "\"center\": \"%f,%f\"," +
-                        "\"zoom\": 4," +
-                        "\"scale\": 2," +
-                        "\"size\": \"600x300\", " +
-                        "\"maptype\": \"terrain\", " +
-                        "\"markers\": \"color:red|%f,%f\"" +
-                    "}" +
-                "}",
-                dLat,
-                dLon,
-                dLat,
-                dLon
-            )
-        );
-    }
-
-    /**
-     * Utility to prepare HTML table header with given date.
-     *
-     * @param date Date for the header.
-     * @return HTML fragment.
-     */
-    private String prepHeader(String date) {
-        try {
-            return
-                "\"<center style='color: #add'>" +
-                outFmt.format(inFmt.parse(date)).replace("___", "'font-weight: 200; font-size: 80%'") +
-                "</center>\"";
-        }
-        catch (ParseException e) {
-            return date;
-        }
-    }
-
-    /**
-     * Utility to prepare HTML table cell with given day data.
-     *
-     * @param day Day's weather holder.
-     * @return HTML fragment.
-     */
-    private String prepCell(Day day) {
-        String css1 = "font-size: 90%; color: #fff; font-weight: 200; letter-spacing: 0.05em";
-        String css2 = "font-size: 100%; color: #fff; font-weight: 400; letter-spacing: 0.05em";
-
-        return String.format("\"" +
-            "<center>" +
-                "<img style='margin-bottom: 5px;' title='%s' src='%s'><br/>" +
-                "<span style='%s'>%s F <span style='font-size: 80%%'> - %s F</span></span><br/>" +
-                "<span style='%s'>Humidity %d%%</span><br/>" +
-                "<span style='%s'>Rain %s in</span><br/>" +
-                "<span style='%s'>Wind %s mph</span>" +
-            "</center>\"",
-            day.getCondition().getText(), day.getCondition().getIcon(),
-            css2, Math.round(day.getMaxTempF()), Math.round(day.getMinTempF()),
-            css1, day.getAvgHumidity(),
-            css1, Math.round(day.getTotalPrecipIn()),
-            css1, Math.round(day.getMaxWindMph())
-        );
-    }
-
-    /**
      * Makes query multipart result for given date range weather.
      *
      * @param res Weather holder for the range of dates.
+     * @param intentId Intent ID.
      * @return Query result.
      */
-    private NCQueryResult makeRangeResult(RangeResponse res) {
+    private NCQueryResult makeRangeResult(RangeResponse res, String intentId) {
         Location loc = res.getLocation();
 
         if (loc == null)
             throw new NCRejection("Weather service doesn't recognize this location.");
-
-        String headers = Arrays.stream(res.getForecast().getForecastDay()).map(day ->
-            prepHeader(day.getDate())).collect(Collectors.joining(","));
-        String rows = Arrays.stream(res.getForecast().getForecastDay()).map(day ->
-            prepCell(day.getDay())).collect(Collectors.joining(","));
-
-        // Multipart result (HTML block + HTML table + Google map).
-        return NCQueryResult.jsonMultipart(
-            // 1. HTML fragment.
-            NCQueryResult.html(
-                String.format(
-                    "<b %s>City:</b> <span style='color: #F1C40F'>%s</span><br/>" +
-                    "<b %s>Local Time:</b> %s",
-                    CSS, loc.getName() + ", " + loc.getRegion(),
-                    CSS, loc.getLocaltime()
-                )
-            ),
-            // 2. HTML table fragment.
-            NCQueryResult.jsonTable(
-                String.format(
-                    "{" +
-                        "\"border\": true," +
-                        "\"background\": \"#2f4963\"," +
-                        "\"borderColor\": \"#607d8b\"," +
-                        "\"columns\": [%s]," +
-                        "\"rows\": [[%s]]" +
-                    "}",
-                    headers,
-                    rows
-                )
-            ),
-            // 3. Static Google map.
-            makeMap(loc.getLatitude(), loc.getLongitude())
-        );
+    
+        return NCQueryResult.json(gson.toJson(new Weather2ResultWrapper<>(intentId, res)));
     }
 
     /**
      * Makes query multipart result for single date.
      *
      * @param res Weather holder for single date.
+     * @param intentId Intent ID.
      * @return Query result.
      */
-    private NCQueryResult makeCurrentResult(CurrentResponse res) {
+    private NCQueryResult makeCurrentResult(CurrentResponse res, String intentId) {
         Location loc = res.getLocation();
         Current cur = res.getCurrent();
 
@@ -252,31 +137,8 @@ public class WeatherProvider extends NCModelProviderAdapter {
             throw new NCRejection("Weather service doesn't recognize this location.");
         if (cur == null)
             throw new NCRejection("Weather service doesn't support this location.");
-
-        // Multipart result (HTML block + Google map).
-        return NCQueryResult.jsonMultipart(
-            // 1. HTML block fragment.
-            NCQueryResult.html(
-                String.format(
-                    "<div style='font-weight: 200; letter-spacing: 0.02em'>" +
-                        "<b %s>Conditions:</b> <b><span style='color: #F1C40F'>%s, %s F</span></b><br/>" +
-                        "<b %s>City:</b> %s<br/>" +
-                        "<b %s>Humidity:</b> %d%%<br/>" +
-                        "<b %s>Rain:</b> %s in<br/>" +
-                        "<b %s>Wind:</b> %s %s mph<br/>" +
-                        "<b %s>Local Time:</b> %s<br/>" +
-                    "</div>",
-                    CSS, cur.getCondition().getText(), Math.round(cur.getTempF()),
-                    CSS, loc.getName() + ", " + loc.getRegion(),
-                    CSS, cur.getHumidity(),
-                    CSS, Math.round(cur.getPrecipIn()),
-                    CSS, cur.getWindDir(), cur.getWindMph(),
-                    CSS, loc.getLocaltime()
-                )
-            ),
-            // 2. Google map fragment.
-            makeMap(loc.getLatitude(), loc.getLongitude())
-        );
+        
+        return NCQueryResult.json(gson.toJson(new Weather2ResultWrapper<>(intentId, res)));
     }
 
     /**
@@ -366,7 +228,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
         String geo = prepGeo(ctx);
 
         try {
-            return makeRangeResult(srv.getWeather(geo, date));
+            return makeRangeResult(srv.getWeather(geo, date), ctx.getIntentId());
         }
         catch (ApixuPeriodException e) {
             throw new NCRejection(e.getLocalizedMessage());
@@ -441,8 +303,8 @@ public class WeatherProvider extends NCModelProviderAdapter {
             String geo = prepGeo(ctx);
     
             return date != null ?
-                makeRangeResult(srv.getWeather(geo, date)) :
-                makeCurrentResult(srv.getCurrentWeather(geo));
+                makeRangeResult(srv.getWeather(geo, date), ctx.getIntentId()) :
+                makeCurrentResult(srv.getCurrentWeather(geo), ctx.getIntentId());
         }
         catch (ApixuPeriodException e) {
             throw new NCRejection(e.getLocalizedMessage());
@@ -476,8 +338,8 @@ public class WeatherProvider extends NCModelProviderAdapter {
     /**
      * Initializes model provider.
      */
-    WeatherProvider() {
-        String modelPath = NCModelBuilder.classPathFile("weather_model.json");
+    Weather2Provider() {
+        String modelPath = NCModelBuilder.classPathFile("weather_model2.json");
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {

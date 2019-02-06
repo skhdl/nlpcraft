@@ -72,7 +72,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
             endpoints.foreach(ep ⇒ require(urlVal.isValid(ep), s"Invalid endpoint: $ep"))
 
-            require(flushMsec > 0 , s"flush interval ($flushMsec) must be > 0")
+            require(flushMsec > 0, s"flush interval ($flushMsec) must be > 0")
             require(maxBufferSize > 0 , s"maximum buffer size ($maxBufferSize) must be > 0")
             require(endpoints.nonEmpty, s"at least one REST endpoint is required")
         }

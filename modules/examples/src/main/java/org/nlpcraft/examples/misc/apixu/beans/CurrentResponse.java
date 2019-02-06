@@ -29,18 +29,28 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib.tools.dev
-
-import org.nlpcraft.mdllib.NCModelSpecBase
-import org.scalatest.FlatSpec
+package org.nlpcraft.examples.misc.apixu.beans;
 
 /**
-  * Spec for test client.
-  */
-class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
-    it should "properly work" in {
-        val client = new NCTestClientBuilder().newBuilder().build()
+ * REST parsing bean.
+ */
+public class CurrentResponse {
+    private Location location;
+    private Current current;
 
-        client.test(new NCTestSentence("LA weather", "nlpcraft.weather.ex"))
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Current getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Current current) {
+        this.current = current;
     }
 }

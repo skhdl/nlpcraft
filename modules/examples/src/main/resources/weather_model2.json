@@ -1,0 +1,105 @@
+/*
+ * “Commons Clause” License, https://commonsclause.com/
+ *
+ * The Software is provided to you by the Licensor under the License,
+ * as defined below, subject to the following condition.
+ *
+ * Without limiting other conditions in the License, the grant of rights
+ * under the License will not include, and the License does not grant to
+ * you, the right to Sell the Software.
+ *
+ * For purposes of the foregoing, “Sell” means practicing any or all of
+ * the rights granted to you under the License to provide to third parties,
+ * for a fee or other consideration (including without limitation fees for
+ * hosting or consulting/support services related to the Software), a
+ * product or service whose value derives, entirely or substantially, from
+ * the functionality of the Software. Any license notice or attribution
+ * required by the License must also include this Commons Clause License
+ * Condition notice.
+ *
+ * Software:    NLPCraft
+ * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+ *
+ *     _   ____      ______           ______
+ *    / | / / /___  / ____/________ _/ __/ /_
+ *   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ *  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+ * /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+ *        /_/
+ */
+
+{
+    "id": "nlpcraft.weather2.ex",
+    "name": "Weather Example Model 2",
+    "version": "1.0",
+    "description": "Weather example model 2.",
+    "vendorName": "NLPCraft",
+    "vendorUrl": "https://www.nlpcraft.org",
+    "vendorContact": "Support",
+    "vendorEmail": "info@nlpcraft.org",
+    "docsUrl": "https://www.nlpcraft.org",
+    "maxGeoTokens": 1,
+    "maxDateTokens": 1,
+    "examples": [
+        "What's the local weather forecast?",
+        "What's the weather in Moscow?"
+    ],
+    "macros": [
+        {
+            "name": "<OF>",
+            "macro": "{of|for|per}"
+        },
+        {
+            "name": "<CHANCE>",
+            "macro": "{chance|possibility|probability|odds|likelihood|potential|risk|opportunity}"
+        },
+        {
+            "name": "<PHENOMENON>",
+            "macro": "{high sea|severe weather|hail|heat wave|cold wave|derecho|supercell|avalanche|cyclone|wildfire|landslide|firestorm|dust storm|thunder snow|winter storm|cloudburst|shower|condensation|precipitation|drizzle|rainstorm|rain storm|rainfall|rain|storm|sun|sunshine|cloud|hot|cold|dry|wet|wind||hurricane|typhoon|sand-storm|sand storm|tornado|humid|fog|snow|smog|black ice|haze|thundershower|thundersnow|sleet|drought|wildfire|blizzard|avalanche|mist|thunderstorm}"
+        },
+        {
+            "name": "<CUR>",
+            "macro": "{current|present|moment|now}"
+        },
+        {
+            "name": "<WEATHER>",
+            "macro": "{weather {condition|temp|temperature|data|*}|condition|temp|temperature}"
+        },
+        {
+            "name": "<FORECAST>",
+            "macro": "{forecast|prognosis|prediction}"
+        },
+        {
+            "name": "<HISTORY>",
+            "macro": "{history|past}"
+        }
+    ],
+    "elements": [
+        {
+            "id": "wt:hist",
+            "description": "Past weather conditions.",
+            "synonyms": [
+                "{<WEATHER>|*} <HISTORY>",
+                "<HISTORY> {<OF>|*} {<WEATHER>|<PHENOMENON>}"
+            ]
+        },
+        {
+            "id": "wt:curr",
+            "description": "Current weather conditions.",
+            "synonyms": [
+                "{<CUR>|*} {<WEATHER>|<PHENOMENON>}",
+                "<CHANCE> <OF> <PHENOMENON>",
+                "<PHENOMENON> {<CHANCE>|*}"
+            ]
+        },
+        {
+            "id": "wt:fcast",
+            "description": "Future weather forecast.",
+            "synonyms": [
+                "{<PHENOMENON>|<WEATHER>|*} <FORECAST>",
+                "<FORECAST> {<OF>|*} {<WEATHER>|<PHENOMENON>}"
+            ]
+        }
+    ]
+}
