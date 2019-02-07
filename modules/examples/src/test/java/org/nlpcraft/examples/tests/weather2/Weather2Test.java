@@ -80,7 +80,10 @@ public class Weather2Test {
     
                 f.mkPassed(mdlId, "What's the local weather forecast?"),
                 f.mkPassed(mdlId, "What's the weather in Moscow?"),
-                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?"))
+                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")),
+    
+                // Missed user defined tokens, but it should be accessible from conversation context.
+                f.mkPassed(mdlId, "Moscow", mkIntentIdChecker("curr|date?|city?"))
             )
         );
     }
@@ -99,9 +102,12 @@ public class Weather2Test {
                 // Unexpected intent ID.
                 f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
                 
-                f.mkPassed(mdlId, "What's the local weather forecast?"),
-                f.mkPassed(mdlId, "What's the weather in Moscow?"),
-                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?"))
+                f.mkPassed(mdlId, "What's the local weather forecast?", mkIntentIdChecker("curr|date?|city?")),
+                f.mkPassed(mdlId, "What's the weather in Moscow?", mkIntentIdChecker("curr|date?|city?")),
+                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")),
+    
+                // Missed user defined tokens.
+                f.mkFailedOnExecution(mdlId, "Moscow")
             )
         );
     }

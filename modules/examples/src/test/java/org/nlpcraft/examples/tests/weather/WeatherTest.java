@@ -61,7 +61,10 @@ public class WeatherTest {
                 f.mkFailedOnExecution(mdlId, "El tiempo en España"),
                 
                 f.mkPassed(mdlId, "What's the local weather forecast?"),
-                f.mkPassed(mdlId, "What's the weather in Moscow?")
+                f.mkPassed(mdlId, "What's the weather in Moscow?"),
+    
+                // Missed user defined tokens, but it should be accessible from conversation context.
+                f.mkPassed(mdlId, "Moscow")
             )
         );
     }
@@ -78,7 +81,10 @@ public class WeatherTest {
                 f.mkFailedOnExecution(mdlId, "El tiempo en España"),
                 
                 f.mkPassed(mdlId, "What's the local weather forecast?"),
-                f.mkPassed(mdlId, "What's the weather in Moscow?")
+                f.mkPassed(mdlId, "What's the weather in Moscow?"),
+    
+                // Missed user defined tokens.
+                f.mkFailedOnExecution(mdlId, "Moscow")
             )
         );
     }
