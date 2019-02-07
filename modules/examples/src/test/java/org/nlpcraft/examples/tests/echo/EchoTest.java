@@ -46,7 +46,7 @@ import java.util.Arrays;
  */
 public class EchoTest {
     private static final TestFactory f = new TestFactory();
-    private static final String mdlId = "nlpcraft.echo.ex"; // See oEchoProvider#MODEL_ID
+    private static final String mdlId = "nlpcraft.echo.ex"; // See EchoProvider#MODEL_ID
     private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
     
     @Test
