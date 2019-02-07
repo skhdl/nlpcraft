@@ -432,21 +432,21 @@ public class NCTestClientBuilder {
                     map(p -> p.getModelId().get()).
                     collect(Collectors.toSet());
             
-            String auth = signin();
+            String acsTok = signin();
     
             Map<String, Long> newDssIds = new HashMap<>();
             
             int num = 0;
             
             for (String mdlId : mdlIds) {
-                newDssIds.put(mdlId, createTestDs(auth, mdlId, num++));
+                newDssIds.put(mdlId, createTestDs(acsTok, mdlId, num++));
             }
     
             Map<NCTestSentence, NCTestResult> res = new HashMap<>();
             
             try {
                 Map<Long, String> dssMdlIds =
-                    getDss(auth).stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
+                    getDss(acsTok).stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
     
                 Map<NCTestSentence, IdHolder> testsExt =
                     tests.stream().collect(
@@ -478,9 +478,9 @@ public class NCTestClientBuilder {
     
                 if (clearConv) {
                     for (NCTestSentence test : tests) {
-                        clearConversation(auth, testsExt.get(test).getDsId());
+                        clearConversation(acsTok, testsExt.get(test).getDsId());
         
-                        res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
+                        res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
                     }
                 }
                 else {
@@ -488,15 +488,15 @@ public class NCTestClientBuilder {
                         tests.stream().map(t -> testsExt.get(t).getDsId()).collect(Collectors.toSet());
                     
                     if (asyncMode) {
-                        clearConversationAllDss(auth, dsIds);
+                        clearConversationAllDss(acsTok, dsIds);
     
-                        res.putAll(executeAsync(auth, testsExt));
+                        res.putAll(executeAsync(acsTok, testsExt));
                     }
                     else {
-                        clearConversationAllDss(auth, dsIds);
+                        clearConversationAllDss(acsTok, dsIds);
     
                         for (NCTestSentence test : tests) {
-                            res.putAll(executeAsync(auth, mkSingleMap.apply(test)));
+                            res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
                         }
                     }
                 }
@@ -508,10 +508,10 @@ public class NCTestClientBuilder {
                 // This potential error can be ignored. Also it shouldn't override main method errors.
                 try {
                     for (Long id : newDssIds.values()) {
-                        deleteTestDs(auth, id);
+                        deleteTestDs(acsTok, id);
                     }
                     
-                    signout(auth);
+                    signout(acsTok);
                 }
                 catch (Exception e) {
                     log.error("Signout error.", e);
@@ -611,19 +611,19 @@ public class NCTestClientBuilder {
             log.info("Tests statistic:\n" + statTab.toString());
         }
     
-        private void clearConversationAllDss(String auth, Set<Long> dssIds) throws IOException, NCTestClientException {
+        private void clearConversationAllDss(String acsTok, Set<Long> dssIds) throws IOException, NCTestClientException {
             for (Long dsId : dssIds) {
-                clearConversation(auth, dsId);
+                clearConversation(acsTok, dsId);
             }
         }
     
-        private void clearConversation(String auth, long dsId) throws IOException, NCTestClientException {
+        private void clearConversation(String acsTok, long dsId) throws IOException, NCTestClientException {
             log.info("`clear/conversation` request sent for data source: {}", dsId);
             
             checkStatus(
                 gson.fromJson(
                     post("clear/conversation",
-                        Pair.of("accessToken", auth),
+                        Pair.of("accessToken", acsTok),
                         Pair.of("dsId", dsId)
                     ),
                     TYPE_RESP
@@ -631,27 +631,36 @@ public class NCTestClientBuilder {
             );
         }
     
-        private void cancel(String auth, Set<String> ids) throws IOException, NCTestClientException {
+        private void cancel(String acsTok, Set<String> ids) throws IOException, NCTestClientException {
             log.info("`cancel` request sent for requests: {}", ids);
             
             checkStatus(
                 gson.fromJson(
                     post("cancel",
-                        Pair.of("accessToken", auth),
+                        Pair.of("accessToken", acsTok),
                         Pair.of("srvReqIds", ids)
                     ),
                     TYPE_RESP
                 )
             );
         }
-    
-        private long createTestDs(String auth, String mdlId, long num) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @param mdlId
+         * @param num
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private long createTestDs(String acsTok, String mdlId, long num) throws IOException, NCTestClientException {
             log.info("`ds/add` request sent for model: {}", mdlId);
             
             long id =
                 checkAndExtract(
                     post("ds/add",
-                        Pair.of("accessToken", auth),
+                        Pair.of("accessToken", acsTok),
                         Pair.of("name", "test-" + num),
                         Pair.of("shortDesc", "Test data source"),
                         Pair.of("mdlId", mdlId),
@@ -667,21 +676,34 @@ public class NCTestClientBuilder {
             
             return id;
         }
-        
-        private void deleteTestDs(String auth, long id) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @param id
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private void deleteTestDs(String acsTok, long id) throws IOException, NCTestClientException {
             log.info("`ds/delete` request sent for temporary data source: {}", id);
             
             checkStatus(
                 gson.fromJson(
                     post("ds/delete",
-                        Pair.of("accessToken", auth),
+                        Pair.of("accessToken", acsTok),
                         Pair.of("id", id)
                     ),
                     TYPE_RESP
                 )
             );
         }
-    
+
+        /**
+         *
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
         private String signin() throws IOException, NCTestClientException {
             log.info("`user/signin` request sent for: {}", email);
             
@@ -695,13 +717,20 @@ public class NCTestClientBuilder {
                 String.class
             );
         }
-    
-        private List<NCDsJson> getDss(String auth) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private List<NCDsJson> getDss(String acsTok) throws IOException, NCTestClientException {
             log.info("`ds/all` request sent for: {}", email);
     
             Map<String, Object> m = gson.fromJson(
                 post("ds/all",
-                    Pair.of("accessToken", auth)
+                    Pair.of("accessToken", acsTok)
                 ),
                 TYPE_RESP
             );
@@ -710,13 +739,20 @@ public class NCTestClientBuilder {
     
             return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
         }
-    
-        private List<NCRequestStateJson> check(String auth) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
             log.info("`check` request sent for: {}", email);
         
             Map<String, Object> m = gson.fromJson(
                 post("check",
-                    Pair.of("accessToken", auth)
+                    Pair.of("accessToken", acsTok)
                 ),
                 TYPE_RESP
             );
@@ -725,13 +761,22 @@ public class NCTestClientBuilder {
         
             return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
         }
-    
-        private String ask(String auth, String txt, long dsId) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @param txt
+         * @param dsId
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private String ask(String acsTok, String txt, long dsId) throws IOException, NCTestClientException {
             log.info("`ask` request sent: {} to data source: {}", txt, dsId);
         
             return checkAndExtract(
                 post("ask",
-                    Pair.of("accessToken", auth),
+                    Pair.of("accessToken", acsTok),
                     Pair.of("txt", txt),
                     Pair.of("dsId", dsId),
                     Pair.of("isTest", true)
@@ -740,22 +785,36 @@ public class NCTestClientBuilder {
                 String.class
             );
         }
-    
-        private void signout(String auth) throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @param acsTok
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private void signout(String acsTok) throws IOException, NCTestClientException {
             log.info("`user/signout` request sent for: {}", email);
             
             checkStatus(
                 gson.fromJson(
                     post("user/signout",
-                        Pair.of("accessToken", auth)
+                        Pair.of("accessToken", acsTok)
                     ),
                     TYPE_RESP
                 )
             );
         }
-    
+
+        /**
+         *
+         * @param acsTok
+         * @param tests
+         * @return
+         * @throws IOException
+         * @throws InterruptedException
+         */
         private Map<NCTestSentence, NCTestResult> executeAsync(
-            String auth,
+            String acsTok,
             Map<NCTestSentence, IdHolder> tests
         ) throws IOException, InterruptedException {
             int n = tests.size();
@@ -772,7 +831,7 @@ public class NCTestClientBuilder {
                     long now = System.currentTimeMillis();
     
                     try {
-                        String srvReqId = ask(auth, test.getText(), h.getDsId());
+                        String srvReqId = ask(acsTok, test.getText(), h.getDsId());
         
                         log.debug("Sentence sent: {}", srvReqId);
         
@@ -793,7 +852,7 @@ public class NCTestClientBuilder {
                             String.format("Timed out waiting for response: %d", maxCheckTimeMs)
                         );
         
-                    List<NCRequestStateJson> states = check(auth);
+                    List<NCRequestStateJson> states = check(acsTok);
                     
                     Thread.sleep(checkIntervalMs);
     
@@ -813,7 +872,7 @@ public class NCTestClientBuilder {
                 if (!testsMap.isEmpty())
                     // This potential error can be ignored. Also it shouldn't override main method errors.
                     try {
-                        cancel(auth, testsMap.keySet());
+                        cancel(acsTok, testsMap.keySet());
                     }
                     catch (Exception e) {
                         log.error("Tests request cancel error: " + testsMap.keySet(), e);
@@ -858,7 +917,18 @@ public class NCTestClientBuilder {
             ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
     }
-    
+
+    /**
+     *
+     * @param test
+     * @param procTime
+     * @param dsId
+     * @param mdlId
+     * @param res
+     * @param resType
+     * @param err
+     * @return
+     */
     private static NCTestResult mkResult(
         NCTestSentence test, long procTime, long dsId, String mdlId, String res, String resType, String err
     ) {
@@ -907,12 +977,24 @@ public class NCTestClientBuilder {
             }
         };
     }
-    
+
+    /**
+     *
+     * @param name
+     * @param v
+     * @throws IllegalArgumentException
+     */
     private static void checkNotNull(String name, Object v) throws IllegalArgumentException {
         if (v == null)
             throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
     }
-    
+
+    /**
+     *
+     * @param name
+     * @param v
+     * @throws IllegalArgumentException
+     */
     private static void checkPositive(String name, long v) throws IllegalArgumentException {
         if (v <= 0)
             throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));

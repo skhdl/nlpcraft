@@ -36,7 +36,7 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.examples.tests.helpers.TestFactory;
 import org.nlpcraft.examples.tests.helpers.TestRunner;
-import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
+import org.nlpcraft.mdllib.tools.dev.*;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
