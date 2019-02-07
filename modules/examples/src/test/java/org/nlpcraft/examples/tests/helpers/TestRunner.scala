@@ -1,6 +1,5 @@
 package org.nlpcraft.examples.tests.helpers
 
-import org.apache.http.util.Asserts
 import org.junit.jupiter.api.Assertions
 import org.nlpcraft.mdllib.tools.dev.NCTestClient
 

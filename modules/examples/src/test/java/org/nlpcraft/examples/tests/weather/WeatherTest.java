@@ -31,7 +31,6 @@
 
 package org.nlpcraft.examples.tests.weather;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.examples.tests.helpers.TestFactory;
 import org.nlpcraft.examples.tests.helpers.TestRunner;
