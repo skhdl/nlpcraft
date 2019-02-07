@@ -36,6 +36,7 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.examples.tests.TestFactory;
 import org.nlpcraft.examples.tests.TestRunner;
+import org.nlpcraft.examples.weather2.Weather2ProbeRunner;
 import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
@@ -48,6 +49,8 @@ import java.util.function.Function;
 
 /**
  * Weather2 model test.
+ *
+ * Note that server and {@link Weather2ProbeRunner} must be started before.
  */
 public class Weather2Test {
     private final Gson GSON = new Gson();
@@ -69,15 +72,14 @@ public class Weather2Test {
     
     @Test
     public void test() {
-        NCTestClient testClient = new NCTestClientBuilder().newBuilder().build();
+        NCTestClient client = new NCTestClientBuilder().newBuilder().build();
         TestFactory f = new TestFactory();
     
         TestRunner.process(
-            testClient,
+            client,
             Arrays.asList(
-                f.mkFailed("", "nlpcraft.weather2.ex"),
-                f.mkPassed(
-                    "LA weather", "nlpcraft.weather2.ex", mkIntentIdChecker("curr|date?|city?")
+                f.mkFailed("nlpcraft.weather2.ex", ""),
+                f.mkPassed("nlpcraft.weather2.ex", "LA weather", mkIntentIdChecker("curr|date?|city?")
                 )
             )
         );

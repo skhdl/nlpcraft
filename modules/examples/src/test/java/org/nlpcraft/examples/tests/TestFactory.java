@@ -88,23 +88,23 @@ public class TestFactory {
     /**
      * Initializes {@link TestExpectation} instance, which execution should be passed, without additional result checkers.
      *
-     * @param txt Sentence text.
      * @param mdlId Model ID.
+     * @param txt Sentence text.
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkPassed(String txt, String mdlId) {
+    public TestExpectation mkPassed(String mdlId, String txt) {
         return new ExpectationImpl(txt, mdlId, true, null, null);
     }
     
     /**
      * Initializes {@link TestExpectation} instance, which execution should be passed, with additional result checkers.
      *
-     * @param txt Sentence text.
      * @param mdlId Model ID.
+     * @param txt Sentence text.
      * @param resultChecker Result checker. See {@link TestExpectation#getResultChecker()}
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkPassed(String txt, String mdlId, Function<String, Optional<String>> resultChecker) {
+    public TestExpectation mkPassed(String mdlId, String txt, Function<String, Optional<String>> resultChecker) {
         return new ExpectationImpl(txt, mdlId, true, resultChecker, null);
     }
     
@@ -112,11 +112,11 @@ public class TestFactory {
      * Initializes {@link TestExpectation} instance, which execution should be failed,
      * without additional error messages checkers.
      *
-     * @param txt Sentence text.
      * @param mdlId Model ID.
+     * @param txt Sentence text.
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkFailed(String txt, String mdlId) {
+    public TestExpectation mkFailed(String mdlId, String txt) {
         return new ExpectationImpl(txt, mdlId, false, null, null);
     }
     
@@ -124,12 +124,12 @@ public class TestFactory {
      * Initializes {@link TestExpectation} instance, which execution should be failed,
      * with additional error message checkers.
      *
-     * @param txt Sentence text.
      * @param mdlId Model ID.
+     * @param txt Sentence text.
      * @param errorChecker Error checker. See {@link TestExpectation#getErrorChecker()}
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkFailed(String txt, String mdlId, Function<String, Optional<String>> errorChecker) {
+    public TestExpectation mkFailed(String mdlId, String txt, Function<String, Optional<String>> errorChecker) {
         return new ExpectationImpl(txt, mdlId, false, null, errorChecker);
     }
 }
