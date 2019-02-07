@@ -32,11 +32,16 @@
 title: NLPCraft
 email: info@nlpcraft.org
 copyright: Copyright (C) 2013-2019 DataLingvo, Inc.
-baseurl: ""
+baseurl: "/"
 url: ""
 
 twitter_username: nlpcraft
 github_username:  nlpcraft
+
+# SASS settings.
+sass:
+  sass_dir: _scss
+  style: compressed
 
 # Build settings.
 markdown: kramdown
