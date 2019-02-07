@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests;
+package org.nlpcraft.examples.tests.helpers;
 
 import org.nlpcraft.mdllib.tools.dev.NCTestSentence;
 

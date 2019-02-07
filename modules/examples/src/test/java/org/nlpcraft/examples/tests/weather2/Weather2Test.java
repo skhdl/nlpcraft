@@ -34,10 +34,8 @@ package org.nlpcraft.examples.tests.weather2;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.examples.tests.TestFactory;
-import org.nlpcraft.examples.tests.TestRunner;
-import org.nlpcraft.examples.weather2.Weather2ProbeRunner;
-import org.nlpcraft.mdllib.tools.dev.NCTestClient;
+import org.nlpcraft.examples.tests.helpers.TestFactory;
+import org.nlpcraft.examples.tests.helpers.TestRunner;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
 import java.lang.reflect.Type;
@@ -49,11 +47,15 @@ import java.util.function.Predicate;
 /**
  * Weather2 model test.
  *
- * Note that server and {@link Weather2ProbeRunner} must be started before.
+ * Note that server and {@link org.nlpcraft.examples.weather2.Weather2ProbeRunner} must be started before.
  */
 public class Weather2Test {
     private final Gson GSON = new Gson();
     private final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+    
+    private static TestFactory f = new TestFactory();
+    // See weather2_model.json
+    private static String mdlId = "nlpcraft.weather2.ex";
     
     private Predicate<String> mkIntentIdChecker(String intentId) {
         return (js) -> {
@@ -64,13 +66,30 @@ public class Weather2Test {
     }
     
     @Test
-    public void test() {
-        NCTestClient client = new NCTestClientBuilder().newBuilder().build();
-        TestFactory f = new TestFactory();
-        String mdlId = "nlpcraft.weather2.ex";
-        
+    public void testConversation() {
         TestRunner.process(
-            client,
+            new NCTestClientBuilder().newBuilder().build(),
+            Arrays.asList(
+                // Empty parameter.
+                f.mkFailedOnExecution(mdlId, ""),
+                
+                // Unsupported language.
+                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
+                
+                // Unexpected intent ID.
+                f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
+    
+                f.mkPassed(mdlId, "What's the local weather forecast?"),
+                f.mkPassed(mdlId, "What's the weather in Moscow?"),
+                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?"))
+            )
+        );
+    }
+    
+    @Test
+    public void testNoConversation() {
+        TestRunner.process(
+            new NCTestClientBuilder().newBuilder().setClearConversation(true).build(),
             Arrays.asList(
                 // Empty parameter.
                 f.mkFailedOnExecution(mdlId, ""),
@@ -81,8 +100,11 @@ public class Weather2Test {
                 // Unexpected intent ID.
                 f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
                 
+                f.mkPassed(mdlId, "What's the local weather forecast?"),
+                f.mkPassed(mdlId, "What's the weather in Moscow?"),
                 f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")
-             )
-        ));
+                )
+            )
+        );
     }
 }

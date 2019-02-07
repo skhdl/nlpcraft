@@ -339,7 +339,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
      * Initializes model provider.
      */
     Weather2Provider() {
-        String modelPath = NCModelBuilder.classPathFile("weather_model2.json");
+        String modelPath = NCModelBuilder.classPathFile("weather2_model.json");
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {
