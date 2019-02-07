@@ -34,7 +34,7 @@ package org.nlpcraft.examples.tests;
 import org.nlpcraft.mdllib.tools.dev.NCTestSentence;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Test behaviour expectation.
@@ -58,20 +58,18 @@ public interface TestExpectation {
     /**
      * Gets optional result checker.
      *
-     * This function should return error message if its argument (test sentence execution result) is not expected
-     * or empty value if result validated successfully.
+     * Checker function returns `true` if result is expected.
      *
      * @return Optional result checker.
      */
-    Optional<Function<String, Optional<String>>> getResultChecker();
+    Optional<Predicate<String>> getResultChecker();
     
     /**
      * Gets optional error checker.
      *
-     * This function should return error message if its argument (test sentence execution error message) is not expected
-     * or empty value if error message validated successfully.
+     * Checker function returns `true` if error message is expected.
      *
      * @return Optional expected checker.
      */
-    Optional<Function<String, Optional<String>>> getErrorChecker();
+    Optional<Predicate<String>> getErrorChecker();
 }

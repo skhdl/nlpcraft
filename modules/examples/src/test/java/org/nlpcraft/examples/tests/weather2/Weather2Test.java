@@ -44,8 +44,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Weather2 model test.
@@ -56,17 +55,11 @@ public class Weather2Test {
     private final Gson GSON = new Gson();
     private final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
     
-    private Function<String, Optional<String>> mkIntentIdChecker(String intentId) {
+    private Predicate<String> mkIntentIdChecker(String intentId) {
         return (js) -> {
             Map<String, Object> m = GSON.fromJson(js, MAP_RESP);
     
-            Object resIntentId = m.get("intentId");
-            
-            return intentId.equals(resIntentId) ?
-                Optional.empty() :
-                Optional.of(
-                    String.format("Unexpected intent ID [expected=%s, resultIntentId=%s]", intentId, resIntentId)
-                );
+            return intentId.equals(m.get("intentId"));
         };
     }
     
@@ -80,13 +73,13 @@ public class Weather2Test {
             client,
             Arrays.asList(
                 // Empty parameter.
-                f.mkFailed(mdlId, ""),
+                f.mkFailedOnExecution(mdlId, ""),
                 
                 // Unsupported language.
-                f.mkFailed(mdlId, "El tiempo en España"),
+                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
                 
                 // Unexpected intent ID.
-                f.mkFailed(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
+                f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
                 
                 f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")
              )

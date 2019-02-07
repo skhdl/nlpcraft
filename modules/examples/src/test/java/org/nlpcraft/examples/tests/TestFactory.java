@@ -34,7 +34,7 @@ package org.nlpcraft.examples.tests;
 import org.nlpcraft.mdllib.tools.dev.NCTestSentence;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Test exception instances factory. See {@link TestExpectation}.
@@ -43,19 +43,18 @@ public class TestFactory {
     private static class ExpectationImpl implements TestExpectation {
         private NCTestSentence test;
         private boolean shouldPassed;
-        private Function<String, Optional<String>> resultChecker;
-        private Function<String, Optional<String>>errorChecker;
+        private Predicate<String> resultChecker;
+        private Predicate<String> errorChecker;
     
         ExpectationImpl(
             String txt,
             String mdlId,
             boolean shouldPassed,
-            Function<String, Optional<String>> resultChecker,
-            Function<String, Optional<String>> errorChecker
+            Predicate<String> resultChecker,
+            Predicate<String> errorChecker
         ) {
             assert txt != null;
             assert mdlId != null;
-            assert shouldPassed || resultChecker == null;
             assert !shouldPassed || errorChecker == null;
             
             this.test = new NCTestSentence(txt, mdlId);
@@ -75,12 +74,12 @@ public class TestFactory {
         }
     
         @Override
-        public Optional<Function<String, Optional<String>>> getResultChecker() {
+        public Optional<Predicate<String>> getResultChecker() {
             return resultChecker == null ? Optional.empty() : Optional.of(resultChecker);
         }
     
         @Override
-        public Optional<Function<String, Optional<String>>> getErrorChecker() {
+        public Optional<Predicate<String>>getErrorChecker() {
             return errorChecker == null ? Optional.empty() : Optional.of(errorChecker);
         }
     }
@@ -104,7 +103,7 @@ public class TestFactory {
      * @param resultChecker Result checker. See {@link TestExpectation#getResultChecker()}
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkPassed(String mdlId, String txt, Function<String, Optional<String>> resultChecker) {
+    public TestExpectation mkPassed(String mdlId, String txt, Predicate<String> resultChecker) {
         return new ExpectationImpl(txt, mdlId, true, resultChecker, null);
     }
     
@@ -116,7 +115,7 @@ public class TestFactory {
      * @param txt Sentence text.
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkFailed(String mdlId, String txt) {
+    public TestExpectation mkFailedOnExecution(String mdlId, String txt) {
         return new ExpectationImpl(txt, mdlId, false, null, null);
     }
     
@@ -129,7 +128,22 @@ public class TestFactory {
      * @param errorChecker Error checker. See {@link TestExpectation#getErrorChecker()}
      * @return {@link TestExpectation} instance
      */
-    public TestExpectation mkFailed(String mdlId, String txt, Function<String, Optional<String>> errorChecker) {
+    public TestExpectation mkFailedOnExecution(String mdlId, String txt, Predicate<String> errorChecker) {
         return new ExpectationImpl(txt, mdlId, false, null, errorChecker);
+    }
+    
+    /**
+     * Initializes {@link TestExpectation} instance, which execution should be failed,
+     * with additional error message checkers.
+     *
+     *
+     *
+     * @param mdlId Model ID.
+     * @param txt Sentence text.
+     * @param resultChecker Result checker. See {@link TestExpectation#getResultChecker()}
+     * @return {@link TestExpectation} instance
+     */
+    public TestExpectation mkFailedOnCheck(String mdlId, String txt, Predicate<String> resultChecker) {
+        return new ExpectationImpl(txt, mdlId, false, resultChecker, null);
     }
 }
