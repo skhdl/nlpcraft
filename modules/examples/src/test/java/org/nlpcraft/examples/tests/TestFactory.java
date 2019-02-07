@@ -85,23 +85,23 @@ public class TestFactory {
     }
     
     /**
-     * Initializes {@link TestExpectation} instance, which execution should be passed, without additional result checkers.
+     * Initializes {@link TestExpectation} instance, which execution should be passed, without additional result checker.
      *
      * @param mdlId Model ID.
      * @param txt Sentence text.
-     * @return {@link TestExpectation} instance
+     * @return {@link TestExpectation} instance.
      */
     public TestExpectation mkPassed(String mdlId, String txt) {
         return new ExpectationImpl(txt, mdlId, true, null, null);
     }
     
     /**
-     * Initializes {@link TestExpectation} instance, which execution should be passed, with additional result checkers.
+     * Initializes {@link TestExpectation} instance, which execution should be passed with additional result checker.
      *
      * @param mdlId Model ID.
      * @param txt Sentence text.
      * @param resultChecker Result checker. See {@link TestExpectation#getResultChecker()}
-     * @return {@link TestExpectation} instance
+     * @return {@link TestExpectation} instance.
      */
     public TestExpectation mkPassed(String mdlId, String txt, Predicate<String> resultChecker) {
         return new ExpectationImpl(txt, mdlId, true, resultChecker, null);
@@ -109,11 +109,11 @@ public class TestFactory {
     
     /**
      * Initializes {@link TestExpectation} instance, which execution should be failed,
-     * without additional error messages checkers.
+     * without additional error message checker.
      *
      * @param mdlId Model ID.
      * @param txt Sentence text.
-     * @return {@link TestExpectation} instance
+     * @return {@link TestExpectation} instance.
      */
     public TestExpectation mkFailedOnExecution(String mdlId, String txt) {
         return new ExpectationImpl(txt, mdlId, false, null, null);
@@ -121,12 +121,12 @@ public class TestFactory {
     
     /**
      * Initializes {@link TestExpectation} instance, which execution should be failed,
-     * with additional error message checkers.
+     * with additional error message checker.
      *
      * @param mdlId Model ID.
      * @param txt Sentence text.
      * @param errorChecker Error checker. See {@link TestExpectation#getErrorChecker()}
-     * @return {@link TestExpectation} instance
+     * @return {@link TestExpectation} instance.
      */
     public TestExpectation mkFailedOnExecution(String mdlId, String txt, Predicate<String> errorChecker) {
         return new ExpectationImpl(txt, mdlId, false, null, errorChecker);
@@ -136,12 +136,10 @@ public class TestFactory {
      * Initializes {@link TestExpectation} instance, which execution should be failed,
      * with additional error message checkers.
      *
-     *
-     *
      * @param mdlId Model ID.
      * @param txt Sentence text.
      * @param resultChecker Result checker. See {@link TestExpectation#getResultChecker()}
-     * @return {@link TestExpectation} instance
+     * @return {@link TestExpectation} instance.
      */
     public TestExpectation mkFailedOnCheck(String mdlId, String txt, Predicate<String> resultChecker) {
         return new ExpectationImpl(txt, mdlId, false, resultChecker, null);

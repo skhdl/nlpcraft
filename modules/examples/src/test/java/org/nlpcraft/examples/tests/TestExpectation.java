@@ -37,7 +37,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * Test behaviour expectation.
+ * Test behaviour expectation holder.
+ *
  * See {@link TestFactory}.
  */
 public interface TestExpectation {
@@ -69,7 +70,7 @@ public interface TestExpectation {
      *
      * Checker function returns `true` if error message is expected.
      *
-     * @return Optional expected checker.
+     * @return Optional error checker.
      */
     Optional<Predicate<String>> getErrorChecker();
 }

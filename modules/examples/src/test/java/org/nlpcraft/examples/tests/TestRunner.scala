@@ -42,56 +42,56 @@ object TestRunner {
     /**
       * Processes test expectations list with prepared test client.
       *
-      * @param testClient Test client.
+      * @param client Test client.
       * @param expsList Expectations list.
       * @return Flag all expectations are passed ot not.
       */
-    def process(testClient: NCTestClient, expsList: java.util.List[TestExpectation]): Boolean = {
+    def process(client: NCTestClient, expsList: java.util.List[TestExpectation]): Boolean = {
         val exps = expsList.asScala
 
-        val results = testClient.test(exps.map(_.getTest).asJava).asScala
+        val results = client.test(exps.map(_.getTest).asJava).asScala
 
         require(exps.length == results.length)
 
         val errs =
-            exps.zip(results).flatMap { case (exp, result) ⇒
+            exps.zip(results).flatMap { case (exp, res) ⇒
                 val test = exp.getTest
 
                 var err: Option[String] = None
 
                 if (exp.shouldPassed) {
-                    if (result.getResultError.isPresent) {
+                    if (res.getResultError.isPresent) {
                         err = Some(
                             s"Test should be passed but failed " +
-                                s"[text=${test.getText}, " +
-                                s"modelId=${test.getModelId}, " +
-                                s"error=${result.getResultError.get()}" +
+                                s"[text=${test.getText}" +
+                                s", modelId=${test.getModelId}" +
+                                s", error=${res.getResultError.get()}" +
                                 ']'
                         )
                     }
                     else if (exp.getResultChecker.isPresent) {
-                        require(result.getResult.isPresent)
+                        require(res.getResult.isPresent)
 
-                        if (!exp.getResultChecker.get().test(result.getResult.get())) {
+                        if (!exp.getResultChecker.get().test(res.getResult.get())) {
                             err = Some(
                                 s"Test passed as expected but result validation failed " +
-                                    s"[text=${test.getText}, " +
-                                    s"modelId=${test.getModelId}" +
+                                    s"[text=${test.getText}" +
+                                    s", modelId=${test.getModelId}" +
                                     ']'
                             )
                         }
                     }
                 }
                 else {
-                    if (!result.getResultError.isPresent) {
+                    if (!res.getResultError.isPresent) {
                         if (exp.getResultChecker.isPresent) {
-                            require(result.getResult.isPresent)
+                            require(res.getResult.isPresent)
 
-                            if (exp.getResultChecker.get().test(result.getResult.get())) {
+                            if (exp.getResultChecker.get().test(res.getResult.get())) {
                                 err = Some(
-                                    s"Test passed and it result checked but but shouldn't be checked " +
-                                        s"[text=${test.getText}, " +
-                                        s"modelId=${test.getModelId}" +
+                                    s"Test passed and its result checked well but shouldn't be checked " +
+                                        s"[text=${test.getText}" +
+                                        s", modelId=${test.getModelId}" +
                                         ']'
                                 )
                             }
@@ -99,21 +99,20 @@ object TestRunner {
                         else {
                             err = Some(
                                 s"Test should be failed but passed " +
-                                    s"[text=${test.getText}, " +
-                                    s"modelId=${test.getModelId}" +
+                                    s"[text=${test.getText}" +
+                                    s", modelId=${test.getModelId}" +
                                     ']'
                             )
                         }
-
                     }
                     else if (exp.getErrorChecker.isPresent) {
-                        require(result.getResultError.isPresent)
+                        require(res.getResultError.isPresent)
 
-                        if (!exp.getErrorChecker.get().test(result.getResultError.get())) {
+                        if (!exp.getErrorChecker.get().test(res.getResultError.get())) {
                             err = Some(
-                                s"Test failed as expected but error validation failed " +
-                                    s"[text=${test.getText}, " +
-                                    s"modelId=${test.getModelId}" +
+                                s"Test failed as expected but error message validation failed " +
+                                    s"[text=${test.getText}" +
+                                    s", modelId=${test.getModelId}" +
                                     ']'
                             )
                         }
