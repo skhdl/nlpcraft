@@ -1,5 +1,7 @@
 package org.nlpcraft.examples.tests.helpers
 
+import org.apache.http.util.Asserts
+import org.junit.jupiter.api.Assertions
 import org.nlpcraft.mdllib.tools.dev.NCTestClient
 
 import scala.collection.JavaConverters._
@@ -13,9 +15,8 @@ object TestRunner {
       *
       * @param client Test client.
       * @param expsList Expectations list.
-      * @return Flag all expectations are passed ot not.
       */
-    def process(client: NCTestClient, expsList: java.util.List[TestExpectation]): Boolean = {
+    def test(client: NCTestClient, expsList: java.util.List[TestExpectation]): Unit = {
         val exps = expsList.asScala
 
         val results = client.test(exps.map(_.getTest).asJava).asScala
@@ -23,17 +24,22 @@ object TestRunner {
         require(exps.length == results.length)
 
         val errs =
-            exps.zip(results).flatMap { case (exp, res) ⇒
+            exps.zipWithIndex.zip(results).flatMap { case ((exp, idx), res) ⇒
                 val test = exp.getTest
+                val txt = test.getText
 
-                var err: Option[String] = None
+                require(test.getModelId.isPresent)
+
+                val mdlId = test.getModelId.get()
+
+                var errOpt: Option[String] = None
 
                 if (exp.shouldPassed) {
                     if (res.getResultError.isPresent) {
-                        err = Some(
+                        errOpt = Some(
                             s"Test should be passed but failed " +
-                                s"[text=${test.getText}" +
-                                s", modelId=${test.getModelId}" +
+                                s"[text=$txt" +
+                                s", modelId=$mdlId" +
                                 s", error=${res.getResultError.get()}" +
                                 ']'
                         )
@@ -42,10 +48,10 @@ object TestRunner {
                         require(res.getResult.isPresent)
 
                         if (!exp.getResultChecker.get().test(res.getResult.get())) {
-                            err = Some(
+                            errOpt = Some(
                                 s"Test passed as expected but result validation failed " +
-                                    s"[text=${test.getText}" +
-                                    s", modelId=${test.getModelId}" +
+                                    s"[text=$txt" +
+                                    s", modelId=$mdlId" +
                                     ']'
                             )
                         }
@@ -57,19 +63,19 @@ object TestRunner {
                             require(res.getResult.isPresent)
 
                             if (exp.getResultChecker.get().test(res.getResult.get())) {
-                                err = Some(
+                                errOpt = Some(
                                     s"Test passed and its result checked well but shouldn't be checked " +
-                                        s"[text=${test.getText}" +
-                                        s", modelId=${test.getModelId}" +
+                                        s"[text=$txt" +
+                                        s", modelId=$mdlId" +
                                         ']'
                                 )
                             }
                         }
                         else {
-                            err = Some(
+                            errOpt = Some(
                                 s"Test should be failed but passed " +
-                                    s"[text=${test.getText}" +
-                                    s", modelId=${test.getModelId}" +
+                                    s"[text=$txt" +
+                                    s", modelId=$mdlId" +
                                     ']'
                             )
                         }
@@ -78,30 +84,28 @@ object TestRunner {
                         require(res.getResultError.isPresent)
 
                         if (!exp.getErrorChecker.get().test(res.getResultError.get())) {
-                            err = Some(
+                            errOpt = Some(
                                 s"Test failed as expected but error message validation failed " +
-                                    s"[text=${test.getText}" +
-                                    s", modelId=${test.getModelId}" +
+                                    s"[text=$txt" +
+                                    s", modelId=$mdlId" +
                                     ']'
                             )
                         }
                     }
                 }
 
-                err
+                errOpt match {
+                    case Some(err) ⇒ Some(idx → err)
+                    case None ⇒ None
+                }
             }
 
-        if (errs.isEmpty) {
+        if (errs.isEmpty)
             println("All sentences processed as expected.")
-
-            true
-        }
         else {
-            System.err.println("Errors list:")
+            errs.foreach { case (idx, err) ⇒ System.err.println(s"${idx + 1}. $err") }
 
-            errs.foreach(System.err.println)
-
-            false
+            Assertions.fail("See errors list.")
         }
     }
 }

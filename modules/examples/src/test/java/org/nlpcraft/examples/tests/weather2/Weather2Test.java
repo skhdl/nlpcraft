@@ -66,7 +66,7 @@ public class Weather2Test {
     
     @Test
     public void testConversation() {
-        TestRunner.process(
+        TestRunner.test(
             builder.setClearConversation(false).build(),
             Arrays.asList(
                 // Empty parameter.
@@ -77,9 +77,9 @@ public class Weather2Test {
                 
                 // Unexpected intent ID.
                 f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
-    
-                f.mkPassed(mdlId, "What's the local weather forecast?"),
-                f.mkPassed(mdlId, "What's the weather in Moscow?"),
+
+                f.mkPassed(mdlId, "What's the local weather forecast?", mkIntentIdChecker("fcast|date?|city?")),
+                f.mkPassed(mdlId, "What's the weather in Moscow?", mkIntentIdChecker("curr|date?|city?")),
                 f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")),
     
                 // Missed user defined tokens, but it should be accessible from conversation context.
@@ -90,7 +90,7 @@ public class Weather2Test {
     
     @Test
     public void testNoConversation() {
-        TestRunner.process(
+        TestRunner.test(
             builder.setClearConversation(true).build(),
             Arrays.asList(
                 // Empty parameter.
@@ -102,7 +102,7 @@ public class Weather2Test {
                 // Unexpected intent ID.
                 f.mkFailedOnCheck(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
                 
-                f.mkPassed(mdlId, "What's the local weather forecast?", mkIntentIdChecker("curr|date?|city?")),
+                f.mkPassed(mdlId, "What's the local weather forecast?", mkIntentIdChecker("fcast|date?|city?")),
                 f.mkPassed(mdlId, "What's the weather in Moscow?", mkIntentIdChecker("curr|date?|city?")),
                 f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")),
     

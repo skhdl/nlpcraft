@@ -544,6 +544,7 @@ public class NCTestClientBuilder {
     
             resTab.addHeaders(
                 Arrays.asList(
+                    "Number",
                     "Sentence",
                     "Data source ID",
                     "Model ID",
@@ -552,9 +553,13 @@ public class NCTestClientBuilder {
                     "Time (ms)"
                 )
             );
+            
+            int i = 1;
     
             for (NCTestResult res : results) {
                 List<Object> row = new ArrayList<>();
+                
+                row.add(i++);
                 
                 String txt = res.getText();
                 
@@ -568,7 +573,7 @@ public class NCTestClientBuilder {
                 resTab.addRow(row);
             }
     
-            log.info("Test result:\n" + resTab.toString());
+            log.info("Test execution result:\n" + resTab.toString());
     
             NCAsciiTable statTab = new NCAsciiTable();
             

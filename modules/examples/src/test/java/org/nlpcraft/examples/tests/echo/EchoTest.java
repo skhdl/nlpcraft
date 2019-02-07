@@ -51,7 +51,7 @@ public class EchoTest {
     
     @Test
     public void test() {
-        TestRunner.process(
+        TestRunner.test(
             client,
             Arrays.asList(
                 // Empty parameter.

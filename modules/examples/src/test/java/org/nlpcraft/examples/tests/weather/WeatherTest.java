@@ -31,6 +31,7 @@
 
 package org.nlpcraft.examples.tests.weather;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.examples.tests.helpers.TestFactory;
 import org.nlpcraft.examples.tests.helpers.TestRunner;
@@ -50,8 +51,7 @@ public class WeatherTest {
     
     @Test
     public void testConversation() {
-        
-        TestRunner.process(
+        TestRunner.test(
             builder.setClearConversation(false).build(),
             Arrays.asList(
                 // Empty parameter.
@@ -71,7 +71,7 @@ public class WeatherTest {
     
     @Test
     public void testNoConversation() {
-        TestRunner.process(
+        TestRunner.test(
             builder.setClearConversation(true).build(),
             Arrays.asList(
                 // Empty parameter.
