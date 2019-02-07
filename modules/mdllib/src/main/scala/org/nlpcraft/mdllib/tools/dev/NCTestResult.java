@@ -88,4 +88,28 @@ public interface NCTestResult {
      * @return Optional execution error.
      */
     Optional<String> getResultError();
+
+    /**
+     * Tests whether or not this result corresponds to a failed execution. This is identical to:
+     * <pre class="brush: java">
+     *      return getResultError().isPresent();
+     * </pre>
+     *
+     * @return {@code true} if result corresponds to a failed execution, {@code false} otherwise.
+     */
+    default boolean isFailed() {
+        return getResultError().isPresent();
+    }
+
+    /**
+     * Tests whether or not this result corresponds to a successful execution. This is identical to:
+     * <pre class="brush: java">
+     *      return getResult().isPresent() && getResultType().isPresent();
+     * </pre>
+     *
+     * @return {@code true} if result corresponds to a successful execution, {@code false} otherwise.
+     */
+    default boolean isSuccessful() {
+        return getResult().isPresent() && getResultType().isPresent();
+    }
 }

@@ -62,4 +62,14 @@ public interface NCTestClient {
      * @throws IOException Thrown in case of I/O errors.
      */
     List<NCTestResult> test(NCTestSentence... tests) throws NCTestClientException, IOException;
+
+    /**
+     * Tests single sentence and returns its result.
+     *
+     * @param sen Sentence to test.
+     * @return Sentence result.
+     * @throws NCTestClientException Thrown if any test system errors occur.
+     * @throws IOException Thrown in case of I/O errors.
+     */
+    NCTestResult test(NCTestSentence sen) throws NCTestClientException, IOException;
 }

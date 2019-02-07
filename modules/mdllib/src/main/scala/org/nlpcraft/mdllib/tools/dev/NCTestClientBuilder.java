@@ -51,15 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -424,6 +416,11 @@ public class NCTestClientBuilder {
             return test(Arrays.asList(tests));
         }
         
+        @Override
+        public NCTestResult test(NCTestSentence sen) throws NCTestClientException, IOException {
+            return test(Collections.singletonList(sen)).get(0);
+        }
+
         @Override
         public synchronized List<NCTestResult> test(List<NCTestSentence> tests)
             throws NCTestClientException, IOException {
