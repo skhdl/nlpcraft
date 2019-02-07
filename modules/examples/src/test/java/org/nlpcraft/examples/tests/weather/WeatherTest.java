@@ -34,7 +34,6 @@ package org.nlpcraft.examples.tests.weather;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.examples.tests.helpers.TestFactory;
 import org.nlpcraft.examples.tests.helpers.TestRunner;
-import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
 import java.util.Arrays;
@@ -47,12 +46,30 @@ import java.util.Arrays;
 public class WeatherTest {
     private static final TestFactory f = new TestFactory();
     private static final String mdlId = "nlpcraft.weather.ex"; // See weather_model.json
-    private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
+    private static final NCTestClientBuilder builder = new NCTestClientBuilder().newBuilder();
     
     @Test
-    public void test() {
+    public void testConversation() {
+        
         TestRunner.process(
-            client,
+            builder.setClearConversation(false).build(),
+            Arrays.asList(
+                // Empty parameter.
+                f.mkFailedOnExecution(mdlId, ""),
+                
+                // Unsupported language.
+                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
+                
+                f.mkPassed(mdlId, "What's the local weather forecast?"),
+                f.mkPassed(mdlId, "What's the weather in Moscow?")
+            )
+        );
+    }
+    
+    @Test
+    public void testNoConversation() {
+        TestRunner.process(
+            builder.setClearConversation(true).build(),
             Arrays.asList(
                 // Empty parameter.
                 f.mkFailedOnExecution(mdlId, ""),

@@ -54,6 +54,7 @@ public class Weather2Test {
     private static final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
     private static final TestFactory f = new TestFactory();
     private static final String mdlId = "nlpcraft.weather2.ex"; // See weather2_model.json
+    private static final NCTestClientBuilder builder = new NCTestClientBuilder().newBuilder();
     
     private static Predicate<String> mkIntentIdChecker(String intentId) {
         return (js) -> {
@@ -66,7 +67,7 @@ public class Weather2Test {
     @Test
     public void testConversation() {
         TestRunner.process(
-            new NCTestClientBuilder().newBuilder().build(),
+            builder.setClearConversation(false).build(),
             Arrays.asList(
                 // Empty parameter.
                 f.mkFailedOnExecution(mdlId, ""),
@@ -87,7 +88,7 @@ public class Weather2Test {
     @Test
     public void testNoConversation() {
         TestRunner.process(
-            new NCTestClientBuilder().newBuilder().setClearConversation(true).build(),
+            builder.setClearConversation(true).build(),
             Arrays.asList(
                 // Empty parameter.
                 f.mkFailedOnExecution(mdlId, ""),
