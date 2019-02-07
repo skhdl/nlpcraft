@@ -29,18 +29,49 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib.tools.dev
+package org.nlpcraft.examples.tests;
 
-import org.nlpcraft.mdllib.NCModelSpecBase
-import org.scalatest.FlatSpec
+import org.nlpcraft.mdllib.tools.dev.NCTestSentence;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
-  * Spec for test client.
-  */
-class NCTestClientSpec extends FlatSpec with NCModelSpecBase {
-    it should "properly work" in {
-        val client = new NCTestClientBuilder().newBuilder().build()
-
-        client.test(new NCTestSentence("LA weather", "nlpcraft.weather.ex"))
-    }
+ * Test behaviour expectation.
+ * See {@link TestFactory}.
+ */
+public interface TestExpectation {
+    /**
+     * Gets test sentence.
+     *
+     * @return Test sentence.
+     */
+    NCTestSentence getTest();
+    
+    /**
+     * Should test be passed or not expectation flag.
+     *
+     * @return Flag.
+     */
+    boolean shouldPassed();
+    
+    /**
+     * Gets optional result checker.
+     *
+     * This function should return error message if its argument (test sentence execution result) is not expected
+     * or empty value if result validated successfully.
+     *
+     * @return Optional result checker.
+     */
+    Optional<Function<String, Optional<String>>> getResultChecker();
+    
+    /**
+     * Gets optional error checker.
+     *
+     * This function should return error message if its argument (test sentence execution error message) is not expected
+     * or empty value if error message validated successfully.
+     *
+     * @return Optional expected checker.
+     */
+    Optional<Function<String, Optional<String>>> getErrorChecker();
 }

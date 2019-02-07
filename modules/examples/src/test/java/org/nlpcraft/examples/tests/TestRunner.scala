@@ -29,103 +29,102 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib.tools.dev
+package org.nlpcraft.examples.tests
 
-import java.util
-
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import org.nlpcraft.mdllib.NCModelSpecBase
-import org.scalatest.FlatSpec
+import org.nlpcraft.mdllib.tools.dev.NCTestClient
 
 import scala.collection.JavaConverters._
 
 /**
-  * Spec for Weather2 example.
+  * Tests runner.
   */
-class NCTestClientWeather2Spec extends FlatSpec with NCModelSpecBase {
-    private final val GSON = new Gson
-    private final val MAP_RESP = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
+object TestRunner {
+    /**
+      * Processes test expectations list with prepared test client.
+      *
+      * @param testClient Test client.
+      * @param expsList Expectations list.
+      * @return Flag all expectations are passed ot not.
+      */
+    def process(testClient: NCTestClient, expsList: java.util.List[TestExpectation]): Boolean = {
+        val exps = expsList.asScala
 
-    case class Expectation(test: NCTestSentence, shouldPassed: Boolean, intentId: Option[String])
-
-    private def mkPassed(txt: String, modelId: String, intentId: String): Expectation =
-        Expectation(new NCTestSentence(txt, modelId), true, Some(intentId))
-
-    private def mkFailed(txt: String, modelId: String): Expectation =
-        Expectation(new NCTestSentence(txt, modelId), false, None)
-
-    private def process(exps: Seq[Expectation]): Unit = {
-        val results = new NCTestClientBuilder().newBuilder().build().test(exps.map(_.test).asJava).asScala
+        val results = testClient.test(exps.map(_.getTest).asJava).asScala
 
         require(exps.length == results.length)
 
         val errs =
             exps.zip(results).flatMap { case (exp, result) ⇒
+                val test = exp.getTest
+
                 var err: Option[String] = None
 
                 if (exp.shouldPassed) {
                     if (result.getResultError.isPresent) {
                         err = Some(
                             s"Test should be passed but failed " +
-                                s"[text=${exp.test.getText}, " +
-                                s"modelId=${exp.test.getModelId}, " +
+                                s"[text=${test.getText}, " +
+                                s"modelId=${test.getModelId}, " +
                                 s"error=${result.getResultError.get()}" +
                                 ']'
                         )
                     }
-                    else {
-                        require(exp.intentId.isDefined)
+                    else if (exp.getResultChecker.isPresent) {
+                        require(result.getResult.isPresent)
 
-                        val expIntentId = exp.intentId.get
+                        val checkRes = exp.getResultChecker.get().apply(result.getResult.get())
 
-                        val resMap: util.Map[String, Any] = GSON.fromJson(result.getResult.get(), MAP_RESP)
-
-                        // See Weather2Provider result data format.
-                        val resIntentId = resMap.asScala("intentId")
-
-                        if (expIntentId != resIntentId)
+                        if (checkRes.isPresent) {
                             err = Some(
-                                s"Test passed with unexpected intent ID " +
-                                    s"[text=${exp.test.getText}, " +
-                                    s"modelId=${exp.test.getModelId}, " +
-                                    s"expectedIntentId=$expIntentId, " +
-                                    s"expectedIntentId=$resIntentId" +
+                                s"Test passed as expected but result validation failed " +
+                                    s"[text=${test.getText}, " +
+                                    s"modelId=${test.getModelId}, " +
+                                    s"validationError=$checkRes" +
                                     ']'
                             )
-
+                        }
                     }
                 }
                 else {
                     if (!result.getResultError.isPresent) {
                         err = Some(
                             s"Test should be failed but passed " +
-                                s"[text=${exp.test.getText}, " +
-                                s"modelId=${exp.test.getModelId}" +
+                                s"[text=${test.getText}, " +
+                                s"modelId=${test.getModelId}" +
                                 ']'
                         )
+                    }
+                    else if (exp.getErrorChecker.isPresent) {
+                        require(result.getResultError.isPresent)
+
+                        val checkRes = exp.getErrorChecker.get().apply(result.getResultError.get())
+
+                        if (checkRes.isPresent) {
+                            err = Some(
+                                s"Test failed as expected but error validation failed " +
+                                    s"[text=${test.getText}, " +
+                                    s"modelId=${test.getModelId}, " +
+                                    s"validationError=$checkRes" +
+                                    ']'
+                            )
+                        }
                     }
                 }
 
                 err
             }
 
-        if (errs.isEmpty)
+        if (errs.isEmpty) {
             println("All sentences processed as expected.")
+
+            true
+        }
         else {
             System.err.println("Errors list:")
 
             errs.foreach(System.err.println)
+
+            false
         }
-    }
-
-    it should "properly work" in {
-        val exps =
-            Seq(
-                mkFailed("", "nlpcraft.weather2.ex"),
-                mkPassed("LA weather", "nlpcraft.weather2.ex", "curr|date?|city?")
-            )
-
-        process(exps)
     }
 }
