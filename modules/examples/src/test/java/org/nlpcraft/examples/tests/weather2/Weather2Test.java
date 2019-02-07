@@ -74,14 +74,22 @@ public class Weather2Test {
     public void test() {
         NCTestClient client = new NCTestClientBuilder().newBuilder().build();
         TestFactory f = new TestFactory();
-    
+        String mdlId = "nlpcraft.weather2.ex";
+        
         TestRunner.process(
             client,
             Arrays.asList(
-                f.mkFailed("nlpcraft.weather2.ex", ""),
-                f.mkPassed("nlpcraft.weather2.ex", "LA weather", mkIntentIdChecker("curr|date?|city?")
-                )
-            )
-        );
+                // Empty parameter.
+                f.mkFailed(mdlId, ""),
+                
+                // Unsupported language.
+                f.mkFailed(mdlId, "El tiempo en España"),
+                
+                // Unexpected intent ID.
+                f.mkFailed(mdlId, "LA weather", mkIntentIdChecker("INVALID-INTENT-ID")),
+                
+                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")
+             )
+        ));
     }
 }

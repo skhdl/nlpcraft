@@ -424,38 +424,10 @@ public class NCTestClientBuilder {
             return test(Arrays.asList(tests));
         }
         
-        private <T> void checkDups(
-            List<NCTestSentence> tests,
-            Function<NCTestSentence, T> extractField,
-            String fieldName
-        ) {
-            List<Pair<String, T>> allTestPairs =
-                tests.stream().
-                    map(p -> Pair.of(p.getText(), extractField.apply(p))).
-                    filter(p -> p.getRight() != null).
-                    collect(Collectors.toList());
-    
-            List<Pair<String, T>> testsPairs = allTestPairs.stream().distinct().collect(Collectors.toList());
-    
-            if (testsPairs.size() != allTestPairs.size()) {
-                allTestPairs.removeAll(testsPairs);
-        
-                String s =
-                    allTestPairs.stream().
-                        map(p -> "sentence=" + p.getLeft() + ", " + fieldName + "=" + p.getRight()).
-                        collect(Collectors.joining(";", "[", "]"));
-        
-                throw new NCTestClientException("Sentences texts cannot be duplicated within same " + fieldName + ": " + s);
-            }
-        }
-    
         @Override
         public synchronized List<NCTestResult> test(List<NCTestSentence> tests)
             throws NCTestClientException, IOException {
             checkNotNull("tests", tests);
-            
-            checkDups(tests, NCTestSentence::getDataSourceId, "data source");
-            checkDups(tests, NCTestSentence::getModelId, "model");
             
             Set<String> mdlIds =
                 tests.stream().
