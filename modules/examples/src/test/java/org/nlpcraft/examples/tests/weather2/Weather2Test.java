@@ -50,14 +50,12 @@ import java.util.function.Predicate;
  * Note that server and {@link org.nlpcraft.examples.weather2.Weather2ProbeRunner} must be started before.
  */
 public class Weather2Test {
-    private final Gson GSON = new Gson();
-    private final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+    private static final Gson GSON = new Gson();
+    private static final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+    private static final TestFactory f = new TestFactory();
+    private static final String mdlId = "nlpcraft.weather2.ex"; // See weather2_model.json
     
-    private static TestFactory f = new TestFactory();
-    // See weather2_model.json
-    private static String mdlId = "nlpcraft.weather2.ex";
-    
-    private Predicate<String> mkIntentIdChecker(String intentId) {
+    private static Predicate<String> mkIntentIdChecker(String intentId) {
         return (js) -> {
             Map<String, Object> m = GSON.fromJson(js, MAP_RESP);
     
@@ -102,8 +100,7 @@ public class Weather2Test {
                 
                 f.mkPassed(mdlId, "What's the local weather forecast?"),
                 f.mkPassed(mdlId, "What's the weather in Moscow?"),
-                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?")
-                )
+                f.mkPassed(mdlId, "LA weather", mkIntentIdChecker("curr|date?|city?"))
             )
         );
     }
