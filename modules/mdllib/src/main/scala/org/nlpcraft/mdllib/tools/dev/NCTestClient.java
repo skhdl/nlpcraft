@@ -31,38 +31,17 @@
 
 package org.nlpcraft.mdllib.tools.dev;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.*;
 
 /**
  * Model testing client. This client can be used for convienient unit testing of the models together
- * with any popular unit testing framework like <a href="http://www.testng.org">TestNG</a> or
+ * with any popular unit testing framework such as <a href="http://www.testng.org">TestNG</a> or
  * <a href="https://junit.org">JUnit</a>. The instance of test client should be obtained
  * via {@link NCTestClientBuilder}.
  *
  * @see NCTestClientBuilder
  */
 public interface NCTestClient {
-    /**
-     * Tests all given sentences and returns corresponding list of results.
-     *
-     * @param tests List of sentences to test.
-     * @return Tests results.
-     * @throws NCTestClientException Thrown if any test system errors occur.
-     * @throws IOException Thrown in case of I/O errors.
-     */
-    List<NCTestResult> test(List<NCTestSentence> tests) throws NCTestClientException, IOException;
-    
-    /**
-     * Tests all given sentences and returns corresponding list of results.
-     *
-     * @param tests List of sentences to test.
-     * @return Tests results.
-     * @throws NCTestClientException Thrown if any test system errors occur.
-     * @throws IOException Thrown in case of I/O errors.
-     */
-    List<NCTestResult> test(NCTestSentence... tests) throws NCTestClientException, IOException;
-
     /**
      * Tests single sentence and returns its result.
      *
@@ -71,5 +50,30 @@ public interface NCTestClient {
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
-    NCTestResult test(NCTestSentence sen) throws NCTestClientException, IOException;
+    NCTestResult ask(NCTestSentence sen) throws NCTestClientException, IOException;
+
+    /**
+     * Connects test client to the server.
+     *
+     * @throws NCTestClientException
+     * @throws IOException
+     */
+    void open() throws NCTestClientException, IOException;
+
+    /**
+     * Closes test client connection to the server.
+     *
+     * @throws NCTestClientException
+     * @throws IOException
+     */
+    void close() throws NCTestClientException, IOException;
+
+    /**
+     * Clears conversation for this test client. This method will clear conversation for
+     * its configured user and all its used data sources.
+     * 
+     * @throws NCTestClientException
+     * @throws IOException
+     */
+    void clearConversation() throws NCTestClientException, IOException;
 }

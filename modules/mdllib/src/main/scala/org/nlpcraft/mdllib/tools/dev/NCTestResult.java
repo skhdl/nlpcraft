@@ -36,8 +36,7 @@ import java.util.*;
 /**
  * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
  *
- * @see NCTestClient#test(NCTestSentence...)
- * @see NCTestClient#test(List)
+ * @see NCTestClient#ask(NCTestSentence)
  */
 public interface NCTestResult {
     /**

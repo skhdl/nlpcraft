@@ -36,8 +36,7 @@ import java.util.*;
 /**
  * Sentence to test. List of sentences is passed to {@link NCTestClient} methods.
  *
- * @see NCTestClient#test(NCTestSentence...)
- * @see NCTestClient#test(List)
+ * @see NCTestClient#ask(NCTestSentence)
  */
 public class NCTestSentence {
     private String txt;

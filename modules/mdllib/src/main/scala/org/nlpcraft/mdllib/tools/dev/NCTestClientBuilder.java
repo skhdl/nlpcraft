@@ -81,9 +81,6 @@ public class NCTestClientBuilder {
     /** Default clear conversation flag value. */
     public static final boolean DFLT_CLEAR_CONVERSATION = false;
     
-    /** Default asynchronous mode flag value. */
-    public static final boolean DFLT_ASYNC_MODE = true;
-    
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
     private NCTestClientImpl impl;
@@ -230,7 +227,6 @@ public class NCTestClientBuilder {
     
         private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
         private boolean clearConv = DFLT_CLEAR_CONVERSATION;
-        private boolean asyncMode = DFLT_ASYNC_MODE;
         private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
         private RequestConfig reqCfg;
         private String baseUrl = DFLT_BASEURL;
@@ -248,10 +244,6 @@ public class NCTestClientBuilder {
     
         boolean isClearConversation() {
             return clearConv;
-        }
-    
-        boolean isAsyncMode() {
-            return asyncMode;
         }
     
         long getMaxCheckTime() {
@@ -284,10 +276,6 @@ public class NCTestClientBuilder {
     
         void setClearConversation(boolean clearConv) {
             this.clearConv = clearConv;
-        }
-    
-        void setAsyncMode(boolean asyncMode) {
-            this.asyncMode = asyncMode;
         }
     
         void setMaxCheckTime(long maxCheckTimeMs) {
@@ -486,18 +474,11 @@ public class NCTestClientBuilder {
                 else {
                     Set<Long> dsIds =
                         tests.stream().map(t -> testsExt.get(t).getDsId()).collect(Collectors.toSet());
-                    
-                    if (asyncMode) {
-                        clearConversationAllDss(acsTok, dsIds);
-    
-                        res.putAll(executeAsync(acsTok, testsExt));
-                    }
-                    else {
-                        clearConversationAllDss(acsTok, dsIds);
-    
-                        for (NCTestSentence test : tests) {
-                            res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
-                        }
+
+                    clearConversationAllDss(acsTok, dsIds);
+
+                    for (NCTestSentence test : tests) {
+                        res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
                     }
                 }
             }
@@ -1032,20 +1013,6 @@ public class NCTestClientBuilder {
      */
     public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
         impl.setCheckInterval(checkIntervalMs);
-        
-        return this;
-    }
-    
-    /**
-     * Sets whether or not process sentences in parallel (async mode) or one by one (sync mode).
-     * Note that only synchronous mode make sense when testing with conversation support. Default values
-     * is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
-     *
-     * @param asyncMode {@code true} for asynchronous (parallel) mode, {@code false} for synchronous mode.
-     * @return Builder instance for chaining calls.
-     */
-    public NCTestClientBuilder setAsyncMode(boolean asyncMode) {
-        impl.setAsyncMode(asyncMode);
         
         return this;
     }
