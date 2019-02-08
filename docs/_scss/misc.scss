@@ -203,3 +203,7 @@ ul.dropdown-menu > li > a > i.fa {
 .btn-sm, .btn {
     border-radius: 2px;
 }
+
+.btn-link:hover, .btn-link:focus, a:hover, a:focus {
+    text-decoration: inherit;
+}
