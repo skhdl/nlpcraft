@@ -70,7 +70,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         override def check(): Unit = {
             val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
-            // Note, we support same URLs in endpoints list.
+            // Note, we support duplicated URLs in endpoints list.
             endpoints.foreach(ep ⇒ require(urlVal.isValid(ep), s"Invalid endpoint: $ep"))
 
             require(flushMsec > 0, s"flush interval ($flushMsec) must be > 0")
