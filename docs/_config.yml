@@ -53,6 +53,7 @@ compress_html:
   comments: all
   endings: all
   blanklines: false
+  profile: false
   startings: [html, head, body]
 
 # Build settings.
