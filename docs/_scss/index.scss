@@ -1,0 +1,87 @@
+/*
+ * “Commons Clause” License, https://commonsclause.com/
+ *
+ * The Software is provided to you by the Licensor under the License,
+ * as defined below, subject to the following condition.
+ *
+ * Without limiting other conditions in the License, the    grant of rights
+ * under the License will not include, and the License does not grant to
+ * you, the right to Sell the Software.
+ *
+ * For purposes of the foregoing, “Sell” means practicing any or all of
+ * the rights granted to you under the License to provide to third parties,
+ * for a fee or other consideration (including without limitation fees for
+ * hosting or consulting/support services related to the Software), a
+ * product or service whose value derives, entirely or substantially, from
+ * the functionality of the Software. Any license notice or attribution
+ * required by the License must also include this Commons Clause License
+ * Condition notice.
+ *
+ * Software:    NLPCraft
+ * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+ *
+ *     _   ____      ______           ______
+ *    / | / / /___  / ____/________ _/ __/ /_
+ *   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ *  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+ * /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+ *        /_/
+ */
+
+.bg-main-box {
+    background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #7590c9;
+
+    .main-box {
+        position: relative;
+        z-index: 9;
+        min-height: 387px;
+        background: url(../../images/bg-main-box.jpg) bottom center no-repeat;
+
+        a {
+            color: #fff;
+        }
+
+        h2 {
+            margin: 60px 0 10px 0;
+            padding: 0;
+            color: #fff;
+            font-size: 80px;
+            letter-spacing: 0.012em;
+            font-family: 'CanaroMedium', sans-serif;
+        }
+
+        .container {
+            padding: 50px 15px;
+            min-height: 387px;
+
+            .sub-title {
+                color: #fff;
+                font-size: 25px;
+                font-family: "Helvetica Neue", serif;
+            }
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+}
+
+.mouse-scroll {
+    position: absolute;
+    bottom: 17px;
+    left: 49%;
+    margin: 0 0 0 -28px;
+    padding: 0 0 0 65px;
+    background: url(/images/ico-mousescroll.png) no-repeat;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'StagSansLight', sans-serif;
+}
+
+.mouse-scroll:hover {
+    color: #fff;
+    text-decoration: none;
+}
