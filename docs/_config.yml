@@ -48,6 +48,14 @@ sass:
   sass_dir: _scss
   style: compressed
 
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  blanklines: false
+  profile: true
+  startings: [html, head, body]
+
 # Build settings.
 markdown: kramdown
 plugins:
