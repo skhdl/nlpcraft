@@ -30,13 +30,13 @@
  */
 
 .bg-main-box {
-    background: url(/images/bg-mb-wrapper2.png) bottom center repeat-x #7590c9;
+    background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #7590c9;
 
     .main-box {
         position: relative;
         z-index: 9;
         min-height: 387px;
-        background: url(/images/bg-main-box.jpg) bottom center no-repeat;
+        background: url(../../images/bg-main-box.jpg) bottom center no-repeat;
 
         a {
             color: #fff;
