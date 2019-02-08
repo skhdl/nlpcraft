@@ -52,7 +52,7 @@ import scala.collection.JavaConverters._
 object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     case class Event(
         name: String,
-        params: Seq[(String, Any)],
+        params: java.util.Map[String, Any],
         tstamp: Long,
         internalIp: String,
         externalIp: String
@@ -68,7 +68,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         val batchSize: Int = hocon.getInt(s"$CFG.batchSize")
 
         override def check(): Unit = {
-            val urlVal = new UrlValidator(Array("http","https"))
+            val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
             endpoints.foreach(ep ⇒ require(urlVal.isValid(ep), s"Invalid endpoint: $ep"))
 
@@ -134,7 +134,9 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       * @param params Optional set of named parameters.
       */
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
-        val evt = Event(evtName, params, G.nowUtcMs(), intlIp, extIp)
+        val evt = Event(evtName, params.toMap.asJava, G.nowUtcMs(), intlIp, extIp)
+
+        logger.trace(s"Event processing: $evt")
 
         queues.values.foreach(queue ⇒
             // Note, that between batches sending endpoint queues can be oversized.
@@ -152,6 +154,8 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       */
     private def sendBatch(ep: String, queue: java.util.LinkedList[Event], batch: java.util.List[Event]): Unit = {
         val post = new HttpPost(ep)
+
+        logger.trace(s"Batch sending [endpoint=$ep, batchSize=${batch.size()}, queueSize=${queue.size()}]")
 
         try {
             post.setHeader("Content-Type", "application/json")
@@ -206,6 +210,10 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
                 val n = size / Config.batchSize
                 val delta = size % Config.batchSize
+
+                println("size="+size)
+                println("n="+n)
+                println("delta="+delta)
 
                 (0 until n).foreach(i ⇒ sendBatch(ep, queue, copy.subList(i * Config.batchSize, Config.batchSize)))
 
