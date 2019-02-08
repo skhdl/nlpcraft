@@ -1,3 +1,6 @@
+---
+layout: compress
+---
 <!doctype html>
 
 <!--
@@ -36,7 +39,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="NLPCraft is an open-source API to convert natural language into actions.">
+    <meta name="description" content="Open-source API to convert natural language into actions.">
     <meta name="author" content="DataLingvo, Inc.">
     <title>NLPCraft - Natural Language Interface</title>
     <!-- BS3 CSS, etc. -->
@@ -78,7 +81,7 @@
 <body>
 <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light" id="top-header">
-    <a class="navbar-brand mr-4" href="#">
+    <a class="navbar-brand mr-4" href="index.html">
         <img src="{{ 'images/nlpcraft_logo_white.gif' | relative_url }}" height="24px">
     </a>
     
@@ -89,16 +92,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
+                <a class="nav-link" href="#features">Features</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Docs</a>
+                <a class="nav-link" href="docs.html">Docs</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Downloads <i class="fas fa-download"></i></a>
+                <a class="nav-link" href="download.html">Downloads <i class="fas fa-download"></i></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">News</a>
+                <a class="nav-link" href="blog.html">Blog</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -115,12 +118,13 @@
     <div class="container">
         <div class="text-muted text-center">
             <span>Copyright &copy; 2014-2019</span>
-            <a href="#" class="btn btn-link mr-2"><img src="{{ 'images/nlpcraft_logo_grey.gif' | relative_url}}" height="16px"></a>
-            <a href="#" class="btn btn-link">News</a>
+            <a href="index.html" class="btn btn-link mr-2"><img src="{{ 'images/nlpcraft_logo_grey.gif' | relative_url}}" height="16px"></a>
+            <a href="blog.html" class="btn btn-link">Blog</a>
             <span class="sep">•</span>
-            <a href="#" class="btn btn-link">Legal, Privacy<span class="amp">&amp;</span>GDPR</a>
+            <a href="legal.html" class="btn btn-link">Privacy <span class="amp">&amp;</span> GDPR</a>
             <span class="sep">•</span>
-            <a href="#" class="btn btn-link">Docs</a>
+            <a href="docs.html" class="btn btn-link">Docs</a>
+            <span class="ml-2">Latest ver. <a href="#"><code>{{ site.latest_version }}</code></a></span>
         </div>
     </div>
 </div>
