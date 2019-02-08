@@ -52,6 +52,7 @@ import java.util.zip.GZIPInputStream;
  * Geo data finder.
  *
  * There are following restrictions to simplify example:
+ *
  * 1. Finder's cache is never cleared.
  * 2. Implementation is not thread safe.
  * 3. Errors just forwarded to error console.
@@ -144,7 +145,6 @@ public class GeoManager {
     
     /**
      * Gets external IP.
-     *
      * @return External IP.
      * @throws IOException If any errors occur.
      */
@@ -156,7 +156,9 @@ public class GeoManager {
     }
     
     /**
-     * Gets Silicon Valley location. Used as default value.
+     * Gets Silicon Valley location. Used as default value for each example service.
+     *
+     * This default location definition added here just for accumulating all GEO manipulation logic in one class.
      *
      * @return Silicon Valley location.
      */
