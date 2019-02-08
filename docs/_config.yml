@@ -38,6 +38,11 @@ url: ""
 twitter_username: nlpcraft
 github_username:  nlpcraft
 
+# Manually update to the latest version:
+# ===================
+latest_version: 0.1.0
+# ===================
+
 # SASS settings.
 sass:
   sass_dir: _scss

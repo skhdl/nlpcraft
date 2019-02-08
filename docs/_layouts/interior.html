@@ -33,16 +33,13 @@ layout: default
           /_/
 -->
 
-<div class="bg-main-box">
-    <div class="main-box">
-        <div class="container">
-            <h2>Natural Language Interface</h2>
-            <center class="sub-title">An open-source API to convert natural language into actions</center>
-            <center class="sub-sub-title">
-                <a href="#">Docs</a> | <a href="#">Latest ver. <code>{{ site.latest_version }}</code> <i class="fas fa-download"></i></a>
-            </center>
-        </div>
+<div class="container-fluid">
+    <div class="row navbar-aligned">
+        <ol class="breadcrumb">
+            <li class="mr-1"><a href="index.html">Home</a></li>
+            <li class="mr-1 active">{{ page.active_crumb }}</li>
+        </ol>
+
+        {{ content }}
     </div>
 </div>
-
-
