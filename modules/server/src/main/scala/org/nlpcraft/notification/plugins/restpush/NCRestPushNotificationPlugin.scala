@@ -70,6 +70,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         override def check(): Unit = {
             val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
+            // Note, we support same URLs in endpoints list.
             endpoints.foreach(ep ⇒ require(urlVal.isValid(ep), s"Invalid endpoint: $ep"))
 
             require(flushMsec > 0, s"flush interval ($flushMsec) must be > 0")
@@ -83,8 +84,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     private final val GSON = new Gson
 
     // Bounded buffer of events to be flushed.
-    private final val queues = Config.endpoints.map(ep ⇒ ep → new util.LinkedList[Event]()).toMap
-
+    private final val queues = Config.endpoints.indices.map(_ ⇒ new util.LinkedList[Event]())
     // Local hosts.
     private final val intlIp = G.getInternalAddress.getHostAddress
     private final val extIp = G.getExternalIp
@@ -97,10 +97,10 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         super.start()
 
         // One timer per endpoint.
-        timers = Config.endpoints.map(ep ⇒ {
+        timers = Config.endpoints.indices.map(idx ⇒ {
             val timer = Executors.newSingleThreadScheduledExecutor
 
-            timer.scheduleWithFixedDelay(() ⇒ flush(ep), Config.flushMsec, Config.flushMsec, TimeUnit.MILLISECONDS)
+            timer.scheduleWithFixedDelay(() ⇒ flush(idx), Config.flushMsec, Config.flushMsec, TimeUnit.MILLISECONDS)
 
             timer
         })
@@ -138,7 +138,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
         logger.trace(s"Event processing: $evt")
 
-        queues.values.foreach(queue ⇒
+        queues.foreach(queue ⇒
             // Note, that between batches sending endpoint queues can be oversized.
             // It is developed for simplifying logic. They are cleared by timer.
             queue.synchronized { queue.add(evt) }
@@ -185,10 +185,11 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     /**
       * Flash accumulated endpoints events.
       *
-      * @param ep Endpoint.
+      * @param idx Endpoint index.
       */
-    private def flush(ep: String): Unit = {
-        val queue = queues(ep)
+    private def flush(idx: Int): Unit = {
+        val ep = Config.endpoints(idx)
+        val queue = queues(idx)
 
         val copy: util.List[Event] = queue.synchronized {
             val overSize = queue.size() - Config.maxBufferSize
@@ -211,14 +212,14 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
                 val n = size / Config.batchSize
                 val delta = size % Config.batchSize
 
-                println("size="+size)
-                println("n="+n)
-                println("delta="+delta)
-
                 (0 until n).foreach(i ⇒ sendBatch(ep, queue, copy.subList(i * Config.batchSize, Config.batchSize)))
 
-                if (delta != 0)
-                    sendBatch(ep, queue, copy.subList(n * Config.batchSize, delta))
+                if (delta != 0) {
+                    val from = n * Config.batchSize
+                    val to = from + delta
+
+                    sendBatch(ep, queue, copy.subList(from, to))
+                }
             }
             catch {
                 case e: Exception ⇒ logger.warn(s"Error during flush data to: $ep", e)
