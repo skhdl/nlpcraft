@@ -29,40 +29,28 @@
  *        /_/
  */
 
-// Footer styling.
-#footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 50px; // Set the fixed height of the footer here.
-    background-image: linear-gradient(to bottom, #fafafa 0%, #ddd 100%);
-    white-space: nowrap;
+.syntaxhighlighter {
+    width: 80% !important;
+    padding: 15px 0;
+    font-size: 100% !important;
+    border-radius: 2px !important;
+    overflow-y: hidden !important;
+    overflow-x: auto !important;
 
-    & > .container {
-        padding: 8px 15px 0 15px;
-        font-size: 14px;
-
-        a.btn-link {
-            vertical-align: baseline;
-            font-size: 14px;
-            margin: 0;
-            padding: 6px;
-        }
-
-        a.btn-link {
-            color: $color-blue2;
-        }
-
-        .sep {
-            color: #cbcbcb;
-        }
-
-        .amp {
-            font-family: baskerville, Helvetica, sans-serif;
-            font-weight: 400 !important;
-            font-style: italic;
-            margin: 0 0.4ch;
-            vertical-align: middle;
-        }
+    .toolbar {
+        display: none;
     }
+}
+
+.syntaxhighlighter a,
+.syntaxhighlighter div,
+.syntaxhighlighter code,
+.syntaxhighlighter table,
+.syntaxhighlighter table td,
+.syntaxhighlighter table tr,
+.syntaxhighlighter table tbody,
+.syntaxhighlighter table thead,
+.syntaxhighlighter table caption,
+.syntaxhighlighter textarea {
+    vertical-align: bottom !important;
 }
