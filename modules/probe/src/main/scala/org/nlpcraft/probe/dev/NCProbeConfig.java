@@ -45,7 +45,6 @@ public class NCProbeConfig implements Serializable {
     private String downLink;
     private String jarsFolder;
     private NCModelProvider provider;
-    private boolean versionAskEnabled;
 
     /**
      * Gets probe unique ID.
