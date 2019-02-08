@@ -56,7 +56,7 @@ object NCPluginManager extends NCLifecycle("Plugin manager") {
       * Starts plugin manager.
       */
     override def start(): NCLifecycle = {
-        notifyPlugin = createPlugin("notify", Config.notifyPluginClass)
+        notifyPlugin = createPlugin("notification", Config.notifyPluginClass)
         probeAuthPlugin = createPlugin("probe authentication", Config.probeAuthPluginClass)
 
         super.start()

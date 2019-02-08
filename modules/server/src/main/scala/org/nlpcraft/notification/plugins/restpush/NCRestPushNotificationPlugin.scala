@@ -136,8 +136,6 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
         val evt = Event(evtName, params.toMap.asJava, G.nowUtcMs(), intlIp, extIp)
 
-        logger.trace(s"Event processing: $evt")
-
         queues.foreach(queue ⇒
             // Note, that between batches sending endpoint queues can be oversized.
             // It is developed for simplifying logic. They are cleared by timer.
@@ -154,9 +152,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       */
     private def sendBatch(ep: String, queue: java.util.LinkedList[Event], batch: java.util.List[Event]): Unit = {
         val post = new HttpPost(ep)
-
-        logger.trace(s"Batch sending [endpoint=$ep, batchSize=${batch.size()}, queueSize=${queue.size()}]")
-
+        
         try {
             post.setHeader("Content-Type", "application/json")
             post.setEntity(new StringEntity(GSON.toJson(batch)))

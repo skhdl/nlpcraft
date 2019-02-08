@@ -69,9 +69,9 @@ object NCNotificationManager extends NCLifecycle("Notification manager") {
       * Stops this component.
       */
     override def stop(): Unit = {
-        super.stop()
-
         if (plugin != null)
             plugin.stop()
+
+        super.stop()
     }
 }
