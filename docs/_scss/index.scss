@@ -30,40 +30,42 @@
  */
 
 .bg-main-box {
-    background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #7590c9;
+    background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #5483dd;
 
     #main-box {
         position: relative;
         z-index: 9;
-        min-height: 387px;
+        min-height: 300px;
+        max-height: 300px;
         background: url(../../images/bg-main-box.jpg) bottom center no-repeat;
 
         a {
             color: #fff;
         }
 
-        h2 {
-            margin: 60px 0 10px 0;
-            padding: 0;
-            color: #fff;
-            font-size: 80px;
-            letter-spacing: 0.012em;
-            font-family: 'CanaroMedium', sans-serif;
-        }
+        .banner {
+            min-height: 300px;
+            padding: 35px 0 0 40px;
 
-        .container {
-            padding: 37px 15px;
-            min-height: 387px;
+            .nat-lang-itf {
+                color: #fff;
+                font-size: 60px;
+                letter-spacing: 0.02em;
+                font-weight: 500;
+                font-family: CanaroBold, Helvetica, sans-serif;
+            }
 
             .sub-title {
                 color: #fff;
-                font-size: 25px;
-                font-family: "Helvetica Neue", serif;
+                font-size: 22px;
+                font-weight: 200;
+                margin-top: -5px;
+                letter-spacing: 0.02em;
             }
 
             .sub-sub-title {
                 color: #fff;
-                margin-top: 80px;
+                margin-top: 40px;
             }
         }
 
@@ -71,6 +73,27 @@
             width: 100%;
             height: auto;
         }
+    }
+}
+
+@media (max-width: 1000px) {
+    .bg-main-box #main-box .banner .nat-lang-itf {
+        font-size: 45px;
+    }
+    .bg-main-box #main-box .banner {
+        padding-top: 50px;
+    }
+}
+
+@media (max-width: 800px) {
+    .bg-main-box #main-box .banner .nat-lang-itf {
+        font-size: 35px;
+    }
+    .bg-main-box #main-box .banner .sub-title {
+        font-size: 18px;
+    }
+    .bg-main-box #main-box .banner {
+        padding-top: 70px;
     }
 }
 
