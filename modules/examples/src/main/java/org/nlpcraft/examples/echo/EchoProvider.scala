@@ -43,9 +43,9 @@ import scala.collection.Seq
 /**
   * Echo example model provider.
   * <p>
-  * This example for any user input replies with JSON representation query context
+  * This example for any user input returns JSON representation of the query context
   * corresponding to that input. This is a simple demonstration of the JSON output
-  * and all NLPCraft-provided information that a user defined model can operate on.
+  * and of most of the NLPCraft-provided data that a user defined model can operate on.
   */
 @NCActiveModelProvider
 class EchoProvider extends NCModelProviderAdapter {
