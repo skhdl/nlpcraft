@@ -32,7 +32,7 @@
 .bg-main-box {
     background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #7590c9;
 
-    .main-box {
+    #main-box {
         position: relative;
         z-index: 9;
         min-height: 387px;
@@ -74,19 +74,40 @@
     }
 }
 
-.mouse-scroll {
+.main-section:after {
     position: absolute;
-    bottom: 17px;
-    left: 49%;
-    margin: 0 0 0 -28px;
-    padding: 0 0 0 65px;
-    background: url(/images/ico-mousescroll.png) no-repeat;
-    color: #fff;
-    font-size: 13px;
-    font-family: 'StagSansLight', sans-serif;
+    bottom: -16px;
+    left: 50%;
+    z-index: 10;
+    margin-left: -23px;
+    width: 0;
+    height: 0;
+    border-top: 16px solid;
+    border-right: 23px solid transparent;
+    border-left: 23px solid transparent;
+    content: "";
+    -moz-transform: scale(.9999);
 }
 
-.mouse-scroll:hover {
-    color: #fff;
-    text-decoration: none;
+.main-section {
+    h3 {
+        margin: 40px auto;
+        font-size: 50px;
+        font-weight: 100;
+        letter-spacing: 0.02em;
+        font-family: 'CanaroExtraLight', Arial, Helvetica, sans-serif;
+
+        span {
+            font-family: 'CanaroBook', sans-serif;
+            font-weight: 500;
+        }
+    }
+}
+
+#main-box:after {
+    border-top-color: #ed8964;
+}
+
+#talk-to-your-data:after {
+    border-top-color: transparent;
 }
