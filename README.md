@@ -1,11 +1,4 @@
-<pre>
-    _   ____      ______           ______ 
-   / | / / /___  / ____/________ _/ __/ /_
-  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
- / /|  / / /_/ / /___/ /  / /_/ / __/ /_  
-/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/  
-       /_/   
-</pre>
+<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="50px">
 
 ### Overview
 NLPCraft library allows you build advanced **free-form natural language interface** to any 
