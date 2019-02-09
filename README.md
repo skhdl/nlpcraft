@@ -1,4 +1,4 @@
-<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="50px">
+<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
 
 ### Overview
 NLPCraft library allows you build advanced **free-form natural language interface** to any 
