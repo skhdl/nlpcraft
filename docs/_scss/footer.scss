@@ -46,23 +46,19 @@
             vertical-align: baseline;
             font-size: 14px;
             margin: 0;
-            padding: 6px 2px;
+            padding: 6px 0;
         }
 
-        a.btn-link {
+        a {
             color: $color-blue2;
+
+            code {
+                color: $color-beta;
+            }
         }
 
         .sep {
             color: #cbcbcb;
-        }
-
-        .amp {
-            font-family: baskerville, Helvetica, sans-serif;
-            font-weight: 400 !important;
-            font-style: italic;
-            margin: 0 0.4ch;
-            vertical-align: middle;
         }
     }
 }

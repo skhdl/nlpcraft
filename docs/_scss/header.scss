@@ -50,3 +50,38 @@
         vertical-align: sub;
     }
 }
+
+.navbar-aligned {
+    margin: 12px 0 72px /* 60 + 12 */ 12px;
+
+    .breadcrumb {
+        background-color: transparent;
+        font-size: 90%;
+        color: $color-asbestos;
+        padding: 0;
+
+        a {
+            color: $color-river;
+        }
+    }
+
+    .breadcrumb > li + li:before {
+        content: "\f105";
+        padding: 0 5px;
+        color: $color-asbestos;
+        font-family: "Font Awesome\ 5 Free", serif;
+        font-style: normal;
+        font-weight: 700;
+        text-decoration: inherit;
+    }
+}
+
+.page-title {
+    font-weight: 700;
+    color: $color-slack;
+    margin-bottom: 30px;
+
+    & > i.fa {
+        margin-left: -7px;
+    }
+}
