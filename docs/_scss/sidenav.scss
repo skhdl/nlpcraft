@@ -1,0 +1,122 @@
+/*
+ * “Commons Clause” License, https://commonsclause.com/
+ *
+ * The Software is provided to you by the Licensor under the License,
+ * as defined below, subject to the following condition.
+ *
+ * Without limiting other conditions in the License, the    grant of rights
+ * under the License will not include, and the License does not grant to
+ * you, the right to Sell the Software.
+ *
+ * For purposes of the foregoing, “Sell” means practicing any or all of
+ * the rights granted to you under the License to provide to third parties,
+ * for a fee or other consideration (including without limitation fees for
+ * hosting or consulting/support services related to the Software), a
+ * product or service whose value derives, entirely or substantially, from
+ * the functionality of the Software. Any license notice or attribution
+ * required by the License must also include this Commons Clause License
+ * Condition notice.
+ *
+ * Software:    NLPCraft
+ * License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+ * Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+ *
+ *     _   ____      ______           ______
+ *    / | / / /___  / ____/________ _/ __/ /_
+ *   /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ *  / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+ * /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+ *        /_/
+ */
+
+.left-nav-column {
+    padding-left: 0;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 122px;
+}
+.right-content-column {
+    padding-left: 0;
+    padding-bottom: 20px;
+}
+
+.side-nav-container {
+    margin: 12px 0 72px 0;
+    display: flex;
+
+    .side-nav {
+        list-style: none;
+        margin: 0 0 20px 0;
+        padding: 0;
+
+        li.side-nav-title {
+            margin-top: 5px;
+            display: block;
+            font-size: 1.2rem;
+            color: #303e4c;
+            font-weight: 500;
+
+            &:not(:first-child) {
+                margin-top: 25px !important;
+            }
+        }
+
+        & > li {
+            padding: 3px 10px 3px 0;
+            display: block;
+            text-align: left;
+
+            a {
+                color: #999;
+                text-align: left;
+                width: 100%;
+                padding-right: 20px;
+                border-right: 1px solid white;
+
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: none;
+                    color: #369;
+                    border-right: 3px solid $color-beta;
+                }
+            }
+        }
+    }
+
+    section {
+        .section-title {
+            color: $color-slack2;
+            font-weight: 500;
+            margin-top: 0;
+            display: block;
+            font-size: 150%;
+        }
+        
+        dl {
+            margin-top: 10px;
+            
+            dd {
+                margin-bottom: 10px;
+            }
+        }
+
+        div.bq {
+            width: 90%;
+
+            h4 {
+                margin: 0 0 10px 0 !important;
+            }
+
+            p, li {
+                width: 100% !important;
+            }
+        }
+
+        margin-bottom: 35px;
+
+        p, li {
+            width: 90% !important;
+            letter-spacing: 0.02em;
+        }
+    }
+}
