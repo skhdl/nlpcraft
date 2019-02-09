@@ -80,9 +80,9 @@ public interface NCIntentSolverContext extends Serializable {
      * Indicates whether or not the intent match was exact.
      * <br><br>
      * An exact match means that for the intent to match it has to use all non-free word tokens
-     * in the user input, i.e. only free word tokens can be left after the match. Non exact match
-     * doesn't have this restriction. Note that non exact match should be used with a great care.
-     * Non exact match completely ignores extra found user or system tokens (which are not part
+     * in the user input, i.e. only free word tokens can be left after the match. Non-exact match
+     * doesn't have this restriction. Note that non-exact match should be used with a great care.
+     * Non-exact match completely ignores extra found user or system tokens (which are not part
      * of the intent template) which could have altered the matching outcome had they been included.
      * <br><br>
      * Intent callbacks can check this property and provide custom rejection message.

@@ -32,7 +32,7 @@
 package org.nlpcraft.examples.weather2;
 
 /**
- * Weather result wrapper.
+ * Weather result wrapper for JSON formatting.
  *
  * @param <T> the type parameter
  */
