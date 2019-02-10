@@ -31,13 +31,13 @@
 
 .left-nav-column {
     padding-left: 0;
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 122px;
+    top: 183px;
+    min-width: 210px;
 }
 .right-content-column {
     padding-left: 0;
     padding-bottom: 20px;
+    margin-left: 210px;
 }
 
 .side-nav-container {

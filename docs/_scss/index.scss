@@ -29,25 +29,29 @@
  *        /_/
  */
 
-.bg-main-box {
+#banner-box {
     background: url(../../images/bg-mb-wrapper2.png) bottom center repeat-x #5483dd;
 
-    #main-box {
+    #inner-banner-box {
         position: relative;
         z-index: 9;
         min-height: 300px;
         max-height: 300px;
         background: url(../../images/bg-main-box.jpg) bottom center no-repeat;
 
-        a {
-            color: #fff;
-        }
-
-        .banner {
+        #banner {
             min-height: 300px;
             padding: 35px 0 0 40px;
 
-            .nat-lang-itf {
+            a#get-started-btn {
+                border-color: #c17dac !important;
+                background-color: #fff !important;
+                color: #f67484 !important;
+                font-weight: 500;
+                margin-left: 2px;
+            }
+
+            #nat-lang-itf {
                 color: #fff;
                 font-size: 60px;
                 letter-spacing: 0.02em;
@@ -55,52 +59,41 @@
                 font-family: CanaroBold, Helvetica, sans-serif;
             }
 
-            .sub-title {
+            #banner-sub-title {
                 color: #fff;
                 font-size: 22px;
                 font-weight: 200;
                 margin-top: -5px;
                 letter-spacing: 0.02em;
             }
-
-            .sub-sub-title {
-                color: #fff;
-                margin-top: 40px;
-            }
-        }
-
-        img {
-            width: 100%;
-            height: auto;
         }
     }
 }
 
 @media (max-width: 1000px) {
-    .bg-main-box #main-box .banner .nat-lang-itf {
+    #banner-box #inner-banner-box #banner #nat-lang-itf {
         font-size: 45px;
     }
-    .bg-main-box #main-box .banner {
+    #banner-box #inner-banner-box #banner {
         padding-top: 50px;
     }
 }
 
 @media (max-width: $min-width) {
-    .bg-main-box #main-box .banner .nat-lang-itf {
+    #banner-box #inner-banner-box #banner #nat-lang-itf {
         font-size: 35px;
     }
-    .bg-main-box #main-box .banner .sub-title {
+    #banner-box #inner-banner-box #banner #sub-title {
         font-size: 18px;
     }
-    .bg-main-box #main-box .banner {
+    #banner-box #inner-banner-box #banner {
         padding-top: 70px;
     }
 }
 
-.main-section {
+.bottom-arrow {
     position: relative;
-    //padding: 0 15px 0 15px;
-    
+
     &:after {
         position: absolute;
         bottom: -16px;
@@ -115,9 +108,14 @@
         content: "";
         -moz-transform: scale(.9999);
     }
+}
+
+.main-section {
+    padding: 0 30px;
+    letter-spacing: 0.02em;
 
     .section-title {
-        margin: 40px 0 20px 0;
+        margin: 40px 0 10px 0;
         font-size: 35px;
         letter-spacing: 0.02em;
         font-weight: 200;
@@ -140,16 +138,12 @@
         }
     }
 
-    section {
-        margin: 0 0 0 0;
-    }
-
     &:last-child {
         margin-bottom: 150px;
     }
 }
 
-.bg-main-box:after {
+#banner-box:after {
     border-top-color: #ed8964;
 }
 
