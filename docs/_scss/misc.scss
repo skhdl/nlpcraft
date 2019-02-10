@@ -29,6 +29,8 @@
  *        /_/
  */
 
+$min-width: 768px;
+
 /*
  * Miscellaneous CSS fixes.
  * ------------------------
@@ -46,13 +48,13 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section, summary,
 time, mark, audio, video {
-    font-family: "Helvetica Neue", Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    min-width: 768px;
+    min-width: $min-width;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
 
 .amp {
@@ -288,26 +290,5 @@ $bq-success-border-color: $brand-success;
     }
 }
 
-@media only screen and (max-width: 1024px) {
-    .hide-below-1024px {
-        display: none;
-    }
-}
-@media only screen and (max-width: 600px) {
-    .hide-below-600px {
-        display: none;
-    }
-}
-@media only screen and (max-width: 620px) {
-    .hide-below-620px {
-        display: none;
-    }
-}
-
-@media (max-width: 1024px) {
-    .collapsing {
-        overflow: hidden !important;
-    }
-}
 
 

@@ -85,7 +85,7 @@
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: $min-width) {
     .bg-main-box #main-box .banner .nat-lang-itf {
         font-size: 35px;
     }
@@ -113,15 +113,14 @@
 }
 
 .main-section {
-    h3 {
-        margin: 40px auto;
-        font-size: 50px;
-        font-weight: 100;
+    .section-title {
+        margin: 40px;
+        font-size: 35px;
         letter-spacing: 0.02em;
-        font-family: 'CanaroExtraLight', Arial, Helvetica, sans-serif;
+        font-weight: 200;
+        display: block;
 
         span {
-            font-family: 'CanaroBook', sans-serif;
             font-weight: 500;
         }
     }
@@ -131,6 +130,26 @@
     border-top-color: #ed8964;
 }
 
-#talk-to-your-data:after {
-    border-top-color: transparent;
+#about-nlpcraft {
+    background-color: #fff;
+
+    &:after {
+        border-top-color: #fff;
+    }
+
+    img#fig1 {
+        padding: 60px;
+    }
+
+    img#fig2 {
+        margin-left: 13px;
+    }
+}
+
+#key-features {
+    background-color: rgba(238,244,246,84);
+
+    &:after {
+        border-top-color: transparent;
+    }
 }
