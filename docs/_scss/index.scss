@@ -111,7 +111,7 @@
 }
 
 .main-section {
-    padding: 0 30px;
+    padding: 0 30px 40px 30px;
     letter-spacing: 0.02em;
 
     .section-title {
@@ -157,14 +157,19 @@
     img#fig1 {
         padding: 50px;
     }
-
-    img#fig2 {
-        margin-left: 13px;
-    }
 }
 
 #features {
     background-color: rgba(238,244,246,84);
+
+    &:after {
+        border-top-color: rgba(238,244,246,84);
+    }
+}
+
+#about {
+    background: url(../../images/bg-about-us.jpg);
+    padding-bottom: 150px;
 
     &:after {
         border-top-color: transparent;
