@@ -119,7 +119,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
                         val t = now()
 
-                        val removed =
+                        val readyData =
                             cache.
                             // Find values.
                             flatMap(p ⇒ if (p.getValue.sendTime <= t) Some(p.getKey) else None).
@@ -132,11 +132,17 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                                     }
                             ).toMap
 
-                        logger.trace(s"Records for sending: ${removed.size}")
+                        logger.trace(s"Records for sending: ${readyData.size}")
 
-                        removed.
-                            groupBy { case (_, v) ⇒ (v.state.userId, v.endpoint) }.
-                            foreach { case ((usrId, ep), data) ⇒ send(usrId, ep, data.values.toSeq) }
+                        readyData.
+                            groupBy(_._2.state.userId).
+                            foreach { case (usrId, data) ⇒
+                                val values = data.values.toSeq
+
+                                require(values.nonEmpty)
+
+                                send(usrId, values.head.endpoint, values)
+                            }
                     }
                 }
             }

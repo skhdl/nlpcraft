@@ -52,11 +52,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -206,7 +208,8 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * TODO: User endpoint or use check calls,
+     * TODO: Set endpoint mode (periodical check otherwise)
+     * Note
      */
     public NCTestClientBuilder setUseEndpoint(boolean useEndpoint) {
         impl.setUseEndpoint(useEndpoint);
@@ -215,11 +218,13 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * TODO: http only
+     * TODO: http only. Note that if localhost set, t is replaced to {@link InetAddress#getLocalHost()}
      */
     public NCTestClientBuilder setEndpoint(String endpoint) {
-        if (!urlValidator.isValid(endpoint))
-            throw new IllegalArgumentException(String.format("Invalid endpoint: %s", endpoint));
+        if (endpoint != null) {
+            if (!urlValidator.isValid(endpoint))
+                throw new IllegalArgumentException(String.format("Invalid endpoint: %s", endpoint));
+        }
         
         impl.setEndpoint(endpoint);
         
@@ -240,6 +245,8 @@ public class NCTestClientBuilder {
         
         if (impl.isUseEndpoint())
             checkNotNull("endpoint", impl.getEndpoint());
+    
+        impl.prepareClient();
         
         return impl;
     }
@@ -248,23 +255,18 @@ public class NCTestClientBuilder {
      * JSON helper class.
      */
     static class NCDsJson {
-        @SerializedName("id")
-        private long dsId;
-        @SerializedName("mdlId")
-        private String mdlId;
+        @SerializedName("id") private long dsId;
+        @SerializedName("mdlId") private String mdlId;
         
         public long getDataSourceId() {
             return dsId;
         }
-        
         public void setDataSourceId(long dsId) {
             this.dsId = dsId;
         }
-        
         public String getModelId() {
             return mdlId;
         }
-        
         public void setModelId(String mdlId) {
             this.mdlId = mdlId;
         }
@@ -349,7 +351,6 @@ public class NCTestClientBuilder {
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
         private final Gson gson = new Gson();
-        private final CloseableHttpClient httpCli;
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
@@ -360,6 +361,7 @@ public class NCTestClientBuilder {
         private String pswd = DFLT_PASSWORD;
         private boolean useEndpoint = DFLT_USE_ENDPOINT;
         private String endpoint = DFLT_ENDPOINT;
+        private CloseableHttpClient httpCli;
         
         private RequestConfig reqCfg;
         private Supplier<CloseableHttpClient> cliSup;
@@ -370,10 +372,6 @@ public class NCTestClientBuilder {
         private String mdlId;
         private boolean isTestDs = false;
         private HttpServer server;
-        
-        NCTestClientImpl() {
-            httpCli = mkClient();
-        }
         
         long getCheckInterval() {
             return checkIntervalMs;
@@ -447,8 +445,8 @@ public class NCTestClientBuilder {
             return endpoint;
         }
     
-        private CloseableHttpClient mkClient() {
-            return cliSup != null ? cliSup.get() : HttpClients.createDefault();
+        void prepareClient() {
+            httpCli = cliSup != null ? cliSup.get() : HttpClients.createDefault();
         }
         
         @Override
@@ -537,7 +535,7 @@ public class NCTestClientBuilder {
                 
                 String host = url.getHost();
                 
-                if (host.equals("127.0.0.1") || host.equals("localhost")) {
+                if (host.equals("127.0.0.1") || host.equalsIgnoreCase("localhost")) {
                     endpoint = endpoint.replaceAll(host, InetAddress.getLocalHost().getHostAddress());
     
                     url = new URL(endpoint);
@@ -552,10 +550,20 @@ public class NCTestClientBuilder {
     
                     try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
                         byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
-                        
-                        is.read(arr);
     
-                        List<NCRequestStateJson> list = gson.fromJson(new String(arr, "UTF-8"), TYPE_STATES);
+                        int n = 0;
+    
+                        while (n != arr.length) {
+                            int k = is.read(arr, n, arr.length - n);
+        
+                            if (k == -1)
+                                throw new EOFException();
+        
+                            n = n + k;
+                        }
+    
+                        List<NCRequestStateJson> list =
+                            gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
     
                         log.trace(String.format("Endpoint batch size: %d", list.size()));
                         
