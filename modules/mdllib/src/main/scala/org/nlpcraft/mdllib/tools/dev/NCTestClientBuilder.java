@@ -50,10 +50,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -550,9 +549,13 @@ public class NCTestClientBuilder {
                 
                 server.createContext(url.getPath(), http -> {
                     log.trace(String.format("Endpoint got request from: %s", http.getRemoteAddress()));
-                    
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(http.getRequestBody()))) {
-                        List<NCRequestStateJson> list = gson.fromJson(reader, TYPE_STATES);
+    
+                    try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
+                        byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
+                        
+                        is.read(arr);
+    
+                        List<NCRequestStateJson> list = gson.fromJson(new String(arr, "UTF-8"), TYPE_STATES);
     
                         log.trace(String.format("Endpoint batch size: %d", list.size()));
                         

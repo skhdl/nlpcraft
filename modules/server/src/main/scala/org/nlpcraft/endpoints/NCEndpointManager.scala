@@ -87,11 +87,11 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         usrId: Long,
         dsId: Long,
         mdlId: String,
-        probeId: Option[String],
+        probeId: String,
         status: String,
-        resType: Option[String],
-        resBody: Option[String],
-        error: Option[String],
+        resType: String,
+        resBody: String,
+        error: String,
         createTstamp: Long,
         updateTstamp: Long
     )
@@ -100,7 +100,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        cache = ignite.cache[String, Value]("endpoint-notification-cache")
+        cache = ignite.cache[String, Value]("endpoint-cache")
 
         require(cache != null)
 
@@ -196,11 +196,11 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 p.state.userId,
                 p.state.dsId,
                 p.state.modelId,
-                p.state.probeId,
+                p.state.probeId.orNull,
                 p.state.status,
-                p.state.resultType,
-                p.state.resultBody,
-                p.state.error,
+                p.state.resultType.orNull,
+                p.state.resultBody.orNull,
+                p.state.error.orNull,
                 p.state.createTstamp.getTime,
                 p.state.updateTstamp.getTime
             )

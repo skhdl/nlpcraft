@@ -111,8 +111,8 @@
         <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
     </bean>
 
-    <bean name="endpoint-notification-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="endpoint-notification-cache"/>
+    <bean name="endpoint-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="endpoint-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
         <property name="atomicityMode" value="TRANSACTIONAL"/>
         <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
@@ -186,7 +186,7 @@
         <property name="cacheConfiguration">
             <list>
                 <ref bean="user-token-signin-cache"/>
-                <ref bean="endpoint-notification-cache"/>
+                <ref bean="endpoint-cache"/>
                 <ref bean="user-id-signin-cache"/>
                 <ref bean="qry-state-cache"/>
                 <ref bean="sentence-cache"/>
