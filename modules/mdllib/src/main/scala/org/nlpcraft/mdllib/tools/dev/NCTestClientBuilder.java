@@ -55,6 +55,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -533,36 +534,53 @@ public class NCTestClientBuilder {
             this.mdlId = dsOpt.get().getModelId();
             
             if (useEndpoint) {
-                registerEndpoint();
-                
                 URL url = new URL(endpoint);
+                
+                String host = url.getHost();
+                
+                if (host.equals("127.0.0.1") || host.equals("localhost")) {
+                    endpoint = endpoint.replaceAll(host, InetAddress.getLocalHost().getHostAddress());
+    
+                    url = new URL(endpoint);
+                }
+    
+                registerEndpoint();
                 
                 server = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
                 
                 server.createContext(url.getPath(), http -> {
+                    log.trace(String.format("Endpoint got request from: %s", http.getRemoteAddress()));
+                    
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(http.getRequestBody()))) {
                         List<NCRequestStateJson> list = gson.fromJson(reader, TYPE_STATES);
+    
+                        log.trace(String.format("Endpoint batch size: %d", list.size()));
                         
                         for (NCRequestStateJson p : list) {
                             res.put(p.getServerRequestId(), p);
+    
+                            log.trace(String.format("Endpoint got response for srvReqId: %s", p.getServerRequestId()));
                         }
                         
                         synchronized (mux) {
                             mux.notifyAll();
                         }
+    
+                        String resp = "OK";
+    
+                        http.sendResponseHeaders(200, resp.length());
+    
+                        try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
+                            out.write(resp.getBytes());
+                        }
                     }
-                    
-                    String resp = "OK";
-                    
-                    http.sendResponseHeaders(200, resp.length());
-                    
-                    try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
-                        out.write(resp.getBytes());
+                    catch (Exception e) {
+                        log.error("Error processing endpoint message.", e);
                     }
                 });
                 
                 server.start();
-                
+    
                 log.info(String.format("Server started: %s", endpoint));
             }
             

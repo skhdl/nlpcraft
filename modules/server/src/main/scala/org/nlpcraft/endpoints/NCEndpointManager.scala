@@ -38,13 +38,11 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
 import org.apache.ignite.IgniteCache
-import org.apache.ignite.cache.query.SqlQuery
 import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.{NCConfigurable, NCE, NCLifecycle}
-import resource.managed
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -83,6 +81,21 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     @volatile private var cleaner: Thread = _
     @volatile private var httpClient: CloseableHttpClient = _
 
+    // Should be the same as REST '/check' response.
+    case class QueryStateJs(
+        srvReqId: String,
+        usrId: Long,
+        dsId: Long,
+        mdlId: String,
+        probeId: Option[String],
+        status: String,
+        resType: Option[String],
+        resBody: Option[String],
+        error: Option[String],
+        createTstamp: Long,
+        updateTstamp: Long
+    )
+
     /**
       * Starts this component.
       */
@@ -103,14 +116,25 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                             mux.wait(t)
                         }
 
-                        val sql: SqlQuery[String, Value] = new SqlQuery(classOf[Value], "time >= ")
+                        val t = now()
 
-                        val data4Send =
-                            managed { cache.query(sql.setArgs(Array(now()))) } acquireAndGet { cursor ⇒
-                                cursor.map(p ⇒ p.getKey → p.getValue).toMap
-                            }
+                        val removed =
+                            cache.
+                            asScala.
+                            // Find values.
+                            flatMap(p ⇒ if (p.getValue.sendTime <= t) Some(p.getKey) else None).
+                            // Removes them from cache.
+                            flatMap(
+                                id ⇒
+                                    cache.getAndRemove(id) match {
+                                        case null ⇒ None
+                                        case v ⇒ Some(id → v)
+                                    }
+                            ).toMap
 
-                        data4Send.
+                        logger.trace(s"Data prepared for sending: ${removed.size}")
+
+                        removed.
                             groupBy { case (_, v) ⇒ (v.state.userId, v.endpoint) }.
                             foreach { case ((usrId, ep), data) ⇒ send(usrId, ep, data.values.toSeq) }
                     }
@@ -136,9 +160,11 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                                     data.toSeq.sortBy(-_.getValue.createdOn).drop(Config.maxQueueSize).map(_.getKey)
                             }
 
-                        cache.removeAll(srvReqIds.toSet.asJava)
+                        if (srvReqIds.nonEmpty) {
+                            cache.removeAll(srvReqIds.toSet.asJava)
 
-                        logger.warn(s"Requests deleted because queue is too big: $srvReqIds")
+                            logger.warn(s"Requests deleted because queue is too big: $srvReqIds")
+                        }
                     }
                 }
             }
@@ -164,21 +190,6 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     private def now(): Long = System.currentTimeMillis()
 
     private def send(usrId: Long, ep: String, values: Seq[Value]): Unit = {
-        // Should be the same as REST '/check' response.
-        case class QueryStateJs(
-            srvReqId: String,
-            usrId: Long,
-            dsId: Long,
-            mdlId: String,
-            probeId: Option[String],
-            status: String,
-            resType: Option[String],
-            resBody: Option[String],
-            error: Option[String],
-            createTstamp: Long,
-            updateTstamp: Long
-        )
-
         val seq = values.map(p ⇒
             QueryStateJs(
                 p.state.srvReqId,
@@ -277,7 +288,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         val t = now()
 
-        cache.put(state.srvReqId, Value(state = state, endpoint = ep, sendTime = t, attempts = 0, createdOn = t))
+        cache.put(state.srvReqId, Value(state, ep, sendTime = t, attempts = 0, createdOn = t))
 
         mux.synchronized {
             mux.notifyAll()
@@ -317,13 +328,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         logger.trace(s"User endpoint notifications cancel [userId=$usrId]")
 
-        val sql: SqlQuery[String, Value] = new SqlQuery(classOf[Value], "state.userId = ?")
+        val srvIds = cache.asScala.groupBy(_.getValue.state.userId).flatMap(_._2.map(_.getKey))
 
-        val m =
-            managed { cache.query(sql.setArgs(Array(usrId))) } acquireAndGet { cursor ⇒
-                cursor.map(p ⇒ p.getKey → p.getValue).toMap
-            }
-
-        cache.removeAll(m.keySet)
+        cache.removeAll(srvIds.toSet.asJava)
     }
 }

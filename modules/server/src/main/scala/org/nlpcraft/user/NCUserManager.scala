@@ -72,7 +72,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         userId: Long,
         signinMs: Long,
         lastAccessMs: Long,
-        endpoint: Option[String] = None
+        endpoint: Option[String]
     )
 
     private object Config extends NCConfigurable {
@@ -281,12 +281,16 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                     val now = G.nowUtcMs()
 
                     // Update login session.
-                    tokenSigninCache.put(acsTkn, SigninSession(
+                    tokenSigninCache.put(
                         acsTkn,
-                        userId = ses.userId,
-                        signinMs = ses.signinMs,
-                        lastAccessMs = now
-                    ))
+                        SigninSession(
+                            acsTkn,
+                            userId = ses.userId,
+                            signinMs = ses.signinMs,
+                            lastAccessMs = now,
+                            ses.endpoint
+                        )
+                    )
 
                     Some(ses.userId) // Bingo!
             }
@@ -348,7 +352,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                                 acsTkn,
                                                 usr.id,
                                                 now,
-                                                now
+                                                now,
+                                                None
                                             )
                                         )
 
@@ -627,32 +632,25 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         }
     }
 
-    private def execute(usrId: Long, fn: SigninSession ⇒ Unit): Unit = {
-        val sesOpt =
-            catching(wrapIE) {
-                NCTxManager.startTx {
-                    idSigninCache.get(usrId) match {
-                        case null ⇒
-                            logger.trace(s"User cache not found for: $usrId")
+    private def execute(usrId: Long, fn: SigninSession ⇒ Unit): Unit =
+        catching(wrapIE) {
+            NCTxManager.startTx {
+                idSigninCache.get(usrId) match {
+                    case null ⇒
+                        logger.trace(s"User cache not found for: $usrId")
 
-                            None
-                        case acsToken ⇒
-                            tokenSigninCache.get(acsToken) match {
-                                case null ⇒
-                                    logger.error(s"Token cache not found for: $acsToken")
+                        None
+                    case acsToken ⇒
+                        tokenSigninCache.get(acsToken) match {
+                            case null ⇒
+                                logger.error(s"Token cache not found for: $acsToken")
 
-                                    None
-                                case ses ⇒ Some(ses)
-                            }
-                    }
+                                None
+                            case ses ⇒ fn(ses)
+                        }
                 }
             }
-
-        sesOpt match {
-            case Some(ses) ⇒ fn(ses)
-            case None ⇒ // No-op.
         }
-    }
 
     private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
         execute(
@@ -660,7 +658,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             ses ⇒ {
                 epOpt match {
                     case Some(ep) ⇒ logger.debug(s"Endpoint registered [userId=$usrId, endpoint=$ep]")
-                    case None ⇒ case Some(e) ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
+                    case None ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
                 }
 
                 tokenSigninCache.put(
