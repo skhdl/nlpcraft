@@ -57,7 +57,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 @NCActiveModelProvider
 public class TimerProvider extends NCModelProviderAdapter {
     private static final DateTimeFormatter FMT =
-        DateTimeFormatter.ofPattern("'<b>'HH'</b>h' '<b>'mm'</b>m' '<b>'ss'</b>s'").withZone(ZoneId.systemDefault());
+        DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'").withZone(ZoneId.systemDefault());
     
     private Timer timer = new Timer();
     
@@ -146,6 +146,6 @@ public class TimerProvider extends NCModelProviderAdapter {
             ms
         );
     
-        return NCQueryResult.html("Timer set for: " + FMT.format(dt));
+        return NCQueryResult.text("Timer set for: " + FMT.format(dt));
     }
 }

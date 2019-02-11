@@ -29,10 +29,33 @@
  *        /_/
  */
 
+$min-width: 768px;
+
 /*
  * Miscellaneous CSS fixes.
  * ------------------------
  */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-width: $min-width;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
 
 .amp {
     font-family: baskerville, Helvetica, sans-serif;
@@ -213,3 +236,59 @@ ul.dropdown-menu > li > a > i.fa {
 .btn-link:hover, .btn-link:focus, a:hover, a:focus {
     text-decoration: inherit;
 }
+
+$bq-info-bg-color: #f4f8fa;
+$bq-info-border-color: #5bc0de;
+
+$bq-warn-bg-color: #faf8f0;
+$bq-warn-border-color: $color-sunflower;
+
+$bq-error-bg-color: #eed3d7;
+$bq-error-border-color: #fdf7f7;
+
+$bq-success-bg-color: #F5FDF2;
+$bq-success-border-color: $brand-success;
+
+.bq {
+    &.info {
+        color: $color-grey-blue;
+        background-color: $bq-info-bg-color;
+        border-color: darken($bq-info-bg-color, 5%);
+        border-left-color: $bq-info-border-color;
+    }
+
+    &.warn {
+        color: $color-slack;
+        background-color: $bq-warn-bg-color;
+        border-color: darken($bq-warn-bg-color, 5%);
+        border-left-color: $bq-warn-border-color;
+    }
+
+    &.error {
+        background-color: $bq-error-bg-color;
+        border-color: darken($bq-error-bg-color, 5%);
+        border-left-color: $bq-error-border-color;
+    }
+
+    &.success {
+        background-color: $bq-success-bg-color;
+        border-color: darken($bq-success-bg-color, 5%);
+        border-left-color: $bq-success-border-color;
+    }
+
+    margin: 20px 0;
+    padding: 15px 20px;
+    border-left: 3px solid #eee;
+
+    & > p,
+    & > ul {
+        margin: 0;
+    }
+
+    & > p {
+        letter-spacing: 0.05em;
+    }
+}
+
+
+

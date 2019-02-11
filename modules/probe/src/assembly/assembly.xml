@@ -10,9 +10,5 @@
             <source>${project.build.directory}/${project.name}-${project.version}-all-dependencies.jar</source>
             <outputDirectory>/</outputDirectory>
         </file>
-        <file>
-            <source>${project.basedir}/src/main/scala/readme.txt</source>
-            <outputDirectory>/</outputDirectory>
-        </file>
     </files>
 </assembly>

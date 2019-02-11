@@ -70,13 +70,13 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
 /**
  * Weather example model provider.
  * <p>
- * This is relatively complete weather service with elaborate HTML output and a non-trivial
+ * This is relatively complete weather service with JSON output and a non-trivial
  * intent matching logic. It uses https://www.apixu.com REST service for the actual
  * weather information.
- *
- * Note that this class in exact copy from {@link org.nlpcraft.examples.weather.WeatherProvider} except output formatting.
- * This implementation uses JSON.
- * Also it return to end user intent ID together with execution result.
+ * <p>
+ * Note that this class is mostly identical to {@link org.nlpcraft.examples.weather.WeatherProvider}
+ * except for the output formatting. This implementation uses JSON. Note also that it also returns intent ID
+ * together with execution result which can be used in testing.
  */
 @SuppressWarnings("Duplicates")
 @NCActiveModelProvider
@@ -85,6 +85,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
     // Please register your own account at https://www.apixu.com/pricing.aspx and
     // replace this demo token with your own.
     private final ApixuWeatherService srv = new ApixuWeatherService("3f9b7de2d3894eb6b27150825171909");
+
     // Geo manager.
     private final GeoManager geoMrg = new GeoManager();
     
@@ -107,7 +108,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
     }
 
     /**
-     * Makes query multipart result for given date range weather.
+     * Makes JSON result for the given date range weather.
      *
      * @param res Weather holder for the range of dates.
      * @param intentId Intent ID.
@@ -123,9 +124,9 @@ public class Weather2Provider extends NCModelProviderAdapter {
     }
 
     /**
-     * Makes query multipart result for single date.
+     * Makes JSON result for a single date.
      *
-     * @param res Weather holder for single date.
+     * @param res Weather holder for a single date.
      * @param intentId Intent ID.
      * @return Query result.
      */
@@ -222,7 +223,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
         Pair<LocalDate, LocalDate> date = prepDate(ctx);
 
         if (date == null)
-            // If we don't have the date in the sentence or conversation STM - use provided range.
+            // If we don't have the date in the sentence or conversation STM - use default range.
             date = Pair.of(from, to);
 
         String geo = prepGeo(ctx);
@@ -244,7 +245,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
     private void checkMatch(NCIntentSolverContext ctx) {
         // Reject if intent match is not exact ("dangling" tokens remain) or too many free words left unmatched.
         if (!ctx.isExactMatch() || ctx.getVariant().getTokens().stream().filter(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
-            throw new NCRejection("Too many extra words - please simplify.");
+            throw new NCRejection("Please simplify your request.");
     }
 
     /**
@@ -343,9 +344,7 @@ public class Weather2Provider extends NCModelProviderAdapter {
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {
-            throw new NCRejection(
-                "Weather request is ambiguous.<br>" +
-                "Note: only one optional <b>city</b> and one optional <b>date</b> or <b>date range</b> are allowed.");
+            throw new NCRejection("Weather request is ambiguous.");
         });
 
         // Match exactly one of weather tokens and optional 'nlp:geo' and 'nlp:date' tokens.

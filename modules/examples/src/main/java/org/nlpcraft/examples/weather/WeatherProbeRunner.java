@@ -37,7 +37,7 @@ import org.nlpcraft.probe.dev.*;
 /**
  * In-process probe runner for this example.
  * <p>
- * Note that this probes requires no configuration (it uses all configuration defaults). However, if necessary,
+ * Note that this probe requires no configuration (it uses local host configuration defaults). However, if necessary,
  * you can set your own configuration properties (see <code>NCProbeConfigBuilder</code> class for details).
  */
 public class WeatherProbeRunner {

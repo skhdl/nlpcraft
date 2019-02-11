@@ -68,6 +68,7 @@ public class GeoManager {
     
     /**
      * Gets optional geo data by given sentence.
+     *
      * @param sen Sentence.
      * @return Geo data. Optional.
      */
@@ -145,6 +146,7 @@ public class GeoManager {
     
     /**
      * Gets external IP.
+     *
      * @return External IP.
      * @throws IOException If any errors occur.
      */
@@ -157,7 +159,6 @@ public class GeoManager {
     
     /**
      * Gets Silicon Valley location. Used as default value for each example service.
-     *
      * This default location definition added here just for accumulating all GEO manipulation logic in one class.
      *
      * @return Silicon Valley location.

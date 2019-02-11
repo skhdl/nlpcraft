@@ -53,7 +53,13 @@
             color: $color-blue2;
 
             code {
-                color: $color-beta;
+                background-color: $color-travis-passing;
+                color: #fff;
+                padding: 2px 4px;
+                -webkit-border-radius: 2px;
+                -moz-border-radius: 2px;
+                border-radius: 2px;
+                font-weight: 700;
             }
         }
 

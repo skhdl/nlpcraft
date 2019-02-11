@@ -75,3 +75,13 @@
         text-decoration: inherit;
     }
 }
+
+.page-title, .page-title span {
+    font-weight: 700;
+    color: $color-slack;
+    margin-bottom: 30px;
+
+    & > i.fa {
+        margin-left: -7px;
+    }
+}
