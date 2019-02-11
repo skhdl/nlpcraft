@@ -63,7 +63,7 @@ public class TimeProvider3 extends NCModelProviderAdapter {
             ctx -> NCQueryResult.text(LessonsUtils.now())
         );
 
-        String path = "modules/examples/src/org/nlpcraft/examples/lessons/lesson3/time_model3.json";
+        String path = "modules/examples/src/main/java/org/nlpcraft/examples/lessons/lesson3/time_model3.json";
         NCModel model = NCModelBuilder.newJsonModel(path).setQueryFunction(solver::solve).build();
     
         // Initialize adapter.

@@ -273,6 +273,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         ensureStarted()
 
+        logger.trace(s"User endpoint notification [userId=${state.userId}, endpoint=$ep, srvReqId=${state.srvReqId}]")
+
         val t = now()
 
         cache.put(state.srvReqId, Value(state = state, endpoint = ep, sendTime = t, attempts = 0, createdOn = t))
@@ -293,6 +295,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         ensureStarted()
 
+        logger.trace(s"User endpoint notification cancel [userId=$usrId, srvReqId=$srvReqId]")
+
         cache.get(srvReqId) match {
             case null ⇒ // No-op.
             case v ⇒
@@ -307,17 +311,16 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
       * Cancel notifications for given user ID and endpoint.
       *
       * @param usrId User ID.
-      * @param ep Endpoint.
       */
-    def cancelNotifications(usrId: Long, ep: String): Unit = {
-        require(ep != null)
-
+    def cancelNotifications(usrId: Long): Unit = {
         ensureStarted()
 
-        val sql: SqlQuery[String, Value] = new SqlQuery(classOf[Value], "state.userId = ? AND endpoint = ?")
+        logger.trace(s"User endpoint notifications cancel [userId=$usrId]")
+
+        val sql: SqlQuery[String, Value] = new SqlQuery(classOf[Value], "state.userId = ?")
 
         val m =
-            managed { cache.query(sql.setArgs(Array(usrId, ep))) } acquireAndGet { cursor ⇒
+            managed { cache.query(sql.setArgs(Array(usrId))) } acquireAndGet { cursor ⇒
                 cursor.map(p ⇒ p.getKey → p.getValue).toMap
             }
 

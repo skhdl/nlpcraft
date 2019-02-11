@@ -238,6 +238,9 @@ public class NCTestClientBuilder {
         checkNotNull("baseUrl", impl.getBaseUrl());
         checkPositive("checkIntervalMs", impl.getCheckInterval());
         
+        if (impl.isUseEndpoint())
+            checkNotNull("endpoint", impl.getEndpoint());
+        
         return impl;
     }
     
@@ -364,10 +367,9 @@ public class NCTestClientBuilder {
         private volatile boolean closed = false;
         private String acsTok;
         private long dsId;
+        private String mdlId;
         private boolean isTestDs = false;
         private HttpServer server;
-        private List<NCDsJson> dss;
-        private Map<Long, String> mdlIds;
         
         NCTestClientImpl() {
             httpCli = mkClient();
@@ -432,11 +434,19 @@ public class NCTestClientBuilder {
         void setUseEndpoint(boolean useEndpoint) {
             this.useEndpoint = useEndpoint;
         }
-        
-        public void setEndpoint(String endpoint) {
+    
+        boolean isUseEndpoint() {
+            return useEndpoint;
+        }
+    
+        void setEndpoint(String endpoint) {
             this.endpoint = endpoint;
         }
-        
+    
+        String getEndpoint() {
+            return endpoint;
+        }
+    
         private CloseableHttpClient mkClient() {
             return cliSup != null ? cliSup.get() : HttpClients.createDefault();
         }
@@ -448,21 +458,38 @@ public class NCTestClientBuilder {
             if (!opened) throw new IllegalStateException("Client is not opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
 
-            long maxTime = now() + maxCheckTimeMs;
+            String srvReqId;
+            
+            try {
+                srvReqId = ask0(txt);
+            }
+            catch (NCTestClientException e) {
+                return mkResult(
+                    txt,
+                    dsId,
+                    mdlId,
+                    null,
+                    null,
+                    e.getLocalizedMessage(),
+                    0
+                );
+            }
 
-            String srvReqId = ask0(txt);
-
-            if (useEndpoint)
+            if (useEndpoint) {
+                long maxTime = now() + maxCheckTimeMs;
+                
                 while (true) {
                     NCRequestStateJson js = this.res.remove(srvReqId);
-                    
-                    assert js.status.equals("QRY_READY");
-
-                    if (js != null)
-                        return mkResult(txt, mdlIds.get(js.getDataSourceId()), js);
-
+    
+                    if (js != null) {
+                        assert js.status.equals("QRY_READY");
+        
+                        return mkResult(txt, dsId, mdlId, js);
+                    }
+    
                     waitUntil(maxTime);
                 }
+            }
             
             while (true) {
                 Optional<NCRequestStateJson> opt =
@@ -474,7 +501,7 @@ public class NCTestClientBuilder {
                 if (opt.isPresent()) {
                     NCRequestStateJson js = opt.get();
                     
-                    return mkResult(txt, mdlIds.get(js.getDataSourceId()), js);
+                    return mkResult(txt, dsId, mdlId, js);
                 }
 
                 waitUntil(now() + checkIntervalMs);
@@ -497,11 +524,17 @@ public class NCTestClientBuilder {
                 this.dsId = createTestDs(mdlId);
                 this.isTestDs = true;
             }
+    
+            Optional<NCDsJson> dsOpt = getDss().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
             
-            this.dss = getDss();
-            this.mdlIds = this.dss.stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
+            if (!dsOpt.isPresent())
+                throw new NCTestClientException(String.format("Data source not found: %d", dsId));
+            
+            this.mdlId = dsOpt.get().getModelId();
             
             if (useEndpoint) {
+                registerEndpoint();
+                
                 URL url = new URL(endpoint);
                 
                 server = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
@@ -526,10 +559,11 @@ public class NCTestClientBuilder {
                     try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
                         out.write(resp.getBytes());
                     }
-                    
                 });
                 
                 server.start();
+                
+                log.info(String.format("Server started: %s", endpoint));
             }
             
             this.opened = true;
@@ -581,21 +615,22 @@ public class NCTestClientBuilder {
         }
     
         private void waitUntil(long wakeupTime) throws NCTestClientException {
-            long sleepTime = now() - wakeupTime;
+            long sleepTime = wakeupTime - now();
         
             if (sleepTime <= 0)
                 throw new NCTestClientException(String.format("Max time elapsed: %d", maxCheckTimeMs));
         
-            try {
-                mux.wait(maxCheckTimeMs);
-            }
-            catch (InterruptedException e) {
-                throw new NCTestClientException(
-                    String.format("Thread interrupted: %s", Thread.currentThread().getName()), e
-                );
+            synchronized (mux) {
+                try {
+                    mux.wait(sleepTime);
+                }
+                catch (InterruptedException e) {
+                    throw new NCTestClientException(
+                        String.format("Thread interrupted: %s", Thread.currentThread().getName()), e
+                    );
+                }
             }
         }
-    
     
         @SuppressWarnings("unchecked")
         private <T> T getField(Map<String, Object> m, String fn) throws NCTestClientException {
@@ -687,8 +722,14 @@ public class NCTestClientBuilder {
         private void clearConversation0() throws IOException, NCTestClientException {
             log.info("`clear/conversation` request sent for data source: {}", dsId);
             
-            checkStatus(gson.fromJson(post("clear/conversation", Pair.of("accessToken", acsTok), Pair.of("dsId",
-                dsId)), TYPE_RESP));
+            checkStatus(gson.fromJson(
+                post(
+                    "clear/conversation",
+                    Pair.of("accessToken", acsTok),
+                    Pair.of("dsId", dsId)
+                ),
+                TYPE_RESP)
+            );
         }
         
         /**
@@ -700,11 +741,20 @@ public class NCTestClientBuilder {
         private long createTestDs(String mdlId) throws IOException, NCTestClientException {
             log.info("`ds/add` request sent for model: {}", mdlId);
             
-            long id = checkAndExtract(post("ds/add", Pair.of("accessToken", acsTok), Pair.of("name", "test"),
-                Pair.of("shortDesc", "Test data source"), Pair.of("mdlId", mdlId), Pair.of("mdlName", "Test model"),
-                Pair.of("mdlVer", "Test version")
-            
-            ), "id", Long.class);
+            long id =
+                checkAndExtract(
+                    post(
+                        "ds/add",
+                        Pair.of("accessToken", acsTok),
+                        Pair.of("name", "test"),
+                        Pair.of("shortDesc", "Test data source"),
+                        Pair.of("mdlId", mdlId),
+                        Pair.of("mdlName", "Test model"),
+                        Pair.of("mdlVer", "Test version")
+                    ),
+                    "id",
+                    Long.class
+                );
             
             log.info("Temporary test data source created: {}", id);
             
@@ -718,8 +768,35 @@ public class NCTestClientBuilder {
         private void deleteTestDs() throws IOException, NCTestClientException {
             log.info("`ds/delete` request sent for temporary data source: {}", dsId);
             
-            checkStatus(gson.fromJson(post("ds/delete", Pair.of("accessToken", acsTok), Pair.of("id", dsId)),
-                TYPE_RESP));
+            checkStatus(
+                gson.fromJson(
+                    post(
+                        "ds/delete",
+                        Pair.of("accessToken", acsTok),
+                        Pair.of("id", dsId)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+    
+        /**
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private void registerEndpoint() throws IOException, NCTestClientException {
+            log.info("`endpoint/register` request sent {}", endpoint);
+        
+            checkStatus(
+                gson.fromJson(
+                    post(
+                        "endpoint/register",
+                        Pair.of("accessToken", acsTok),
+                        Pair.of("endpoint", endpoint)
+                    ),
+                    TYPE_RESP
+                )
+            );
         }
         
         /**
@@ -730,9 +807,15 @@ public class NCTestClientBuilder {
         private String signin() throws IOException, NCTestClientException {
             log.info("`user/signin` request sent for: {}", email);
             
-            return checkAndExtract(post("user/signin", Pair.of("email", email), Pair.of("passwd", pswd)
-            
-            ), "accessToken", String.class);
+            return checkAndExtract(
+                post(
+                    "user/signin",
+                    Pair.of("email", email),
+                    Pair.of("passwd", pswd)
+                ),
+                "accessToken",
+                String.class
+            );
         }
         
         /**
@@ -743,7 +826,13 @@ public class NCTestClientBuilder {
         private List<NCDsJson> getDss() throws IOException, NCTestClientException {
             log.info("`ds/all` request sent for: {}", email);
             
-            Map<String, Object> m = gson.fromJson(post("ds/all", Pair.of("accessToken", acsTok)), TYPE_RESP);
+            Map<String, Object> m = gson.fromJson(
+                post(
+                    "ds/all",
+                    Pair.of("accessToken", acsTok)
+                ),
+                TYPE_RESP
+            );
             
             checkStatus(m);
             
@@ -759,7 +848,13 @@ public class NCTestClientBuilder {
         private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
             log.info("`check` request sent for: {}", email);
             
-            Map<String, Object> m = gson.fromJson(post("check", Pair.of("accessToken", acsTok)), TYPE_RESP);
+            Map<String, Object> m = gson.fromJson(
+                post(
+                    "check",
+                    Pair.of("accessToken", acsTok)
+                ),
+                TYPE_RESP
+            );
             
             checkStatus(m);
             
@@ -775,8 +870,17 @@ public class NCTestClientBuilder {
         private String ask0(String txt) throws IOException, NCTestClientException {
             log.info("`ask` request sent: {} to data source: {}", txt, dsId);
             
-            return checkAndExtract(post("ask", Pair.of("accessToken", acsTok), Pair.of("txt", txt), Pair.of("dsId",
-                dsId), Pair.of("isTest", true)), "srvReqId", String.class);
+            return checkAndExtract(
+                post(
+                    "ask",
+                    Pair.of("accessToken", acsTok),
+                    Pair.of("txt", txt),
+                    Pair.of("dsId", dsId),
+                    Pair.of("isTest", true)
+                ),
+                "srvReqId",
+                String.class
+            );
         }
         
         /**
@@ -786,18 +890,38 @@ public class NCTestClientBuilder {
         private void signout() throws IOException, NCTestClientException {
             log.info("`user/signout` request sent for: {}", email);
             
-            checkStatus(gson.fromJson(post("user/signout", Pair.of("accessToken", acsTok)), TYPE_RESP));
+            checkStatus(gson.fromJson(
+                post(
+                    "user/signout",
+                    Pair.of("accessToken", acsTok)
+                ),
+                TYPE_RESP)
+            );
         }
     
         /**
+         *
          * @param txt
+         * @param dsId
          * @param mdlId
-         * @param js
+         * @param resType
+         * @param resBody
+         * @param errMsg
+         * @param time
          * @return
          */
-        private NCTestResult mkResult(String txt, String mdlId, NCRequestStateJson js) {
+        private NCTestResult mkResult(
+            String txt,
+            long dsId,
+            String mdlId,
+            String resType,
+            String resBody,
+            String errMsg,
+            long time
+        ) {
             assert txt != null;
-            assert js != null;
+            assert mdlId != null;
+            assert (resType != null && resBody != null) ^ errMsg != null;
             
             return new NCTestResult() {
                 private Optional<String> convert(String s) {
@@ -811,12 +935,12 @@ public class NCTestClientBuilder {
                 
                 @Override
                 public long getProcessingTime() {
-                    return js.getUpdateTstamp() - js.getCreateTstamp();
+                    return time;
                 }
                 
                 @Override
                 public long getDataSourceId() {
-                    return js.getDataSourceId();
+                    return dsId;
                 }
                 
                 @Override
@@ -826,19 +950,39 @@ public class NCTestClientBuilder {
                 
                 @Override
                 public Optional<String> getResult() {
-                    return convert(js.getResultBody());
+                    return convert(resBody);
                 }
                 
                 @Override
                 public Optional<String> getResultType() {
-                    return convert(js.getResultType());
+                    return convert(resType);
                 }
                 
                 @Override
                 public Optional<String> getResultError() {
-                    return convert(js.getError());
+                    return convert(errMsg);
                 }
             };
+        }
+    
+        /**
+         *
+         * @param txt
+         * @param dsId
+         * @param mdlId
+         * @param js
+         * @return
+         */
+        private NCTestResult mkResult(String txt, long dsId, String mdlId, NCRequestStateJson js) {
+            return mkResult(
+                txt,
+                dsId,
+                mdlId,
+                js.getResultType(),
+                js.getResultBody(),
+                js.getError(),
+                js.getUpdateTstamp() - js.getCreateTstamp()
+            );
         }
     }
     

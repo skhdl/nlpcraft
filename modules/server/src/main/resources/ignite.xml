@@ -112,7 +112,7 @@
     </bean>
 
     <bean name="endpoint-notification-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="qry-state-cache"/>
+        <property name="name" value="endpoint-notification-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
         <property name="atomicityMode" value="TRANSACTIONAL"/>
         <property name="expiryPolicyFactory" ref="oneDayPolicy"/>

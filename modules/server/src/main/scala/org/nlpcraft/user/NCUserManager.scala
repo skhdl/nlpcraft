@@ -134,7 +134,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                 idSigninCache.remove(ses.userId)
 
                                 ses.endpoint match {
-                                    case Some(ep) ⇒ NCEndpointManager.cancelNotifications(ses.userId, ep)
+                                    case Some(_) ⇒ NCEndpointManager.cancelNotifications(ses.userId)
                                     case None ⇒ // No-op.
                                 }
 
@@ -342,7 +342,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                         val acsTkn = NCBlowfishHasher.hash(G.genGuid())
                                         val now = G.nowUtcMs()
 
-                                        tokenSigninCache.put(acsTkn,
+                                        tokenSigninCache.put(
+                                            acsTkn,
                                             SigninSession(
                                                 acsTkn,
                                                 usr.id,
@@ -631,11 +632,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             catching(wrapIE) {
                 NCTxManager.startTx {
                     idSigninCache.get(usrId) match {
-                        case null ⇒ None
+                        case null ⇒
+                            logger.trace(s"User cache not found for: $usrId")
+
+                            None
                         case acsToken ⇒
                             tokenSigninCache.get(acsToken) match {
                                 case null ⇒
-                                    logger.error(s"Token cache not found for :$acsToken")
+                                    logger.error(s"Token cache not found for: $acsToken")
 
                                     None
                                 case ses ⇒ Some(ses)
@@ -650,19 +654,26 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         }
     }
 
-    private def registerEndpoint0(usrId: Long, ep: Option[String]): Unit =
+    private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
         execute(
             usrId,
-            ses ⇒
-                tokenSigninCache.put(ses.acsToken,
+            ses ⇒ {
+                epOpt match {
+                    case Some(ep) ⇒ logger.debug(s"Endpoint registered [userId=$usrId, endpoint=$ep]")
+                    case None ⇒ case Some(e) ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
+                }
+
+                tokenSigninCache.put(
+                    ses.acsToken,
                     SigninSession(
                         ses.acsToken,
                         ses.userId,
                         ses.signinMs,
                         ses.lastAccessMs,
-                        ep
+                        epOpt
                     )
                 )
+            }
         )
 
     /**

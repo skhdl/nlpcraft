@@ -182,7 +182,7 @@ public class TimeProvider7 extends NCModelProviderAdapter {
      * @throws NCException If any errors occur.
      */
     TimeProvider7() throws NCException {
-        String path = "modules/examples/src/org/nlpcraft/examples/lessons/lesson7/time_model7.json";
+        String path = "modules/examples/src/main/java/org/nlpcraft/examples/lessons/lesson7/time_model7.json";
 
         NCIntentSolver solver =
             new NCIntentSolver(

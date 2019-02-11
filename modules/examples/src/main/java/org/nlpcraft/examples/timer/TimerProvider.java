@@ -82,7 +82,7 @@ public class TimerProvider extends NCModelProviderAdapter {
         );
     
         setup(NCModelBuilder.newJsonModel(
-            "modules/examples/src/org/nlpcraft/examples/timer/timer_model.json").
+            "modules/examples/src/main/java/org/nlpcraft/examples/timer/timer_model.json").
             setQueryFunction(solver::solve).build());
     }
     
