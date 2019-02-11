@@ -477,7 +477,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
      * Initializes model provider.
      */
     WeatherProvider() {
-        String modelPath = NCModelBuilder.classPathFile("weather_model.json");
+        String modelPath = "modules/examples/src/org/nlpcraft/examples/weather/weather_model.json";
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {

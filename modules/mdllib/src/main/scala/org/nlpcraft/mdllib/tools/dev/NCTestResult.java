@@ -34,9 +34,7 @@ package org.nlpcraft.mdllib.tools.dev;
 import java.util.*;
 
 /**
- * Test sentence result. For each {@link NCTestSentence} the test framework returns an instance of this interface.
- *
- * @see NCTestClient#ask(NCTestSentence)
+ * Test sentence result.
  */
 public interface NCTestResult {
     /**

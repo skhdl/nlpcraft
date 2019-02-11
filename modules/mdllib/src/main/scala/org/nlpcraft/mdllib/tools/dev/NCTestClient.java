@@ -45,21 +45,32 @@ public interface NCTestClient {
     /**
      * Tests single sentence and returns its result.
      *
-     * @param sen Sentence to test.
+     * @param txt Sentence to test.
      * @return Sentence result.
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
-    NCTestResult ask(NCTestSentence sen) throws NCTestClientException, IOException;
+    NCTestResult ask(String txt) throws NCTestClientException, IOException;
 
     /**
      * Connects test client to the server.
      *
+     * @param dsId TODO:
      * @throws NCTestClientException
      * @throws IOException
      */
-    void open() throws NCTestClientException, IOException;
-
+    void open(long dsId) throws NCTestClientException, IOException;
+    
+    /**
+     * Connects test client to the server.
+     *
+     * @param mdlId TODO:
+     * @throws NCTestClientException
+     * @throws IOException
+     */
+    void open(String mdlId) throws NCTestClientException, IOException;
+    
+    
     /**
      * Closes test client connection to the server.
      *
@@ -70,7 +81,7 @@ public interface NCTestClient {
 
     /**
      * Clears conversation for this test client. This method will clear conversation for
-     * its configured user and all its used data sources.
+     * its configured user.
      * 
      * @throws NCTestClientException
      * @throws IOException

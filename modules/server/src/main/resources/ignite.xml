@@ -97,13 +97,27 @@
         </constructor-arg>
     </bean>
 
-    <bean name="user-signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="user-signin-cache"/>
+    <bean name="user-token-signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="user-token-signin-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
         <property name="atomicityMode" value="TRANSACTIONAL"/>
         <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
     </bean>
-    
+
+    <bean name="user-id-signin-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="user-id-signin-cache"/>
+        <property name="cacheMode" value="REPLICATED"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
+    </bean>
+
+    <bean name="endpoint-notification-cache" class="org.apache.ignite.configuration.CacheConfiguration">
+        <property name="name" value="qry-state-cache"/>
+        <property name="cacheMode" value="REPLICATED"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="expiryPolicyFactory" ref="oneDayPolicy"/>
+    </bean>
+
     <bean name="qry-state-cache" class="org.apache.ignite.configuration.CacheConfiguration">
         <property name="name" value="qry-state-cache"/>
         <property name="cacheMode" value="REPLICATED"/>
@@ -171,7 +185,9 @@
         <!-- Caches. -->
         <property name="cacheConfiguration">
             <list>
-                <ref bean="user-signin-cache"/>
+                <ref bean="user-token-signin-cache"/>
+                <ref bean="endpoint-notification-cache"/>
+                <ref bean="user-id-signin-cache"/>
                 <ref bean="qry-state-cache"/>
                 <ref bean="sentence-cache"/>
                 <ref bean="user-cache"/>

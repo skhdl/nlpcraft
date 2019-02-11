@@ -81,7 +81,8 @@ public class TimerProvider extends NCModelProviderAdapter {
             this::onMatch
         );
     
-        setup(NCModelBuilder.newJsonModel(NCModelBuilder.classPathFile("timer_model.json")).
+        setup(NCModelBuilder.newJsonModel(
+            "modules/examples/src/org/nlpcraft/examples/timer/timer_model.json").
             setQueryFunction(solver::solve).build());
     }
     

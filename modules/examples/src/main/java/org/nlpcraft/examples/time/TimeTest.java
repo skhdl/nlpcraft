@@ -29,39 +29,52 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests.helloworld;
+package org.nlpcraft.examples.time;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.examples.tests.helpers.TestFactory;
-import org.nlpcraft.examples.tests.helpers.TestRunner;
+import org.nlpcraft.NCException;
 import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
-import java.util.Arrays;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * HelloWorld model test.
+ * Time model test.
  *
- * Note that server and {@link org.nlpcraft.examples.helloworld.HelloWorldProbeRunner} must be started before.
+ * Note that server and {@link org.nlpcraft.examples.time.TimeProbeRunner} must be started before.
  */
-public class HelloWorldTest {
-    private static final TestFactory f = new TestFactory();
-    private static final String mdlId = "nlpcraft.helloworld.ex"; // See HelloWorldProvider#HelloWorldProvider
-    private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
+public class TimeTest {
+    private NCTestClient client;
+    
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        client = new NCTestClientBuilder().newBuilder().build();
+        
+        client.open("nlpcraft.time.ex"); // See time_model.json
+    }
+    
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        client.close();
+    }
     
     @Test
-    public void test() {
-        TestRunner.test(
-            client,
-            Arrays.asList(
-                // Empty parameter.
-                f.mkFailedOnExecution(mdlId, ""),
-                
-                // Unsupported language.
-                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
-                
-                f.mkPassed(mdlId, "Hi!")
-            )
-        );
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(client.ask("").isFailed());
+        
+        // Unsupported language.
+        assertTrue(client.ask("El tiempo en España").isFailed());
+        
+        // Should be passed.
+        assertTrue(client.ask("What time is it now in New York City?").isSuccessful());
+        assertTrue(client.ask("What's the time in Moscow?").isSuccessful());
+        assertTrue(client.ask("Show me time of the day in London.").isSuccessful());
+        assertTrue(client.ask("Give me San Francisco's current date and time.").isSuccessful());
+        assertTrue(client.ask("What's the local time?").isSuccessful());
     }
 }

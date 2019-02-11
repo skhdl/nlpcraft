@@ -36,7 +36,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.sun.net.httpserver.HttpServer;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -45,17 +47,25 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.nlpcraft.ascii.NCAsciiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.*;
-import java.util.function.Function;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Test client builder for {@link NCTestClient} instances. Note that all configuration values
@@ -63,923 +73,43 @@ import java.util.stream.Stream;
  * will have to be changed if not testing with default account.
  */
 public class NCTestClientBuilder {
-    /** Default public REST API URL (endpoint). */
+    /**
+     * Default public REST API URL (endpoint).
+     */
     public static final String DFLT_BASEURL = "http://localhost:8081/api/v1/";
     
-    /** Default client email. */
+    /**
+     * Default client email.
+     */
     public static final String DFLT_EMAIL = "admin@admin.com";
     
-    /** Default client password. */
+    /**
+     * Default client password.
+     */
     public static final String DFLT_PASSWORD = "admin";
     
-    /** Default maximum statuses check time, millisecond. */
+    /**
+     * Default maximum statuses check time, millisecond.
+     */
     public static final long DFLT_MAX_CHECK_TIME = 10 * 1000;
     
-    /** Default millisecond delay between result checks. */
+    /**
+     * Default millisecond delay between result checks.
+     */
     public static final long DFLT_CHECK_INTERVAL_MS = 2000;
     
-    /** Default clear conversation flag value. */
-    public static final boolean DFLT_CLEAR_CONVERSATION = false;
+    /**
+     * TODO.
+     */
+    public static final boolean DFLT_USE_ENDPOINT = true;
+    public static final String DFLT_ENDPOINT = "http://localhost:8463/test";
     
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
+    private static final UrlValidator urlValidator =
+        new UrlValidator(new String[]{"http"}, UrlValidator.ALLOW_LOCAL_URLS);
+    
     private NCTestClientImpl impl;
-    
-    /**
-     * JSON helper class.
-     */
-    static class NCDsJson {
-        @SerializedName("id") private long dsId;
-        @SerializedName("mdlId") private String mdlId;
-    
-        public long getDataSourceId() {
-            return dsId;
-        }
-    
-        public void setDataSourceId(long dsId) {
-            this.dsId = dsId;
-        }
-    
-        public String getModelId() {
-            return mdlId;
-        }
-    
-        public void setModelId(String mdlId) {
-            this.mdlId = mdlId;
-        }
-    }
-
-    /**
-     * JSON helper class.
-     */
-    static class NCRequestStateJson {
-        @SerializedName("srvReqId") private String srvReqId;
-        @SerializedName("usrId") private long userId;
-        @SerializedName("dsId") private long dsId;
-        @SerializedName("resType") private String resType;
-        @SerializedName("resBody") private String resBody;
-        @SerializedName("status") private String status;
-        @SerializedName("error") private String error;
-        @SerializedName("createTstamp") private long createTstamp;
-        @SerializedName("updateTstamp") private long updateTstamp;
-    
-        public String getServerRequestId() {
-            return srvReqId;
-        }
-    
-        public void setServerRequestId(String srvReqId) {
-            this.srvReqId = srvReqId;
-        }
-    
-        public long getUserId() {
-            return userId;
-        }
-    
-        public void setUserId(long userId) {
-            this.userId = userId;
-        }
-    
-        public long getDataSourceId() {
-            return dsId;
-        }
-    
-        public void setDataSourceId(long dsId) {
-            this.dsId = dsId;
-        }
-    
-        public String getStatus() {
-            return status;
-        }
-    
-        public void setStatus(String status) {
-            this.status = status;
-        }
-    
-        public String getResultType() {
-            return resType;
-        }
-    
-        public void setResultType(String resType) {
-            this.resType = resType;
-        }
-    
-        public String getResultBody() {
-            return resBody;
-        }
-    
-        public void setResultBody(String resBody) {
-            this.resBody = resBody;
-        }
-    
-        public String getError() {
-            return error;
-        }
-    
-        public void setError(String error) {
-            this.error = error;
-        }
-    
-        public long getCreateTstamp() {
-            return createTstamp;
-        }
-    
-        public void setCreateTstamp(long createTstamp) {
-            this.createTstamp = createTstamp;
-        }
-    
-        public long getUpdateTstamp() {
-            return updateTstamp;
-        }
-    
-        public void setUpdateTstamp(long updateTstamp) {
-            this.updateTstamp = updateTstamp;
-        }
-    }
-    
-    private static class IdHolder {
-        private final long dsId;
-        private final String mdlId;
-    
-        IdHolder(long dsId, String mdlId) {
-            this.dsId = dsId;
-            this.mdlId = mdlId;
-        }
-    
-        long getDsId() {
-            return dsId;
-        }
-    
-        String getModelId() {
-            return mdlId;
-        }
-    }
-
-    /**
-     * Client implementation.
-     */
-    private class NCTestClientImpl implements NCTestClient {
-        private static final String STATUS_API_OK = "API_OK";
-        private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
-        private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
-        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
-        private final Gson gson = new Gson();
-        private final CloseableHttpClient httpCli;
-    
-        private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
-        private boolean clearConv = DFLT_CLEAR_CONVERSATION;
-        private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
-        private RequestConfig reqCfg;
-        private String baseUrl = DFLT_BASEURL;
-        private String email = DFLT_EMAIL;
-        private String pswd = DFLT_PASSWORD;
-        private Supplier<CloseableHttpClient> cliSup;
-    
-        NCTestClientImpl() {
-            httpCli = mkClient();
-        }
-    
-        long getCheckInterval() {
-            return checkIntervalMs;
-        }
-    
-        boolean isClearConversation() {
-            return clearConv;
-        }
-    
-        long getMaxCheckTime() {
-            return maxCheckTimeMs;
-        }
-    
-        RequestConfig getRequestConfig() {
-            return reqCfg;
-        }
-    
-        String getBaseUrl() {
-            return baseUrl;
-        }
-    
-        String getEmail() {
-            return email;
-        }
-    
-        String getPassword() {
-            return pswd;
-        }
-    
-        Supplier<CloseableHttpClient> getClientSupplier() {
-            return cliSup;
-        }
-    
-        void setCheckInterval(long checkIntervalMs) {
-            this.checkIntervalMs = checkIntervalMs;
-        }
-    
-        void setClearConversation(boolean clearConv) {
-            this.clearConv = clearConv;
-        }
-    
-        void setMaxCheckTime(long maxCheckTimeMs) {
-            this.maxCheckTimeMs = maxCheckTimeMs;
-        }
-    
-        void setRequestConfig(RequestConfig reqCfg) {
-            this.reqCfg = reqCfg;
-        }
-    
-        void setBaseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-        }
-    
-        void setEmail(String email) {
-            this.email = email;
-        }
-    
-        void setPassword(String pswd) {
-            this.pswd = pswd;
-        }
-    
-        void setClientSupplier(Supplier<CloseableHttpClient> cliSup) {
-            this.cliSup = cliSup;
-        }
-    
-        private CloseableHttpClient mkClient() {
-            return cliSup != null ? cliSup.get() : HttpClients.createDefault();
-        }
-    
-        @SuppressWarnings("unchecked")
-        private<T> T getField(Map<String, Object> m, String fn) throws NCTestClientException {
-            Object o = m.get(fn);
-        
-            if (o == null)
-                throw new NCTestClientException(
-                    String.format("Missed expected field [fields=%s, field=%s]", m.keySet(), fn)
-                );
-        
-            try {
-                return (T) o;
-            }
-            catch (ClassCastException e) {
-                throw new NCTestClientException(String.format("Invalid field type: %s", o), e);
-            }
-        }
-    
-        private void checkStatus(Map<String, Object> m) throws NCTestClientException {
-            String status = getField(m, "status");
-        
-            if (!status.equals(STATUS_API_OK))
-                throw new NCTestClientException("Unexpected message status: " + status);
-        }
-    
-        private <T> T extract(JsonElement js, Type t) throws NCTestClientException {
-            try {
-                return gson.fromJson(js, t);
-            }
-            catch (JsonSyntaxException e) {
-                throw new NCTestClientException(String.format("Invalid field type [json=%s, type=%s]", js, t), e);
-            }
-        }
-    
-        private <T> T checkAndExtract(String js, String name, Type type) throws NCTestClientException {
-            Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
-        
-            checkStatus(m);
-        
-            return extract(gson.toJsonTree(getField(m, name)), type);
-        }
-        
-        @SafeVarargs
-        private final String post(String url, Pair<String, Object>... ps) throws NCTestClientException, IOException {
-            HttpPost post = new HttpPost(baseUrl + url);
-        
-            try {
-                if (reqCfg != null)
-                    post.setConfig(reqCfg);
-            
-                StringEntity entity = new StringEntity(
-                    gson.toJson(
-                        Arrays.stream(ps).
-                            filter(p -> p.getValue() != null).
-                            collect(Collectors.toMap(Pair::getKey, Pair::getValue))
-                    )
-                );
-    
-                post.setHeader("Content-Type", "application/json");
-                post.setEntity(entity);
-            
-                log.trace("Request prepared: {}", post);
-            
-                ResponseHandler<String> h = resp -> {
-                    int code = resp.getStatusLine().getStatusCode();
-                
-                    HttpEntity e = resp.getEntity();
-                
-                    String js = e != null ? EntityUtils.toString(e) : null;
-                
-                    if (js == null)
-                        throw new NCTestClientException(String.format("Unexpected empty response [code=%d]", code));
-                
-                    switch (code) {
-                        case 200: return js;
-                        case 400: throw new NCTestClientException(js);
-                        default:
-                            throw new NCTestClientException(
-                                String.format("Unexpected response [code=%d, text=%s]", code, js)
-                            );
-                    }
-                };
-            
-                String s = httpCli.execute(post, h);
-            
-                log.trace("Response received: {}", s);
-            
-                return s;
-            }
-            finally {
-                post.releaseConnection();
-            }
-        }
-    
-        @Override
-        public List<NCTestResult> test(NCTestSentence... tests) throws NCTestClientException, IOException {
-            return test(Arrays.asList(tests));
-        }
-        
-        @Override
-        public NCTestResult test(NCTestSentence sen) throws NCTestClientException, IOException {
-            return test(Collections.singletonList(sen)).get(0);
-        }
-
-        @Override
-        public synchronized List<NCTestResult> test(List<NCTestSentence> tests)
-            throws NCTestClientException, IOException {
-            checkNotNull("tests", tests);
-            
-            Set<String> mdlIds =
-                tests.stream().
-                    filter(p -> p.getModelId().isPresent()).
-                    map(p -> p.getModelId().get()).
-                    collect(Collectors.toSet());
-            
-            String acsTok = signin();
-    
-            Map<String, Long> newDssIds = new HashMap<>();
-            
-            int num = 0;
-            
-            for (String mdlId : mdlIds) {
-                newDssIds.put(mdlId, createTestDs(acsTok, mdlId, num++));
-            }
-    
-            Map<NCTestSentence, NCTestResult> res = new HashMap<>();
-            
-            try {
-                Map<Long, String> dssMdlIds =
-                    getDss(acsTok).stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
-    
-                Map<NCTestSentence, IdHolder> testsExt =
-                    tests.stream().collect(
-                        Collectors.toMap(
-                            p -> p,
-                            p -> {
-                                long dsId;
-                                
-                                if (p.getDataSourceId().isPresent())
-                                    dsId = p.getDataSourceId().get();
-                                else {
-                                    assert p.getModelId().isPresent();
-    
-                                    dsId = newDssIds.get(p.getModelId().get());
-                                }
-                                
-                                return new IdHolder(dsId, dssMdlIds.get(dsId));
-                            }
-                        )
-                    );
-                
-                Function<NCTestSentence, Map<NCTestSentence, IdHolder>> mkSingleMap = (t) -> {
-                    Map<NCTestSentence, IdHolder> m = new HashMap<>();
-                    
-                    m.put(t, testsExt.get(t));
-                    
-                    return m;
-                };
-    
-                if (clearConv) {
-                    for (NCTestSentence test : tests) {
-                        clearConversation(acsTok, testsExt.get(test).getDsId());
-        
-                        res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
-                    }
-                }
-                else {
-                    Set<Long> dsIds =
-                        tests.stream().map(t -> testsExt.get(t).getDsId()).collect(Collectors.toSet());
-
-                    clearConversationAllDss(acsTok, dsIds);
-
-                    for (NCTestSentence test : tests) {
-                        res.putAll(executeAsync(acsTok, mkSingleMap.apply(test)));
-                    }
-                }
-            }
-            catch (InterruptedException e) {
-                throw new NCTestClientException("Test interrupted.", e);
-            }
-            finally {
-                // This potential error can be ignored. Also it shouldn't override main method errors.
-                try {
-                    for (Long id : newDssIds.values()) {
-                        deleteTestDs(acsTok, id);
-                    }
-                    
-                    signout(acsTok);
-                }
-                catch (Exception e) {
-                    log.error("Signout error.", e);
-                }
-            }
-    
-            List<NCTestResult> list =
-                res.entrySet().
-                    stream().
-                    sorted(Comparator.comparingInt(o -> tests.indexOf(o.getKey()))).
-                    map(Map.Entry::getValue).
-                    collect(Collectors.toList());
-            
-            printResult(tests, list);
-    
-            return list;
-        }
-    
-        private void printResult(List<NCTestSentence> tests, List<NCTestResult> results) {
-            assert tests != null && results != null;
-            assert !tests.isEmpty();
-            assert tests.size() == results.size();
-            
-            int n = tests.size();
-            
-            NCAsciiTable resTab = new NCAsciiTable();
-    
-            resTab.addHeaders(
-                Arrays.asList(
-                    "Number",
-                    "Sentence",
-                    "Data source ID",
-                    "Model ID",
-                    "Result",
-                    "Error",
-                    "Time (ms)"
-                )
-            );
-            
-            int i = 1;
-    
-            for (NCTestResult res : results) {
-                List<Object> row = new ArrayList<>();
-                
-                row.add(i++);
-                
-                String txt = res.getText();
-                
-                row.add(txt.length() > 100 ? txt.substring(0, 100) + "..." : txt);
-                row.add(res.getDataSourceId());
-                row.add(res.getModelId());
-                row.add(res.getResult().orElse(""));
-                row.add(res.getResultError().orElse(""));
-                row.add(res.getProcessingTime());
-    
-                resTab.addRow(row);
-            }
-    
-            log.info("Test execution result:\n" + resTab.toString());
-    
-            NCAsciiTable statTab = new NCAsciiTable();
-            
-            statTab.addHeaders(
-                Arrays.asList(
-                    "Tests Count",
-                    "Passed",
-                    "Failed",
-                    "Min Time (ms)",
-                    "Max Time (ms)",
-                    "Avg Time (ms)"
-                )
-            );
-    
-            List<Object> row = new ArrayList<>();
-            
-            row.add(n);
-            
-            long passed = results.stream().filter(p -> !p.getResultError().isPresent()).count();
-            
-            row.add(passed);
-            row.add(n - passed);
-    
-            OptionalLong min = results.stream().mapToLong(NCTestResult::getProcessingTime).min();
-            OptionalLong max = results.stream().mapToLong(NCTestResult::getProcessingTime).max();
-            
-            assert min.isPresent() && max.isPresent();
-            
-            row.add(min.getAsLong());
-            row.add(max.getAsLong());
-            
-            double avg = results.stream().mapToDouble(NCTestResult::getProcessingTime).sum() / n;
-            
-            row.add(Math.round(avg * 100.) / 100.);
-    
-            statTab.addRow(row);
-    
-            log.info("Tests statistic:\n" + statTab.toString());
-        }
-    
-        private void clearConversationAllDss(String acsTok, Set<Long> dssIds) throws IOException, NCTestClientException {
-            for (Long dsId : dssIds) {
-                clearConversation(acsTok, dsId);
-            }
-        }
-    
-        private void clearConversation(String acsTok, long dsId) throws IOException, NCTestClientException {
-            log.info("`clear/conversation` request sent for data source: {}", dsId);
-            
-            checkStatus(
-                gson.fromJson(
-                    post("clear/conversation",
-                        Pair.of("accessToken", acsTok),
-                        Pair.of("dsId", dsId)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-    
-        private void cancel(String acsTok, Set<String> ids) throws IOException, NCTestClientException {
-            log.info("`cancel` request sent for requests: {}", ids);
-            
-            checkStatus(
-                gson.fromJson(
-                    post("cancel",
-                        Pair.of("accessToken", acsTok),
-                        Pair.of("srvReqIds", ids)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @param mdlId
-         * @param num
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private long createTestDs(String acsTok, String mdlId, long num) throws IOException, NCTestClientException {
-            log.info("`ds/add` request sent for model: {}", mdlId);
-            
-            long id =
-                checkAndExtract(
-                    post("ds/add",
-                        Pair.of("accessToken", acsTok),
-                        Pair.of("name", "test-" + num),
-                        Pair.of("shortDesc", "Test data source"),
-                        Pair.of("mdlId", mdlId),
-                        Pair.of("mdlName", "Test model"),
-                        Pair.of("mdlVer", "Test version")
-            
-                    ),
-                    "id",
-                    Long.class
-               );
-    
-            log.info("Temporary test data source created: {}", id);
-            
-            return id;
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @param id
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private void deleteTestDs(String acsTok, long id) throws IOException, NCTestClientException {
-            log.info("`ds/delete` request sent for temporary data source: {}", id);
-            
-            checkStatus(
-                gson.fromJson(
-                    post("ds/delete",
-                        Pair.of("accessToken", acsTok),
-                        Pair.of("id", id)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-
-        /**
-         *
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private String signin() throws IOException, NCTestClientException {
-            log.info("`user/signin` request sent for: {}", email);
-            
-            return checkAndExtract(
-                post("user/signin",
-                    Pair.of("email", email),
-                    Pair.of("passwd", pswd)
-                    
-                ),
-                "accessToken",
-                String.class
-            );
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private List<NCDsJson> getDss(String acsTok) throws IOException, NCTestClientException {
-            log.info("`ds/all` request sent for: {}", email);
-    
-            Map<String, Object> m = gson.fromJson(
-                post("ds/all",
-                    Pair.of("accessToken", acsTok)
-                ),
-                TYPE_RESP
-            );
-    
-            checkStatus(m);
-    
-            return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
-            log.info("`check` request sent for: {}", email);
-        
-            Map<String, Object> m = gson.fromJson(
-                post("check",
-                    Pair.of("accessToken", acsTok)
-                ),
-                TYPE_RESP
-            );
-        
-            checkStatus(m);
-        
-            return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @param txt
-         * @param dsId
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private String ask(String acsTok, String txt, long dsId) throws IOException, NCTestClientException {
-            log.info("`ask` request sent: {} to data source: {}", txt, dsId);
-        
-            return checkAndExtract(
-                post("ask",
-                    Pair.of("accessToken", acsTok),
-                    Pair.of("txt", txt),
-                    Pair.of("dsId", dsId),
-                    Pair.of("isTest", true)
-                ),
-                "srvReqId",
-                String.class
-            );
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private void signout(String acsTok) throws IOException, NCTestClientException {
-            log.info("`user/signout` request sent for: {}", email);
-            
-            checkStatus(
-                gson.fromJson(
-                    post("user/signout",
-                        Pair.of("accessToken", acsTok)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-
-        /**
-         *
-         * @param acsTok
-         * @param tests
-         * @return
-         * @throws IOException
-         * @throws InterruptedException
-         */
-        private Map<NCTestSentence, NCTestResult> executeAsync(
-            String acsTok,
-            Map<NCTestSentence, IdHolder> tests
-        ) throws IOException, InterruptedException {
-            int n = tests.size();
-    
-            Map<String, NCTestSentence> testsMap = new HashMap<>(n);
-            Map<String, NCRequestStateJson> testsResMap = new HashMap<>();
-            Map<NCTestSentence, Pair<String, Long>> askErrTests = new HashMap<>();
-            
-            try {
-                for (Map.Entry<NCTestSentence, IdHolder> entry : tests.entrySet()) {
-                    NCTestSentence test = entry.getKey();
-                    IdHolder h = entry.getValue();
-                    
-                    long now = System.currentTimeMillis();
-    
-                    try {
-                        String srvReqId = ask(acsTok, test.getText(), h.getDsId());
-        
-                        log.debug("Sentence sent: {}", srvReqId);
-        
-                        testsMap.put(srvReqId, test);
-                    }
-                    catch (NCTestClientException e) {
-                        askErrTests.put(test, Pair.of(e.getMessage(), System.currentTimeMillis() - now));
-                    }
-                }
-    
-                log.debug("Sentences sent: {}", testsMap.size());
-    
-                long startTime = System.currentTimeMillis();
-    
-                while (testsResMap.size() != testsMap.size()) {
-                    if (System.currentTimeMillis() - startTime > maxCheckTimeMs)
-                        throw new NCTestClientException(
-                            String.format("Timed out waiting for response: %d", maxCheckTimeMs)
-                        );
-        
-                    List<NCRequestStateJson> states = check(acsTok);
-                    
-                    Thread.sleep(checkIntervalMs);
-    
-                    Map<String, NCRequestStateJson> res =
-                        states.stream().
-                        filter(p -> p.getStatus().equals("QRY_READY")).
-                        collect(Collectors.toMap(NCRequestStateJson::getServerRequestId, p -> p));
-    
-                    testsResMap.putAll(res);
-    
-                    long newResps = res.keySet().stream().filter(p -> !testsResMap.containsKey(p)).count();
-    
-                    log.debug("Request processed: {}", newResps);
-                }
-            }
-            finally {
-                if (!testsMap.isEmpty())
-                    // This potential error can be ignored. Also it shouldn't override main method errors.
-                    try {
-                        cancel(acsTok, testsMap.keySet());
-                    }
-                    catch (Exception e) {
-                        log.error("Tests request cancel error: " + testsMap.keySet(), e);
-                    }
-            }
-    
-            return Stream.concat(
-                testsResMap.entrySet().stream().map(p -> {
-                    NCTestSentence test = testsMap.get(p.getKey());
-                    NCRequestStateJson testRes = p.getValue();
-    
-                    IdHolder h = tests.get(test);
-                    
-                    return
-                        Pair.of(
-                            test,
-                            mkResult(
-                                test,
-                                testRes.getUpdateTstamp() - testRes.getCreateTstamp(),
-                                h.getDsId(),
-                                h.getModelId(),
-                                testRes.getResultBody(),
-                                testRes.getResultType(),
-                                testRes.getError()
-                            )
-                        );
-                }),
-                askErrTests.entrySet().stream().map(p -> {
-                    NCTestSentence test = p.getKey();
-                    String err = p.getValue().getLeft();
-                    long time = p.getValue().getRight();
-    
-                    IdHolder h = tests.get(test);
-    
-                    return Pair.of(
-                        test,
-                        mkResult(
-                            test, time, h.getDsId(), h.getModelId(), null, null, err
-                        )
-                    );
-                })
-            ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-        }
-    }
-
-    /**
-     *
-     * @param test
-     * @param procTime
-     * @param dsId
-     * @param mdlId
-     * @param res
-     * @param resType
-     * @param err
-     * @return
-     */
-    private static NCTestResult mkResult(
-        NCTestSentence test, long procTime, long dsId, String mdlId, String res, String resType, String err
-    ) {
-        assert test != null;
-        assert mdlId != null;
-        assert (res != null && resType != null) ^ err != null;
-        
-        return new NCTestResult() {
-            private Optional<String>convert(String s) {
-                return s == null ? Optional.empty() : Optional.of(s);
-            }
-            
-            @Override
-            public String getText() {
-                return test.getText();
-            }
-    
-            @Override
-            public long getProcessingTime() {
-                return procTime;
-            }
-    
-            @Override
-            public long getDataSourceId() {
-                return dsId;
-            }
-    
-            @Override
-            public String getModelId() {
-                return mdlId;
-            }
-    
-            @Override
-            public Optional<String> getResult() {
-                return convert(res);
-            }
-    
-            @Override
-            public Optional<String> getResultType() {
-                return convert(resType);
-            }
-            
-            @Override
-            public Optional<String> getResultError() {
-                return convert(err);
-            }
-        };
-    }
-
-    /**
-     *
-     * @param name
-     * @param v
-     * @throws IllegalArgumentException
-     */
-    private static void checkNotNull(String name, Object v) throws IllegalArgumentException {
-        if (v == null)
-            throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
-    }
-
-    /**
-     *
-     * @param name
-     * @param v
-     * @throws IllegalArgumentException
-     */
-    private static void checkPositive(String name, long v) throws IllegalArgumentException {
-        if (v <= 0)
-            throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));
-    }
     
     /**
      * Creates new default builder instance.
@@ -1018,20 +148,6 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets whether or not to clear conversation after each test request.
-     * Note that if this flag set to {@code false}, requests always sent in synchronous (one-by-one) mode.
-     * Default values is {@link NCTestClientBuilder#DFLT_CLEAR_CONVERSATION}.
-     *
-     * @param clearConv Whether or not to clear conversation after each test request.
-     * @return Builder instance for chaining calls.
-     */
-    public NCTestClientBuilder setClearConversation(boolean clearConv) {
-        impl.setClearConversation(clearConv);
-        
-        return this;
-    }
-    
-    /**
      * Sets {@link CloseableHttpClient} custom supplier.
      * By default {@link CloseableHttpClient} created with {@link HttpClients#createDefault()}.
      *
@@ -1040,7 +156,7 @@ public class NCTestClientBuilder {
      */
     public NCTestClientBuilder setHttpClientSupplier(Supplier<CloseableHttpClient> cliSup) {
         impl.setClientSupplier(cliSup);
-    
+        
         return this;
     }
     
@@ -1054,11 +170,10 @@ public class NCTestClientBuilder {
     public NCTestClientBuilder setBaseUrl(String baseUrl) {
         String s = baseUrl;
         
-        if (!s.endsWith("/"))
-            s += '/';
+        if (!s.endsWith("/")) s += '/';
         
         impl.setBaseUrl(s);
-    
+        
         return this;
     }
     
@@ -1067,13 +182,13 @@ public class NCTestClientBuilder {
      * By default {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD} are used.
      *
      * @param email User email.
-     * @param pswd User password.
+     * @param pswd  User password.
      * @return Builder instance for chaining calls.
      */
     public NCTestClientBuilder setUser(String email, String pswd) {
         impl.setEmail(email);
         impl.setPassword(pswd);
-     
+        
         return this;
     }
     
@@ -1086,7 +201,28 @@ public class NCTestClientBuilder {
      */
     public NCTestClientBuilder setMaxCheckTime(long maxCheckTimeMs) {
         impl.setMaxCheckTime(maxCheckTimeMs);
+        
+        return this;
+    }
     
+    /**
+     * TODO: User endpoint or use check calls,
+     */
+    public NCTestClientBuilder setUseEndpoint(boolean useEndpoint) {
+        impl.setUseEndpoint(useEndpoint);
+        
+        return this;
+    }
+    
+    /**
+     * TODO: http only
+     */
+    public NCTestClientBuilder setEndpoint(String endpoint) {
+        if (!urlValidator.isValid(endpoint))
+            throw new IllegalArgumentException(String.format("Invalid endpoint: %s", endpoint));
+        
+        impl.setEndpoint(endpoint);
+        
         return this;
     }
     
@@ -1101,7 +237,627 @@ public class NCTestClientBuilder {
         checkNotNull("pswd", impl.getPassword());
         checkNotNull("baseUrl", impl.getBaseUrl());
         checkPositive("checkIntervalMs", impl.getCheckInterval());
-
+        
         return impl;
+    }
+    
+    /**
+     * JSON helper class.
+     */
+    static class NCDsJson {
+        @SerializedName("id")
+        private long dsId;
+        @SerializedName("mdlId")
+        private String mdlId;
+        
+        public long getDataSourceId() {
+            return dsId;
+        }
+        
+        public void setDataSourceId(long dsId) {
+            this.dsId = dsId;
+        }
+        
+        public String getModelId() {
+            return mdlId;
+        }
+        
+        public void setModelId(String mdlId) {
+            this.mdlId = mdlId;
+        }
+    }
+    
+    /**
+     * JSON helper class.
+     */
+    static class NCRequestStateJson {
+        @SerializedName("srvReqId") private String srvReqId;
+        @SerializedName("usrId") private long userId;
+        @SerializedName("dsId") private long dsId;
+        @SerializedName("resType") private String resType;
+        @SerializedName("resBody") private String resBody;
+        @SerializedName("status") private String status;
+        @SerializedName("error") private String error;
+        @SerializedName("createTstamp") private long createTstamp;
+        @SerializedName("updateTstamp") private long updateTstamp;
+        
+        public String getServerRequestId() {
+            return srvReqId;
+        }
+        public void setServerRequestId(String srvReqId) {
+            this.srvReqId = srvReqId;
+        }
+        public long getUserId() {
+            return userId;
+        }
+        public void setUserId(long userId) {
+            this.userId = userId;
+        }
+        public long getDataSourceId() {
+            return dsId;
+        }
+        public void setDataSourceId(long dsId) {
+            this.dsId = dsId;
+        }
+        public String getStatus() {
+            return status;
+        }
+        public void setStatus(String status) {
+            this.status = status;
+        }
+        public String getResultType() {
+            return resType;
+        }
+        public void setResultType(String resType) {
+            this.resType = resType;
+        }
+        public String getResultBody() {
+            return resBody;
+        }
+        public void setResultBody(String resBody) {
+            this.resBody = resBody;
+        }
+        public String getError() {
+            return error;
+        }
+        public void setError(String error) {
+            this.error = error;
+        }
+        public long getCreateTstamp() {
+            return createTstamp;
+        }
+        public void setCreateTstamp(long createTstamp) {
+            this.createTstamp = createTstamp;
+        }
+        public long getUpdateTstamp() {
+            return updateTstamp;
+        }
+        public void setUpdateTstamp(long updateTstamp) {
+            this.updateTstamp = updateTstamp;
+        }
+    }
+    
+    /**
+     * Client implementation.
+     */
+    private class NCTestClientImpl implements NCTestClient {
+        private static final String STATUS_API_OK = "API_OK";
+        private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+        private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
+        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
+        private final Gson gson = new Gson();
+        private final CloseableHttpClient httpCli;
+        private final Object mux = new Object();
+        private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
+        
+        private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
+        private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
+        private String baseUrl = DFLT_BASEURL;
+        private String email = DFLT_EMAIL;
+        private String pswd = DFLT_PASSWORD;
+        private boolean useEndpoint = DFLT_USE_ENDPOINT;
+        private String endpoint = DFLT_ENDPOINT;
+        
+        private RequestConfig reqCfg;
+        private Supplier<CloseableHttpClient> cliSup;
+        private volatile boolean opened = false;
+        private volatile boolean closed = false;
+        private String acsTok;
+        private long dsId;
+        private boolean isTestDs = false;
+        private HttpServer server;
+        private List<NCDsJson> dss;
+        private Map<Long, String> mdlIds;
+        
+        NCTestClientImpl() {
+            httpCli = mkClient();
+        }
+        
+        long getCheckInterval() {
+            return checkIntervalMs;
+        }
+        
+        void setCheckInterval(long checkIntervalMs) {
+            this.checkIntervalMs = checkIntervalMs;
+        }
+        
+        long getMaxCheckTime() {
+            return maxCheckTimeMs;
+        }
+        
+        void setMaxCheckTime(long maxCheckTimeMs) {
+            this.maxCheckTimeMs = maxCheckTimeMs;
+        }
+        
+        RequestConfig getRequestConfig() {
+            return reqCfg;
+        }
+        
+        void setRequestConfig(RequestConfig reqCfg) {
+            this.reqCfg = reqCfg;
+        }
+        
+        String getBaseUrl() {
+            return baseUrl;
+        }
+        
+        void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+        
+        String getEmail() {
+            return email;
+        }
+        
+        void setEmail(String email) {
+            this.email = email;
+        }
+        
+        String getPassword() {
+            return pswd;
+        }
+        
+        void setPassword(String pswd) {
+            this.pswd = pswd;
+        }
+        
+        Supplier<CloseableHttpClient> getClientSupplier() {
+            return cliSup;
+        }
+        
+        void setClientSupplier(Supplier<CloseableHttpClient> cliSup) {
+            this.cliSup = cliSup;
+        }
+        
+        void setUseEndpoint(boolean useEndpoint) {
+            this.useEndpoint = useEndpoint;
+        }
+        
+        public void setEndpoint(String endpoint) {
+            this.endpoint = endpoint;
+        }
+        
+        private CloseableHttpClient mkClient() {
+            return cliSup != null ? cliSup.get() : HttpClients.createDefault();
+        }
+        
+        @Override
+        public NCTestResult ask(String txt) throws NCTestClientException, IOException {
+            checkNotNull("txt", txt);
+
+            if (!opened) throw new IllegalStateException("Client is not opened.");
+            if (closed) throw new IllegalStateException("Client already closed.");
+
+            long maxTime = now() + maxCheckTimeMs;
+
+            String srvReqId = ask0(txt);
+
+            if (useEndpoint)
+                while (true) {
+                    NCRequestStateJson js = this.res.remove(srvReqId);
+                    
+                    assert js.status.equals("QRY_READY");
+
+                    if (js != null)
+                        return mkResult(txt, mdlIds.get(js.getDataSourceId()), js);
+
+                    waitUntil(maxTime);
+                }
+            
+            while (true) {
+                Optional<NCRequestStateJson> opt =
+                    check(acsTok).
+                        stream().
+                        filter(p -> p.getServerRequestId().equals(srvReqId) && p.getStatus().equals("QRY_READY")).
+                        findAny();
+
+                if (opt.isPresent()) {
+                    NCRequestStateJson js = opt.get();
+                    
+                    return mkResult(txt, mdlIds.get(js.getDataSourceId()), js);
+                }
+
+                waitUntil(now() + checkIntervalMs);
+            }
+        }
+    
+        private void open0(Long dsId, String mdlId) throws NCTestClientException, IOException {
+            assert dsId != null ^ mdlId != null;
+            
+            if (opened) throw new IllegalStateException("Client already opened.");
+            if (closed) throw new IllegalStateException("Client already closed.");
+            
+            this.acsTok = signin();
+            
+            if (dsId != null) {
+                this.dsId = dsId;
+                this.isTestDs = false;
+            }
+            else {
+                this.dsId = createTestDs(mdlId);
+                this.isTestDs = true;
+            }
+            
+            this.dss = getDss();
+            this.mdlIds = this.dss.stream().collect(Collectors.toMap(NCDsJson::getDataSourceId, NCDsJson::getModelId));
+            
+            if (useEndpoint) {
+                URL url = new URL(endpoint);
+                
+                server = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
+                
+                server.createContext(url.getPath(), http -> {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(http.getRequestBody()))) {
+                        List<NCRequestStateJson> list = gson.fromJson(reader, TYPE_STATES);
+                        
+                        for (NCRequestStateJson p : list) {
+                            res.put(p.getServerRequestId(), p);
+                        }
+                        
+                        synchronized (mux) {
+                            mux.notifyAll();
+                        }
+                    }
+                    
+                    String resp = "OK";
+                    
+                    http.sendResponseHeaders(200, resp.length());
+                    
+                    try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
+                        out.write(resp.getBytes());
+                    }
+                    
+                });
+                
+                server.start();
+            }
+            
+            this.opened = true;
+        }
+        
+        @Override
+        public void open(long dsId) throws NCTestClientException, IOException {
+            open0(dsId, null);
+        }
+        
+        @Override
+        public void open(String mdlId) throws NCTestClientException, IOException {
+            open0(null, mdlId);
+        }
+        
+        @Override
+        public void close() throws NCTestClientException, IOException {
+            if (!opened) throw new IllegalStateException("Client is not opened.");
+            if (closed) throw new IllegalStateException("Client already closed.");
+            
+            if (server != null) server.stop(0);
+            
+            res.clear();
+            
+            if (isTestDs) deleteTestDs();
+            
+            signout();
+            
+            closed = true;
+        }
+    
+        /**
+         * Clears conversation for this test client. This method will clear conversation for
+         * its configured user.
+         *
+         * @throws NCTestClientException
+         * @throws IOException
+         */
+        @Override
+        public void clearConversation() throws NCTestClientException, IOException {
+            if (!opened) throw new IllegalStateException("Client is not opened.");
+            if (closed) throw new IllegalStateException("Client already closed.");
+            
+            clearConversation0();
+        }
+    
+        private long now() {
+            return System.currentTimeMillis();
+        }
+    
+        private void waitUntil(long wakeupTime) throws NCTestClientException {
+            long sleepTime = now() - wakeupTime;
+        
+            if (sleepTime <= 0)
+                throw new NCTestClientException(String.format("Max time elapsed: %d", maxCheckTimeMs));
+        
+            try {
+                mux.wait(maxCheckTimeMs);
+            }
+            catch (InterruptedException e) {
+                throw new NCTestClientException(
+                    String.format("Thread interrupted: %s", Thread.currentThread().getName()), e
+                );
+            }
+        }
+    
+    
+        @SuppressWarnings("unchecked")
+        private <T> T getField(Map<String, Object> m, String fn) throws NCTestClientException {
+            Object o = m.get(fn);
+            
+            if (o == null)
+                throw new NCTestClientException(String.format("Missed expected field [fields=%s, field=%s]",
+                    m.keySet(), fn));
+            
+            try {
+                return (T) o;
+            }
+            catch (ClassCastException e) {
+                throw new NCTestClientException(String.format("Invalid field type: %s", o), e);
+            }
+        }
+        
+        private void checkStatus(Map<String, Object> m) throws NCTestClientException {
+            String status = getField(m, "status");
+            
+            if (!status.equals(STATUS_API_OK))
+                throw new NCTestClientException(String.format("Unexpected message status: %s", status));
+        }
+        
+        private <T> T extract(JsonElement js, Type t) throws NCTestClientException {
+            try {
+                return gson.fromJson(js, t);
+            }
+            catch (JsonSyntaxException e) {
+                throw new NCTestClientException(String.format("Invalid field type [json=%s, type=%s]", js, t), e);
+            }
+        }
+        
+        private <T> T checkAndExtract(String js, String name, Type type) throws NCTestClientException {
+            Map<String, Object> m = gson.fromJson(js, TYPE_RESP);
+            
+            checkStatus(m);
+            
+            return extract(gson.toJsonTree(getField(m, name)), type);
+        }
+        
+        @SafeVarargs
+        private final String post(String url, Pair<String, Object>... ps) throws NCTestClientException, IOException {
+            HttpPost post = new HttpPost(baseUrl + url);
+            
+            try {
+                if (reqCfg != null) post.setConfig(reqCfg);
+                
+                StringEntity entity = new StringEntity(gson.toJson(Arrays.stream(ps).
+                    filter(p -> p.getValue() != null).
+                    collect(Collectors.toMap(Pair::getKey, Pair::getValue))));
+                
+                post.setHeader("Content-Type", "application/json");
+                post.setEntity(entity);
+                
+                log.trace("Request prepared: {}", post);
+                
+                ResponseHandler<String> h = resp -> {
+                    int code = resp.getStatusLine().getStatusCode();
+                    
+                    HttpEntity e = resp.getEntity();
+                    
+                    String js = e != null ? EntityUtils.toString(e) : null;
+                    
+                    if (js == null)
+                        throw new NCTestClientException(String.format("Unexpected empty response [code=%d]", code));
+                    
+                    switch (code) {
+                        case 200: return js;
+                        case 400: throw new NCTestClientException(js);
+                        default:
+                            throw new NCTestClientException(
+                                String.format("Unexpected response [code=%d, text=%s]", code, js)
+                            );
+                    }
+                };
+                
+                String s = httpCli.execute(post, h);
+                
+                log.trace("Response received: {}", s);
+                
+                return s;
+            }
+            finally {
+                post.releaseConnection();
+            }
+        }
+        
+        private void clearConversation0() throws IOException, NCTestClientException {
+            log.info("`clear/conversation` request sent for data source: {}", dsId);
+            
+            checkStatus(gson.fromJson(post("clear/conversation", Pair.of("accessToken", acsTok), Pair.of("dsId",
+                dsId)), TYPE_RESP));
+        }
+        
+        /**
+         * @param mdlId
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private long createTestDs(String mdlId) throws IOException, NCTestClientException {
+            log.info("`ds/add` request sent for model: {}", mdlId);
+            
+            long id = checkAndExtract(post("ds/add", Pair.of("accessToken", acsTok), Pair.of("name", "test"),
+                Pair.of("shortDesc", "Test data source"), Pair.of("mdlId", mdlId), Pair.of("mdlName", "Test model"),
+                Pair.of("mdlVer", "Test version")
+            
+            ), "id", Long.class);
+            
+            log.info("Temporary test data source created: {}", id);
+            
+            return id;
+        }
+        
+        /**
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private void deleteTestDs() throws IOException, NCTestClientException {
+            log.info("`ds/delete` request sent for temporary data source: {}", dsId);
+            
+            checkStatus(gson.fromJson(post("ds/delete", Pair.of("accessToken", acsTok), Pair.of("id", dsId)),
+                TYPE_RESP));
+        }
+        
+        /**
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private String signin() throws IOException, NCTestClientException {
+            log.info("`user/signin` request sent for: {}", email);
+            
+            return checkAndExtract(post("user/signin", Pair.of("email", email), Pair.of("passwd", pswd)
+            
+            ), "accessToken", String.class);
+        }
+        
+        /**
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private List<NCDsJson> getDss() throws IOException, NCTestClientException {
+            log.info("`ds/all` request sent for: {}", email);
+            
+            Map<String, Object> m = gson.fromJson(post("ds/all", Pair.of("accessToken", acsTok)), TYPE_RESP);
+            
+            checkStatus(m);
+            
+            return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
+        }
+        
+        /**
+         * @param acsTok
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
+            log.info("`check` request sent for: {}", email);
+            
+            Map<String, Object> m = gson.fromJson(post("check", Pair.of("accessToken", acsTok)), TYPE_RESP);
+            
+            checkStatus(m);
+            
+            return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
+        }
+        
+        /**
+         * @param txt
+         * @return
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private String ask0(String txt) throws IOException, NCTestClientException {
+            log.info("`ask` request sent: {} to data source: {}", txt, dsId);
+            
+            return checkAndExtract(post("ask", Pair.of("accessToken", acsTok), Pair.of("txt", txt), Pair.of("dsId",
+                dsId), Pair.of("isTest", true)), "srvReqId", String.class);
+        }
+        
+        /**
+         * @throws IOException
+         * @throws NCTestClientException
+         */
+        private void signout() throws IOException, NCTestClientException {
+            log.info("`user/signout` request sent for: {}", email);
+            
+            checkStatus(gson.fromJson(post("user/signout", Pair.of("accessToken", acsTok)), TYPE_RESP));
+        }
+    
+        /**
+         * @param txt
+         * @param mdlId
+         * @param js
+         * @return
+         */
+        private NCTestResult mkResult(String txt, String mdlId, NCRequestStateJson js) {
+            assert txt != null;
+            assert js != null;
+            
+            return new NCTestResult() {
+                private Optional<String> convert(String s) {
+                    return s == null ? Optional.empty() : Optional.of(s);
+                }
+                
+                @Override
+                public String getText() {
+                    return txt;
+                }
+                
+                @Override
+                public long getProcessingTime() {
+                    return js.getUpdateTstamp() - js.getCreateTstamp();
+                }
+                
+                @Override
+                public long getDataSourceId() {
+                    return js.getDataSourceId();
+                }
+                
+                @Override
+                public String getModelId() {
+                    return mdlId;
+                }
+                
+                @Override
+                public Optional<String> getResult() {
+                    return convert(js.getResultBody());
+                }
+                
+                @Override
+                public Optional<String> getResultType() {
+                    return convert(js.getResultType());
+                }
+                
+                @Override
+                public Optional<String> getResultError() {
+                    return convert(js.getError());
+                }
+            };
+        }
+    }
+    
+    /**
+     * @param name
+     * @param v
+     * @throws IllegalArgumentException
+     */
+    private void checkNotNull(String name, Object v) throws IllegalArgumentException {
+        if (v == null) throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
+    }
+    
+    /**
+     * @param name
+     * @param v
+     * @throws IllegalArgumentException
+     */
+    private void checkPositive(String name, long v) throws IllegalArgumentException {
+        if (v <= 0)
+            throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));
     }
 }

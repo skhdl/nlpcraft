@@ -34,6 +34,7 @@ package org.nlpcraft
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.endpoints.NCEndpointManager
 import org.nlpcraft.geo.NCGeoManager
 import org.nlpcraft.ignite.NCIgniteServer
 import org.nlpcraft.nlp.dict.NCDictionaryManager
@@ -111,6 +112,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         NCDsManager.start()
         NCProbeManager.start()
         NCQueryManager.start()
+        NCEndpointManager.start()
         NCRestManager.start()
     }
 
@@ -139,6 +141,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
     // Stops all managers.
     private def stopComponents(): Unit = {
         NCRestManager.stop()
+        NCEndpointManager.stop()
         NCQueryManager.stop()
         NCDsManager.stop()
         NCUserManager.stop()

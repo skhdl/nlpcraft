@@ -39,6 +39,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
+import org.apache.commons.validator.routines.UrlValidator
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
 import org.nlpcraft.ignite._
@@ -66,6 +67,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
 
     private var bindFut: Future[Http.ServerBinding] = _
 
+    private final val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
+
     private object Config extends NCConfigurable {
         var host: String = hocon.getString("rest.host")
         var port: Int = hocon.getInt("rest.port")
@@ -86,6 +89,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
     case class NotImplemented() extends NCE("Not implemented.")
     case class OutOfRangeField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
+    case class InvalidField(fn: String) extends NCE(s"API invalid field '$fn'")
     case class EmptyField(fn: String, max: Int) extends NCE(s"API field '$fn' value cannot be empty.")
     
     private implicit def handleErrors: ExceptionHandler =
@@ -117,6 +121,13 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                 complete(StatusCodes.NotImplemented, errMsg)
 
             case e: OutOfRangeField ⇒
+                val errMsg = e.getLocalizedMessage
+
+                NCNotificationManager.addEvent("NC_INVALID_FIELD")
+
+                complete(StatusCodes.BadRequest, errMsg)
+
+            case e: InvalidField ⇒
                 val errMsg = e.getLocalizedMessage
 
                 NCNotificationManager.addEvent("NC_INVALID_FIELD")
@@ -942,6 +953,57 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     
                         complete {
                             Res(API_OK, probeLst)
+                        }
+                    }
+                } ~
+                path(API / "endpoint" / "set") {
+                    case class Req(
+                        accessToken: String,
+                        endpoint: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("endpoint", req.endpoint, 2083)
+
+                        if (!urlVal.isValid(req.endpoint))
+                            throw InvalidField(req.endpoint)
+
+                        val usrId = authenticate(req.accessToken).id
+
+                        NCUserManager.registerEndpoint(usrId, req.endpoint)
+
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
+                } ~
+                 path(API / "endpoint" / "remove") {
+                    case class Req(
+                        accessToken: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
+                        val usrId = authenticate(req.accessToken).id
+
+                        NCUserManager.deregisterEndpoint(usrId)
+
+                        complete {
+                            Res(API_OK)
                         }
                     }
                 }

@@ -29,15 +29,18 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests.timer;
+package org.nlpcraft.examples.timer;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.examples.tests.helpers.TestFactory;
-import org.nlpcraft.examples.tests.helpers.TestRunner;
+import org.nlpcraft.NCException;
 import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
-import java.util.Arrays;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Timer model test.
@@ -45,25 +48,31 @@ import java.util.Arrays;
  * Note that server and {@link org.nlpcraft.examples.timer.TimerProbeRunner} must be started before.
  */
 public class TimerTest {
-    private static final TestFactory f = new TestFactory();
-    private static final String mdlId = "nlpcraft.timer.ex"; // See timer_model.json
-    private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
+    private NCTestClient client;
+    
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        client = new NCTestClientBuilder().newBuilder().build();
+        
+        client.open("nlpcraft.timer.ex"); // See timer_model.json
+    }
+    
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        client.close();
+    }
     
     @Test
-    public void test() {
-        TestRunner.test(
-            client,
-            Arrays.asList(
-                // Empty parameter.
-                f.mkFailedOnExecution(mdlId, ""),
-                
-                // Unsupported language.
-                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
-                
-                f.mkPassed(mdlId, "Ping me in 3 minutes"),
-                f.mkPassed(mdlId, "Buzz me in an hour and 15mins"),
-                f.mkPassed(mdlId, "Set my alarm for 30s")
-            )
-        );
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(client.ask("").isFailed());
+        
+        // Unsupported language.
+        assertTrue(client.ask("El tiempo en España").isFailed());
+        
+        // Should be passed.
+        assertTrue(client.ask("Ping me in 3 minutes").isSuccessful());
+        assertTrue(client.ask("Buzz me in an hour and 15mins").isSuccessful());
+        assertTrue(client.ask("Set my alarm for 30s").isSuccessful());
     }
 }

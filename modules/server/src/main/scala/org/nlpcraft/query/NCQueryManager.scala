@@ -199,6 +199,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
                         copy.error = Some(errMsg)
     
                         cache += srvReqId → copy
+
+                        NCUserManager.onRequestReady(copy)
                         
                         true
                 
@@ -247,6 +249,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
                         copy.resultBody = Some(resBody)
                         
                         cache += srvReqId → copy
+
+                        NCUserManager.onRequestReady(copy)
                         
                         true
                     
@@ -326,5 +330,16 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         ensureStarted()
 
         srvReqIds.map(cache.get).filter(_!= null)
+    }
+
+    /**
+      *
+      * @param srvReqIds
+      */
+    @throws[NCE]
+    def has(srvReqId: String): Boolean = {
+        ensureStarted()
+
+        cache.containsKey(srvReqId)
     }
 }

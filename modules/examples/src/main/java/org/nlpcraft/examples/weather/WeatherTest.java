@@ -29,39 +29,57 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests.echo;
+package org.nlpcraft.examples.weather;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.examples.tests.helpers.TestFactory;
-import org.nlpcraft.examples.tests.helpers.TestRunner;
+import org.nlpcraft.NCException;
 import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
-import java.util.Arrays;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Echo model test.
+ * Weather model test.
  *
- * Note that server and {@link org.nlpcraft.examples.echo.EchoProbeRunner} must be started before.
+ * Note that server and {@link org.nlpcraft.examples.weather.WeatherProbeRunner} must be started before.
  */
-public class EchoTest {
-    private static final TestFactory f = new TestFactory();
-    private static final String mdlId = "nlpcraft.echo.ex"; // See EchoProvider#MODEL_ID
-    private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
+public class WeatherTest {
+    private NCTestClient client;
+    
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        client = new NCTestClientBuilder().newBuilder().build();
+        
+        client.open("nlpcraft.weather.ex"); // See weather_model.json
+    }
+    
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        client.close();
+    }
     
     @Test
-    public void test() {
-        TestRunner.test(
-            client,
-            Arrays.asList(
-                // Empty parameter.
-                f.mkFailedOnExecution(mdlId, ""),
-                
-                // Unsupported language.
-                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
-                
-                f.mkPassed(mdlId, "LA weather last Friday")
-            )
-        );
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(client.ask("").isFailed());
+        
+        // Unsupported language.
+        assertTrue(client.ask("El tiempo en España").isFailed());
+        
+        // Should be passed.
+        assertTrue(client.ask("What's the local weather forecast?").isSuccessful());
+        assertTrue(client.ask("What's the weather in Moscow?").isSuccessful());
+
+        // Can be answered with conversation.
+        assertTrue(client.ask("Moscow").isSuccessful());
+        
+        client.clearConversation();
+    
+        // Cannot be answered without conversation.
+        assertTrue(client.ask("Moscow").isFailed());
     }
 }

@@ -29,43 +29,48 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests.time;
+package org.nlpcraft.examples.echo;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.examples.tests.helpers.TestFactory;
-import org.nlpcraft.examples.tests.helpers.TestRunner;
+import org.nlpcraft.NCException;
 import org.nlpcraft.mdllib.tools.dev.NCTestClient;
 import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
-import java.util.Arrays;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Time model test.
+ * Echo model test.
  *
- * Note that server and {@link org.nlpcraft.examples.time.TimeProbeRunner} must be started before.
+ * Note that server and {@link org.nlpcraft.examples.echo.EchoProbeRunner} must be started before.
  */
-public class TimeTest {
-    private static final TestFactory f = new TestFactory();
-    private static final String mdlId = "nlpcraft.time.ex"; // See time_model.json
-    private static final NCTestClient client = new NCTestClientBuilder().newBuilder().build();
+public class EchoTest {
+    private NCTestClient client;
+    
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        client = new NCTestClientBuilder().newBuilder().build();
+    
+        client.open("nlpcraft.echo.ex"); // See EchoProvider#MODEL_ID
+    }
+    
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        client.close();
+    }
     
     @Test
-    public void test() {
-        TestRunner.test(
-            client,
-            Arrays.asList(
-                // Empty parameter.
-                f.mkFailedOnExecution(mdlId, ""),
-                
-                // Unsupported language.
-                f.mkFailedOnExecution(mdlId, "El tiempo en España"),
-                
-                f.mkPassed(mdlId, "What time is it now in New York City?"),
-                f.mkPassed(mdlId, "What's the time in Moscow?"),
-                f.mkPassed(mdlId, "Show me time of the day in London."),
-                f.mkPassed(mdlId, "Give me San Francisco's current date and time."),
-                f.mkPassed(mdlId, "What's the local time?")
-            )
-        );
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(client.ask("").isFailed());
+    
+        // Unsupported language.
+        assertTrue(client.ask("El tiempo en España").isFailed());
+    
+        // Should be passed.
+        assertTrue(client.ask("LA weather last Friday").isSuccessful());
     }
 }

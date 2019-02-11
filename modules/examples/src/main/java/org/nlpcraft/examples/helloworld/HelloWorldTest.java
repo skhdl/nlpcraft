@@ -29,48 +29,48 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.tests.helpers;
+package org.nlpcraft.examples.helloworld;
 
-import org.nlpcraft.mdllib.tools.dev.NCTestSentence;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.nlpcraft.NCException;
+import org.nlpcraft.mdllib.tools.dev.NCTestClient;
+import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
 
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test behaviour expectation holder.
+ * HelloWorld model test.
  *
- * See {@link TestFactory}.
+ * Note that server and {@link org.nlpcraft.examples.helloworld.HelloWorldProbeRunner} must be started before.
  */
-public interface TestExpectation {
-    /**
-     * Gets test sentence.
-     *
-     * @return Test sentence.
-     */
-    NCTestSentence getTest();
+public class HelloWorldTest {
+    private NCTestClient client;
     
-    /**
-     * Should test be passed or not expectation flag.
-     *
-     * @return Flag.
-     */
-    boolean shouldPassed();
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        client = new NCTestClientBuilder().newBuilder().build();
+        
+        client.open("nlpcraft.helloworld.ex"); // See HelloWorldProvider#HelloWorldProvider
+    }
     
-    /**
-     * Gets optional result checker.
-     *
-     * Checker function returns `true` if result is expected.
-     *
-     * @return Optional result checker.
-     */
-    Optional<Predicate<String>> getResultChecker();
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        client.close();
+    }
     
-    /**
-     * Gets optional error checker.
-     *
-     * Checker function returns `true` if error message is expected.
-     *
-     * @return Optional error checker.
-     */
-    Optional<Predicate<String>> getErrorChecker();
+    @Test
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(client.ask("").isFailed());
+    
+        // Unsupported language.
+        assertTrue(client.ask("El tiempo en España").isFailed());
+    
+        // Should be passed.
+        assertTrue(client.ask("Hi!").isSuccessful());
+    }
 }
