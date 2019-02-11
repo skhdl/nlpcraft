@@ -329,15 +329,15 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def get(srvReqIds: Set[String]): Set[NCQueryStateMdo] = {
         ensureStarted()
 
-        srvReqIds.map(cache.get).filter(_!= null)
+        srvReqIds.map(cache.get).filter(_ != null)
     }
 
     /**
       *
-      * @param srvReqIds
+      * @param srvReqId
       */
     @throws[NCE]
-    def has(srvReqId: String): Boolean = {
+    def contains(srvReqId: String): Boolean = {
         ensureStarted()
 
         cache.containsKey(srvReqId)

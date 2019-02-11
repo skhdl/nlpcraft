@@ -712,7 +712,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             usrId,
             ses ⇒
                 ses.endpoint match {
-                    case Some(_) ⇒ NCEndpointManager.cancelNotification(usrId, srvReqId)
+                    case Some(_) ⇒ NCEndpointManager.cancelNotification(srvReqId, usrId)
                     case None ⇒ // No-op
                 }
         )

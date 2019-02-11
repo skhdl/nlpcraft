@@ -129,7 +129,6 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                                     cache -==id match {
                                         case Some(v) ⇒ Some(id → v)
                                         case None ⇒ None
-
                                     }
                             ).toMap
 
@@ -234,11 +233,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     val t = now()
 
                     var added = false
-
                     var minDelay = Long.MaxValue
 
-                    values.foreach(v ⇒ {
-                        if (NCQueryManager.has(v.state.srvReqId)) {
+                    values.foreach(v ⇒
+                        if (NCQueryManager.contains(v.state.srvReqId)) {
                             val delay =
                                 if (v.attempts < Config.delaysCnt) Config.delaysMs(v.attempts) else Config.delaysMs.last
 
@@ -249,7 +247,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
                             added = true
                         }
-                    })
+                    )
 
                     if (added)
                         mux.synchronized {
@@ -295,21 +293,21 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     /**
       * Cancel notification for given server request ID.
       *
+      * Note that there isn't 100% guarantee that notification for server request ID will not be sent.
+      *
       * @param usrId User ID.
       * @param srvReqId Server request ID.
       */
-    def cancelNotification(usrId: Long, srvReqId: String): Unit = {
+    def cancelNotification(srvReqId: String, usrId: Long): Unit = {
         require(srvReqId != null)
 
         ensureStarted()
 
         logger.trace(s"User endpoint notification cancel [userId=$usrId, srvReqId=$srvReqId]")
 
-        cache(srvReqId) match {
+        cache -== srvReqId match {
             case Some(v) ⇒
-                if (v.state.srvReqId == srvReqId)
-                    cache -= srvReqId
-                else
+                if (v.state.userId != usrId)
                     logger.error(s"Attempt to remove invalid request data [usrId=$usrId, srvReqId=$srvReqId]")
             case None ⇒ // No-op.
         }
@@ -317,6 +315,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
     /**
       * Cancel notifications for given user ID and endpoint.
+      *
+      * Note that there isn't 100% guarantee that notifications from given user will never be sent.
       *
       * @param usrId User ID.
       */
