@@ -168,10 +168,24 @@
 }
 
 #about {
-    background: url(../../images/bg-about-us.jpg);
-    padding-bottom: 150px;
+    padding-bottom: 100px;
 
     &:after {
         border-top-color: transparent;
+    }
+
+    a, a:hover, a:active {
+        color: $color-blue2;
+    }
+
+    .about-project-name {
+        font-weight: 700;
+        font-size: 150%;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    #about-container {
+        padding-top: 75px;
     }
 }
