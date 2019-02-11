@@ -45,6 +45,7 @@ import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.{NCQueryStateMdo, NCUserMdo}
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.tx.NCTxManager
+import org.nlpcraft.ignite.NCIgniteHelpers._
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception._
@@ -130,8 +131,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                             for (ses ← tokenSigninCache.asScala.map(_.getValue)
                                  if now - ses.lastAccessMs >= Config.expireMs
                             ) {
-                                tokenSigninCache.remove(ses.acsToken)
-                                idSigninCache.remove(ses.userId)
+                                tokenSigninCache -= ses.acsToken
+                                idSigninCache -= ses.userId
 
                                 ses.endpoint match {
                                     case Some(_) ⇒ NCEndpointManager.cancelNotifications(ses.userId)
@@ -231,10 +232,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
         catching(wrapIE) {
             NCTxManager.startTx {
-                tokenSigninCache.getAndRemove(acsTok) match {
-                    case null ⇒ // No-op.
-                    case ses ⇒
-                        idSigninCache.remove(ses.userId)
+                tokenSigninCache -== acsTok match {
+                    case Some(ses) ⇒
+                        idSigninCache -= ses.userId
+
+                        NCEndpointManager.cancelNotifications(ses.userId)
 
                         // Notification.
                         NCNotificationManager.addEvent("NC_USER_SIGNED_OUT",
@@ -245,6 +247,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                         )
 
                         logger.info(s"User signed out: $ses")
+                    case None ⇒ // No-op.
                 }
             }
         }
@@ -281,16 +284,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                     val now = G.nowUtcMs()
 
                     // Update login session.
-                    tokenSigninCache.put(
-                        acsTkn,
-                        SigninSession(
-                            acsTkn,
-                            userId = ses.userId,
-                            signinMs = ses.signinMs,
-                            lastAccessMs = now,
-                            ses.endpoint
-                        )
-                    )
+                    tokenSigninCache += acsTkn → SigninSession(acsTkn, ses.userId, ses.signinMs, now, ses.endpoint)
 
                     Some(ses.userId) // Bingo!
             }
@@ -346,18 +340,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                         val acsTkn = NCBlowfishHasher.hash(G.genGuid())
                                         val now = G.nowUtcMs()
 
-                                        tokenSigninCache.put(
-                                            acsTkn,
-                                            SigninSession(
-                                                acsTkn,
-                                                usr.id,
-                                                now,
-                                                now,
-                                                None
-                                            )
-                                        )
+                                        tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, None)
 
-                                        idSigninCache.put(usr.id, acsTkn)
+                                        idSigninCache += usr.id → acsTkn
 
                                         acsTkn
                                 }
@@ -421,8 +406,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                 u.createdOn
                             )
 
-                            userCache.put(idKey, mdo)
-                            userCache.put(Right(u.email), mdo)
+                            userCache += idKey → mdo
+                            userCache += Right(u.email) → mdo
                     }
                 }
         }
@@ -452,8 +437,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                 userCache.get(idKey) match {
                     case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
                     case u ⇒
-                        userCache.remove(idKey)
-                        userCache.remove(Right(u.email))
+                        userCache -= idKey
+                        userCache -= Right(u.email)
 
                         // Notification.
                         NCNotificationManager.addEvent("NC_USER_DELETE",
@@ -599,8 +584,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                         isAdmin
                     )
 
-                    userCache.put(Left(newUsrId), mdo)
-                    userCache.put(emailKey, mdo)
+                    userCache += Left(newUsrId) → mdo
+                    userCache += emailKey → mdo
 
                     (newUsrId, salt)
                 }
@@ -661,15 +646,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                     case None ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
                 }
 
-                tokenSigninCache.put(
-                    ses.acsToken,
-                    SigninSession(
-                        ses.acsToken,
-                        ses.userId,
-                        ses.signinMs,
-                        ses.lastAccessMs,
-                        epOpt
-                    )
+                tokenSigninCache +=
+                    ses.acsToken → SigninSession(ses.acsToken, ses.userId, ses.signinMs, ses.lastAccessMs, epOpt
                 )
             }
         )

@@ -43,6 +43,7 @@ import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft.{NCConfigurable, NCE, NCLifecycle}
+import org.nlpcraft.ignite.NCIgniteHelpers._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -120,19 +121,19 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
                         val removed =
                             cache.
-                            asScala.
                             // Find values.
                             flatMap(p ⇒ if (p.getValue.sendTime <= t) Some(p.getKey) else None).
                             // Removes them from cache.
                             flatMap(
                                 id ⇒
-                                    cache.getAndRemove(id) match {
-                                        case null ⇒ None
-                                        case v ⇒ Some(id → v)
+                                    cache -==id match {
+                                        case Some(v) ⇒ Some(id → v)
+                                        case None ⇒ None
+
                                     }
                             ).toMap
 
-                        logger.trace(s"Data prepared for sending: ${removed.size}")
+                        logger.trace(s"Records for sending: ${removed.size}")
 
                         removed.
                             groupBy { case (_, v) ⇒ (v.state.userId, v.endpoint) }.
@@ -152,7 +153,6 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                         }
 
                         val srvReqIds = cache.
-                            asScala.
                             groupBy(_.getValue.state.userId).
                             filter { case (_, data) ⇒ data.toSeq.size > Config.maxQueueSize }.
                             flatMap {
@@ -161,7 +161,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                             }
 
                         if (srvReqIds.nonEmpty) {
-                            cache.removeAll(srvReqIds.toSet.asJava)
+                            cache --= srvReqIds.toSet
 
                             logger.warn(s"Requests deleted because queue is too big: $srvReqIds")
                         }
@@ -245,10 +245,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                             if (delay < minDelay)
                                 minDelay = delay
 
-                            cache.put(
-                                v.state.srvReqId,
-                                Value(v.state, v.endpoint, t + delay, v.attempts + 1, v.createdOn)
-                            )
+                            cache += v.state.srvReqId → Value(v.state, v.endpoint, t + delay, v.attempts + 1, v.createdOn)
 
                             added = true
                         }
@@ -266,7 +263,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     )
             },
             (_: Unit) ⇒ {
-                cache.removeAll(seq.map(_.srvReqId).toSet.asJava)
+                cache --= seq.map(_.srvReqId).toSet
 
                 logger.trace(s"Endpoint notification sent [userId=$usrId, endpoint=$ep]")
             }
@@ -288,7 +285,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         val t = now()
 
-        cache.put(state.srvReqId, Value(state, ep, sendTime = t, attempts = 0, createdOn = t))
+        cache += state.srvReqId → Value(state, ep, sendTime = t, attempts = 0, createdOn = t)
 
         mux.synchronized {
             mux.notifyAll()
@@ -308,13 +305,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         logger.trace(s"User endpoint notification cancel [userId=$usrId, srvReqId=$srvReqId]")
 
-        cache.get(srvReqId) match {
-            case null ⇒ // No-op.
-            case v ⇒
+        cache(srvReqId) match {
+            case Some(v) ⇒
                 if (v.state.srvReqId == srvReqId)
-                    cache.remove(srvReqId)
+                    cache -= srvReqId
                 else
                     logger.error(s"Attempt to remove invalid request data [usrId=$usrId, srvReqId=$srvReqId]")
+            case None ⇒ // No-op.
         }
     }
 
@@ -326,10 +323,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     def cancelNotifications(usrId: Long): Unit = {
         ensureStarted()
 
-        logger.trace(s"User endpoint notifications cancel [userId=$usrId]")
+        val srvIds = cache.groupBy(_.getValue.state.userId).flatMap(_._2.map(_.getKey))
 
-        val srvIds = cache.asScala.groupBy(_.getValue.state.userId).flatMap(_._2.map(_.getKey))
+        logger.trace(s"User endpoint notifications cancel [userId=$usrId, removedReqCnt=${srvIds.size}]")
 
-        cache.removeAll(srvIds.toSet.asJava)
+        cache --= srvIds.toSet
     }
 }
