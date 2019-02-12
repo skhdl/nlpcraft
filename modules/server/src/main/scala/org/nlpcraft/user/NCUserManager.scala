@@ -246,7 +246,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                             "lastAccessMs" → ses.lastAccessMs
                         )
 
-                        logger.info(s"User signed out: $ses")
+                        logger.info(s"User signed out: ${ses.userId}")
                     case None ⇒ // No-op.
                 }
             }
