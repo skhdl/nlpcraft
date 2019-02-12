@@ -546,8 +546,6 @@ public class NCTestClientBuilder {
                 server = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
                 
                 server.createContext(url.getPath(), http -> {
-                    log.trace(String.format("Endpoint got request from: %s", http.getRemoteAddress()));
-    
                     try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
                         byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
     
@@ -565,12 +563,23 @@ public class NCTestClientBuilder {
                         List<NCRequestStateJson> list =
                             gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
     
-                        log.trace(String.format("Endpoint batch size: %d", list.size()));
+                        log.trace("Endpoint response size: {}", list.size());
                         
                         for (NCRequestStateJson p : list) {
                             res.put(p.getServerRequestId(), p);
     
-                            log.trace(String.format("Endpoint got response for srvReqId: %s", p.getServerRequestId()));
+                            String body = p.getResultBody();
+                            
+                            if (body != null && body.length() > 100)
+                                body = body.substring(0, 100) + " ...";
+                            
+                            log.trace(
+                                "Response [srvReqId={}, resType={}, resBody={}, errMsg={}]",
+                                p.getServerRequestId(),
+                                p.getResultType(),
+                                body,
+                                p.getError()
+                            );
                         }
                         
                         synchronized (mux) {
@@ -592,7 +601,7 @@ public class NCTestClientBuilder {
                 
                 server.start();
     
-                log.info(String.format("Server started: %s", endpoint));
+                log.info("Server started: {}", endpoint);
             }
             
             this.opened = true;
@@ -749,7 +758,7 @@ public class NCTestClientBuilder {
         }
         
         private void clearConversation0() throws IOException, NCTestClientException {
-            log.info("`clear/conversation` request sent for data source: {}", dsId);
+            log.info("`clear/conversation` request sent for data source: `{}`", dsId);
             
             checkStatus(gson.fromJson(
                 post(
@@ -768,7 +777,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private long createTestDs(String mdlId) throws IOException, NCTestClientException {
-            log.info("`ds/add` request sent for model: {}", mdlId);
+            log.info("`ds/add` request sent for model: `{}`", mdlId);
             
             long id =
                 checkAndExtract(
@@ -795,7 +804,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private void deleteTestDs() throws IOException, NCTestClientException {
-            log.info("`ds/delete` request sent for temporary data source: {}", dsId);
+            log.info("`ds/delete` request sent for temporary data source: `{}`", dsId);
             
             checkStatus(
                 gson.fromJson(
@@ -814,7 +823,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private void registerEndpoint() throws IOException, NCTestClientException {
-            log.info("`endpoint/register` request sent {}", endpoint);
+            log.info("`endpoint/register` request sent `{}`", endpoint);
         
             checkStatus(
                 gson.fromJson(
@@ -834,7 +843,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private String signin() throws IOException, NCTestClientException {
-            log.info("`user/signin` request sent for: {}", email);
+            log.info("`user/signin` request sent for: `{}`", email);
             
             return checkAndExtract(
                 post(
@@ -853,7 +862,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private List<NCDsJson> getDss() throws IOException, NCTestClientException {
-            log.info("`ds/all` request sent for: {}", email);
+            log.info("`ds/all` request sent for: `{}`", email);
             
             Map<String, Object> m = gson.fromJson(
                 post(
@@ -875,7 +884,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
-            log.info("`check` request sent for: {}", email);
+            log.info("`check` request sent for: `{}`", email);
             
             Map<String, Object> m = gson.fromJson(
                 post(
@@ -897,7 +906,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private String ask0(String txt) throws IOException, NCTestClientException {
-            log.info("`ask` request sent: {} to data source: {}", txt, dsId);
+            log.info("`ask` request sent: `{}` to data source: `{}`", txt, dsId);
             
             return checkAndExtract(
                 post(
@@ -917,7 +926,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private void signout() throws IOException, NCTestClientException {
-            log.info("`user/signout` request sent for: {}", email);
+            log.info("`user/signout` request sent for: `{}`", email);
             
             checkStatus(gson.fromJson(
                 post(

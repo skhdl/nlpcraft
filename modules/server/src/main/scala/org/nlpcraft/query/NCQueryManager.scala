@@ -295,17 +295,27 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         ensureStarted()
 
         val now = new Timestamp(G.nowUtcMs())
-    
-        NCTxManager.startTx {
-            cache --= srvReqIds
 
-            for (srvReqId ← srvReqIds) {
-                NCProcessLogManager.updateCancel(srvReqId, now)
-             
-                NCNotificationManager.addEvent("NC_CANCEL_QRY",
-                    "srvReqId" → srvReqId
-                )
+        catching(wrapIE) {
+            NCTxManager.startTx {
+                cache --= srvReqIds
             }
+        }
+
+        val userSrvReqIds =
+            srvReqIds.
+                flatMap(srvReqIds ⇒ cache(srvReqIds)).
+                groupBy(_.userId).
+                map { case(usrId, data) ⇒ usrId → data.map(_.srvReqId) }
+
+        NCUserManager.onRequestCancel(userSrvReqIds)
+
+        for (srvReqId ← srvReqIds) {
+            NCProcessLogManager.updateCancel(srvReqId, now)
+
+            NCNotificationManager.addEvent("NC_CANCEL_QRY",
+                "srvReqId" → srvReqId
+            )
         }
     }
     
@@ -318,7 +328,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
 
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
-        (if (usr.isAdmin) cache.values else cache.values.filter(p ⇒ p.userId == usrId)).toSeq
+        catching(wrapIE) {
+            (if (usr.isAdmin) cache.values else cache.values.filter(p ⇒ p.userId == usrId)).toSeq
+        }
     }
 
     /**
@@ -329,7 +341,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def get(srvReqIds: Set[String]): Set[NCQueryStateMdo] = {
         ensureStarted()
 
-        srvReqIds.map(cache.get).filter(_ != null)
+        catching(wrapIE) {
+            srvReqIds.map(cache.get).filter(_ != null)
+        }
     }
 
     /**
@@ -340,6 +354,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def contains(srvReqId: String): Boolean = {
         ensureStarted()
 
-        cache.containsKey(srvReqId)
+        catching(wrapIE) {
+            cache.containsKey(srvReqId)
+        }
     }
 }

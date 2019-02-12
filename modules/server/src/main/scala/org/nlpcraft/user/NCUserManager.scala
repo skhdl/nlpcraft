@@ -631,10 +631,13 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                 logger.error(s"Token cache not found for: $acsToken")
 
                                 None
-                            case ses ⇒ fn(ses)
+                            case ses ⇒ Some(ses)
                         }
                 }
             }
+        } match {
+            case Some(ses) ⇒ fn(ses)
+            case None ⇒ // No-op.
         }
 
     private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
@@ -701,20 +704,22 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
       * This method called on user request error cancel.
       *
       * @param usrId User ID.
-      * @param srvReqId Request ID.
+      * @param userSrvReqIds Request IDs by users.
       */
-    def onRequestCancel(usrId: Long, srvReqId: String): Unit = {
-        require(srvReqId != null)
+    def onRequestCancel(userSrvReqIds: Map[Long, Set[String]]): Unit = {
+        require(userSrvReqIds != null)
 
         ensureStarted()
 
-        execute(
-            usrId,
-            ses ⇒
-                ses.endpoint match {
-                    case Some(_) ⇒ NCEndpointManager.cancelNotification(srvReqId, usrId)
-                    case None ⇒ // No-op
-                }
-        )
+        userSrvReqIds.foreach { case (usrId, srvReqIds) ⇒
+            execute(
+                usrId,
+                ses ⇒
+                    ses.endpoint match {
+                        case Some(_) ⇒ NCEndpointManager.cancelNotification(srvReqIds)
+                        case None ⇒ // No-op
+                    }
+            )
+        }
     }
 }
