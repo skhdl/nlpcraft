@@ -189,3 +189,34 @@
         padding-top: 75px;
     }
 }
+
+.quick-link {
+    display: block;
+    padding: 8px 0 0 20px;
+    width: 250px;
+    margin: 0 10px 20px 0;
+    height: 50px;
+    border: 1px solid #d5dee0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #edf4f6;
+    
+    a {
+        color: $color-grey-blue;
+        
+        img {
+            height: 32px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        span {
+            vertical-align: middle;
+        }
+
+        i.fas {
+            vertical-align: middle;
+        }
+    }
+}
