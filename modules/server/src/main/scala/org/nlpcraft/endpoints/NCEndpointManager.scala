@@ -55,12 +55,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteNLPCraft {
     private object Config extends NCConfigurable {
         val maxQueueSize: Int = hocon.getInt("endpoint.max.queue.size")
+        val maxQueueUserSize: Int = hocon.getInt("endpoint.max.queue.per.user.size")
         val maxQueueCheckPeriodMs: Long = hocon.getLong("endpoint.max.queue.check.period.mins") * 60 * 1000
         val delaysMs: Seq[Long] = hocon.getLongList("endpoint.delaysSecs").toSeq.map(p ⇒ p * 1000)
         val delaysCnt: Int = delaysMs.size
 
         override def check(): Unit = {
             require(maxQueueSize > 0, s"Parameter `maxQueueSize` must be positive: $maxQueueSize")
+            require(maxQueueUserSize > 0, s"Parameter `maxQueueUserSize` must be positive: $maxQueueUserSize")
             require(maxQueueCheckPeriodMs > 0, s"Parameter `maxQueueCheckPeriodMs` must be positive: $maxQueueCheckPeriodMs")
             require(delaysMs.nonEmpty, s"Parameters `delaysMs` shouldn't be empty")
 
@@ -70,7 +72,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
     Config.check()
 
-    case class Value(state: NCQueryStateMdo, endpoint: String, sendTime: Long, attempts: Int, createdOn: Long)
+    case class Value(state: NCQueryStateMdo, endpoint: String, sendTime: Long, attempts: Int, createdOn: Long) {
+        def nextAttempt(fromTime: Long): Value = {
+            val delay = if (attempts < Config.delaysCnt) Config.delaysMs(attempts) else Config.delaysMs.last
+
+            Value(state, endpoint, fromTime + delay, attempts + 1, createdOn)
+        }
+    }
 
     private final val GSON = new Gson
     private final val mux = new Object
@@ -114,7 +122,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                         mux.synchronized {
                             val t = sleepTime
 
-                            mux.wait(t)
+                            if (t > 0)
+                                mux.wait(t)
+
+                            sleepTime = Long.MaxValue
                         }
 
                         val t = now()
@@ -157,19 +168,32 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                             mux.wait(Config.maxQueueCheckPeriodMs)
                         }
 
-                        val srvReqIds = cache.
-                            groupBy(_.getValue.state.userId).
-                            filter { case (_, data) ⇒ data.toSeq.size > Config.maxQueueSize }.
-                            flatMap {
-                                case (_, data) ⇒
-                                    data.toSeq.sortBy(-_.getValue.createdOn).drop(Config.maxQueueSize).map(_.getKey)
+                        def remove(srvReqIds: Set[String]): Unit =
+                            if (srvReqIds.nonEmpty) {
+                                cache --= srvReqIds
+
+                                logger.warn(s"Requests deleted because queue is too big: $srvReqIds")
                             }
 
-                        if (srvReqIds.nonEmpty) {
-                            cache --= srvReqIds.toSet
+                        // Clears cache for each user.
+                        remove(
+                            cache.
+                                groupBy(_.getValue.state.userId).
+                                filter { case (_, data) ⇒ data.toSeq.size > Config.maxQueueUserSize }.
+                                flatMap {
+                                    case (_, data) ⇒
+                                        data.toSeq.sortBy(-_.getValue.createdOn).drop(Config.maxQueueUserSize).map(_.getKey)
+                                }.toSet
+                        )
 
-                            logger.warn(s"Requests deleted because queue is too big: $srvReqIds")
-                        }
+                        // Clears summary cache.
+                        if (cache.size() > Config.maxQueueSize)
+                            remove(
+                                cache.values.toSeq.
+                                    sortBy(-_.createdOn).
+                                    drop(Config.maxQueueSize).
+                                    map(_.state.srvReqId).toSet
+                            )
                     }
                 }
             }
@@ -238,38 +262,39 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 case e: Exception ⇒
                     val t = now()
 
-                    var added = false
-                    var minDelay = Long.MaxValue
+                    val sendAgain =
+                        values.flatMap(v ⇒
+                            if (NCQueryManager.contains(v.state.srvReqId))
+                                Some(v.state.srvReqId → v.nextAttempt(t))
+                            else
+                                None
+                        ).toMap
 
-                    values.foreach(v ⇒
-                        if (NCQueryManager.contains(v.state.srvReqId)) {
-                            val delay =
-                                if (v.attempts < Config.delaysCnt) Config.delaysMs(v.attempts) else Config.delaysMs.last
+                    if (sendAgain.nonEmpty) {
+                        val sleepTime = sendAgain.map(_._2.sendTime).min - now()
 
-                            if (delay < minDelay)
-                                minDelay = delay
-
-                            cache += v.state.srvReqId → Value(v.state, v.endpoint, t + delay, v.attempts + 1, v.createdOn)
-
-                            added = true
-                        }
-                    )
-
-                    if (added)
                         mux.synchronized {
-                            sleepTime = minDelay
+                            this.sleepTime = sleepTime
 
                             mux.notifyAll()
                         }
+                    }
 
                     logger.warn(
-                        s"Error sending notification [userId=$usrId, endpoint=$ep, error=${e.getLocalizedMessage}]"
+                        s"Error sending notification " +
+                            s"[userId=$usrId" +
+                            s", endpoint=$ep" +
+                            s", returnedToCache=${sendAgain.size}" +
+                            s", error=${e.getLocalizedMessage}" +
+                            s"]"
                     )
             },
             (_: Unit) ⇒ {
-                cache --= seq.map(_.srvReqId).toSet
+                val set = seq.map(_.srvReqId).toSet
 
-                logger.trace(s"Endpoint notification sent [userId=$usrId, endpoint=$ep]")
+                cache --= set
+
+                logger.trace(s"Endpoint notifications sent [userId=$usrId, endpoint=$ep, srvReqIds=$set]")
             }
         )
     }
