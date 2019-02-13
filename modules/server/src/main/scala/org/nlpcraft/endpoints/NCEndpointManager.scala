@@ -165,60 +165,73 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
     private def now(): Long = System.currentTimeMillis()
 
-    private def clean(): Unit = {
-        // Clears cache for each user.
-        val query: SqlQuery[String, NCEndpointCacheValue] =
-            new SqlQuery(
-                classOf[NCEndpointCacheValue],
-                    s"""
-                    |SELECT v.*
-                    |FROM
-                    |    (SELECT DISTINCT userId FROM NCEndpointCacheValue) u,
-                    |    (SELECT v1.* FROM v1
-                    |    WHERE
-                    |        v.srvReqId NOT IN (
-                    |            SELECT v2.srvReqId
-                    |            FROM NCEndpointCacheValue v2
-                    |            WHERE v2.userId = v1.userId
-                    |            ORDER BY v2.createdOn DESC
-                    |            LIMIT ${Config.maxQueueUserSize}
-                    |        )
-                    |    ) v
-                    """.stripMargin
-            )
-
-        val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
-
-        if (srvReqIds.nonEmpty) {
-            logger.warn(s"Too big users endpoints queue. Some notifications deleted: $srvReqIds")
-
-            cache --= srvReqIds
-        }
-
-        // Clears summary cache.
-        if (cache.size() > Config.maxQueueSize) {
+    private def clean(): Unit =
+        try {
+            // Clears cache for each user.
             val query: SqlQuery[String, NCEndpointCacheValue] =
                 new SqlQuery(
                     classOf[NCEndpointCacheValue],
                         s"""
-                        |SELECT *
-                        |FROM NCEndpointCacheValue
-                        |WHERE srvReqId NOT IN (
-                        |    SELECT srvReqId
-                        |    FROM NCEndpointCacheValue
-                        |    ORDER BY createdOn DESC
-                        |    LIMIT ${Config.maxQueueSize}
-                        |)
+                        |SELECT v.*
+                        |FROM
+                        |    (SELECT DISTINCT userId FROM NCEndpointCacheValue) u,
+                        |    (SELECT
+                        |        _key,
+                        |        _val,
+                        |        userId
+                        |    FROM NCEndpointCacheValue v1
+                        |    WHERE
+                        |        v1.srvReqId NOT IN (
+                        |            SELECT v2.srvReqId
+                        |            FROM NCEndpointCacheValue v2
+                        |            WHERE v2.userId = v1.userId
+                        |            ORDER BY v2.createdOn DESC
+                        |            LIMIT ${Config.maxQueueUserSize}
+                        |        )
+                        |    ) v
+                        |WHERE u.userId = v.userId
                         """.stripMargin
                 )
 
             val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
-            logger.warn(s"Too big summary endpoints queue. Some notifications deleted: $srvReqIds")
+            if (srvReqIds.nonEmpty) {
+                logger.warn(s"Too big users endpoints queue. Some notifications deleted: $srvReqIds")
 
-            cache --= srvReqIds
+                cache --= srvReqIds
+            }
+            else
+                logger.debug(s"Queue user limits checked ok.")
+
+            // Clears summary cache.
+            if (cache.size() > Config.maxQueueSize) {
+                val query: SqlQuery[String, NCEndpointCacheValue] =
+                    new SqlQuery(
+                        classOf[NCEndpointCacheValue],
+                            s"""
+                            |SELECT *
+                            |FROM NCEndpointCacheValue
+                            |WHERE srvReqId NOT IN (
+                            |    SELECT srvReqId
+                            |    FROM NCEndpointCacheValue
+                            |    ORDER BY createdOn DESC
+                            |    LIMIT ${Config.maxQueueSize}
+                            |)
+                            """.stripMargin
+                    )
+
+                val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
+
+                logger.warn(s"Too big summary endpoints queue. Some notifications deleted: $srvReqIds")
+
+                cache --= srvReqIds
+            }
+            else
+                logger.debug(s"Queue limit checked ok.")
         }
-    }
+        catch {
+            case e: Throwable ⇒ logger.error("Cleaner execution error.", e)
+        }
 
     private def send(usrId: Long, ep: String, values: Seq[NCEndpointCacheValue]): Unit = {
         val seq = values.map(p ⇒ {
@@ -259,9 +272,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     }
                 )
             }
-            finally {
+            finally
                 post.releaseConnection()
-            }
         },
         {
             case e: Exception ⇒
