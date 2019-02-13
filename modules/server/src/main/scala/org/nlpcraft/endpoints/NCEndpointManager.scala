@@ -97,6 +97,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     private final val GSON = new Gson
 
     @volatile private var sleepTime = Long.MaxValue
+
     @volatile private var cache: IgniteCache[String, NCEndpointCacheValue] = _
     @volatile private var sender: Thread = _
     @volatile private var cleaner: ScheduledExecutorService = _
