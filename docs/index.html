@@ -52,17 +52,17 @@ layout: default
                 <div class="section-title"><span>About</span> NLPCraft</div>
                 <section>
                     <p>
-                        NLPCraft is an open source library for building Natural Language Interface
-                        for any type of applications.
+                        NLPCraft is an open source library for adding Natural Language Interface
+                        to any applications.
                     </p>
                     <p>
                         NLPCraft is simple to use: define a semantic model and intents to interpret
-                        user input. Deploy this model and use REST API to explore the data using natural language from
+                        user input. Securely deploy this model and use REST API to explore the data using natural language from
                         your applications.
                     </p>
-                    <p>
+                    <div class="learn-more">
                         <a href="docs.html">Learn more <i class="align-text-bottom fas fa-angle-right"></i></a>
-                    </p>
+                    </div>
                 </section>
             </div>
             <div class="col-4">
@@ -80,7 +80,7 @@ layout: default
                 </section>
             </div>
             <div class="col-4">
-                <div class="section-title"><span>Quick</span> Links</div>
+                <div class="section-title">Quick <span>Links</span></div>
                 <section>
                     <a class="quick-link" href="https://github.com/vic64/nlpcraft" target="github">
                         <div>
@@ -201,11 +201,11 @@ layout: default
                 </div>
                 <div class="blog-footer">
                     <img src="{{ blog.avatar_url | relative_url}}">
-                    <a class="blog-author" target="blog" href="https://medium.com/@{{ blog.medium_id}}">{{ blog.author }}</a>
+                    <a class="blog-author text-nowrap " target="blog" href="https://medium.com/@{{ blog.medium_id}}">{{ blog.author }}</a>
                     <a target=linkedin href="https://www.linkedin.com/in/{{ blog.linkedin_id}}/"><i class="fab fa-fw fa-linkedin"></i></a>
                     <a target=medium href="https://medium.com/@{{ blog.medium_id}}"><i class="fab fa-fw fa-medium"></i></a>
                     <a target=twitter href="https://twitter.com/{{ blog.twitter_id}}"><i class="fab fa-fw fa-twitter"></i></a>
-                    <span class="blog-date">{{ blog.publish_date }}</span>
+                    <span class="text-nowrap blog-date">{{ blog.publish_date }}</span>
                 </div>
             </div>
             {% endfor %}
