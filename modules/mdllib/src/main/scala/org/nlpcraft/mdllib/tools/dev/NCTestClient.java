@@ -56,8 +56,8 @@ public interface NCTestClient {
      * Connects test client to the server.
      *
      * @param dsId TODO:
-     * @throws NCTestClientException
-     * @throws IOException
+     * @throws NCTestClientException Thrown if any test system errors occur.
+     * @throws IOException Thrown in case of I/O errors.
      */
     void open(long dsId) throws NCTestClientException, IOException;
     
@@ -65,8 +65,8 @@ public interface NCTestClient {
      * Connects test client to the server.
      *
      * @param mdlId TODO:
-     * @throws NCTestClientException
-     * @throws IOException
+     * @throws NCTestClientException Thrown if any test system errors occur.
+     * @throws IOException Thrown in case of I/O errors.
      */
     void open(String mdlId) throws NCTestClientException, IOException;
     
@@ -74,17 +74,17 @@ public interface NCTestClient {
     /**
      * Closes test client connection to the server.
      *
-     * @throws NCTestClientException
-     * @throws IOException
+     * @throws NCTestClientException Thrown if any test system errors occur.
+     * @throws IOException Thrown in case of I/O errors.
      */
     void close() throws NCTestClientException, IOException;
 
     /**
      * Clears conversation for this test client. This method will clear conversation for
      * its configured user.
-     * 
-     * @throws NCTestClientException
-     * @throws IOException
+     *
+     * @throws NCTestClientException Thrown if any test system errors occur.
+     * @throws IOException Thrown in case of I/O errors.
      */
     void clearConversation() throws NCTestClientException, IOException;
 }
