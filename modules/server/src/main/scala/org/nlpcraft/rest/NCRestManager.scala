@@ -681,6 +681,57 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         }
                     }
                 } ~
+                /**/path(API / "user" / "endpoint" / "register") {
+                    case class Req(
+                        accessToken: String,
+                        endpoint: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("endpoint", req.endpoint, 2083)
+
+                        if (!urlVal.isValid(req.endpoint))
+                            throw InvalidField(req.endpoint)
+
+                        val usrId = authenticate(req.accessToken).id
+
+                        NCUserManager.registerEndpoint(usrId, req.endpoint)
+
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
+                } ~
+                /**/path(API / "user" / "endpoint" / "remove") {
+                    case class Req(
+                        accessToken: String
+                    )
+                    case class Res(
+                        status: String
+                    )
+
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                    entity(as[Req]) { req ⇒
+                        checkLength("accessToken", req.accessToken, 256)
+
+                        val usrId = authenticate(req.accessToken).id
+
+                        NCUserManager.deregisterEndpoint(usrId)
+
+                        complete {
+                            Res(API_OK)
+                        }
+                    }
+                } ~
                 /**/path(API / "ds" / "add") {
                     case class Req(
                         // Caller.
@@ -953,57 +1004,6 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     
                         complete {
                             Res(API_OK, probeLst)
-                        }
-                    }
-                } ~
-                path(API / "endpoint" / "register") {
-                    case class Req(
-                        accessToken: String,
-                        endpoint: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
-                        checkLength("endpoint", req.endpoint, 2083)
-
-                        if (!urlVal.isValid(req.endpoint))
-                            throw InvalidField(req.endpoint)
-
-                        val usrId = authenticate(req.accessToken).id
-
-                        NCUserManager.registerEndpoint(usrId, req.endpoint)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                 path(API / "endpoint" / "remove") {
-                    case class Req(
-                        accessToken: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
-
-                        val usrId = authenticate(req.accessToken).id
-
-                        NCUserManager.deregisterEndpoint(usrId)
-
-                        complete {
-                            Res(API_OK)
                         }
                     }
                 }

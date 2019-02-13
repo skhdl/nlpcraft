@@ -823,12 +823,12 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException
          */
         private void registerEndpoint() throws IOException, NCTestClientException {
-            log.info("`endpoint/register` request sent `{}`", endpoint);
+            log.info("`user/endpoint/register` request sent `{}`", endpoint);
         
             checkStatus(
                 gson.fromJson(
                     post(
-                        "endpoint/register",
+                        "user/endpoint/register",
                         Pair.of("accessToken", acsTok),
                         Pair.of("endpoint", endpoint)
                     ),

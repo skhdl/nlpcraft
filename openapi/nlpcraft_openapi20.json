@@ -692,6 +692,130 @@
                 }
             }
         },
+        "/user/endpoint/register": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Register user endpoint.",
+                "description": "Register session level user endpoint.",
+                "operationId": "registerEndpoint",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken",
+                            "endpoint"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
+                            },
+                            "endpoint": {
+                                "type": "string",
+                                "description": "User endpoint",
+                                "maxLength": 2083
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "API_OK"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/endpoint/remove": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Removes user endpoint.",
+                "description": "Removes session level user endpoint. Command ignored if endpoint is not registered",
+                "operationId": "addUser",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Payload body",
+                    "description": "JSON request.",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "accessToken"
+                        ],
+                        "properties": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token obtain via '/api/signin' call",
+                                "maxLength": 256
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation.",
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "status"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status code of this operation",
+                                    "enum": [
+                                        "API_OK"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed operation.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
         "/user/signin": {
             "post": {
                 "tags": ["Authentication"],
