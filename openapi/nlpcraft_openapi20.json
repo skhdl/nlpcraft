@@ -762,7 +762,7 @@
                 "tags": ["Users"],
                 "summary": "Removes user endpoint.",
                 "description": "Removes session level user endpoint. Command ignored if endpoint is not registered",
-                "operationId": "addUser",
+                "operationId": "removeEndpoint",
                 "produces": [
                     "application/json"
                 ],
