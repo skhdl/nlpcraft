@@ -45,7 +45,7 @@ public interface NCTestClient {
     /**
      * Tests single sentence and returns its result.
      *
-     * @param txt Sentence to test.
+     * @param txt Text sentence to test.
      * @return Sentence result.
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
@@ -53,26 +53,27 @@ public interface NCTestClient {
     NCTestResult ask(String txt) throws NCTestClientException, IOException;
 
     /**
-     * Connects test client to the server.
+     * Connects test client to the server for testing with given data source ID.
      *
-     * @param dsId TODO:
+     * @param dsId Data source ID to open this client for.
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
     void open(long dsId) throws NCTestClientException, IOException;
     
     /**
-     * Connects test client to the server.
+     * Connects test client to the server for testing with given model ID. Note that
+     * a temporary data source will be automatically created for this model ID.
      *
-     * @param mdlId TODO:
+     * @param mdlId Model ID to open this client for.
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
     void open(String mdlId) throws NCTestClientException, IOException;
-    
-    
+
     /**
-     * Closes test client connection to the server.
+     * Closes test client connection to the server. Removes temporary data source
+     * if one was created.
      *
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.

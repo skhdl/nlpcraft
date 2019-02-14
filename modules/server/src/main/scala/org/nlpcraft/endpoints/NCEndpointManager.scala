@@ -46,7 +46,7 @@ import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.util.NCGlobals
-import org.nlpcraft.{NCConfigurable, NCE, NCLifecycle, _}
+import org.nlpcraft._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -54,23 +54,27 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.control.Exception.catching
 
 /**
-  * Endpoints manager.
+  * Query result notification endpoints manager.
   */
 object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteNLPCraft {
     private object Config extends NCConfigurable {
-        val maxQueueSize: Int = hocon.getInt("endpoint.max.queue.size")
-        val maxQueueUserSize: Int = hocon.getInt("endpoint.max.queue.per.user.size")
-        val maxQueueCheckPeriodMs: Long = hocon.getLong("endpoint.max.queue.check.period.mins") * 60 * 1000
+        val maxQueueSize: Int = hocon.getInt("endpoint.queue.maxSize")
+        val maxQueueUserSize: Int = hocon.getInt("endpoint.queue.maxPerUserSize")
+        val maxQueueCheckPeriodMs: Long = hocon.getLong("endpoint.queue.checkPeriodMins") * 60 * 1000
         val delaysMs: Seq[Long] = hocon.getLongList("endpoint.delaysSecs").toSeq.map(p ⇒ p * 1000)
         val delaysCnt: Int = delaysMs.size
 
         override def check(): Unit = {
-            require(maxQueueSize > 0, s"Parameter `maxQueueSize` must be positive: $maxQueueSize")
-            require(maxQueueUserSize > 0, s"Parameter `maxQueueUserSize` must be positive: $maxQueueUserSize")
-            require(maxQueueCheckPeriodMs > 0, s"Parameter `maxQueueCheckPeriodMs` must be positive: $maxQueueCheckPeriodMs")
-            require(delaysMs.nonEmpty, s"Parameters `delaysMs` shouldn't be empty")
-
-            delaysMs.foreach(delayMs ⇒ require(delayMs > 0, s"Parameter `delayMs` must be positive: $delayMs"))
+            require(maxQueueSize > 0,
+                s"Parameter 'endpoint.queue.maxSize' must be positive: $maxQueueSize")
+            require(maxQueueUserSize > 0,
+                s"Parameter 'endpoint.queue.maxPerUserSize' must be positive: $maxQueueUserSize")
+            require(maxQueueCheckPeriodMs > 0,
+                s"Parameter 'endpoint.queue.checkPeriodMins' must be positive: $maxQueueCheckPeriodMs")
+            require(delaysMs.nonEmpty,
+                s"Parameters 'endpoint.delaysSecs' cannot be empty.")
+            delaysMs.foreach(delayMs ⇒ require(delayMs > 0,
+                s"Parameter 'endpoint.delaysSecs' must contain only positive values: $delayMs"))
         }
     }
 
@@ -101,7 +105,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     @volatile private var cache: IgniteCache[String, NCEndpointCacheValue] = _
     @volatile private var sender: Thread = _
     @volatile private var cleaner: ScheduledExecutorService = _
-    @volatile private var httpClient: CloseableHttpClient = _
+    @volatile private var httpCli: CloseableHttpClient = _
 
     /**
       * Starts this component.
@@ -111,10 +115,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         require(cache != null)
 
-        httpClient = HttpClients.createDefault
+        httpCli = HttpClients.createDefault
 
         sender =
-            NCGlobals.mkThread("endpoint-notifier-sender-thread") {
+            NCGlobals.mkThread("endpoint-sender-thread") {
                 thread ⇒ {
                     while (!thread.isInterrupted) {
                         mux.synchronized {
@@ -126,7 +130,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                             sleepTime = Long.MaxValue
                         }
 
-                        val t = now()
+                        val t = G.nowUtcMs()
 
                         val query: SqlQuery[String, NCEndpointCacheValue] =
                             new SqlQuery(
@@ -163,9 +167,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         super.start()
     }
-
-    private def now(): Long = System.currentTimeMillis()
-
+    
+    /**
+      *
+      */
     private def clean(): Unit =
         try {
             // Clears cache for each user.
@@ -197,12 +202,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
             val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
             if (srvReqIds.nonEmpty) {
-                logger.warn(s"Too big users endpoints queue. Some notifications deleted: $srvReqIds")
+                logger.warn(s"Query state notifications dropped due to per-use queue size limit: $srvReqIds")
 
                 cache --= srvReqIds
             }
-            else
-                logger.debug(s"Queue user limits checked ok.")
 
             // Clears summary cache.
             if (cache.size() > Config.maxQueueSize) {
@@ -222,18 +225,22 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     )
 
                 val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
-
-                logger.warn(s"Too big summary endpoints queue. Some notifications deleted: $srvReqIds")
+    
+                logger.warn(s"Query state notifications dropped due to overall queue size limit: $srvReqIds")
 
                 cache --= srvReqIds
             }
-            else
-                logger.debug(s"Queue limit checked ok.")
         }
         catch {
-            case e: Throwable ⇒ logger.error("Cleaner execution error.", e)
+            case e: Throwable ⇒ logger.error("Query notification GC error.", e)
         }
-
+    
+    /**
+      * 
+      * @param usrId
+      * @param ep
+      * @param values
+      */
     private def send(usrId: Long, ep: String, values: Seq[NCEndpointCacheValue]): Unit = {
         val seq = values.map(p ⇒ {
             val s = p.getState
@@ -261,14 +268,18 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 post.setHeader("Content-Type", "application/json")
                 post.setEntity(new StringEntity(GSON.toJson(seq.asJava)))
 
-                httpClient.execute(
+                httpCli.execute(
                     post,
                     new ResponseHandler[Unit] {
                         override def handleResponse(resp: HttpResponse): Unit = {
                             val code = resp.getStatusLine.getStatusCode
 
                             if (code != 200)
-                                throw new NCE(s"Unexpected result [userId=$usrId, endpoint=$ep, code=$code]")
+                                throw new NCE(s"Unexpected query state endpoint send HTTP response [" +
+                                    s"userId=$usrId, " +
+                                    s"endpoint=$ep, " +
+                                    s"code=$code" +
+                                s"]")
                         }
                     }
                 )
@@ -278,7 +289,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         },
         {
             case e: Exception ⇒
-                val t = now()
+                val t = G.nowUtcMs()
 
                 val sendAgain =
                     values.flatMap(v ⇒
@@ -298,7 +309,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     ).toMap
 
                 if (sendAgain.nonEmpty) {
-                    val sleepTime = sendAgain.map(_._2.getSendTime).min - now()
+                    val sleepTime = sendAgain.map(_._2.getSendTime).min - G.nowUtcMs()
 
                     mux.synchronized {
                         this.sleepTime = sleepTime
@@ -311,7 +322,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     s"Error sending notification " +
                         s"[userId=$usrId" +
                         s", endpoint=$ep" +
-                        s", returnedToCache=${sendAgain.size}" +
+                        s", sendAgain=${sendAgain.size}" +
                         s", error=${e.getLocalizedMessage}" +
                         s"]"
                 )
@@ -334,7 +345,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
             try
                 cleaner.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
             catch {
-                case _: InterruptedException ⇒ logger.warn("Failed to await cleaner timer.")
+                case _: InterruptedException ⇒ () // Safely ignore.
             }
 
             cleaner = null
@@ -343,29 +354,25 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         NCGlobals.stopThread(sender)
 
         cache = null
-        httpClient = null
+        httpCli = null
 
         super.stop()
     }
 
     /**
-      * Adds event for processing.
-      * Note that is executes cache processing in separated thread to not be involved into another transactions.
+      * Adds event for asynchronous notification.
       *
       * @param state Query state.
       * @param ep Endpoint.
       */
     def addNotification(state: NCQueryStateMdo, ep: String): Unit = {
         require(state != null)
+        
         ensureStarted()
 
         NCGlobals.asFuture(
             _ ⇒ {
-                logger.trace(
-                    s"User endpoint notification [userId=${state.userId}, endpoint=$ep, srvReqId=${state.srvReqId}]"
-                )
-
-                val t = now()
+                val t = G.nowUtcMs()
 
                 catching(wrapIE) {
                     cache +=
@@ -378,19 +385,17 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 }
             },
             {
-                case e: Exception ⇒ logger.error(s"Error adding notification [state=$state, ep=$ep]", e)
+                case e: Exception ⇒ logger.error(s"Failed to add query state notification [state=$state, ep=$ep]", e)
             }
         )
     }
 
     /**
       * Cancel notifications for given server request IDs.
-      * Note that is executes cache processing in separated thread to not be involved into another transactions.
-      * Note that doesn't provide 100% guarantee that notification for server request ID will not be sent.
       *
       * @param srvReqIds Server request IDs.
       */
-    def cancelNotification(srvReqIds: Set[String]): Unit = {
+    def cancelNotifications(srvReqIds: Set[String]): Unit = {
         require(srvReqIds != null)
 
         ensureStarted()
@@ -400,19 +405,15 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 catching(wrapIE) {
                     cache --= srvReqIds
                 }
-
-                logger.trace(s"User endpoint notification cancel [srvReqIds=$srvReqIds]")
             },
             {
-                case e: Exception ⇒ logger.error(s"Error cancelling notification [srvReqIds=$srvReqIds]", e)
+                case e: Exception ⇒ logger.error(s"Failed to cancel query state notification [srvReqIds=$srvReqIds]", e)
             }
         )
     }
 
     /**
-      * Cancel notifications for given user ID and endpoint.
-      * Note that is executes cache processing in separated thread to not be involved into another transactions.
-      * Note that it doesn't provide 100% guarantee that notifications from given user will never be sent.
+      * Cancel notifications for given user ID and its endpoint.
       *
       * @param usrId User ID.
       */
@@ -432,12 +433,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
                     val srvIds = cache.query(query).getAll.asScala.map(_.getKey)
 
-                    logger.trace(s"User endpoint notifications cancel [userId=$usrId, removedReqCnt=${srvIds.size}]")
-
                     cache --= srvIds.toSet
                 },
             {
-                case e: Exception ⇒ logger.error(s"Error cancelling notifications [usrId=$usrId]", e)
+                case e: Exception ⇒ logger.error(s"Failed to cancel query state notification [usrId=$usrId]", e)
             }
         )
     }

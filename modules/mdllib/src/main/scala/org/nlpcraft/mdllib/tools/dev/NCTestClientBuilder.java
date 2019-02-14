@@ -130,7 +130,7 @@ public class NCTestClientBuilder {
      * @param reqCfg HTTP REST client configuration parameters.
      * @return Builder instance for chaining calls.
      */
-    public NCTestClientBuilder setConfig(RequestConfig reqCfg) {
+    public NCTestClientBuilder setRequestConfig(RequestConfig reqCfg) {
         impl.setRequestConfig(reqCfg);
         
         return this;
@@ -523,7 +523,7 @@ public class NCTestClientBuilder {
                 this.isTestDs = true;
             }
     
-            Optional<NCDsJson> dsOpt = getDss().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
+            Optional<NCDsJson> dsOpt = getDataSources().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
             
             if (!dsOpt.isPresent())
                 throw new NCTestClientException(String.format("Data source not found: %d", dsId));
@@ -861,7 +861,7 @@ public class NCTestClientBuilder {
          * @throws IOException
          * @throws NCTestClientException
          */
-        private List<NCDsJson> getDss() throws IOException, NCTestClientException {
+        private List<NCDsJson> getDataSources() throws IOException, NCTestClientException {
             log.info("`ds/all` request sent for: `{}`", email);
             
             Map<String, Object> m = gson.fromJson(

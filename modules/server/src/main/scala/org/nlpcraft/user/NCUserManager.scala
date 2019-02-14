@@ -703,7 +703,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     /**
       * This method called on user request error cancel.
       *
-      * @param usrId User ID.
       * @param userSrvReqIds Request IDs by users.
       */
     def onRequestCancel(userSrvReqIds: Map[Long, Set[String]]): Unit = {
@@ -716,7 +715,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                 usrId,
                 ses ⇒
                     ses.endpoint match {
-                        case Some(_) ⇒ NCEndpointManager.cancelNotification(srvReqIds)
+                        case Some(_) ⇒ NCEndpointManager.cancelNotifications(srvReqIds)
                         case None ⇒ // No-op
                     }
             )
