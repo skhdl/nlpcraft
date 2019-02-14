@@ -37,6 +37,7 @@ import org.apache.ignite.IgniteCache
 import org.nlpcraft._
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
+import org.nlpcraft.endpoints.NCEndpointManager
 import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo.NCQueryStateMdo
@@ -200,8 +201,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     
                         cache += srvReqId → copy
 
-                        NCUserManager.onRequestReady(copy)
-                        
+                        processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+
                         true
                 
                     case None ⇒
@@ -250,8 +251,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
                         
                         cache += srvReqId → copy
 
-                        NCUserManager.onRequestReady(copy)
-                        
+                        processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+
                         true
                     
                     case None ⇒
@@ -287,6 +288,18 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         logger.warn(s"Server request not found - safely ignoring (expired or cancelled): $srvReqId")
 
     /**
+      * Executes function with endpoint if it is found for user.
+      *
+      * @param usrId USer ID.
+      * @param f Function.
+      */
+    private def processEndpoint(usrId: Long, f: String ⇒ Unit): Unit =
+        NCUserManager.getUserEndpoint(usrId) match {
+            case Some(ep) ⇒ f(ep)
+            case None ⇒ // No-op
+        }
+
+    /**
       *
       * @param srvReqIds
       */
@@ -308,7 +321,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
                 groupBy(_.userId).
                 map { case(usrId, data) ⇒ usrId → data.map(_.srvReqId) }
 
-        NCUserManager.onRequestCancel(userSrvReqIds)
+        userSrvReqIds.foreach { case (usrId, usrSrvReqIds) ⇒
+            processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
+        }
 
         for (srvReqId ← srvReqIds) {
             NCProcessLogManager.updateCancel(srvReqId, now)

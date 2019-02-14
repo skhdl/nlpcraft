@@ -103,7 +103,6 @@ public class NCTestClientBuilder {
     /**
      * TODO.
      */
-    public static final boolean DFLT_USE_ENDPOINT = true;
     public static final String DFLT_ENDPOINT = "http://localhost:8463/test";
     
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
@@ -208,16 +207,6 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * TODO: Set endpoint mode (periodical check otherwise)
-     * Note
-     */
-    public NCTestClientBuilder setUseEndpoint(boolean useEndpoint) {
-        impl.setUseEndpoint(useEndpoint);
-        
-        return this;
-    }
-    
-    /**
      * TODO: http only. Note that if localhost set, t is replaced to {@link InetAddress#getLocalHost()}
      */
     public NCTestClientBuilder setEndpoint(String endpoint) {
@@ -242,9 +231,6 @@ public class NCTestClientBuilder {
         checkNotNull("pswd", impl.getPassword());
         checkNotNull("baseUrl", impl.getBaseUrl());
         checkPositive("checkIntervalMs", impl.getCheckInterval());
-        
-        if (impl.isUseEndpoint())
-            checkNotNull("endpoint", impl.getEndpoint());
     
         impl.prepareClient();
         
@@ -359,7 +345,6 @@ public class NCTestClientBuilder {
         private String baseUrl = DFLT_BASEURL;
         private String email = DFLT_EMAIL;
         private String pswd = DFLT_PASSWORD;
-        private boolean useEndpoint = DFLT_USE_ENDPOINT;
         private String endpoint = DFLT_ENDPOINT;
         private CloseableHttpClient httpCli;
         
@@ -429,14 +414,6 @@ public class NCTestClientBuilder {
             this.cliSup = cliSup;
         }
         
-        void setUseEndpoint(boolean useEndpoint) {
-            this.useEndpoint = useEndpoint;
-        }
-    
-        boolean isUseEndpoint() {
-            return useEndpoint;
-        }
-    
         void setEndpoint(String endpoint) {
             this.endpoint = endpoint;
         }
@@ -473,7 +450,7 @@ public class NCTestClientBuilder {
                 );
             }
 
-            if (useEndpoint) {
+            if (endpoint != null) {
                 long maxTime = now() + maxCheckTimeMs;
                 
                 while (true) {
@@ -530,7 +507,7 @@ public class NCTestClientBuilder {
             
             this.mdlId = dsOpt.get().getModelId();
             
-            if (useEndpoint) {
+            if (endpoint != null) {
                 URL url = new URL(endpoint);
                 
                 String host = url.getHost();

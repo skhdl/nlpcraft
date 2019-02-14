@@ -169,7 +169,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
     }
     
     /**
-      *
+      * Checks and reduces if necessary queue size, for each user and in general.
       */
     private def clean(): Unit =
         try {
@@ -236,10 +236,11 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         }
     
     /**
-      * 
-      * @param usrId
-      * @param ep
-      * @param values
+      * Sends states events to user endpoint.
+      *
+      * @param usrId User ID.
+      * @param ep Endpoint.
+      * @param values Cached values.
       */
     private def send(usrId: Long, ep: String, values: Seq[NCEndpointCacheValue]): Unit = {
         val seq = values.map(p ⇒ {
@@ -385,7 +386,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 }
             },
             {
-                case e: Exception ⇒ logger.error(s"Failed to add query state notification [state=$state, ep=$ep]", e)
+                case e: Exception ⇒
+                    logger.error(s"Failed to add query state notification [state=$state, ep=$ep]", e)
             }
         )
     }
@@ -407,7 +409,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                 }
             },
             {
-                case e: Exception ⇒ logger.error(s"Failed to cancel query state notification [srvReqIds=$srvReqIds]", e)
+                case e: Exception ⇒
+                    logger.error(s"Failed to cancel query state notification [srvReqIds=$srvReqIds]", e)
             }
         )
     }
@@ -436,7 +439,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                     cache --= srvIds.toSet
                 },
             {
-                case e: Exception ⇒ logger.error(s"Failed to cancel query state notification [usrId=$usrId]", e)
+                case e: Exception ⇒
+                    logger.error(s"Failed to cancel query state notification [usrId=$usrId]", e)
             }
         )
     }

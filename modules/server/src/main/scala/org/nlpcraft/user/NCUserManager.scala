@@ -41,11 +41,11 @@ import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.NCDbManager
 import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.endpoints.NCEndpointManager
+import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft.ignite.NCIgniteNLPCraft
-import org.nlpcraft.mdo.{NCQueryStateMdo, NCUserMdo}
+import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.tx.NCTxManager
-import org.nlpcraft.ignite.NCIgniteHelpers._
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception._
@@ -89,6 +89,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             require(accessTokenExpireTimeoutMins > 0, s"access token expire timeout ($accessTokenExpireTimeoutMins) must be > 0")
         }
     }
+
+    Config.check()
 
     /**
       * Starts this manager.
@@ -191,8 +193,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
         logger.info(s"Default admin user ($email/$pswd) created.")
     }
-
-    Config.check()
 
     /**
       * Gets the list of all current users.
@@ -304,6 +304,27 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             userCache.get(Left(usrId)) match {
                 case null ⇒ None
                 case u ⇒ Some(u)
+            }
+        }
+    }
+
+    /**
+      * Gets user for given user ID.
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def getUserEndpoint(usrId: Long): Option[String] = {
+        ensureStarted()
+
+        catching(wrapIE) {
+            idSigninCache.get(usrId) match {
+                case null ⇒ None
+                case tok ⇒
+                    tokenSigninCache.get(tok) match {
+                        case null ⇒ None
+                        case ses ⇒ ses.endpoint
+                    }
             }
         }
     }
@@ -617,7 +638,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         }
     }
 
-    private def execute(usrId: Long, fn: SigninSession ⇒ Unit): Unit =
+    /**
+      * Set endpoint for user session.
+      * @param usrId User ID.
+      * @param epOpt Endpoint.
+      */
+    private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
         catching(wrapIE) {
             NCTxManager.startTx {
                 idSigninCache.get(usrId) match {
@@ -636,14 +662,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                 }
             }
         } match {
-            case Some(ses) ⇒ fn(ses)
-            case None ⇒ // No-op.
-        }
-
-    private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
-        execute(
-            usrId,
-            ses ⇒ {
+            case Some(ses) ⇒
                 epOpt match {
                     case Some(ep) ⇒ logger.debug(s"Endpoint registered [userId=$usrId, endpoint=$ep]")
                     case None ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
@@ -651,9 +670,10 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
                 tokenSigninCache +=
                     ses.acsToken → SigninSession(ses.acsToken, ses.userId, ses.signinMs, ses.lastAccessMs, epOpt
-                )
-            }
-        )
+                    )
+
+            case None ⇒ // No-op.
+        }
 
     /**
       * Registers session level user endpoint.
@@ -678,47 +698,5 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         registerEndpoint0(usrId, None)
-    }
-
-    /**
-      * This method called on user request result received.
-      *
-      * @param state State.
-      */
-    def onRequestReady(state: NCQueryStateMdo): Unit = {
-        require(state != null)
-
-        ensureStarted()
-
-        execute(
-            state.userId,
-            ses ⇒
-                ses.endpoint match {
-                    case Some(ep) ⇒ NCEndpointManager.addNotification(state, ep)
-                    case None ⇒ // No-op
-                }
-        )
-    }
-
-    /**
-      * This method called on user request error cancel.
-      *
-      * @param userSrvReqIds Request IDs by users.
-      */
-    def onRequestCancel(userSrvReqIds: Map[Long, Set[String]]): Unit = {
-        require(userSrvReqIds != null)
-
-        ensureStarted()
-
-        userSrvReqIds.foreach { case (usrId, srvReqIds) ⇒
-            execute(
-                usrId,
-                ses ⇒
-                    ses.endpoint match {
-                        case Some(_) ⇒ NCEndpointManager.cancelNotifications(srvReqIds)
-                        case None ⇒ // No-op
-                    }
-            )
-        }
     }
 }
