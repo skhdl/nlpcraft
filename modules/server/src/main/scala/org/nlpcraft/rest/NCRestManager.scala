@@ -728,7 +728,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
 
                         val usrId = authenticate(req.accessToken).id
 
-                        NCUserManager.deregisterEndpoint(usrId)
+                        NCUserManager.removeEndpoint(usrId)
 
                         complete {
                             Res(API_OK)

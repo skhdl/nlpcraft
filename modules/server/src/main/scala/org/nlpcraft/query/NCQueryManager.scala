@@ -321,8 +321,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
                 groupBy(_.userId).
                 map { case(usrId, data) ⇒ usrId → data.map(_.srvReqId) }
 
-        userSrvReqIds.foreach { case (usrId, usrSrvReqIds) ⇒
-            processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
+        userSrvReqIds.foreach {
+            case (usrId, usrSrvReqIds) ⇒ processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
         }
 
         for (srvReqId ← srvReqIds) {

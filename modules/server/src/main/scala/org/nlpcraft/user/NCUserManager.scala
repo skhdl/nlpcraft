@@ -110,18 +110,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         }
 
         userCache = ignite.cache[Either[Long, String], NCUserMdo]("user-cache")
-
-        require(userCache != null)
-
-        userCache.localLoadCache(null)
-
         tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")
-
-        require(tokenSigninCache != null)
-
         idSigninCache = ignite.cache[Long, String]("user-id-signin-cache")
 
+        require(userCache != null)
+        require(tokenSigninCache != null)
         require(idSigninCache != null)
+
+        userCache.localLoadCache(null)
 
         scanner = new Timer("timeout-scanner")
 
@@ -218,6 +214,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             scanner.cancel()
 
         scanner = null
+        
         tokenSigninCache = null
         idSigninCache = null
         userCache = null
@@ -498,8 +495,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                     }
 
                     // Notification.
-                    NCNotificationManager.addEvent(
-                        "NC_USER_PASSWD_RESET",
+                    NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
                         "userId" → usrId
                     )
             }
@@ -642,11 +638,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     }
 
     /**
-      * Set endpoint for user session.
+      * Updates endpoint for user session.
+      * 
       * @param usrId User ID.
       * @param epOpt Endpoint.
       */
-    private def registerEndpoint0(usrId: Long, epOpt: Option[String]): Unit =
+    private def updateEndpoint(usrId: Long, epOpt: Option[String]): Unit =
         catching(wrapIE) {
             NCTxManager.startTx {
                 idSigninCache.get(usrId) match {
@@ -666,14 +663,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             }
         } match {
             case Some(ses) ⇒
-                epOpt match {
-                    case Some(ep) ⇒ logger.debug(s"Endpoint registered [userId=$usrId, endpoint=$ep]")
-                    case None ⇒ logger.debug(s"Endpoint de-registered [userId=$usrId]")
-                }
-
                 tokenSigninCache +=
                     ses.acsToken → SigninSession(ses.acsToken, ses.userId, ses.signinMs, ses.lastAccessMs, epOpt
-                    )
+                )
 
             case None ⇒ // No-op.
         }
@@ -685,11 +677,15 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
       * @param ep Endpoint URL.
       */
     def registerEndpoint(usrId: Long, ep: String): Unit = {
-        require(ep != null)
-
         ensureStarted()
 
-        registerEndpoint0(usrId, Some(ep))
+        updateEndpoint(usrId, Some(ep))
+    
+        // Notification.
+        NCNotificationManager.addEvent("NC_USER_ADD_ENDPOINT",
+            "userId" → usrId,
+            "endpoint" → ep
+        )
     }
 
     /**
@@ -697,9 +693,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
       *
       * @param usrId User ID.
       */
-    def deregisterEndpoint(usrId: Long): Unit = {
+    def removeEndpoint(usrId: Long): Unit = {
         ensureStarted()
 
-        registerEndpoint0(usrId, None)
+        updateEndpoint(usrId, None)
+    
+        // Notification.
+        NCNotificationManager.addEvent("NC_USER_REMOVE_ENDPOINT",
+            "userId" → usrId
+        )
     }
 }
