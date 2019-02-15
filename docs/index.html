@@ -82,27 +82,35 @@ layout: default
             <div class="col-4">
                 <div class="section-title">Quick <span>Links</span></div>
                 <section>
-                    <a class="quick-link" href="https://github.com/vic64/nlpcraft" target="github">
-                        <div>
-                            <img src="{{ 'images/github_logo.png' | relative_url }}">
-                            <span>GitHub</span>
-                            <i class="fas fa-angle-right"></i>
+                    <div class="quick-link" >
+                        <a href="https://github.com/vic64/nlpcraft" target="github">
+                            <img class="quick-link-img" src="{{ 'images/github_logo.png' | relative_url }}">
+                        </a>
+                        <div class="gh-btn">
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft/subscription" data-icon="octicon-eye" aria-label="Watch vic64/nlpcraft on GitHub">Watch</a>
                         </div>
-                    </a>
-                    <a  class="quick-link" href="javadoc/index.html" target="github">
-                        <div>
-                            <img src="{{ 'images/java.png' | relative_url }}">
+                        <div class="gh-btn">
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft" data-icon="octicon-star" aria-label="Star vic64/nlpcraft on GitHub">Star</a>
+                        </div>
+                        <div class="gh-btn">
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft/fork" data-icon="octicon-repo-forked" aria-label="Fork vic64/nlpcraft on GitHub">Fork</a>
+                        </div>
+                        <i class="fas fa-angle-right"></i>
+                    </div>
+                    <div class="quick-link" >
+                        <a href="javadoc/index.html" target="github">
+                            <img class="quick-link-img" src="{{ 'images/java.png' | relative_url }}">
                             <span>Latest Javadoc</span>
                             <i class="fas fa-angle-right"></i>
-                        </div>
-                    </a>
-                    <a class="quick-link" href="" target="github">
-                        <div>
-                            <img src="{{ 'images/rest.gif' | relative_url }}">
+                        </a>
+                    </div>
+                    <div class="quick-link">
+                        <a href="" target="github">
+                            <img class="quick-link-img" src="{{ 'images/rest.gif' | relative_url }}">
                             <span>REST API</span>
                             <i class="fas fa-angle-right"></i>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </section>
             </div>
         </div>
