@@ -71,11 +71,16 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
             val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
             // Note, we support duplicated URLs in endpoints list.
-            endpoints.foreach(ep ⇒ require(urlVal.isValid(ep), s"Invalid endpoint: $ep"))
-
-            require(flushMsec > 0, s"flush interval ($flushMsec) must be > 0")
-            require(maxBufferSize > 0 , s"maximum buffer size ($maxBufferSize) must be > 0")
-            require(endpoints.nonEmpty, s"at least one REST endpoint is required")
+            endpoints.foreach(ep ⇒ require(urlVal.isValid(ep),
+                s"Invalid value in '$CFG.endpoints' configuration property: $ep"))
+            require(flushMsec > 0,
+                s" Configuration property '$CFG.flushSecs' must be > 0: $flushMsec")
+            require(maxBufferSize > 0 ,
+                s"Configuration property '$CFG.maxBufferSize' must be > 0: $maxBufferSize")
+            require(batchSize > 1 ,
+                s"Configuration property '$CFG.batchSize' must be > 1: $batchSize")
+            require(endpoints.nonEmpty,
+                s"Configuration property '$CFG.endpoints' must have at least one REST endpoint.")
         }
     }
 

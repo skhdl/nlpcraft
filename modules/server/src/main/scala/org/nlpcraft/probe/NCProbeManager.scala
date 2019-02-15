@@ -77,12 +77,18 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val soTimeoutMs: Int = hocon.getInt("probe.soTimeoutMs")
         
         override def check(): Unit = {
-            assert(p2sPort >= 0 && p2sPort <= 65535, s"P2S port ($p2sPort) must be >= 0 and <= 65535")
-            assert(s2pPort >= 0 && s2pPort <= 65535, s"S2P port ($s2pPort) must be >= 0 and <= 65535")
-            assert(reconnectTimeoutMs > 0, s"Reconnect time must be > 0")
-            assert(poolSize > 0, s"Pool size must be > 0")
-            assert(soTimeoutMs > 0, s"SO_TIMEOUT must be > 0")
-            assert(pingTimeoutMs > 0, s"Ping timeout must be > 0")
+            assert(p2sPort >= 0 && p2sPort <= 65535,
+                s"Configuration property 'probe.links.p2s' must be >= 0 and <= 65535: $p2sPort")
+            assert(s2pPort >= 0 && s2pPort <= 65535,
+                s"Configuration property 'probe.links.s2p' must be >= 0 and <= 65535: $s2pPort")
+            assert(reconnectTimeoutMs > 0,
+                s"Configuration property 'probe.reconnectTimeoutMs' must be > 0: $reconnectTimeoutMs")
+            assert(poolSize > 0,
+                s"Configuration property 'probe.poolSize' must be > 0: $poolSize")
+            assert(soTimeoutMs > 0,
+                s"Configuration property 'probe.soTimeoutMs' must be > 0: $soTimeoutMs")
+            assert(pingTimeoutMs > 0,
+                s"Configuration property 'probe.pingTimeoutMs' timeout must be > 0: $pingTimeoutMs")
         }
     }
     

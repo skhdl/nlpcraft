@@ -74,7 +74,10 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
         var port: Int = hocon.getInt("rest.port")
 
         override def check(): Unit = {
-            require(port > 0 && port < 65535, s"port ($port) must be > 0 and < 65535")
+            require(port > 0 && port < 65535,
+                s"Configuration property port 'rest.port' must be > 0 and < 65535: $port")
+            require(host != null,
+                s"Configuration property port 'rest.host' must be specified.")
         }
     }
 

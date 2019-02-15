@@ -49,7 +49,8 @@ object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
         val probeToken: String = hocon.getString(s"$CFG.probe.token")
     
         override def check(): Unit = {
-            require(probeToken != null, s"probe token is not specified")
+            require(probeToken != null,
+                s"Configuration property '$CFG.probe.token' must be specified.")
         }
     }
     

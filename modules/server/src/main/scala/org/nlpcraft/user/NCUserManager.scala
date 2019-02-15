@@ -84,9 +84,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         val accessTokenExpireTimeoutMins: Int = hocon.getInt("user.accessTokenExpireTimeoutMins")
 
         override def check(): Unit = {
-            require(pwdPoolBlowup > 1, s"password pool blowup ($pwdPoolBlowup) must be > 1")
-            require(timeoutScannerFreqMins > 0, s"timeout scanner frequency ($timeoutScannerFreqMins) must be > 0")
-            require(accessTokenExpireTimeoutMins > 0, s"access token expire timeout ($accessTokenExpireTimeoutMins) must be > 0")
+            require(pwdPoolBlowup > 1,
+                s"Configuration parameter 'user.pwdPoolBlowup' must be > 1")
+            require(timeoutScannerFreqMins > 0,
+                s"Configuration parameter 'user.timeoutScannerFreqMins' must be > 0")
+            require(accessTokenExpireTimeoutMins > 0,
+                s"Configuration parameter 'user.accessTokenExpireTimeoutMins' must be > 0")
         }
     }
 

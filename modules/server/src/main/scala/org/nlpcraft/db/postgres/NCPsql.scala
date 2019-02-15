@@ -90,13 +90,13 @@ object NCPsql extends LazyLogging {
 
         override def check(): Unit = {
             require(minPoolSize <= maxPoolSize,
-                s"minimum pool size ($minPoolSize) must be <= maximum pool size ($maxPoolSize).")
+                s"Configuration property 'postgres.c3p0.pool.minSize' ($minPoolSize) must be <= 'postgres.c3p0.pool.maxSize' ($maxPoolSize).")
             require(minPoolSize <= initPoolSize,
-                s"minimum pool size ($minPoolSize) must be <= initial pool size ($initPoolSize).")
+                s"Configuration property 'postgres.c3p0.pool.minSize' ($minPoolSize) must be <= 'postgres.c3p0.pool.initSize' ($initPoolSize).")
             require(initPoolSize <= maxPoolSize,
-                s"initial pool size ($initPoolSize) must be <= maximum pool size ($maxPoolSize).")
+                s"Configuration property 'postgres.c3p0.pool.initSize' ($initPoolSize) must be <= 'postgres.c3p0.pool.maxSize' ($maxPoolSize).")
             require(acqInc > 0,
-                s"acquire increment ($acqInc) must be > 0.")
+                s"Configuration property 'postgres.c3p0.pool.acquireIncrement' must be > 0: $acqInc")
         }
     }
 

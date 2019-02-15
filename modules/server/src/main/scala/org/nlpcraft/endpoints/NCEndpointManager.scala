@@ -66,15 +66,15 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
         override def check(): Unit = {
             require(maxQueueSize > 0,
-                s"Parameter 'endpoint.queue.maxSize' must be positive: $maxQueueSize")
+                s"Configuration parameter 'endpoint.queue.maxSize' must > 0: $maxQueueSize")
             require(maxQueueUserSize > 0,
-                s"Parameter 'endpoint.queue.maxPerUserSize' must be positive: $maxQueueUserSize")
+                s"Configuration parameter 'endpoint.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
             require(maxQueueCheckPeriodMs > 0,
-                s"Parameter 'endpoint.queue.checkPeriodMins' must be positive: $maxQueueCheckPeriodMs")
+                s"Configuration parameter 'endpoint.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
             require(delaysMs.nonEmpty,
-                s"Parameters 'endpoint.delaysSecs' cannot be empty.")
+                s"Configuration parameter 'endpoint.delaysSecs' cannot be empty.")
             delaysMs.foreach(delayMs ⇒ require(delayMs > 0,
-                s"Parameter 'endpoint.delaysSecs' must contain only positive values: $delayMs"))
+                s"Configuration parameter 'endpoint.delaysSecs' must contain only positive values: $delayMs"))
         }
     }
 
