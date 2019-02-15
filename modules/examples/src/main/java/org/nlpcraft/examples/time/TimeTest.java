@@ -67,9 +67,9 @@ public class TimeTest {
         // Empty parameter.
         assertTrue(client.ask("").isFailed());
     
-        // Only latin charset is supported. (Data source default configuration.)
+        // Only latin charset is supported.
         assertTrue(client.ask("El tiempo en España").isFailed());
-        
+
         // Should be passed.
         assertTrue(client.ask("What time is it now in New York City?").isSuccessful());
         assertTrue(client.ask("What's the time in Moscow?").isSuccessful());

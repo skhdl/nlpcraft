@@ -91,7 +91,7 @@ public class Weather2Test {
         // Empty parameter.
         assertTrue(client.ask("").isFailed());
     
-        // Only latin charset is supported. (Data source default configuration.)
+        // Only latin charset is supported.
         assertTrue(client.ask("El tiempo en España").isFailed());
     
         // Unexpected intent ID.

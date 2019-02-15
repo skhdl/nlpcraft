@@ -67,7 +67,7 @@ public class EchoTest {
         // Empty parameter.
         assertTrue(client.ask("").isFailed());
     
-        // Only latin charset is supported. (Data source default configuration.)
+        // Only latin charset is supported.
         assertTrue(client.ask("El tiempo en España").isFailed());
     
         // Should be passed.
