@@ -237,6 +237,7 @@ public class NCProbeConfigBuilder {
      * Sets probe ID.
      *
      * @param id Probe ID to set.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setId(String id) {
         impl.setId(id);
@@ -253,6 +254,7 @@ public class NCProbeConfigBuilder {
      * probe can technically connect to any default server.
      *
      * @param token Probe token to set.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setToken(String token) {
         impl.setToken(token);
@@ -264,6 +266,7 @@ public class NCProbeConfigBuilder {
      * Sets uplink endpoint for this probe.
      *
      * @param upLink Uplink endpoint to set.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setUpLink(String upLink) {
         impl.setUpLink(upLink);
@@ -275,6 +278,7 @@ public class NCProbeConfigBuilder {
      * Sets downlink endpoint for this probe.
      *
      * @param downLink Downlink endpoint to set.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setDownLink(String downLink) {
         impl.setDownLink(downLink);
@@ -286,6 +290,7 @@ public class NCProbeConfigBuilder {
      * Sets optional folder to scan for model JARs.
      *
      * @param jarsFolder Folder to scan for model JARs.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setJarsFolder(String jarsFolder) {
         impl.setJarsFolder(jarsFolder);
@@ -297,6 +302,7 @@ public class NCProbeConfigBuilder {
      * Sets optional model provider for the probe.
      *
      * @param provider Optional model provider for the probe.
+     * @return This builder instance for call chaining.
      */
     public NCProbeConfigBuilder setProvider(NCModelProvider provider) {
         impl.setProvider(provider);

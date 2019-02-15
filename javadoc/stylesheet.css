@@ -621,8 +621,9 @@ h2 {
 }
 
 .legalCopy {
-    font-size: 115%;
-    line-height: 2em;
+    margin-left: 0.4em;
+    margin-top: 90px;
+    font-size: 110%;
 }
 
 .bar {
@@ -631,7 +632,7 @@ h2 {
 
 .aboutLanguage {
     float: right;
-    padding: 14px 21px;
+    padding: 12px 10px;
     font-size: 110%;
     z-index: 200;
     margin-top: -9px;

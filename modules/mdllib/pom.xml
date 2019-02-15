@@ -119,7 +119,6 @@
                     <bottom>
                         <![CDATA[
                             Copyright &#169; 2013-{currentYear} NLPCraft Project. All rights reserved.
-                            <a class="github-button" href="https://github.com/vic64/nlpcraft" data-icon="octicon-star" aria-label="Star vic64/nlpcraft on GitHub">Star</a>
                         ]]>
                     </bottom>
                     <top>
@@ -160,12 +159,16 @@
                     </groups>
                     <header>
                         <![CDATA[
-                            NLPCraft ${project.version} API <a href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
+                            NLPCraft ${project.version}
                         ]]>
                     </header>
                     <footer>
                         <![CDATA[
-                            NLPCraft ${project.version} API
+                            <span style="vertical-align: super">NLPCraft ${project.version}</span>
+                            <a style="vertical-align: super; margin-right: 10px" href="https://github.com/vic64/nlpcraft" target="github"><i class="fa fa-github github-logo"></i></a>
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft/subscription" data-icon="octicon-eye" aria-label="Watch vic64/nlpcraft on GitHub">Watch</a>
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft" data-icon="octicon-star" aria-label="Star vic64/nlpcraft on GitHub">Star</a>
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft/fork" data-icon="octicon-repo-forked" aria-label="Fork vic64/nlpcraft on GitHub">Fork</a>
                             <script type="text/javascript">
                                 SyntaxHighlighter.defaults["auto-links"] = false;
                                 SyntaxHighlighter.defaults["tab-size"] = 2;
@@ -186,11 +189,11 @@
                     </footer>
                     <doctitle>
                         <![CDATA[
-                            <img src="http://nlpcraft.org/images/nlpcraft_logo_darkblue.gif" height="54px"><br>
-                            API Specification v${project.version}
+                            <img style="margin-bottom: 10px" src="http://nlpcraft.org/images/nlpcraft_logo_darkblue.png" height="54px"><br>
+                            API Specification ${project.version}
                         ]]>
                     </doctitle>
-                    <windowtitle>NLPCraft ${project.version} API</windowtitle>
+                    <windowtitle>NLPCraft ${project.version}</windowtitle>
                     <show>public</show>
                     <verbose>false</verbose>
                 </configuration>

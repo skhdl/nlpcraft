@@ -101,7 +101,7 @@ public interface NCTestResult {
     /**
      * Tests whether or not this result corresponds to a successful execution. This is identical to:
      * <pre class="brush: java">
-     *      return getResult().isPresent() && getResultType().isPresent();
+     *      return getResult().isPresent() &amp;&amp; getResultType().isPresent();
      * </pre>
      *
      * @return {@code true} if result corresponds to a successful execution, {@code false} otherwise.
