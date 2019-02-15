@@ -462,64 +462,62 @@ public class NCTestClientBuilder {
             
             this.mdlId = dsOpt.get().getModelId();
             
-            if (endpoint != null) {
-                URL url = new URL(endpoint);
-                
-                String host = url.getHost();
-                
-                if (host.equals("127.0.0.1") || host.equalsIgnoreCase("localhost")) {
-                    endpoint = endpoint.replaceAll(host, InetAddress.getLocalHost().getHostAddress());
-    
-                    url = new URL(endpoint);
-                }
-    
-                restRegisterEndpoint();
-                
-                srv = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
-                
-                srv.createContext(url.getPath(), http -> {
-                    try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
-                        byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
-    
-                        int n = 0;
-    
-                        while (n != arr.length) {
-                            int k = is.read(arr, n, arr.length - n);
-        
-                            if (k == -1)
-                                throw new EOFException();
-        
-                            n = n + k;
-                        }
-    
-                        List<NCRequestStateJson> list =
-                            gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
-                        
-                        for (NCRequestStateJson p : list) 
-                            res.put(p.getServerRequestId(), p);
+            URL url = new URL(endpoint);
 
-                        synchronized (mux) {
-                            mux.notifyAll();
-                        }
-    
-                        String resp = "OK";
-    
-                        http.sendResponseHeaders(200, resp.length());
-    
-                        try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
-                            out.write(resp.getBytes());
-                        }
-                    }
-                    catch (Exception e) {
-                        log.error("Error processing endpoint message.", e);
-                    }
-                });
-                
-                srv.start();
-    
-                log.info("Endpoint listener started: {}", endpoint);
+            String host = url.getHost();
+
+            if (host.equals("127.0.0.1") || host.equalsIgnoreCase("localhost")) {
+                endpoint = endpoint.replaceAll(host, InetAddress.getLocalHost().getHostAddress());
+
+                url = new URL(endpoint);
             }
-            
+
+            restRegisterEndpoint();
+
+            srv = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
+
+            srv.createContext(url.getPath(), http -> {
+                try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
+                    byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
+
+                    int n = 0;
+
+                    while (n != arr.length) {
+                        int k = is.read(arr, n, arr.length - n);
+
+                        if (k == -1)
+                            throw new EOFException();
+
+                        n = n + k;
+                    }
+
+                    List<NCRequestStateJson> list =
+                        gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
+
+                    for (NCRequestStateJson p : list)
+                        res.put(p.getServerRequestId(), p);
+
+                    synchronized (mux) {
+                        mux.notifyAll();
+                    }
+
+                    String resp = "OK";
+
+                    http.sendResponseHeaders(200, resp.length());
+
+                    try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
+                        out.write(resp.getBytes());
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Error processing endpoint message.", e);
+                }
+            });
+
+            srv.start();
+
+            log.info("Endpoint listener started: {}", endpoint);
+
             this.opened = true;
         }
         
