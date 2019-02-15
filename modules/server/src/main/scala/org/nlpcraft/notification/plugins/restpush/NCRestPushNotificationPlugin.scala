@@ -160,7 +160,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
         
         try {
             post.setHeader("Content-Type", "application/json")
-            post.setEntity(new StringEntity(GSON.toJson(batch)))
+            post.setEntity(new StringEntity(GSON.toJson(batch), "UTF-8"))
 
             httpClient.execute(
                 post,

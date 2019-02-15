@@ -131,7 +131,8 @@ object NCVersionManager extends NCLifecycle("Version manager") {
                                     "version" → ver.version,
                                     "properties" → props
                                 ).asJava
-                            )
+                            ),
+                            "UTF-8"
                         )
                     )
 

@@ -635,9 +635,12 @@ public class NCTestClientBuilder {
                 if (reqCfg != null)
                     post.setConfig(reqCfg);
                 
-                StringEntity entity = new StringEntity(gson.toJson(Arrays.stream(ps).
+                StringEntity entity = new StringEntity(
+                    gson.toJson(Arrays.stream(ps).
                     filter(p -> p.getValue() != null).
-                    collect(Collectors.toMap(Pair::getKey, Pair::getValue))));
+                    collect(Collectors.toMap(Pair::getKey, Pair::getValue))),
+                    "UTF-8"
+                );
                 
                 post.setHeader("Content-Type", "application/json");
                 post.setEntity(entity);

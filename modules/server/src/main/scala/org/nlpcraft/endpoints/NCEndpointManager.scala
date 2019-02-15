@@ -267,7 +267,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
             try {
                 post.setHeader("Content-Type", "application/json")
-                post.setEntity(new StringEntity(GSON.toJson(seq.asJava)))
+                post.setEntity(new StringEntity(GSON.toJson(seq.asJava), "UTF-8"))
 
                 httpCli.execute(
                     post,

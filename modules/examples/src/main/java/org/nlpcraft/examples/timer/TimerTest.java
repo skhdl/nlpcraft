@@ -66,8 +66,8 @@ public class TimerTest {
     public void test() throws NCException, IOException {
         // Empty parameter.
         assertTrue(client.ask("").isFailed());
-        
-        // Unsupported language.
+    
+        // Only latin charset is supported. (Data source default configuration.)
         assertTrue(client.ask("El tiempo en España").isFailed());
         
         // Should be passed.
