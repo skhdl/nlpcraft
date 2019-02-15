@@ -134,11 +134,6 @@
                                         "API_OK"
                                     ]
                                 },
-                                "hash": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "description": "Current server hash (can be sent back to server to avoid unnecessary payloads)"
-                                },
                                 "states": {
                                     "type": "array",
                                     "items": {
@@ -225,7 +220,7 @@
             "post": {
                 "tags": ["Asking"],
                 "summary": "Cancels a question.",
-                "description": "Cancels the previously submitted sentence.",
+                "description": "Cancels the previously submitted sentence. Must be called when query result is no longer needed.",
                 "operationId": "cancel",
                 "produces": [
                     "application/json"
@@ -318,7 +313,7 @@
                             },
                             "isTest": {
                                 "type": "boolean",
-                                "description": "Optional flag. Is request sent for test reasons or not."
+                                "description": "Optional flag on whether request was sent for test reasons or not."
                             }
                         }
                     }
@@ -361,7 +356,7 @@
             "post": {
                 "tags": ["Users"],
                 "summary": "Gets all users.",
-                "description": "Gets all users for signed in user company.",
+                "description": "Gets all users.",
                 "operationId": "getAllUsers",
                 "produces": [
                     "application/json"
@@ -470,7 +465,7 @@
             "post": {
                 "tags": ["Users"],
                 "summary": "Updates regular user.",
-                "description": "Updates regular user with given parameters. Note that admin status and preferences can only be changed via website.",
+                "description": "Updates user with given parameters.",
                 "operationId": "updateUser",
                 "produces": [
                     "application/json"
@@ -598,7 +593,7 @@
             "post": {
                 "tags": ["Users"],
                 "summary": "Adds new regular user.",
-                "description": "Adds new regular user with given parameters. Note that admin status and preferences can only be changed via website.",
+                "description": "Adds new user with given parameters.",
                 "operationId": "addUser",
                 "produces": [
                     "application/json"
@@ -696,7 +691,7 @@
             "post": {
                 "tags": ["Users"],
                 "summary": "Register user endpoint.",
-                "description": "Register session level user endpoint.",
+                "description": "Register session level user endpoint for query results.",
                 "operationId": "registerEndpoint",
                 "produces": [
                     "application/json"
@@ -761,7 +756,7 @@
             "post": {
                 "tags": ["Users"],
                 "summary": "Removes user endpoint.",
-                "description": "Removes session level user endpoint. Command ignored if endpoint is not registered",
+                "description": "Removes session level user endpoint. Command ignored if endpoint is not registered.",
                 "operationId": "removeEndpoint",
                 "produces": [
                     "application/json"
@@ -1361,7 +1356,7 @@
             "post": {
                 "tags": ["Data Sources"],
                 "summary": "Gets all data sources.",
-                "description": "Gets all data sources for signed in user company.",
+                "description": "Gets all data sources for signed in user.",
                 "operationId": "getAllDataSources",
                 "produces": [
                     "application/json"
