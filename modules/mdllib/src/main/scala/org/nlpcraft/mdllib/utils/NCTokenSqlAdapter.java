@@ -32,13 +32,13 @@
 package org.nlpcraft.mdllib.utils;
 
 import org.nlpcraft.mdllib.*;
-import java.util.List;
+import java.util.*;
 
 /**
- * Convenient SQL adapter for usage with JDBC prepared statements.
+ * Convenient SQL adapter for usage with JDBC prepared statements in methods in {@link NCTokenUtils} class.
  *
  * @param <T> Type of parameters.
- * @see NCTokenUtils#prepareNumSql(NCToken, String)
+ * @see NCTokenUtils#prepareNumSql(NCToken, String) 
  * @see NCTokenUtils#prepareDateSql(NCToken, String)
  */
 public interface NCTokenSqlAdapter<T> {

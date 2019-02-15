@@ -75,34 +75,16 @@ import java.util.stream.Collectors;
  * will have to be changed if not testing with default account.
  */
 public class NCTestClientBuilder {
-    /**
-     * Default public REST API URL (endpoint).
-     */
+    /** Maximum time to wait for the individual result. */
+    private static final long MAX_WAIT_TIME = 30 * 1000; // 30s.
+
+    /** Default public REST API URL (endpoint). */
     public static final String DFLT_BASEURL = "http://localhost:8081/api/v1/";
-    
-    /**
-     * Default client email.
-     */
+    /** Default client email. */
     public static final String DFLT_EMAIL = "admin@admin.com";
-    
-    /**
-     * Default client password.
-     */
+    /** Default client password. */
     public static final String DFLT_PASSWORD = "admin";
-    
-    /**
-     * Default maximum statuses check time, millisecond.
-     */
-    public static final long DFLT_MAX_CHECK_TIME = 10 * 1000;
-    
-    /**
-     * Default millisecond delay between result checks.
-     */
-    public static final long DFLT_CHECK_INTERVAL_MS = 2000;
-    
-    /**
-     * TODO.
-     */
+    /** Default local endpoint to get result notifications. */
     public static final String DFLT_ENDPOINT = "http://localhost:8463/test";
     
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
@@ -113,7 +95,7 @@ public class NCTestClientBuilder {
     private NCTestClientImpl impl;
     
     /**
-     * Creates new default builder instance.
+     * Creates new builder instance with all defaults set.
      *
      * @return Builder instance.
      */
@@ -136,20 +118,7 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets check result delay value in milliseconds.
-     * Default values is {@link NCTestClientBuilder#DFLT_CHECK_INTERVAL_MS}.
-     *
-     * @param checkIntervalMs Result check delay value in milliseconds.
-     * @return Builder instance for chaining calls.
-     */
-    public NCTestClientBuilder setCheckInterval(long checkIntervalMs) {
-        impl.setCheckInterval(checkIntervalMs);
-        
-        return this;
-    }
-    
-    /**
-     * Sets {@link CloseableHttpClient} custom supplier.
+     * Sets non-default {@link CloseableHttpClient} custom supplier.
      * By default {@link CloseableHttpClient} created with {@link HttpClients#createDefault()}.
      *
      * @param cliSup {@link CloseableHttpClient} custom supplier.
@@ -162,7 +131,7 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets API base URL.
+     * Sets non-default API base URL. Only change it if your server is not running on localhost.
      * By default {@link NCTestClientBuilder#DFLT_BASEURL} is used.
      *
      * @param baseUrl API base URL.
@@ -179,8 +148,9 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets user credentials.
-     * By default {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD} are used.
+     * Sets non-default user credentials.
+     * By default {@link NCTestClientBuilder#DFLT_EMAIL} and {@link NCTestClientBuilder#DFLT_PASSWORD} are used
+     * and they match the default NLPCraft server user.
      *
      * @param email User email.
      * @param pswd  User password.
@@ -194,20 +164,12 @@ public class NCTestClientBuilder {
     }
     
     /**
-     * Sets maximum check time. It is maximum time for waiting for the processing completion.
-     * By default {@link NCTestClientBuilder#DFLT_MAX_CHECK_TIME} is used.
+     * Sets non-default query result endpoint. In most cases the default value should be used unless
+     * there's a problem with network exchange on the default endpoint.
+     * By default {@link NCTestClientBuilder#DFLT_ENDPOINT} is used.
      *
-     * @param maxCheckTimeMs Maximum check time (ms).
+     * @param endpoint Endpoint URL to set, e.g. "http://localhost:8463/test".
      * @return Builder instance for chaining calls.
-     */
-    public NCTestClientBuilder setMaxCheckTime(long maxCheckTimeMs) {
-        impl.setMaxCheckTime(maxCheckTimeMs);
-        
-        return this;
-    }
-    
-    /**
-     * TODO: http only. Note that if localhost set, t is replaced to {@link InetAddress#getLocalHost()}
      */
     public NCTestClientBuilder setEndpoint(String endpoint) {
         if (endpoint != null) {
@@ -226,12 +188,11 @@ public class NCTestClientBuilder {
      * @return Newly built test client instance.
      */
     public NCTestClient build() {
-        checkPositive("maxCheckTimeMs", impl.getMaxCheckTime());
         checkNotNull("email", impl.getEmail());
-        checkNotNull("pswd", impl.getPassword());
+        checkNotNull("password", impl.getPassword());
         checkNotNull("baseUrl", impl.getBaseUrl());
-        checkPositive("checkIntervalMs", impl.getCheckInterval());
-    
+        checkNotNull("endpoint", impl.getEndpoint());
+
         impl.prepareClient();
         
         return impl;
@@ -247,12 +208,15 @@ public class NCTestClientBuilder {
         public long getDataSourceId() {
             return dsId;
         }
+
         public void setDataSourceId(long dsId) {
             this.dsId = dsId;
         }
+
         public String getModelId() {
             return mdlId;
         }
+
         public void setModelId(String mdlId) {
             this.mdlId = mdlId;
         }
@@ -275,54 +239,70 @@ public class NCTestClientBuilder {
         public String getServerRequestId() {
             return srvReqId;
         }
+
         public void setServerRequestId(String srvReqId) {
             this.srvReqId = srvReqId;
         }
+
         public long getUserId() {
             return userId;
         }
+
         public void setUserId(long userId) {
             this.userId = userId;
         }
+
         public long getDataSourceId() {
             return dsId;
         }
+
         public void setDataSourceId(long dsId) {
             this.dsId = dsId;
         }
+
         public String getStatus() {
             return status;
         }
+
         public void setStatus(String status) {
             this.status = status;
         }
+
         public String getResultType() {
             return resType;
         }
+
         public void setResultType(String resType) {
             this.resType = resType;
         }
         public String getResultBody() {
             return resBody;
         }
+
         public void setResultBody(String resBody) {
             this.resBody = resBody;
         }
+
         public String getError() {
             return error;
         }
+
         public void setError(String error) {
             this.error = error;
         }
+
         public long getCreateTstamp() {
             return createTstamp;
         }
+
         public void setCreateTstamp(long createTstamp) {
             this.createTstamp = createTstamp;
         }
+
         public long getUpdateTstamp() {
             return updateTstamp;
         }
+        
         public void setUpdateTstamp(long updateTstamp) {
             this.updateTstamp = updateTstamp;
         }
@@ -333,47 +313,32 @@ public class NCTestClientBuilder {
      */
     private class NCTestClientImpl implements NCTestClient {
         private static final String STATUS_API_OK = "API_OK";
+
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
+
         private final Gson gson = new Gson();
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
-        private long checkIntervalMs = DFLT_CHECK_INTERVAL_MS;
-        private long maxCheckTimeMs = DFLT_MAX_CHECK_TIME;
         private String baseUrl = DFLT_BASEURL;
         private String email = DFLT_EMAIL;
         private String pswd = DFLT_PASSWORD;
         private String endpoint = DFLT_ENDPOINT;
+
         private CloseableHttpClient httpCli;
-        
         private RequestConfig reqCfg;
         private Supplier<CloseableHttpClient> cliSup;
-        private volatile boolean opened = false;
-        private volatile boolean closed = false;
         private String acsTok;
         private long dsId;
         private String mdlId;
         private boolean isTestDs = false;
-        private HttpServer server;
-        
-        long getCheckInterval() {
-            return checkIntervalMs;
-        }
-        
-        void setCheckInterval(long checkIntervalMs) {
-            this.checkIntervalMs = checkIntervalMs;
-        }
-        
-        long getMaxCheckTime() {
-            return maxCheckTimeMs;
-        }
-        
-        void setMaxCheckTime(long maxCheckTimeMs) {
-            this.maxCheckTimeMs = maxCheckTimeMs;
-        }
-        
+        private HttpServer srv;
+
+        private volatile boolean opened = false;
+        private volatile boolean closed = false;
+
         RequestConfig getRequestConfig() {
             return reqCfg;
         }
@@ -428,7 +393,8 @@ public class NCTestClientBuilder {
         
         @Override
         public NCTestResult ask(String txt) throws NCTestClientException, IOException {
-            checkNotNull("txt", txt);
+            if (txt == null)
+                throw new IllegalArgumentException("Test sentence text cannot be 'null'.");
 
             if (!opened) throw new IllegalStateException("Client is not opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
@@ -436,7 +402,7 @@ public class NCTestClientBuilder {
             String srvReqId;
             
             try {
-                srvReqId = ask0(txt);
+                srvReqId = restAsk(txt);
             }
             catch (NCTestClientException e) {
                 return mkResult(
@@ -450,60 +416,49 @@ public class NCTestClientBuilder {
                 );
             }
 
-            if (endpoint != null) {
-                long maxTime = now() + maxCheckTimeMs;
-                
-                while (true) {
-                    NCRequestStateJson js = this.res.remove(srvReqId);
-    
-                    if (js != null) {
-                        assert js.status.equals("QRY_READY");
-        
-                        return mkResult(txt, dsId, mdlId, js);
-                    }
-    
-                    waitUntil(maxTime);
-                }
-            }
-            
-            while (true) {
-                Optional<NCRequestStateJson> opt =
-                    check(acsTok).
-                        stream().
-                        filter(p -> p.getServerRequestId().equals(srvReqId) && p.getStatus().equals("QRY_READY")).
-                        findAny();
+            long maxTime = System.currentTimeMillis() + MAX_WAIT_TIME;
 
-                if (opt.isPresent()) {
-                    NCRequestStateJson js = opt.get();
-                    
+            while (true) {
+                NCRequestStateJson js = this.res.remove(srvReqId);
+
+                if (js != null) {
+                    assert js.status.equals("QRY_READY");
+
                     return mkResult(txt, dsId, mdlId, js);
                 }
 
-                waitUntil(now() + checkIntervalMs);
-            }
+                waitUntil(maxTime);
+            } 
         }
-    
+
+        /**
+         *
+         * @param dsId
+         * @param mdlId
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
+         */
         private void open0(Long dsId, String mdlId) throws NCTestClientException, IOException {
             assert dsId != null ^ mdlId != null;
             
             if (opened) throw new IllegalStateException("Client already opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
             
-            this.acsTok = signin();
+            acsTok = restSignin();
             
             if (dsId != null) {
                 this.dsId = dsId;
-                this.isTestDs = false;
+                isTestDs = false;
             }
             else {
-                this.dsId = createTestDs(mdlId);
-                this.isTestDs = true;
+                this.dsId = restCreateTestDs(mdlId);
+                isTestDs = true;
             }
     
-            Optional<NCDsJson> dsOpt = getDataSources().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
+            Optional<NCDsJson> dsOpt = restGetDataSources().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
             
             if (!dsOpt.isPresent())
-                throw new NCTestClientException(String.format("Data source not found: %d", dsId));
+                throw new NCTestClientException(String.format("Data source ID not found: %d", dsId));
             
             this.mdlId = dsOpt.get().getModelId();
             
@@ -518,11 +473,11 @@ public class NCTestClientBuilder {
                     url = new URL(endpoint);
                 }
     
-                registerEndpoint();
+                restRegisterEndpoint();
                 
-                server = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
+                srv = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
                 
-                server.createContext(url.getPath(), http -> {
+                srv.createContext(url.getPath(), http -> {
                     try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
                         byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
     
@@ -539,26 +494,10 @@ public class NCTestClientBuilder {
     
                         List<NCRequestStateJson> list =
                             gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
-    
-                        log.trace("Endpoint response size: {}", list.size());
                         
-                        for (NCRequestStateJson p : list) {
+                        for (NCRequestStateJson p : list) 
                             res.put(p.getServerRequestId(), p);
-    
-                            String body = p.getResultBody();
-                            
-                            if (body != null && body.length() > 100)
-                                body = body.substring(0, 100) + " ...";
-                            
-                            log.trace(
-                                "Response [srvReqId={}, resType={}, resBody={}, errMsg={}]",
-                                p.getServerRequestId(),
-                                p.getResultType(),
-                                body,
-                                p.getError()
-                            );
-                        }
-                        
+
                         synchronized (mux) {
                             mux.notifyAll();
                         }
@@ -576,9 +515,9 @@ public class NCTestClientBuilder {
                     }
                 });
                 
-                server.start();
+                srv.start();
     
-                log.info("Server started: {}", endpoint);
+                log.info("Endpoint listener started: {}", endpoint);
             }
             
             this.opened = true;
@@ -599,13 +538,15 @@ public class NCTestClientBuilder {
             if (!opened) throw new IllegalStateException("Client is not opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
             
-            if (server != null) server.stop(0);
+            if (srv != null) srv.stop(0);
             
             res.clear();
             
-            if (isTestDs) deleteTestDs();
+            if (isTestDs) restDeleteTestDs();
+
+            restRemoveEndpoint();
             
-            signout();
+            restSignout();
             
             closed = true;
         }
@@ -614,35 +555,34 @@ public class NCTestClientBuilder {
          * Clears conversation for this test client. This method will clear conversation for
          * its configured user.
          *
-         * @throws NCTestClientException
-         * @throws IOException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
         @Override
         public void clearConversation() throws NCTestClientException, IOException {
             if (!opened) throw new IllegalStateException("Client is not opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
             
-            clearConversation0();
+            restClearConversation();
         }
-    
-        private long now() {
-            return System.currentTimeMillis();
-        }
-    
+
+        /**
+         * 
+         * @param wakeupTime
+         * @throws NCTestClientException
+         */
         private void waitUntil(long wakeupTime) throws NCTestClientException {
-            long sleepTime = wakeupTime - now();
+            long sleepTime = wakeupTime - System.currentTimeMillis();
         
             if (sleepTime <= 0)
-                throw new NCTestClientException(String.format("Max time elapsed: %d", maxCheckTimeMs));
+                throw new NCTestClientException("Max wait time elapsed.");
         
             synchronized (mux) {
                 try {
                     mux.wait(sleepTime);
                 }
                 catch (InterruptedException e) {
-                    throw new NCTestClientException(
-                        String.format("Thread interrupted: %s", Thread.currentThread().getName()), e
-                    );
+                    throw new NCTestClientException("Result wait thread interrupted.", e);
                 }
             }
         }
@@ -692,7 +632,8 @@ public class NCTestClientBuilder {
             HttpPost post = new HttpPost(baseUrl + url);
             
             try {
-                if (reqCfg != null) post.setConfig(reqCfg);
+                if (reqCfg != null)
+                    post.setConfig(reqCfg);
                 
                 StringEntity entity = new StringEntity(gson.toJson(Arrays.stream(ps).
                     filter(p -> p.getValue() != null).
@@ -700,8 +641,6 @@ public class NCTestClientBuilder {
                 
                 post.setHeader("Content-Type", "application/json");
                 post.setEntity(entity);
-                
-                log.trace("Request prepared: {}", post);
                 
                 ResponseHandler<String> h = resp -> {
                     int code = resp.getStatusLine().getStatusCode();
@@ -723,18 +662,19 @@ public class NCTestClientBuilder {
                     }
                 };
                 
-                String s = httpCli.execute(post, h);
-                
-                log.trace("Response received: {}", s);
-                
-                return s;
+                return httpCli.execute(post, h);
             }
             finally {
                 post.releaseConnection();
             }
         }
-        
-        private void clearConversation0() throws IOException, NCTestClientException {
+
+        /**
+         *
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
+         */
+        private void restClearConversation() throws IOException, NCTestClientException {
             log.info("`clear/conversation` request sent for data source: `{}`", dsId);
             
             checkStatus(gson.fromJson(
@@ -748,12 +688,12 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @param mdlId
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
+         * @param mdlId Model ID.
+         * @return ID of newly created data source.
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private long createTestDs(String mdlId) throws IOException, NCTestClientException {
+        private long restCreateTestDs(String mdlId) throws IOException, NCTestClientException {
             log.info("`ds/add` request sent for model: `{}`", mdlId);
             
             long id =
@@ -777,10 +717,10 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @throws IOException
-         * @throws NCTestClientException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private void deleteTestDs() throws IOException, NCTestClientException {
+        private void restDeleteTestDs() throws IOException, NCTestClientException {
             log.info("`ds/delete` request sent for temporary data source: `{}`", dsId);
             
             checkStatus(
@@ -796,10 +736,10 @@ public class NCTestClientBuilder {
         }
     
         /**
-         * @throws IOException
-         * @throws NCTestClientException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private void registerEndpoint() throws IOException, NCTestClientException {
+        private void restRegisterEndpoint() throws IOException, NCTestClientException {
             log.info("`user/endpoint/register` request sent `{}`", endpoint);
         
             checkStatus(
@@ -813,13 +753,31 @@ public class NCTestClientBuilder {
                 )
             );
         }
-        
+
         /**
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private String signin() throws IOException, NCTestClientException {
+        private void restRemoveEndpoint() throws IOException, NCTestClientException {
+            log.info("`user/endpoint/remove` request sent `{}`", endpoint);
+
+            checkStatus(
+                gson.fromJson(
+                    post(
+                        "user/endpoint/remove",
+                        Pair.of("accessToken", acsTok)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+
+        /**
+         * @return Access token.
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
+         */
+        private String restSignin() throws IOException, NCTestClientException {
             log.info("`user/signin` request sent for: `{}`", email);
             
             return checkAndExtract(
@@ -834,11 +792,11 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
+         * @return List of data sources for configured user.
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private List<NCDsJson> getDataSources() throws IOException, NCTestClientException {
+        private List<NCDsJson> restGetDataSources() throws IOException, NCTestClientException {
             log.info("`ds/all` request sent for: `{}`", email);
             
             Map<String, Object> m = gson.fromJson(
@@ -855,34 +813,12 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @param acsTok
-         * @return
-         * @throws IOException
-         * @throws NCTestClientException
-         */
-        private List<NCRequestStateJson> check(String acsTok) throws IOException, NCTestClientException {
-            log.info("`check` request sent for: `{}`", email);
-            
-            Map<String, Object> m = gson.fromJson(
-                post(
-                    "check",
-                    Pair.of("accessToken", acsTok)
-                ),
-                TYPE_RESP
-            );
-            
-            checkStatus(m);
-            
-            return extract(gson.toJsonTree(getField(m, "states")), TYPE_STATES);
-        }
-        
-        /**
          * @param txt
          * @return
-         * @throws IOException
-         * @throws NCTestClientException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private String ask0(String txt) throws IOException, NCTestClientException {
+        private String restAsk(String txt) throws IOException, NCTestClientException {
             log.info("`ask` request sent: `{}` to data source: `{}`", txt, dsId);
             
             return checkAndExtract(
@@ -899,10 +835,10 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @throws IOException
-         * @throws NCTestClientException
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
          */
-        private void signout() throws IOException, NCTestClientException {
+        private void restSignout() throws IOException, NCTestClientException {
             log.info("`user/signout` request sent for: `{}`", email);
             
             checkStatus(gson.fromJson(
@@ -1007,16 +943,6 @@ public class NCTestClientBuilder {
      * @throws IllegalArgumentException
      */
     private void checkNotNull(String name, Object v) throws IllegalArgumentException {
-        if (v == null) throw new IllegalArgumentException(String.format("Argument cannot be null: '%s'", name));
-    }
-    
-    /**
-     * @param name
-     * @param v
-     * @throws IllegalArgumentException
-     */
-    private void checkPositive(String name, long v) throws IllegalArgumentException {
-        if (v <= 0)
-            throw new IllegalArgumentException(String.format("Argument '%s' must be positive: %d", name, v));
+        if (v == null) throw new IllegalArgumentException(String.format("Test client property cannot be null: '%s'", name));
     }
 }

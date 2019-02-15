@@ -45,7 +45,7 @@ import java.util.regex.*;
 import java.util.stream.*;
 
 /**
- * Intent-based user input matcher.
+ * <b>Main entry point</b> for intent-based user input matcher.
  * <br><br>
  * Intent solver is intended for simpler and more formalized implementation of {@link NCModel#query(NCQueryContext)}
  * method. This is the non-declarative part of the model and cannot be defined outside of JVM code as this

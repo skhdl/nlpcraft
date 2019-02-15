@@ -119,6 +119,7 @@
                     <bottom>
                         <![CDATA[
                             Copyright &#169; 2013-{currentYear} NLPCraft Project. All rights reserved.
+                            <a class="github-button" href="https://github.com/vic64/nlpcraft" data-icon="octicon-star" aria-label="Star vic64/nlpcraft on GitHub">Star</a>
                         ]]>
                     </bottom>
                     <top>
@@ -130,6 +131,7 @@
                             <link href="{@docRoot}/resources/sh/styles/shCore.css" rel="stylesheet" type="text/css" title="Style">
                             <link href="{@docRoot}/resources/sh/styles/shThemeMidnight.css" rel="stylesheet" type="text/css" title="Style">
                             <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+                            <script async defer src="https://buttons.github.io/buttons.js"></script>
                         ]]>
                     </top>
                     <subpackages>org.nlpcraft.mdllib:org.nlpcraft.probe.dev</subpackages>
@@ -184,7 +186,8 @@
                     </footer>
                     <doctitle>
                         <![CDATA[
-                            NLPCraft ${project.version} API Specification
+                            <img src="http://nlpcraft.org/images/nlpcraft_logo_darkblue.gif" height="54px"><br>
+                            API Specification v${project.version}
                         ]]>
                     </doctitle>
                     <windowtitle>NLPCraft ${project.version} API</windowtitle>
