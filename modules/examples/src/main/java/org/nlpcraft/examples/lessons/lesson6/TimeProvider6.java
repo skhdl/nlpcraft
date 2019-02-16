@@ -50,7 +50,6 @@ import static java.time.format.FormatStyle.*;
 /**
  * `Lesson 6` model provider.
  */
-@NCActiveModelProvider
 public class TimeProvider6 extends NCModelProviderAdapter {
     static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     // Geo manager.

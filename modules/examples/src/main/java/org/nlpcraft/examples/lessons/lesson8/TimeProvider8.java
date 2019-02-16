@@ -50,7 +50,6 @@ import static java.time.format.FormatStyle.*;
 /**
  * `Lesson 8` model provider.
  */
-@NCActiveModelProvider
 public class TimeProvider8 extends NCModelProviderAdapter {
     static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     

@@ -35,7 +35,6 @@ import java.util.Optional
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder
-import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 import scala.collection.Seq
@@ -47,7 +46,6 @@ import scala.collection.Seq
   * corresponding to that input. This is a simple demonstration of the JSON output
   * and of most of the NLPCraft-provided data that a user defined model can operate on.
   */
-@NCActiveModelProvider
 class EchoProvider extends NCModelProviderAdapter {
     // Any immutable user defined ID.
     private final val MODEL_ID = "nlpcraft.echo.ex"

@@ -84,12 +84,10 @@ object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug wit
     private def makeProvider(cls: Class[_], src: String): Option[NCModelProvider] =
         catching(classOf[Throwable]) either cls.newInstance().asInstanceOf[NCModelProvider] match {
             case Left(_) ⇒
-                logger.error(s"Failed to instantiate model provider (use 'NCActiveModelProvider' " +
-                    s"to mark deployable providers) [" +
+                logger.error(s"Failed to instantiate model provider [" +
                     s"class=${cls.getName}, " +
                     s"source=$src" +
-                    s"]"
-                )
+                "]")
                 
                 None
 
@@ -147,22 +145,8 @@ object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug wit
                 entry = in.getNextJarEntry
             }
         }
-        
-        // If there is only one class - take it. If more than one - take only those with
-        // 'NCActiveModelProvider' annotation.
-        val filtered =
-            if (classes.size <= 1)
-                classes
-            else {
-                val x = classes.filter(_.isAnnotationPresent(classOf[NCActiveModelProvider]))
-
-                if (x.isEmpty)
-                    logger.warn(s"Found multiple model providers - but none have 'NCActiveModelProvider' annotation: $jarFile")
-
-                x
-            }
     
-        val seq = filtered.flatMap(makeProvider(_, jarFile.getPath))
+        val seq = classes.flatMap(makeProvider(_, jarFile.getPath))
         
         // Ack exit.
         logger.trace(s"Finished scanning JAR: $jarFile")

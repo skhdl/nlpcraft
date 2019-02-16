@@ -41,7 +41,6 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * `Lesson 3` model provider.
  */
-@NCActiveModelProvider
 public class TimeProvider3 extends NCModelProviderAdapter {
     /**
      * Initializes provider.

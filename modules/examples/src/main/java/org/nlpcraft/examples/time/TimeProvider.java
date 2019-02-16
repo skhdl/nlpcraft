@@ -54,7 +54,6 @@ import static java.time.format.FormatStyle.*;
  * It provides HTML response with time and timezone information as well as Google map
  * of the location (default or provided by the user).
  */
-@NCActiveModelProvider
 public class TimeProvider extends NCModelProviderAdapter {
     // Medium data formatter.
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);

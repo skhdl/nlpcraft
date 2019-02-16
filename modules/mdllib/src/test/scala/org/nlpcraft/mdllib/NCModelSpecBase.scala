@@ -35,13 +35,7 @@ import java.util
 import java.util.Collections
 import java.util.{List ⇒ JList}
 
-import org.nlpcraft.mdllib.tools.builder._
-import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
-import org.nlpcraft.mdllib._
-import org.nlpcraft.mdllib.tools.NCSerializableFunction
 import org.nlpcraft.mdllib.tools.builder.{NCElementBuilder, NCModelBuilder, NCModelDescriptorBuilder}
-
-import scala.collection.JavaConverters._
 
 /**
   * Base model test trait.
@@ -126,9 +120,7 @@ trait NCModelSpecBase {
                         .build()
                     )
                     .setQueryFunction(
-                        new NCSerializableFunction[NCQueryContext, NCQueryResult]() {
-                            override def apply(t: NCQueryContext): NCQueryResult = null
-                        }
+                        (_: NCQueryContext) => null
                     )
                     .build()
     

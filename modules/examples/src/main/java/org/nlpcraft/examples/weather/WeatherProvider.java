@@ -42,7 +42,6 @@ import org.nlpcraft.examples.misc.apixu.beans.Day;
 import org.nlpcraft.examples.misc.apixu.beans.Location;
 import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
 import org.nlpcraft.examples.weather2.Weather2Provider;
-import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCRejection;
@@ -82,7 +81,6 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  * Note that this class in exact copy from {@link Weather2Provider} except output formatting.
  * This implementation uses HTML.
  */
-@NCActiveModelProvider
 @SuppressWarnings("Duplicates")
 public class WeatherProvider extends NCModelProviderAdapter {
     // It is demo token and its usage has some restrictions (history data contains one day only, etc).

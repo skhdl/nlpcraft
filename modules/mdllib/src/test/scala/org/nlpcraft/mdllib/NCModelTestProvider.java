@@ -38,7 +38,6 @@ import java.util.*;
 /**
  * Tests model provider.
  */
-@NCActiveModelProvider
 public class NCModelTestProvider implements NCModelProvider {
     private final NCModelDescriptor ds = NCModelDescriptorBuilder.newDescriptor(
         "Test-ID",

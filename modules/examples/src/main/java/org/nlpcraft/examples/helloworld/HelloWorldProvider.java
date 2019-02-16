@@ -32,7 +32,6 @@
 package org.nlpcraft.examples.helloworld;
 
 import org.nlpcraft.NCException;
-import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
@@ -43,7 +42,6 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
  * This trivial example simply responds with 'Hello World!' on any user input. This is the simplest
  * user model that can be defined.
  */
-@NCActiveModelProvider
 public class HelloWorldProvider extends NCModelProviderAdapter {
     /**
      * Initializes provider.
