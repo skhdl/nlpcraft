@@ -31,6 +31,7 @@
 
 package org.nlpcraft.mdllib;
 
+import org.nlpcraft.mdllib.intent.*;
 import org.nlpcraft.util.*;
 import java.io.*;
 import java.util.*;
@@ -270,33 +271,37 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * TODO:
      * Gets optional sentence variant associated with this result.
+     * <br><br>
+     * Note that in general a user input can have one or more possible
+     * parsing {@link NCSentence#getVariants() variants}. Setting the specific variant that was the origin of
+     * this result is required for proper conversation context maintenance. Note also that
+     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
      *
      * @return Sentence variant associated with this result or {@code null}.
+     * @see NCSentence#getVariants()
      */
     public NCVariant getVariant() {
         return var;
     }
     
     /**
-     * TODO:
-     * Sets optional sentence variant this result refers to.
+     * Sets optional sentence variant this result originated from.
      * <br><br>
      * Note that in general a user input can have one or more possible
-     * parsing {@link DLSentence#variants() variants}. Setting the specific variant that was the origin of this result
-     * is optional but improves the self-learning capabilities of the system when provided. Note also that
-     * sub-systems like {@link DLIntentSolver intent-based solver} will set the proper variant automatically.
+     * parsing {@link NCSentence#getVariants() variants}. Setting the specific variant that was the origin of
+     * this result is required for proper conversation context maintenance. Note also that
+     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
      *
      * @param var Sentence variant to set.
      * @return This instance of chaining calls.
+     * @see NCSentence#getVariants()
      */
     public NCQueryResult setVariant(NCVariant var) {
         this.var = var;
         
         return this;
     }
-    
     
     /**
      * Gets result type.

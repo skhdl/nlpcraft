@@ -1551,9 +1551,9 @@ public class NCIntentSolver {
                 if (qryRes.getVariant() == null) {
                     if (res.variant() != null)
                         qryRes.setVariant(res.variant());
-                    else if (sen.variants().size() == 1)
+                    else if (sen.getVariants().size() == 1)
                         // If there's only one variant - use it implicitly.
-                        qryRes.setVariant(sen.variants().get(0));
+                        qryRes.setVariant(sen.getVariants().get(0));
                 }
                 
                 return qryRes;
