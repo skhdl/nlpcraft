@@ -1534,18 +1534,30 @@ public class NCIntentSolver {
 
         if (results.isEmpty())
             return (notFound != null ? notFound : DFLT_NOT_FOUND).get();
-
+    
         NCRejection errRej = null;
     
         for (NCIntentSolverResult res : results)
             try {
-                return res.fn().apply(new NCIntentSolverContext() {
-                    @Override public NCQueryContext getQueryContext() { return ctx; }
-                    @Override public List<List<NCToken>> getIntentTokens() { return res.toks(); }
-                    @Override public NCVariant getVariant() { return res.variant(); }
-                    @Override public boolean isExactMatch() { return res.isExactMatch(); }
-                    @Override public String getIntentId() { return res.intentId(); }
-                });
+                NCQueryResult qryRes =
+                    res.fn().apply(new NCIntentSolverContext() {
+                        @Override public NCQueryContext getQueryContext() { return ctx; }
+                        @Override public List<List<NCToken>> getIntentTokens() { return res.toks(); }
+                        @Override public NCVariant getVariant() { return res.variant(); }
+                        @Override public boolean isExactMatch() { return res.isExactMatch(); }
+                        @Override public String getIntentId() { return res.intentId(); }
+                    });
+    
+                // Don't override if user already set it.
+                if (qryRes.getVariant() == null) {
+                    if (res.variant() != null)
+                        qryRes.setVariant(res.variant());
+                    else if (sen.variants().size() == 1)
+                        // If there's only one variant - use it implicitly.
+                        qryRes.setVariant(sen.variants().get(0));
+                }
+                
+                return qryRes;
             }
             catch (NCIntentSkip e) {
                 // No-op - just skipping this result.
