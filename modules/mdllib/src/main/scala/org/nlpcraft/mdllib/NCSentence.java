@@ -38,8 +38,8 @@ import java.util.*;
 /**
  * Fully parsed representation of the user input.
  * <br><br>
- * Note that in general a given user input can have multiple {@link #variants() variants} of how it can be parsed
- * in isolation. These variants (always at least one) are available through {@link #variants()} method. Additional
+ * Note that in general a given user input can have multiple {@link #getVariants() variants} of how it can be parsed
+ * in isolation. These variants (always at least one) are available through {@link #getVariants()} method. Additional
  * mechanisms, like {@link NCIntentSolver intent-based matching}, utilize the external context (i.e. intents)
  * that simplify the processing and selection among multiple variants.
  * <br><br>
@@ -132,7 +132,7 @@ public interface NCSentence extends Serializable {
      *
      * @return All parsing variants of this sentence. Always contains at least one variant.
      */
-    List<NCVariant> variants();
+    List<NCVariant> getVariants();
     
     /**
      * Gets optional address of the remote client.

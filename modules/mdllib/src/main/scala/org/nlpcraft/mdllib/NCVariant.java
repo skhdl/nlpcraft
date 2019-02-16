@@ -40,7 +40,7 @@ import java.util.*;
  * parsing variants (i.e. set of tokens representing that parsed input). Note also that variants support
  * natural ordering from best to worst fitness.
  *
- * @see NCSentence#variants()
+ * @see NCSentence#getVariants()
  */
 public interface NCVariant extends Serializable, Comparable<NCVariant> {
     /**
