@@ -189,7 +189,7 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "variants":
-           |        ${mkJsonVals(sen.variants().asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
+           |        ${mkJsonVals(sen.getVariants().asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
            | }
          """.stripMargin
     }
