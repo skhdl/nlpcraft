@@ -46,7 +46,7 @@ import org.nlpcraft.mdllib.tools.builder.impl.*;
  * method to get properly constructed {@link NCModelDescriptor} instance.
  */
 public class NCModelDescriptorBuilder {
-    private NCModelDescriptorImpl impl;
+    private final NCModelDescriptorImpl impl;
 
     /**
      * Builds and returns model descriptor instance.

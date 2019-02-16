@@ -44,8 +44,8 @@ public class NCElementImpl implements NCElement {
     private String group;
     private String desc;
     private String parentId;
-    private List<String> syns = new ArrayList<>();
-    private List<String> exclSyns = new ArrayList<>();
+    private final List<String> syns = new ArrayList<>();
+    private final List<String> exclSyns = new ArrayList<>();
     private List<NCValue> values = new ArrayList<>();
     private NCMetadata meta = new NCMetadataImpl();
 

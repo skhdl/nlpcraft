@@ -70,8 +70,8 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
     private final val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
     private object Config extends NCConfigurable {
-        var host: String = hocon.getString("rest.host")
-        var port: Int = hocon.getInt("rest.port")
+        val host: String = hocon.getString("rest.host")
+        val port: Int = hocon.getInt("rest.port")
 
         override def check(): Unit = {
             require(port > 0 && port < 65535,

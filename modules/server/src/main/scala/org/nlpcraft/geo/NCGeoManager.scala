@@ -53,9 +53,6 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
     // Special file, the data of which are not filtered by common dictionary words.
     private final val SYNONYMS_MANUAL_FILES = Seq("manual.json", "states.json")
     
-    private val OK = true.asInstanceOf[java.io.Serializable]
-    private val ERROR = false.asInstanceOf[java.io.Serializable]
-    
     private var model: NCGeoModel = _
     
     // Auxiliary words for GEO names. Example: CA state, Los Angeles city.

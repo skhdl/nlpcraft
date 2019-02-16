@@ -56,9 +56,9 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  */
 @NCActiveModelProvider
 public class TimeProvider5 extends NCModelProviderAdapter {
-    static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     // Geo manager.
-    static private GeoManager geoMrg = new GeoManager();
+    static private final GeoManager geoMrg = new GeoManager();
 
     /**
      * Gets formatted query result.

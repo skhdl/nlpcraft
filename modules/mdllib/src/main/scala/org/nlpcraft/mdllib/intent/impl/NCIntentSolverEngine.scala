@@ -169,7 +169,7 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         val matches = mutable.ArrayBuffer.empty[MatchHolder]
 
         // Find all matches across all intents and sentence variants.
-        for ((vrn, vrnIdx) ← sen.getVariants().zipWithIndex) {
+        for ((vrn, vrnIdx) ← sen.getVariants.zipWithIndex) {
             val availToks = vrn.getTokens.filter(!isStopWord(_))
             
             matches.appendAll(

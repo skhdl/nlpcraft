@@ -37,8 +37,8 @@ package org.nlpcraft.examples.weather2;
  * @param <T> the type parameter
  */
 public class Weather2ResultWrapper<T> {
-    private String intentId;
-    private T result;
+    private final String intentId;
+    private final T result;
     
     /**
      * Instantiates new bean instance.

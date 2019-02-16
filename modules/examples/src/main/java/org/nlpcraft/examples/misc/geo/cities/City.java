@@ -35,8 +35,8 @@ package org.nlpcraft.examples.misc.geo.cities;
  * City data object.
  */
 public class City {
-    private String name;
-    private String country;
+    private final String name;
+    private final String country;
 
     /**
      * Creates new city object.

@@ -60,7 +60,7 @@ import java.util.stream.*;
  */
 public class NCModelBuilder extends NCJsonBuilder {
     /** */
-    private NCModelImpl impl;
+    private final NCModelImpl impl;
     
     /**
      *

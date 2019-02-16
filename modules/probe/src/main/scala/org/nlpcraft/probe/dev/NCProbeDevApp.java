@@ -45,13 +45,13 @@ import java.util.concurrent.atomic.*;
  */
 public class NCProbeDevApp {
     /** Probe exit code indicating error status. */
-    static public int ERROR_EXIT = 0;
+    static final public int ERROR_EXIT = 0;
 
     /** Probe exit code indicating OK status. */
-    static public int OK_EXIT = 1;
+    static final public int OK_EXIT = 1;
 
     /** Probe exit code indicating restart request. */
-    static public int RESTART_EXIT = 2;
+    static final public int RESTART_EXIT = 2;
 
     static private final Object mux = new Object();
 

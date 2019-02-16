@@ -50,7 +50,7 @@ import java.util.*;
  * {@link #setId(String) ID} must be set.
  */
 public class NCElementBuilder extends NCJsonBuilder {
-    private NCElementImpl impl;
+    private final NCElementImpl impl;
 
     /**
      *

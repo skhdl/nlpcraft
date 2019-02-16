@@ -60,10 +60,10 @@ public class TimeProvider extends NCModelProviderAdapter {
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
 
     // Map of cities and their geo and timezone information.
-    static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     
     // Geo manager.
-    static private GeoManager geoMrg = new GeoManager();
+    static private final GeoManager geoMrg = new GeoManager();
 
     /**
      * Gets multipart query result.

@@ -42,13 +42,13 @@ import java.util.*;
  */
 public class NCModelImpl implements NCModel {
     private NCModelDescriptor ds = null;
-    private NCMetadata meta = new NCMetadataImpl();
-    private Set<String> suspWords = new HashSet<>();
-    private Set<String> examples = new HashSet<>();
-    private Set<String> exclStopWords = new HashSet<>();
-    private Set<NCElement> elms = new HashSet<>();
-    private Map<String, String> macros = new HashMap<>();
-    private Set<String> addStopWords = new HashSet<>();
+    private final NCMetadata meta = new NCMetadataImpl();
+    private final Set<String> suspWords = new HashSet<>();
+    private final Set<String> examples = new HashSet<>();
+    private final Set<String> exclStopWords = new HashSet<>();
+    private final Set<NCElement> elms = new HashSet<>();
+    private final Map<String, String> macros = new HashMap<>();
+    private final Set<String> addStopWords = new HashSet<>();
 
     private NCSerializableFunction<NCQueryContext, NCQueryResult> qryFun;
     private NCSerializableConsumer<NCProbeContext> initFun;

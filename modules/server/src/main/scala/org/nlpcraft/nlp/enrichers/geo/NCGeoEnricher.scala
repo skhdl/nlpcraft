@@ -291,21 +291,6 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
             false
     }
 
-    private def note2String(n: NCNlpSentenceNote): String = {
-        def x(name: String): String = n.getOrElse(name, "").asInstanceOf[String]
-
-        val kind = x("kind")
-
-        val content =
-            Seq(
-                x("continent"), x("subcontinent"), x("country"), x("region"), x("city"), x("metro")
-            ).
-            filter(!_.isEmpty).
-            mkString("|")
-
-        s"$kind $content"
-    }
-
     @throws[NCE]
     private def collapse(ns: NCNlpSentence) {
         // Candidates for excluding.
