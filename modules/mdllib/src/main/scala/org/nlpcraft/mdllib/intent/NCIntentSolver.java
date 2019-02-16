@@ -999,9 +999,9 @@ public class NCIntentSolver {
             Object v2 = value;
 
             switch (op) {
-                case "==": return v1 == v2 || v1 != null && v1.equals(v2);
+                case "==": return Objects.equals(v1, v2);
 
-                case "!=": return !(v1 == v2 || v1 != null && v1.equals(v2));
+                case "!=": return !(Objects.equals(v1, v2));
 
                 case "!%":
                     if (v2 == null || !(v1 instanceof String))
@@ -1408,10 +1408,10 @@ public class NCIntentSolver {
     }
 
     // Default not-found callback.
-    private Supplier<NCQueryResult> notFound;
+    private final Supplier<NCQueryResult> notFound;
 
     // Added intents.
-    private List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
+    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
 
     /**
      * Creates new default token solver. Default solver has default {@code null} name, no multi-match and
@@ -1514,7 +1514,6 @@ public class NCIntentSolver {
      * @param ctx Sentence's context to find the best match for.
      * @return Query result.
      */
-    @SuppressWarnings("unchecked")
     public NCQueryResult solve(NCQueryContext ctx) throws NCRejection {
         if (intents.isEmpty())
             log.warn("Intent solver has no registered intents (ignoring).");
