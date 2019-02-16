@@ -81,6 +81,7 @@ import java.util.stream.*;
 public class NCQueryResult implements Serializable {
     private String body;
     private String type;
+    private NCVariant var;
     
     /**
      * Creates {@code text} result.
@@ -267,6 +268,35 @@ public class NCQueryResult implements Serializable {
 
         return this;
     }
+    
+    /**
+     * TODO:
+     * Gets optional sentence variant associated with this result.
+     *
+     * @return Sentence variant associated with this result or {@code null}.
+     */
+    public NCVariant getVariant() {
+        return var;
+    }
+    
+    /**
+     * TODO:
+     * Sets optional sentence variant this result refers to.
+     * <br><br>
+     * Note that in general a user input can have one or more possible
+     * parsing {@link DLSentence#variants() variants}. Setting the specific variant that was the origin of this result
+     * is optional but improves the self-learning capabilities of the system when provided. Note also that
+     * sub-systems like {@link DLIntentSolver intent-based solver} will set the proper variant automatically.
+     *
+     * @param var Sentence variant to set.
+     * @return This instance of chaining calls.
+     */
+    public NCQueryResult setVariant(NCVariant var) {
+        this.var = var;
+        
+        return this;
+    }
+    
     
     /**
      * Gets result type.

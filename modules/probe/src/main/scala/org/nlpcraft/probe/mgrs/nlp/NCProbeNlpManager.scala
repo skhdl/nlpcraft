@@ -354,6 +354,13 @@ object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
                 if (res.getType == null)
                     throw new IllegalStateException("Result type cannot be null.")
 
+                val v = res.getVariant
+
+                // Adds input sentence to the ongoing conversation if *some* result
+                // was returned. Do not add if result is invalid.
+                if (v != null)
+                    conv.addItem(unitedSen, v)
+
                 res
             },
             {
