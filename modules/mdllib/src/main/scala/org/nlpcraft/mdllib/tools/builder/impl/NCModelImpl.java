@@ -32,10 +32,10 @@
 package org.nlpcraft.mdllib.tools.builder.impl;
 
 import org.nlpcraft.mdllib.*;
-import org.nlpcraft.mdllib.tools.*;
 import org.nlpcraft.mdllib.tools.impl.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 /**
  * Default model implementation.
@@ -50,9 +50,9 @@ public class NCModelImpl implements NCModel {
     private final Map<String, String> macros = new HashMap<>();
     private final Set<String> addStopWords = new HashSet<>();
 
-    private NCSerializableFunction<NCQueryContext, NCQueryResult> qryFun;
-    private NCSerializableConsumer<NCProbeContext> initFun;
-    private NCSerializableRunnable discardFun;
+    private Function<NCQueryContext, NCQueryResult> qryFun;
+    private Consumer<NCProbeContext> initFun;
+    private Runnable discardFun;
 
     private String desc;
     private String docsUrl;
@@ -232,7 +232,7 @@ public class NCModelImpl implements NCModel {
      * 
      * @return
      */
-    public NCSerializableFunction<NCQueryContext, NCQueryResult> getQueryFunction() {
+    public Function<NCQueryContext, NCQueryResult> getQueryFunction() {
         return qryFun;
     }
 
@@ -240,7 +240,7 @@ public class NCModelImpl implements NCModel {
      *
      * @param qryFun
      */
-    public void setQueryFunction(NCSerializableFunction<NCQueryContext, NCQueryResult> qryFun) {
+    public void setQueryFunction(Function<NCQueryContext, NCQueryResult> qryFun) {
         assert qryFun != null;
 
         this.qryFun = qryFun;
@@ -250,7 +250,7 @@ public class NCModelImpl implements NCModel {
      *
      * @return
      */
-    public NCSerializableConsumer<NCProbeContext> getInitFunction() {
+    public Consumer<NCProbeContext> getInitFunction() {
         return initFun;
     }
 
@@ -258,7 +258,7 @@ public class NCModelImpl implements NCModel {
      *
      * @param initFun
      */
-    public void setInitFunction(NCSerializableConsumer<NCProbeContext> initFun) {
+    public void setInitFunction(Consumer<NCProbeContext> initFun) {
         assert initFun != null;
 
         this.initFun = initFun;
@@ -268,7 +268,7 @@ public class NCModelImpl implements NCModel {
      *
      * @param discardFun
      */
-    public void setDiscardFunction(NCSerializableRunnable discardFun) {
+    public void setDiscardFunction(Runnable discardFun) {
         assert discardFun != null;
 
         this.discardFun = discardFun;

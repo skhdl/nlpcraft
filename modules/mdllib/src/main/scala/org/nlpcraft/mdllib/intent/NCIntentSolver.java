@@ -35,7 +35,6 @@ import org.apache.commons.lang3.tuple.*;
 import org.nlpcraft.*;
 import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.intent.impl.*;
-import org.nlpcraft.mdllib.tools.*;
 import org.nlpcraft.mdllib.tools.builder.*;
 import org.slf4j.*;
 import java.time.*;
@@ -67,7 +66,7 @@ import java.util.stream.*;
  *     <li>
  *         Use {@link NCIntentSolver#solve(NCQueryContext)} method as implementation
  *         for {@link NCModel#query(NCQueryContext)} method on your model. For example, if you use
- *         {@link NCModelBuilder} class you can use its {@link NCModelBuilder#setQueryFunction(NCSerializableFunction)}
+ *         {@link NCModelBuilder} class you can use its {@link NCModelBuilder#setQueryFunction(Function)}
  *         method to set this up.
  *     </li>
  * </ul>

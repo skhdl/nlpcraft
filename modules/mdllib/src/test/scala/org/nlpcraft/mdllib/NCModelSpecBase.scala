@@ -35,7 +35,8 @@ import java.util
 import java.util.Collections
 import java.util.{List ⇒ JList}
 
-import org.nlpcraft.mdllib.tools.builder.{NCElementBuilder, NCModelBuilder, NCModelDescriptorBuilder}
+import org.nlpcraft.mdllib.tools.builder._
+import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
 
 /**
   * Base model test trait.
@@ -119,9 +120,7 @@ trait NCModelSpecBase {
                         )
                         .build()
                     )
-                    .setQueryFunction(
-                        (_: NCQueryContext) => null
-                    )
+                    .setQueryFunction((_: NCQueryContext) => null)
                     .build()
     
             /**

@@ -36,8 +36,6 @@ import java.util.function.{BiPredicate, Supplier, Function ⇒ JFunction, Predic
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.intent.NCIntentSolver._
 import org.nlpcraft.mdllib.intent.NCIntentSolverContext
-import org.nlpcraft.mdllib.tools.{NCSerializableFunction, NCSerializableRunnable}
-import org.nlpcraft.mdllib.tools.{NCSerializableFunction, NCSerializableRunnable}
 
 import scala.language.implicitConversions
 
@@ -95,28 +93,6 @@ object NCScalaSupport {
     implicit def toIntentCallback(f: NCIntentSolverContext ⇒ NCQueryResult): IntentCallback =
         new IntentCallback() {
             override def apply(ctx: NCIntentSolverContext): NCQueryResult = f(ctx)
-        }
-    
-    /**
-      *                                           
-      * @param f
-      * @tparam T
-      * @tparam R
-      * @return
-      */
-    implicit def toSerializableFunction[T, R](f: T ⇒ R): NCSerializableFunction[T, R] =
-        new NCSerializableFunction[T, R] {
-            override def apply(t: T) = f(t)
-        }
-    
-    /**
-      *
-      * @param f
-      * @return
-      */
-    implicit def toSerializableRunnable(f: Unit ⇒ Unit): NCSerializableRunnable =
-        new NCSerializableRunnable {
-            override def run(): Unit = f(())
         }
 }
 
