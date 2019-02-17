@@ -32,7 +32,9 @@
 package org.nlpcraft.mdllib.tools.dev;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -47,6 +49,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,6 +204,30 @@ public class NCTestClientBuilder {
     /**
      * JSON helper class.
      */
+    static class NCMultipartJson {
+        @SerializedName("resType") private String resType;
+        @SerializedName("resBody") private String resBody;
+    
+        public String getResType() {
+            return resType;
+        }
+    
+        public void setResType(String resType) {
+            this.resType = resType;
+        }
+    
+        public String getResBody() {
+            return resBody;
+        }
+    
+        public void setResBody(String resBody) {
+            this.resBody = resBody;
+        }
+    }
+    
+    /**
+     * JSON helper class.
+     */
     static class NCDsJson {
         @SerializedName("id") private long dsId;
         @SerializedName("mdlId") private String mdlId;
@@ -317,8 +344,10 @@ public class NCTestClientBuilder {
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
+        private final Type TYPE_MPARTS = new TypeToken<ArrayList<NCMultipartJson>>() {}.getType();
 
-        private final Gson gson = new Gson();
+        private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        private final JsonParser jp = new JsonParser();
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
@@ -423,12 +452,81 @@ public class NCTestClientBuilder {
 
                 if (js != null) {
                     assert js.status.equals("QRY_READY");
-
-                    return mkResult(txt, dsId, mdlId, js);
+    
+                    NCTestResult res =
+                        mkResult(
+                            txt,
+                            dsId,
+                            mdlId,
+                            js.getResultType(),
+                            js.getResultBody(),
+                            js.getError(),
+                            js.getUpdateTstamp() - js.getCreateTstamp()
+                        );
+    
+                    //noinspection OptionalGetWithoutIsPresent
+                    log.info(
+                        "Question `{}` with ID: `{}` answered {} with result:\n{}",
+                        txt,
+                        srvReqId,
+                        res.isSuccessful() ? "successfully" : "unsuccessfully",
+                        res.isSuccessful() ?
+                            pretty(res.getResultType().get(), res.getResult().get()) :
+                            res.getResultError().get()
+                    );
+                    
+                    return res;
+                    
                 }
 
                 waitUntil(maxTime);
             } 
+        }
+    
+        /**
+         *
+         * @param type
+         * @param body
+         * @return
+         */
+        private String pretty(String type, String body) {
+            try {
+                switch (type) {
+                    case "json":
+                    case "json/google/map":
+                    case "json/table":
+                        return gson.toJson(jp.parse(body));
+    
+                    case "html/raw":
+                    case "html":
+                        return Jsoup.parseBodyFragment(body).outerHtml();
+    
+                    case "json/multipart": {
+                        List<NCMultipartJson> parts = gson.fromJson(body, TYPE_MPARTS);
+        
+                        StringBuilder buf = new StringBuilder();
+                        
+                        int num = 1;
+        
+                        for (NCMultipartJson part : parts) {
+                            buf.append(num++).append(". Part type: `").append(part.getResType()).append("`\n");
+                            buf.append("Part body:\n").append(pretty(part.getResType(), part.getResBody())).append("\n");
+                        }
+        
+                        return buf.toString();
+                    }
+    
+                    default:
+                        return body;
+                }
+            }
+            catch (Exception e) {
+                log.error(
+                    "Error during result decoding [type={}, body={}, error={}]", type, body, e.getLocalizedMessage()
+                );
+                
+                return body;
+            }
         }
 
         /**
@@ -915,26 +1013,6 @@ public class NCTestClientBuilder {
                     return convert(errMsg);
                 }
             };
-        }
-    
-        /**
-         *
-         * @param txt
-         * @param dsId
-         * @param mdlId
-         * @param js
-         * @return
-         */
-        private NCTestResult mkResult(String txt, long dsId, String mdlId, NCRequestStateJson js) {
-            return mkResult(
-                txt,
-                dsId,
-                mdlId,
-                js.getResultType(),
-                js.getResultBody(),
-                js.getError(),
-                js.getUpdateTstamp() - js.getCreateTstamp()
-            );
         }
     }
     

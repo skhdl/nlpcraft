@@ -51,6 +51,7 @@
         <commons.io.ver>2.5</commons.io.ver>
         <commons-lang3.ver>3.5</commons-lang3.ver>
         <commons.validator.ver>1.6</commons.validator.ver>
+        <jsoup.ver>1.8.3</jsoup.ver>
         <postgresql.ver>9.4.1212</postgresql.ver>
         <slf4j.ver>1.7.25</slf4j.ver>
         <scala.logging.ver>3.7.2</scala.logging.ver>
