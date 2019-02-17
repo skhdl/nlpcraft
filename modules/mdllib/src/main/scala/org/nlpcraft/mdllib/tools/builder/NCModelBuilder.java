@@ -32,7 +32,6 @@
 package org.nlpcraft.mdllib.tools.builder;
 
 import org.nlpcraft.mdllib.*;
-import org.nlpcraft.mdllib.tools.*;
 import org.nlpcraft.mdllib.tools.builder.impl.*;
 import org.nlpcraft.mdllib.tools.builder.json.*;
 import org.nlpcraft.mdllib.tools.impl.*;
@@ -43,7 +42,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Convenient model builder.
+ * Model builder for {@link NCModel} instances.
  * <br><br>
  * To use this builder start by invoking one of the following static method to create new builder instance:
  * <ul>

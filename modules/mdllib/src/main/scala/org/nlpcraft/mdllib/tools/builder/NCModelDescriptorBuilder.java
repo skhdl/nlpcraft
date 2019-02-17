@@ -35,7 +35,7 @@ import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.tools.builder.impl.*;
 
 /**
- * Convenient model descriptor builder.
+ * Model descriptor builder for {@link NCModelDescriptor} instances.
  * <br><br>
  * To use this builder start by invoking one of the following static method to create new builder instance:
  * <ul>
