@@ -797,62 +797,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     }
     
     /**
-      *
-      * @param probeGuid
-      */
-    @throws[NCE]
-    def stopProbe(probeGuid: String): Unit = {
-        ensureStarted()
-        
-        getProbeForGuid(probeGuid) match {
-            case Some(holder) ⇒
-                val probeKey = holder.probeKey
-                
-                sendToProbe(
-                    probeKey,
-                    NCProbeMessage("S2P_STOP_PROBE")
-                )
-    
-                // Notification.
-                NCNotificationManager.addEvent("NC_PROBE_STOP",
-                    "probeGuid" → probeKey.probeGuid,
-                    "probeId" → probeKey.probeId,
-                    "probeToken" → probeKey.probeToken
-                )
-
-            case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
-        }
-    }
-    
-    /**
-      *
-      * @param probeGuid
-      */
-    @throws[NCE]
-    def restartProbe(probeGuid: String): Unit = {
-        ensureStarted()
-    
-        getProbeForGuid(probeGuid) match {
-            case Some(holder) ⇒
-                val probeKey = holder.probeKey
-                
-                sendToProbe(
-                    probeKey,
-                    NCProbeMessage("S2P_RESTART_PROBE")
-                )
-    
-                // Notification.
-                NCNotificationManager.addEvent("NC_PROBE_RESTART",
-                    "probeGuid" → probeKey.probeGuid,
-                    "probeId" → probeKey.probeId,
-                    "probeToken" → probeKey.probeToken
-                )
-                
-            case None ⇒ throw new NCE(s"Unknown probe GUID: $probeGuid")
-        }
-    }
-    
-    /**
       * Gets all active probes.
       * 
       * @return

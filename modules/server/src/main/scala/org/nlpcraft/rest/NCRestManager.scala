@@ -884,57 +884,7 @@ object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
                         }
                     }
                 } ~
-                path(API / "probe" / "stop") {
-                    case class Req(
-                        accessToken: String,
-                        guid: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
-                        checkLength("guid", req.guid, 256)
-
-                        authenticateAsAdmin(req.accessToken)
-
-                        NCProbeManager.stopProbe(req.guid)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                path(API / "probe" / "restart") {
-                    case class Req(
-                        accessToken: String,
-                        guid: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
-                        checkLength("guid", req.guid, 256)
-
-                        authenticateAsAdmin(req.accessToken)
-    
-                        NCProbeManager.restartProbe(req.guid)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                path(API / "probe" / "all") {
+                /**/path(API / "probe" / "all") {
                     case class Req(
                         accessToken: String
                     )
