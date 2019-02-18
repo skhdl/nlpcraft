@@ -466,17 +466,15 @@ public class NCTestClientBuilder {
     
                     //noinspection OptionalGetWithoutIsPresent
                     log.info(
-                        "Question `{}` with ID: `{}` answered {} with result:\n{}",
+                        "Question `{}` answered {} with result:\n{}",
                         txt,
-                        srvReqId,
                         res.isSuccessful() ? "successfully" : "unsuccessfully",
                         res.isSuccessful() ?
-                            pretty(res.getResultType().get(), res.getResult().get()) :
+                            mkPrettyString(res.getResultType().get(), res.getResult().get()) :
                             res.getResultError().get()
                     );
                     
                     return res;
-                    
                 }
 
                 waitUntil(maxTime);
@@ -489,17 +487,13 @@ public class NCTestClientBuilder {
          * @param body
          * @return
          */
-        private String pretty(String type, String body) {
+        private String mkPrettyString(String type, String body) {
             try {
                 switch (type) {
                     case "json":
                     case "json/google/map":
                     case "json/table":
                         return gson.toJson(jp.parse(body));
-    
-                    case "html/raw":
-                    case "html":
-                        return Jsoup.parseBodyFragment(body).outerHtml();
     
                     case "json/multipart": {
                         List<NCMultipartJson> parts = gson.fromJson(body, TYPE_MPARTS);
@@ -510,11 +504,15 @@ public class NCTestClientBuilder {
         
                         for (NCMultipartJson part : parts) {
                             buf.append(num++).append(". Part type: `").append(part.getResType()).append("`\n");
-                            buf.append("Part body:\n").append(pretty(part.getResType(), part.getResBody())).append("\n");
+                            buf.append("Part body:\n").append(mkPrettyString(part.getResType(), part.getResBody())).append("\n");
                         }
         
                         return buf.toString();
                     }
+    
+                    case "html/raw":
+                    case "html":
+                        return Jsoup.parseBodyFragment(body).outerHtml();
     
                     default:
                         return body;
