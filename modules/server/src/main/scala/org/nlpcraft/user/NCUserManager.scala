@@ -35,7 +35,7 @@ import java.util.{Timer, TimerTask}
 
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.ignite.cache.CachePeekMode
-import org.apache.ignite.{IgniteAtomicSequence, IgniteCache, IgniteException}
+import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft._
 import org.nlpcraft.blowfish.NCBlowfishHasher
 import org.nlpcraft.db.NCDbManager
@@ -109,48 +109,55 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             )
         }
 
-        userCache = ignite.cache[Either[Long, String], NCUserMdo]("user-cache")
-        tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")
-        idSigninCache = ignite.cache[Long, String]("user-id-signin-cache")
+        catching(wrapIE) {
+            userCache = ignite.cache[Either[Long, String], NCUserMdo]("user-cache")
+            tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")
+            idSigninCache = ignite.cache[Long, String]("user-id-signin-cache")
 
-        require(userCache != null)
-        require(tokenSigninCache != null)
-        require(idSigninCache != null)
+            require(userCache != null)
+            require(tokenSigninCache != null)
+            require(idSigninCache != null)
 
-        userCache.localLoadCache(null)
+            userCache.localLoadCache(null)
+        }
 
         scanner = new Timer("timeout-scanner")
 
         scanner.scheduleAtFixedRate(
             new TimerTask() {
                 def run() {
-                    val now = G.nowUtcMs()
+                    try {
+                        val now = G.nowUtcMs()
 
-                    // Check access tokens for expiration.
-                    ignoring(classOf[IgniteException]) {
-                        NCTxManager.startTx {
-                            for (ses ← tokenSigninCache.asScala.map(_.getValue)
-                                 if now - ses.lastAccessMs >= Config.expireMs
-                            ) {
-                                tokenSigninCache -= ses.acsToken
-                                idSigninCache -= ses.userId
+                        // Check access tokens for expiration.
+                        catching(wrapIE) {
+                            NCTxManager.startTx {
+                                for (ses ← tokenSigninCache.asScala.map(_.getValue)
+                                     if now - ses.lastAccessMs >= Config.expireMs
+                                ) {
+                                    tokenSigninCache -= ses.acsToken
+                                    idSigninCache -= ses.userId
 
-                                ses.endpoint match {
-                                    case Some(_) ⇒ NCEndpointManager.cancelNotifications(ses.userId)
-                                    case None ⇒ // No-op.
+                                    ses.endpoint match {
+                                        case Some(_) ⇒ NCEndpointManager.cancelNotifications(ses.userId)
+                                        case None ⇒ // No-op.
+                                    }
+
+                                    // Notification.
+                                    NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
+                                        "accessToken" → ses.acsToken,
+                                        "userId" → ses.userId,
+                                        "signinMs" → ses.signinMs,
+                                        "lastAccessMs" → ses.lastAccessMs
+                                    )
+
+                                    logger.trace(s"Access token timed out: ${ses.acsToken}")
                                 }
-
-                                // Notification.
-                                NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
-                                    "accessToken" → ses.acsToken,
-                                    "userId" → ses.userId,
-                                    "signinMs" → ses.signinMs,
-                                    "lastAccessMs" → ses.lastAccessMs
-                                )
-
-                                logger.trace(s"Access token timed out: ${ses.acsToken}")
                             }
                         }
+                    }
+                    catch {
+                        case e: Throwable ⇒ logger.error("Error during timeout scanner process.", e)
                     }
                 }
             },
@@ -161,13 +168,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
 
-        if (userCache.localEntries(CachePeekMode.ALL).asScala.isEmpty)
-            try {
-                addDefaultUser()
-            }
-            catch {
-                case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
-            }
+        catching(wrapIE) {
+            if (userCache.localEntries(CachePeekMode.ALL).asScala.isEmpty)
+                try
+                    addDefaultUser()
+                catch {
+                    case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
+                }
+        }
 
         super.start()
     }
@@ -277,16 +285,15 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            tokenSigninCache.get(acsTkn) match {
-                case null ⇒
-                    None
-                case ses: SigninSession ⇒
+            tokenSigninCache(acsTkn) match {
+                case Some(ses) ⇒
                     val now = G.nowUtcMs()
 
                     // Update login session.
                     tokenSigninCache += acsTkn → SigninSession(acsTkn, ses.userId, ses.signinMs, now, ses.endpoint)
 
                     Some(ses.userId) // Bingo!
+                case None ⇒ None
             }
         }
     }
@@ -301,10 +308,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            userCache.get(Left(usrId)) match {
-                case null ⇒ None
-                case u ⇒ Some(u)
-            }
+            userCache(Left(usrId))
         }
     }
 
@@ -318,13 +322,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            idSigninCache.get(usrId) match {
-                case null ⇒ None
-                case tok ⇒
-                    tokenSigninCache.get(tok) match {
-                        case null ⇒ None
-                        case ses ⇒ ses.endpoint
+            idSigninCache(usrId) match {
+                case Some(tok) ⇒
+                    tokenSigninCache(tok) match {
+                        case Some(ses) ⇒ ses.endpoint
+                        case None ⇒ None
+
                     }
+                case None ⇒ None
             }
         }
     }
@@ -341,9 +346,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
         catching(wrapIE) {
             NCTxManager.startTx {
-                userCache.get(Right(G.normalizeEmail(email))) match {
-                    case null ⇒ None
-                    case usr ⇒
+                userCache(Right(G.normalizeEmail(email))) match {
+                    case Some(usr) ⇒
                         NCPsql.sql {
                             if (!NCDbManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
                                 None
@@ -385,6 +389,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
                                 Some(newAcsTkn)
                             }
                         }
+                    case None ⇒ None
                 }
             }
         }
@@ -412,25 +417,23 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         val idKey = Left(usrId)
 
         catching(wrapIE) {
-                NCTxManager.startTx {
-                    userCache.get(idKey) match {
-                        case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                        case u ⇒
-                            val mdo = NCUserMdo(
-                                u.id,
-                                u.email,
-                                firstName,
-                                lastName,
-                                avatarUrl,
-                                u.passwordSalt,
-                                isAdmin,
-                                u.createdOn
-                            )
+            NCTxManager.startTx {
+                val usr = userCache(idKey).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
-                            userCache += idKey → mdo
-                            userCache += Right(u.email) → mdo
-                    }
-                }
+                val mdo = NCUserMdo(
+                    usr.id,
+                    usr.email,
+                    firstName,
+                    lastName,
+                    avatarUrl,
+                    usr.passwordSalt,
+                    isAdmin,
+                    usr.createdOn
+                )
+
+                userCache += idKey → mdo
+                userCache += Right(usr.email) → mdo
+            }
         }
 
         // Notification.
@@ -455,20 +458,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
         catching(wrapIE) {
             NCTxManager.startTx {
-                userCache.get(idKey) match {
-                    case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                    case u ⇒
-                        userCache -= idKey
-                        userCache -= Right(u.email)
+                val usr = userCache(idKey).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
-                        // Notification.
-                        NCNotificationManager.addEvent("NC_USER_DELETE",
-                            "userId" → usrId,
-                            "firstName" → u.firstName,
-                            "lastName" → u.lastName,
-                            "email" → u.email
-                        )
-                }
+                userCache -= idKey
+                userCache -= Right(usr.email)
+
+                // Notification.
+                NCNotificationManager.addEvent("NC_USER_DELETE",
+                    "userId" → usrId,
+                    "firstName" → usr.firstName,
+                    "lastName" → usr.lastName,
+                    "email" → usr.email
+                )
             }
         }
     }
@@ -483,22 +484,20 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         ensureStarted()
 
         catching(wrapIE) {
-            userCache.get(Left(usrId)) match {
-                case null ⇒ throw new NCE(s"Unknown user ID: $usrId")
-                case usr ⇒
-                    val salt = NCBlowfishHasher.hash(usr.email)
+            val usr = userCache(Left(usrId)).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
-                    NCPsql.sql {
-                        // Add actual hash for the password.
-                        // NOTE: we don't "stir up" password pool for password resets.
-                        NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
-                    }
+            val salt = NCBlowfishHasher.hash(usr.email)
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
-                        "userId" → usrId
-                    )
+            NCPsql.sql {
+                // Add actual hash for the password.
+                // NOTE: we don't "stir up" password pool for password resets.
+                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
             }
+
+            // Notification.
+            NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
+                "userId" → usrId
+            )
         }
     }
 
@@ -645,21 +644,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
       */
     private def updateEndpoint(usrId: Long, epOpt: Option[String]): Unit =
         catching(wrapIE) {
-            NCTxManager.startTx {
-                idSigninCache.get(usrId) match {
-                    case null ⇒
-                        logger.trace(s"User cache not found for: $usrId")
+            idSigninCache(usrId) match {
+                case Some(acsToken) ⇒
+                    tokenSigninCache(acsToken) match {
+                        case Some(ses) ⇒ Some(ses)
+                        case None ⇒
+                            logger.error(s"Token cache not found for: $acsToken")
 
-                        None
-                    case acsToken ⇒
-                        tokenSigninCache.get(acsToken) match {
-                            case null ⇒
-                                logger.error(s"Token cache not found for: $acsToken")
+                            None
 
-                                None
-                            case ses ⇒ Some(ses)
-                        }
-                }
+                    }
+
+                case None ⇒
+                    logger.trace(s"User cache not found for: $usrId")
+
+                    None
             }
         } match {
             case Some(ses) ⇒

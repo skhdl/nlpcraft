@@ -39,6 +39,7 @@ import org.nlpcraft.db.postgres.NCPsql
 import org.nlpcraft.ignite.NCIgniteNLPCraft
 import org.nlpcraft.mdo._
 import org.nlpcraft.notification.NCNotificationManager
+import org.nlpcraft.ignite.NCIgniteHelpers._
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception.catching
@@ -65,11 +66,13 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
             )
         }
 
-        dsCache = ignite.cache[Long, NCDataSourceMdo]("ds-cache")
+        catching(wrapIE) {
+            dsCache = ignite.cache[Long, NCDataSourceMdo]("ds-cache")
 
-        require(dsCache != null)
+            require(dsCache != null)
 
-        dsCache.localLoadCache(null)
+            dsCache.localLoadCache(null)
+        }
 
         super.start()
     }
@@ -93,10 +96,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         ensureStarted()
 
         catching(wrapIE) {
-            dsCache.get(dsId) match {
-                case null ⇒ None
-                case ds ⇒ Some(ds)
-            }
+            dsCache(dsId)
         }
     }
 
@@ -116,30 +116,27 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         ensureStarted()
 
         catching(wrapIE) {
-            dsCache.get(dsId) match {
-                case null ⇒ throw new NCE(s"Unknown data source ID: $dsId")
-                case ds ⇒
-                    dsCache.put(
-                        dsId,
-                        NCDataSourceMdo(
-                            ds.id,
-                            name,
-                            shortDesc,
-                            ds.modelId,
-                            ds.modelName,
-                            ds.modelVersion,
-                            ds.modelConfig,
-                            ds.createdOn
-                        )
-                    )
+            val ds = dsCache(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_DS_UPDATE",
-                        "dsId" → dsId,
-                        "name" → ds.name,
-                        "desc" → ds.shortDesc
-                    )
-            }
+            dsCache +=
+                dsId →
+                NCDataSourceMdo(
+                    ds.id,
+                    name,
+                    shortDesc,
+                    ds.modelId,
+                    ds.modelName,
+                    ds.modelVersion,
+                    ds.modelConfig,
+                    ds.createdOn
+                )
+
+            // Notification.
+            NCNotificationManager.addEvent("NC_DS_UPDATE",
+                "dsId" → dsId,
+                "name" → ds.name,
+                "desc" → ds.shortDesc
+            )
         }
     }
 
@@ -168,8 +165,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         val newDsId = dsSeq.incrementAndGet()
 
         catching(wrapIE) {
-            dsCache.put(
-                newDsId,
+            dsCache +=
+                newDsId →
                 NCDataSourceMdo(
                     newDsId,
                     name,
@@ -179,7 +176,6 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
                     mdlVer,
                     mdlCfg
                 )
-            )
         }
 
         // Notification.
@@ -206,23 +202,18 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         ensureStarted()
 
         catching(wrapIE) {
-            dsCache.get(dsId) match {
-                case null ⇒ throw new NCE(s"Unknown data source ID: $dsId")
-                case ds ⇒
-                    dsCache.remove(dsId)
+            val ds = dsCache(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
 
-                    // Notification.
-                    NCNotificationManager.addEvent("NC_DS_DELETE",
-                        "dsId" → dsId,
-                        "name" → ds.name,
-                        "desc" → ds.shortDesc,
-                        "modelId" → ds.modelId,
-                        "modelName" → ds.modelName,
-                        "mdlVer" → ds.modelVersion,
-                        "mdlCfg" → ds.modelConfig
-                    )
-            }
-
+            // Notification.
+            NCNotificationManager.addEvent("NC_DS_DELETE",
+                "dsId" → dsId,
+                "name" → ds.name,
+                "desc" → ds.shortDesc,
+                "modelId" → ds.modelId,
+                "modelName" → ds.modelName,
+                "mdlVer" → ds.modelVersion,
+                "mdlCfg" → ds.modelConfig
+            )
         }
     }
 

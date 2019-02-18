@@ -112,40 +112,38 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         
         val srvReqId = G.genGuid()
     
-        NCTxManager.startTx {
-            catching(wrapIE) {
-                // Enlist for tracking.
-                cache += srvReqId → NCQueryStateMdo(
-                    srvReqId,
-                    isTest,
-                    dsId = dsId,
-                    modelId = ds.modelId,
-                    userId = usrId,
-                    email = usr.email,
-                    status = QRY_ENLISTED, // Initial status.
-                    text = txt0,
-                    userAgent = usrAgent,
-                    remoteAddress = rmtAddr,
-                    createTstamp = rcvTstamp,
-                    updateTstamp = rcvTstamp
-                )
-            }
-
-            // Add processing log.
-            NCProcessLogManager.newEntry(
-                usrId,
+        catching(wrapIE) {
+            // Enlist for tracking.
+            cache += srvReqId → NCQueryStateMdo(
                 srvReqId,
-                txt0,
-                dsId,
-                ds.modelId,
-                QRY_ENLISTED,
                 isTest,
-                usrAgent.orNull,
-                rmtAddr.orNull,
-                rcvTstamp
+                dsId = dsId,
+                modelId = ds.modelId,
+                userId = usrId,
+                email = usr.email,
+                status = QRY_ENLISTED, // Initial status.
+                text = txt0,
+                userAgent = usrAgent,
+                remoteAddress = rmtAddr,
+                createTstamp = rcvTstamp,
+                updateTstamp = rcvTstamp
             )
         }
-    
+
+        // Add processing log.
+        NCProcessLogManager.newEntry(
+            usrId,
+            srvReqId,
+            txt0,
+            dsId,
+            ds.modelId,
+            QRY_ENLISTED,
+            isTest,
+            usrAgent.orNull,
+            rmtAddr.orNull,
+            rcvTstamp
+        )
+
         val fut = Future {
             NCNotificationManager.addEvent("NC_NEW_QRY",
                 "userId" → usrId,
@@ -192,25 +190,23 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         val now = new Timestamp(G.nowUtcMs())
     
         val found = catching(wrapIE) {
-            NCTxManager.startTx {
-                cache(srvReqId) match {
-                    case Some(copy) ⇒
-                        copy.updateTstamp = now
-                        copy.status = QRY_READY
-                        copy.error = Some(errMsg)
-    
-                        cache += srvReqId → copy
+            cache(srvReqId) match {
+                case Some(copy) ⇒
+                    copy.updateTstamp = now
+                    copy.status = QRY_READY
+                    copy.error = Some(errMsg)
 
-                        processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    cache += srvReqId → copy
 
-                        true
-                
-                    case None ⇒
-                        // Safely ignore missing status (cancelled before).
-                        ignore(srvReqId)
-                        
-                        false
-                }
+                    processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+
+                    true
+
+                case None ⇒
+                    // Safely ignore missing status (cancelled before).
+                    ignore(srvReqId)
+
+                    false
             }
         }
         
@@ -241,26 +237,23 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         val now = new Timestamp(G.nowUtcMs())
         
         val found = catching(wrapIE) {
-            NCTxManager.startTx {
-                cache(srvReqId) match {
-                    case Some(copy) ⇒
-                        copy.updateTstamp = now
-                        copy.status = QRY_READY
-                        copy.resultType = Some(resType)
-                        copy.resultBody = Some(resBody)
-                        
-                        cache += srvReqId → copy
+            cache(srvReqId) match {
+                case Some(copy) ⇒
+                    copy.updateTstamp = now
+                    copy.status = QRY_READY
+                    copy.resultType = Some(resType)
+                    copy.resultBody = Some(resBody)
 
-                        processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    cache += srvReqId → copy
 
-                        true
-                    
-                    case None ⇒
-                        // Safely ignore missing status (cancelled before).
-                        ignore(srvReqId)
-                        
-                        false
-                }
+                    processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+
+                    true
+                case None ⇒
+                    // Safely ignore missing status (cancelled before).
+                    ignore(srvReqId)
+
+                    false
             }
         }
         
@@ -309,18 +302,18 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
 
         val now = new Timestamp(G.nowUtcMs())
 
-        catching(wrapIE) {
-            NCTxManager.startTx {
-                cache --= srvReqIds
-            }
-        }
-
         val userSrvReqIds =
-            srvReqIds.
-                flatMap(srvReqIds ⇒ cache(srvReqIds)).
-                groupBy(_.userId).
-                map { case(usrId, data) ⇒ usrId → data.map(_.srvReqId) }
+            catching(wrapIE) {
+                NCTxManager.startTx {
+                    cache --= srvReqIds
 
+                    srvReqIds.
+                        flatMap(srvReqId ⇒ cache(srvReqId)).
+                        groupBy(_.userId).
+                        map { case (usrId, data) ⇒ usrId → data.map(_.srvReqId) }
+
+                }
+            }
         userSrvReqIds.foreach {
             case (usrId, usrSrvReqIds) ⇒ processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
         }
@@ -344,7 +337,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
         catching(wrapIE) {
-            (if (usr.isAdmin) cache.values else cache.values.filter(p ⇒ p.userId == usrId)).toSeq
+            (if (usr.isAdmin) cache.values else cache.values.filter(_.userId == usrId)).toSeq
         }
     }
 
@@ -357,7 +350,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         ensureStarted()
 
         catching(wrapIE) {
-            srvReqIds.map(cache.get).filter(_ != null)
+            srvReqIds.flatMap(id ⇒ cache(id))
         }
     }
 

@@ -33,9 +33,8 @@ package org.nlpcraft.nlp.enrichers
 
 import org.apache.ignite.IgniteCache
 import org.nlpcraft.ascii.NCAsciiTable
+import org.nlpcraft.ignite.NCIgniteHelpers._
 import org.nlpcraft.ignite.NCIgniteNLPCraft
-import org.nlpcraft.{NCE, NCLifecycle}
-import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.nlp.enrichers.basenlp.NCBaseNlpEnricher
 import org.nlpcraft.nlp.enrichers.date.NCDateEnricher
 import org.nlpcraft.nlp.enrichers.geo.NCGeoEnricher
@@ -43,7 +42,10 @@ import org.nlpcraft.nlp.enrichers.numeric.NCNumericEnricher
 import org.nlpcraft.nlp.enrichers.quote.NCQuoteEnricher
 import org.nlpcraft.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.nlp.preproc.NCPreProcessManager
-import org.nlpcraft.ignite.NCIgniteHelpers._
+import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.{NCE, NCLifecycle}
+
+import scala.util.control.Exception.catching
 
 /**
   * Enrichment pipeline manager.
@@ -81,27 +83,28 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgn
         ensureStarted()
     
         val normTxt = NCPreProcessManager.normalize(txt)
-    
-        cache(normTxt) match {
-            case None ⇒
-                val s = new NCNlpSentence(normTxt)
-            
-                // Server-side enrichment pipeline.
-                // NOTE: order of enrichers is IMPORTANT.
-                NCBaseNlpEnricher.enrich(s)
-                NCQuoteEnricher.enrich(s)
-                NCStopWordEnricher.enrich(s)
-                NCDateEnricher.enrich(s)
-                NCNumericEnricher.enrich(s)
-                NCGeoEnricher.enrich(s)
-            
-                prepareAsciiTable(s).info(logger, Some(s"Sentence enriched: $normTxt"))
-            
-                cache += normTxt → s
-            
-                s
-        
-            case Some(s) ⇒ s
+
+        catching(wrapIE) {
+            cache(normTxt) match {
+                case Some(s) ⇒ s
+                case None ⇒
+                    val s = new NCNlpSentence(normTxt)
+
+                    // Server-side enrichment pipeline.
+                    // NOTE: order of enrichers is IMPORTANT.
+                    NCBaseNlpEnricher.enrich(s)
+                    NCQuoteEnricher.enrich(s)
+                    NCStopWordEnricher.enrich(s)
+                    NCDateEnricher.enrich(s)
+                    NCNumericEnricher.enrich(s)
+                    NCGeoEnricher.enrich(s)
+
+                    prepareAsciiTable(s).info(logger, Some(s"Sentence enriched: $normTxt"))
+
+                    cache += normTxt → s
+
+                    s
+            }
         }
     }
     
@@ -154,7 +157,9 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgn
       * Starts this manager.
       */
     override def start(): NCLifecycle = {
-        cache = ignite.cache[String, NCNlpSentence]("sentence-cache")
+        catching(wrapIE) {
+            cache = ignite.cache[String, NCNlpSentence]("sentence-cache")
+        }
         
         NCBaseNlpEnricher.start()
         NCDateEnricher.start()

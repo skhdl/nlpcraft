@@ -47,6 +47,7 @@ import org.nlpcraft.mdo.NCQueryStateMdo
 import org.nlpcraft.query.NCQueryManager
 import org.nlpcraft.util.NCGlobals
 import org.nlpcraft._
+import org.nlpcraft.tx.NCTxManager
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -111,7 +112,9 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        cache = ignite.cache[String, NCEndpointCacheValue]("endpoint-cache")
+        catching(wrapIE) {
+            cache = ignite.cache[String, NCEndpointCacheValue]("endpoint-cache")
+        }
 
         require(cache != null)
 
@@ -140,7 +143,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
 
                         query.setArgs(List(t).map(_.asInstanceOf[java.lang.Object]): _*)
 
-                        val readyData = cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
+                        val readyData =
+                            catching(wrapIE) {
+                                cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
+                            }
 
                         logger.trace(s"Records for sending: ${readyData.size}")
 
@@ -199,36 +205,40 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
                         """.stripMargin
                 )
 
-            val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
+            catching(wrapIE) {
+                NCTxManager.startTx {
+                    val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
-            if (srvReqIds.nonEmpty) {
-                logger.warn(s"Query state notifications dropped due to per-use queue size limit: $srvReqIds")
+                    if (srvReqIds.nonEmpty) {
+                        logger.warn(s"Query state notifications dropped due to per-use queue size limit: $srvReqIds")
 
-                cache --= srvReqIds
-            }
+                        cache --= srvReqIds
+                    }
 
-            // Clears summary cache.
-            if (cache.size() > Config.maxQueueSize) {
-                val query: SqlQuery[String, NCEndpointCacheValue] =
-                    new SqlQuery(
-                        classOf[NCEndpointCacheValue],
-                            s"""
-                            |SELECT *
-                            |FROM NCEndpointCacheValue
-                            |WHERE srvReqId NOT IN (
-                            |    SELECT srvReqId
-                            |    FROM NCEndpointCacheValue
-                            |    ORDER BY createdOn DESC
-                            |    LIMIT ${Config.maxQueueSize}
-                            |)
-                            """.stripMargin
-                    )
+                    // Clears summary cache.
+                    if (cache.size() > Config.maxQueueSize) {
+                        val query: SqlQuery[String, NCEndpointCacheValue] =
+                            new SqlQuery(
+                                classOf[NCEndpointCacheValue],
+                                s"""
+                                    |SELECT *
+                                    |FROM NCEndpointCacheValue
+                                    |WHERE srvReqId NOT IN (
+                                    |    SELECT srvReqId
+                                    |    FROM NCEndpointCacheValue
+                                    |    ORDER BY createdOn DESC
+                                    |    LIMIT ${Config.maxQueueSize}
+                                    |)
+                                    """.stripMargin
+                            )
 
-                val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
-    
-                logger.warn(s"Query state notifications dropped due to overall queue size limit: $srvReqIds")
+                        val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
-                cache --= srvReqIds
+                        logger.warn(s"Query state notifications dropped due to overall queue size limit: $srvReqIds")
+
+                        cache --= srvReqIds
+                    }
+                }
             }
         }
         catch {
@@ -331,11 +341,14 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         (_: Unit) ⇒ {
             val set = seq.map(_.srvReqId).toSet
 
-            cache --= set
+            catching(wrapIE) {
+                NCTxManager.startTx {
+                    cache --= set
+                }
+            }
 
             logger.trace(s"Endpoint notifications sent [userId=$usrId, endpoint=$ep, srvReqIds=$set]")
-        }
-        )
+        })
     }
 
     /**
@@ -405,7 +418,9 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         NCGlobals.asFuture(
             _ ⇒ {
                 catching(wrapIE) {
-                    cache --= srvReqIds
+                    NCTxManager.startTx {
+                        cache --= srvReqIds
+                    }
                 }
             },
             {
@@ -424,20 +439,21 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteN
         ensureStarted()
 
         NCGlobals.asFuture(
-            _ ⇒
+            _ ⇒ {
+                val query: SqlQuery[String, NCEndpointCacheValue] =
+                    new SqlQuery(
+                        classOf[NCEndpointCacheValue],
+                        "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
+                    )
+
+                query.setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
+
                 catching(wrapIE) {
-                    val query: SqlQuery[String, NCEndpointCacheValue] =
-                        new SqlQuery(
-                            classOf[NCEndpointCacheValue],
-                            "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
-                        )
-
-                    query.setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
-
-                    val srvIds = cache.query(query).getAll.asScala.map(_.getKey)
-
-                    cache --= srvIds.toSet
-                },
+                    NCTxManager.startTx {
+                        cache --= cache.query(query).getAll.asScala.map(_.getKey).toSet
+                    }
+                }
+            },
             {
                 case e: Exception ⇒
                     logger.error(s"Failed to cancel query state notification [usrId=$usrId]", e)

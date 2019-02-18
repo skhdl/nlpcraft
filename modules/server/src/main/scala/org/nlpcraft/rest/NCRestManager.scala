@@ -42,7 +42,6 @@ import akka.stream.ActorMaterializer
 import org.apache.commons.validator.routines.UrlValidator
 import org.nlpcraft.apicodes.NCApiStatusCode._
 import org.nlpcraft.ds.NCDsManager
-import org.nlpcraft.ignite._
 import org.nlpcraft.mdo.NCUserMdo
 import org.nlpcraft.notification.NCNotificationManager
 import org.nlpcraft.probe.NCProbeManager
@@ -54,7 +53,7 @@ import spray.json.RootJsonFormat
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-object NCRestManager extends NCLifecycle("REST manager") with NCIgniteNLPCraft {
+object NCRestManager extends NCLifecycle("REST manager") {
     // Akka intestines.
     private implicit val SYSTEM: ActorSystem = ActorSystem()
     private implicit val MATERIALIZER: ActorMaterializer = ActorMaterializer()
