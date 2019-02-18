@@ -35,8 +35,6 @@ import org.nlpcraft.mdllib._
 import org.nlpcraft._
 import org.scalatest.FlatSpec
 
-import scala.collection.JavaConverters._
-
 /**
   * Model builder test.
   */

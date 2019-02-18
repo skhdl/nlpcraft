@@ -95,7 +95,7 @@ public class NCProbeConfigBuilder {
     private final static String DFLT_PROBE_TOKEN = "3141592653589793";
     
     /** */
-    private NCProbeConfig impl;
+    private final NCProbeConfig impl;
 
     /**
      * Null or empty check.

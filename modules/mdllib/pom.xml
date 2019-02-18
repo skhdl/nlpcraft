@@ -139,19 +139,13 @@
                         ]]>
                     </top>
                     <subpackages>org.nlpcraft.mdllib:org.nlpcraft.probe.dev</subpackages>
-                    <excludePackageNames>org.nlpcraft.mdllib.tools.builder.json:org.nlpcraft.mdllib.tools.impl:org.nlpcraft.mdllib.tools.builder.impl</excludePackageNames>
+                    <excludePackageNames>org.nlpcraft.mdllib.tools.scala:org.nlpcraft.mdllib.tools.impl:org.nlpcraft.mdllib.tools.builder.json:org.nlpcraft.mdllib.tools.impl:org.nlpcraft.mdllib.tools.builder.impl</excludePackageNames>
                     <groups>
                         <group>
                             <title>Data Model</title>
-                            <packages>org.nlpcraft.mdllib:org.nlpcraft.mdllib.utils</packages>
-                        </group>
-                        <group>
-                            <title>Intent Matching</title>
-                            <packages>org.nlpcraft.mdllib.intent</packages>
-                        </group>
-                        <group>
-                            <title>Model Builder</title>
-                            <packages>org.nlpcraft.mdllib.tools:org.nlpcraft.mdllib.tools.builder</packages>
+                            <packages>
+                                org.nlpcraft.mdllib:org.nlpcraft.mdllib.utils:org.nlpcraft.mdllib.intent:org.nlpcraft.mdllib.tools.builder
+                            </packages>
                         </group>
                         <group>
                             <title>In-Process Probe</title>

@@ -54,16 +54,15 @@ import static java.time.format.FormatStyle.*;
  * It provides HTML response with time and timezone information as well as Google map
  * of the location (default or provided by the user).
  */
-@NCActiveModelProvider
 public class TimeProvider extends NCModelProviderAdapter {
     // Medium data formatter.
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
 
     // Map of cities and their geo and timezone information.
-    static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     
     // Geo manager.
-    static private GeoManager geoMrg = new GeoManager();
+    static private final GeoManager geoMrg = new GeoManager();
 
     /**
      * Gets multipart query result.

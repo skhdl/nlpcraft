@@ -30,6 +30,6 @@
  */
 
 /**
- * Contains utility APIs.
+ * Contains model utilities.
  */
 package org.nlpcraft.mdllib.utils;

@@ -30,6 +30,6 @@
  */
 
 /**
- * Contains intent-based matching solver.
+ * Contains intent-based input matcher.
  */
 package org.nlpcraft.mdllib.intent;

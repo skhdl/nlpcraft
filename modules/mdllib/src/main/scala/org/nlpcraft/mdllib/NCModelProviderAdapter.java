@@ -38,9 +38,9 @@ import java.util.*;
  * return them from {@link #makeModel(String)} method.
  */
 public class NCModelProviderAdapter implements NCModelProvider {
-    private List<String> ids = new ArrayList<>();
-    private List<NCModel> mdls = new ArrayList<>();
-    private List<NCModelDescriptor> dss = new ArrayList<>();
+    private final List<String> ids = new ArrayList<>();
+    private final List<NCModel> mdls = new ArrayList<>();
+    private final List<NCModelDescriptor> dss = new ArrayList<>();
 
     /**
      * Sets up this provider with given model instances.

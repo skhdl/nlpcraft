@@ -33,7 +33,6 @@ package org.nlpcraft.examples.lessons.lesson1;
 
 import org.nlpcraft.NCException;
 import org.nlpcraft.examples.lessons.utils.LessonsUtils;
-import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
@@ -41,7 +40,6 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * `Lesson 1` model provider.
  */
-@NCActiveModelProvider
 public class TimeProvider1 extends NCModelProviderAdapter {
     /**
      * Initializes provider.

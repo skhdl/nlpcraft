@@ -41,7 +41,6 @@ import java.util.*;
  * <p>
  * In most cases users should use {@link NCModelProviderAdapter} for convenience.
  *
- * @see NCActiveModelProvider
  * @see NCModelProviderAdapter
  */
 public interface NCModelProvider extends Serializable {

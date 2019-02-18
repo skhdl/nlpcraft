@@ -54,12 +54,11 @@ import static java.time.temporal.ChronoUnit.MILLIS;
  * As an additional exercise you can quickly add support for settings the alarm to a specific
  * time (and not only for a duration) and can play with the way the system reacts when the timer is up.
  */
-@NCActiveModelProvider
 public class TimerProvider extends NCModelProviderAdapter {
     private static final DateTimeFormatter FMT =
         DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'").withZone(ZoneId.systemDefault());
     
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
     
     TimerProvider() {
         NCIntentSolver solver = new NCIntentSolver();

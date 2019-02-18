@@ -69,6 +69,8 @@ public interface NCTestResult {
      * Gets optional execution result.
      *
      * @return Optional execution result.
+     * @see #isFailed()
+     * @see #isSuccessful()
      */
     Optional<String> getResult();
     
@@ -76,6 +78,8 @@ public interface NCTestResult {
      * Gets optional execution result type.
      *
      * @return Optional execution result type.
+     * @see #isFailed()
+     * @see #isSuccessful()
      */
     Optional<String> getResultType();
     
@@ -83,6 +87,8 @@ public interface NCTestResult {
      * Gets optional execution error.
      *
      * @return Optional execution error.
+     * @see #isFailed()
+     * @see #isSuccessful()
      */
     Optional<String> getResultError();
 

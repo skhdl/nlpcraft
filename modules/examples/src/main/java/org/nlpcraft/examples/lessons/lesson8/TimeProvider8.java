@@ -50,12 +50,11 @@ import static java.time.format.FormatStyle.*;
 /**
  * `Lesson 8` model provider.
  */
-@NCActiveModelProvider
 public class TimeProvider8 extends NCModelProviderAdapter {
-    static private Map<City, CityData> citiesData = CitiesDataProvider.get();
+    static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     
     // Geo manager.
-    static private GeoManager geoMrg = new GeoManager();
+    static private final GeoManager geoMrg = new GeoManager();
 
     // Medium data formatter.
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);

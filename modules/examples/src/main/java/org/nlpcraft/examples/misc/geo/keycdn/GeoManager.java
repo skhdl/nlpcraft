@@ -63,7 +63,7 @@ public class GeoManager {
     private static final String URL = "https://tools.keycdn.com/geo.json?host=";
     private static final Gson GSON = new Gson();
     
-    private Map<String, GeoDataBean> cache = new HashMap<>();
+    private final Map<String, GeoDataBean> cache = new HashMap<>();
     private String externalIp = null;
     
     /**

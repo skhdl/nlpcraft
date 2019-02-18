@@ -35,9 +35,9 @@ package org.nlpcraft.examples.misc.geo.cities;
  * City data holder.
  */
 public class CityData {
-    private String timezone;
-    private double latitude;
-    private double longitude;
+    private final String timezone;
+    private final double latitude;
+    private final double longitude;
 
     /**
      * Creates new city data holder.

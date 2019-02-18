@@ -47,7 +47,6 @@ import scala.collection.Seq
   * corresponding to that input. This is a simple demonstration of the JSON output
   * and of most of the NLPCraft-provided data that a user defined model can operate on.
   */
-@NCActiveModelProvider
 class EchoProvider extends NCModelProviderAdapter {
     // Any immutable user defined ID.
     private final val MODEL_ID = "nlpcraft.echo.ex"
@@ -189,7 +188,7 @@ class EchoProvider extends NCModelProviderAdapter {
            |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "variants":
-           |        ${mkJsonVals(sen.getVariants().asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
+           |        ${mkJsonVals(sen.getVariants.asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
            | }
          """.stripMargin
     }

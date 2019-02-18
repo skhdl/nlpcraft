@@ -30,6 +30,6 @@
  */
 
 /**
- * Contains convenient model builder.
+ * Contains model builder.
  */
 package org.nlpcraft.mdllib.tools.builder;

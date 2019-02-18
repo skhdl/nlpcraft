@@ -667,14 +667,6 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
     }
 
     /**
-      * Converts Java collection.
-      *
-      * @param col Java collection.
-      */
-    private def nlv(col: JCollection[String]): List[String] =
-        if (col == null) List.empty else col.asScala.toList
-
-    /**
       *
       * @return
       */

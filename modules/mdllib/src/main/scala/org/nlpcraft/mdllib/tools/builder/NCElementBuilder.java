@@ -37,7 +37,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Convenient model element builder.
+ * Model element builder for {@link NCElement} instances.
  * <br><br>
  * To use this builder start by invoking one of the following static method to create new builder instance:
  * <ul>
@@ -50,7 +50,7 @@ import java.util.*;
  * {@link #setId(String) ID} must be set.
  */
 public class NCElementBuilder extends NCJsonBuilder {
-    private NCElementImpl impl;
+    private final NCElementImpl impl;
 
     /**
      *

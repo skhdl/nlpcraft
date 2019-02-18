@@ -48,5 +48,5 @@ public interface NCVariant extends Serializable, Comparable<NCVariant> {
      *
      * @return List of tokens.
      */
-    public List<NCToken> getTokens();
+    List<NCToken> getTokens();
 }

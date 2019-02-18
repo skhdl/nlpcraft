@@ -39,13 +39,13 @@ import java.io.Serializable;
  * Cache value bean.
  */
 public class NCEndpointCacheValue implements Serializable  {
-    private NCQueryStateMdo state;
-    private String endpoint;
-    private long sendTime;
-    private int attempts;
-    private long createdOn;
-    private long userId;
-    private String srvReqId;
+    private final NCQueryStateMdo state;
+    private final String endpoint;
+    private final long sendTime;
+    private final int attempts;
+    private final long createdOn;
+    private final long userId;
+    private final String srvReqId;
     
     public NCEndpointCacheValue(
         NCQueryStateMdo state,

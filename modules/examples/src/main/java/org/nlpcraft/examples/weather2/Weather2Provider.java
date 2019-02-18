@@ -41,7 +41,6 @@ import org.nlpcraft.examples.misc.apixu.beans.Location;
 import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
 import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
-import org.nlpcraft.mdllib.NCActiveModelProvider;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCRejection;
@@ -79,7 +78,6 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  * together with execution result which can be used in testing.
  */
 @SuppressWarnings("Duplicates")
-@NCActiveModelProvider
 public class Weather2Provider extends NCModelProviderAdapter {
     // It is demo token and its usage has some restrictions (history data contains one day only, etc).
     // Please register your own account at https://www.apixu.com/pricing.aspx and

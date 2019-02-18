@@ -32,17 +32,17 @@
 package org.nlpcraft.mdllib.tools.builder;
 
 import org.nlpcraft.mdllib.*;
-import org.nlpcraft.mdllib.tools.*;
 import org.nlpcraft.mdllib.tools.builder.impl.*;
 import org.nlpcraft.mdllib.tools.builder.json.*;
 import org.nlpcraft.mdllib.tools.impl.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Convenient model builder.
+ * Model builder for {@link NCModel} instances.
  * <br><br>
  * To use this builder start by invoking one of the following static method to create new builder instance:
  * <ul>
@@ -55,12 +55,12 @@ import java.util.stream.*;
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
  * method to get properly constructed {@link NCModel} instance. Note that at the minimum the
  * {@link #setDescriptor(NCModelDescriptor) descriptor} and
- * the {@link #setQueryFunction(NCSerializableFunction) query function}
+ * the {@link #setQueryFunction(Function) query function}
  * must be set.
  */
 public class NCModelBuilder extends NCJsonBuilder {
     /** */
-    private NCModelImpl impl;
+    private final NCModelImpl impl;
     
     /**
      *
@@ -163,7 +163,7 @@ public class NCModelBuilder extends NCJsonBuilder {
     /**
      * Returns newly built model. Note that at the minimum the
      * {@link #setDescriptor(NCModelDescriptor) descriptor} and
-     * the {@link #setQueryFunction(NCSerializableFunction) query function}
+     * the {@link #setQueryFunction(Function) query function}
      * must be set.
      *
      * @return New built model.
@@ -480,7 +480,7 @@ public class NCModelBuilder extends NCJsonBuilder {
      * @param qryFun Query function to set.
      * @return This builder for chaining operations.
      */
-    public NCModelBuilder setQueryFunction(NCSerializableFunction<NCQueryContext, NCQueryResult> qryFun) {
+    public NCModelBuilder setQueryFunction(Function<NCQueryContext, NCQueryResult> qryFun) {
         impl.setQueryFunction(qryFun);
 
         return this;
@@ -492,7 +492,7 @@ public class NCModelBuilder extends NCJsonBuilder {
      * @param discardFun Model's discard function to set.
      * @return This builder for chaining operations.
      */
-    public NCModelBuilder setDiscardFunction(NCSerializableRunnable discardFun) {
+    public NCModelBuilder setDiscardFunction(Runnable discardFun) {
         impl.setDiscardFunction(discardFun);
 
         return this;
@@ -504,7 +504,7 @@ public class NCModelBuilder extends NCJsonBuilder {
      * @param initFun Model's initialize function to set.
      * @return This builder for chaining operations.
      */
-    public NCModelBuilder setInitFunction(NCSerializableConsumer<NCProbeContext> initFun) {
+    public NCModelBuilder setInitFunction(Consumer<NCProbeContext> initFun) {
         impl.setInitFunction(initFun);
 
         return this;

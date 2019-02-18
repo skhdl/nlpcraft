@@ -39,8 +39,8 @@ import java.util.List;
  * Default value implementation.
  */
 public class NCValueImpl implements NCElement.NCValue {
-    private String name;
-    private List<String> synonyms;
+    private final String name;
+    private final List<String> synonyms;
     
     public NCValueImpl(String name, List<String> synonyms) {
         this.name = name;

@@ -58,12 +58,6 @@ object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug 
             msg.getType match {
                 case "S2P_PING" ⇒ ()
 
-                case "S2P_STOP_PROBE" ⇒
-                    NCExitManager.exit()
-
-                case "S2P_RESTART_PROBE" ⇒
-                    NCExitManager.restart()
-
                 case "S2P_CLEAR_CONV" ⇒
                     NCConversationManager.get(
                         msg.data[Long]("usrId"),
