@@ -32,16 +32,17 @@
 package org.nlpcraft.probe.mgrs.model
 
 import java.util.regex.{Pattern, PatternSyntaxException}
-import java.util.{Set ⇒ JSet, List ⇒ JList}
+import java.util.{List ⇒ JList, Set ⇒ JSet}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.makro.{NCMacroParser => MacroParser}
+import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._
-import org.nlpcraft.probe.NCSynonymChunkKind._
-import org.nlpcraft.probe._
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
+import org.nlpcraft.probe.{mgrs, _}
+import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCSynonym, NCSynonymChunk}
 import org.nlpcraft.probe.mgrs.deploy._
 
 import scala.collection.JavaConversions._
@@ -492,7 +493,7 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                     )
                 }
 
-        NCModelDecorator(
+        mgrs.NCModelDecorator(
             model = mdl,
             synonyms = mkFastAccessMap(syns.toSet),
             excludedSynonyms = mkFastAccessMap(exclSyns.toSet),

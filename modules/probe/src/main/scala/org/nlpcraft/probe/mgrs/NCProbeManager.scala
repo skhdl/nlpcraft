@@ -29,26 +29,29 @@
  *        /_/
  */
 
-package org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious
+package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.nlp._
-import org.nlpcraft.probe.mgrs.NCModelDecorator
-import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
+import org.nlpcraft.NCLifecycle
+import org.nlpcraft.probe.NCProbe
 
 /**
-  * Suspicious words enricher.
+  * Base probe manager class.
   */
-object NCSuspiciousNounsEnricher extends NCProbeEnricher("Suspicious nouns enricher") {
-    /**
-      * 
-      * @param mdl Model decorator.
-      * @param ns NLP sentence to enrich.
-      */
-    override def enrich(mdl: NCModelDecorator, ns: NCNlpSentence): Unit = {
-        ensureStarted()
+abstract class NCProbeManager(name: String) extends NCLifecycle(name) {
+    /** Probe configuration this manager was started with. */
+    protected var config: NCProbe.Config.type = _
     
-        ns.
-            filter(t ⇒ mdl.suspiciousWordsStems.contains(t.stem)).
-            foreach(_.getNlpNote += "suspNoun" → true)
+    /**
+      * Starts manager with probe configuration.
+      *
+      * @param cfg Probe configuration to use.
+      * @return Itself for call chaining.
+      */
+    def startWithConfig(cfg: NCProbe.Config.type): NCProbeManager = {
+        config = cfg
+        
+        start()
+        
+        this
     }
 }

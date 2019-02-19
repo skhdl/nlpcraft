@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.probe
+package org.nlpcraft.probe.mgrs
 
 import java.util.regex.Pattern
 
@@ -49,7 +49,7 @@ object NCSynonymChunkKind extends Enumeration {
     val REGEX: Value = Value // Regular expression.
 }
 
-import org.nlpcraft.probe.NCSynonymChunkKind._
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 
 /**
   *

@@ -33,8 +33,8 @@ package org.nlpcraft.probe.mgrs.nlp.post
 
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft.nlp.{NCNlpSentence ⇒ Sentence}
-import org.nlpcraft.probe.NCModelDecorator
 import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 /**
   * Post checker.

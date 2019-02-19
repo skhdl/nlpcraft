@@ -36,7 +36,7 @@ import java.util.Optional
 import org.nlpcraft.mdllib.tools.impl._
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp._
-import org.nlpcraft.probe.NCModelDecorator
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._
 

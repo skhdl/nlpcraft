@@ -32,9 +32,9 @@
 package org.nlpcraft.probe.mgrs.nlp.post
 
 import org.nlpcraft.nlp.{NCNlpSentence ⇒ Sentence, NCNlpSentenceToken ⇒ Token}
-import org.nlpcraft.probe.NCModelDecorator
 import org.nlpcraft._
 import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.annotation.tailrec
 import scala.collection.Seq
