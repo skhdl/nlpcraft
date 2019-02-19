@@ -41,8 +41,7 @@ import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._
 import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
-import org.nlpcraft.probe.{mgrs, _}
-import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCSynonym, NCSynonymChunk}
+import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCProbeLifecycle, NCSynonym, NCSynonymChunk}
 import org.nlpcraft.probe.mgrs.deploy._
 
 import scala.collection.JavaConversions._
@@ -53,7 +52,7 @@ import scala.util.control.Exception._
 /**
   * Model manager.
   */
-object NCModelManager extends NCProbeManager("Model manager") with NCDebug with DecorateAsScala {
+object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug with DecorateAsScala {
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
 
@@ -493,7 +492,7 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                     )
                 }
 
-        mgrs.NCModelDecorator(
+        NCModelDecorator(
             model = mdl,
             synonyms = mkFastAccessMap(syns.toSet),
             excludedSynonyms = mkFastAccessMap(exclSyns.toSet),

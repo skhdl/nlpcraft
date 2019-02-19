@@ -29,32 +29,26 @@
  *        /_/
  */
 
-package org.nlpcraft.probe.mgrs.nlp.conversation
+package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.NCDebug
-import org.nlpcraft.probe.mgrs.NCProbeLifecycle
+import java.util.regex.Pattern
 
-import scala.collection._
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 
 /**
-  * Conversation manager.
+  *
+  * @param kind
+  * @param origText
+  * @param wordStem
+  * @param posTag
+  * @param regex
   */
-object NCConversationManager extends NCProbeLifecycle("Conversation manager") with NCDebug {
-    case class Key(userId: Long, dsId: Long)
-    
-    // TODO: add periodic garbage collector for stale conversations.
-    private val convs = mutable.HashMap.empty[Key, NCConversation]
-
-    /**
-      * Gets conversation for given key.
-      *
-      * @param usrId User ID.
-      * @param dsId Data source ID.
-      * @return New or existing conversation.
-      */
-    def get(usrId: Long, dsId: Long): NCConversation = {
-        convs.synchronized {
-            convs.getOrElseUpdate(Key(usrId, dsId), NCConversation(usrId, dsId))
-        }
-    }
+case class NCSynonymChunk(
+    kind: NCSynonymChunkKind,
+    origText: String,
+    wordStem: String = null,
+    posTag: String = null,
+    regex: Pattern = null
+) {
+    override def toString = s"($origText|$kind)"
 }

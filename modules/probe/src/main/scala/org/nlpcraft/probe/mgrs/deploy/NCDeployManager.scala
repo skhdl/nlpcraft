@@ -34,7 +34,7 @@ package org.nlpcraft.probe.mgrs.deploy
 import java.io._
 import java.util.jar.{JarInputStream ⇒ JIS}
 
-import org.nlpcraft.probe.NCProbeManager
+import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.mdllib._
@@ -49,7 +49,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Model deployment manager.
   */
-object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug with DecorateAsScala {
+object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug with DecorateAsScala {
     private val providers = ArrayBuffer.empty[NCModelProvider]
     private val descriptors = ArrayBuffer.empty[NCModelDescriptor]
     

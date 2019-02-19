@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import org.nlpcraft.crypto._
 import org.nlpcraft.probe._
+import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
@@ -51,7 +52,7 @@ import scala.collection.mutable
 /**
   * Probe down/up link connection manager.
   */
-object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
+object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2") {
     // Uplink retry timeout.
     private final val RETRY_TIMEOUT = 10 * 1000
     // SO_TIMEOUT.

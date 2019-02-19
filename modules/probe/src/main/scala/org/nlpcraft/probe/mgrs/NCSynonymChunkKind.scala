@@ -29,28 +29,15 @@
  *        /_/
  */
 
-package org.nlpcraft.probe
-
-import org.nlpcraft.NCLifecycle
+package org.nlpcraft.probe.mgrs
 
 /**
-  * Base probe manager class.
+  * Synonym element type.
   */
-abstract class NCProbeManager(name: String) extends NCLifecycle(name) {
-    /** Probe configuration this manager was started with. */
-    protected var config: NCProbe.Config.type = _
+object NCSynonymChunkKind extends Enumeration {
+    type NCSynonymChunkKind = Value
     
-    /**
-      * Starts manager with probe configuration.
-      *
-      * @param cfg Probe configuration to use.
-      * @return Itself for call chaining.
-      */
-    def startWithConfig(cfg: NCProbe.Config.type): NCProbeManager = {
-        config = cfg
-        
-        start()
-        
-        this
-    }
+    val TEXT: Value = Value // Simple word.
+    val POS: Value = Value // PoS tag.
+    val REGEX: Value = Value // Regular expression.
 }
