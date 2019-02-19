@@ -1506,8 +1506,8 @@ public class NCIntentSolver {
      * wasn't provided, the {@link NCRejection} exception with default rejection message will be thrown.
      * <p>
      * The specific algorithm of selecting the best matching intent is relatively complex and can be challenging to
-     * trace and understand. During development and testing phase it is highly recommended <i>not to
-     * use {@code NLPCRAFT_PROBE_SILENT} system property</i> to make sure that solver logs out all debugging
+     * trace and understand. During development and testing phase it is highly recommended <i>to
+     * use {@code NLPCRAFT_PROBE_VERBOSE} system property</i> to make sure that solver logs out all debugging
      * information.
      * 
      * @param ctx Sentence's context to find the best match for.

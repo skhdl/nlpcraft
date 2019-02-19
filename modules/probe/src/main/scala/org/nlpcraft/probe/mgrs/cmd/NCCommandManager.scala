@@ -35,7 +35,6 @@ import java.io.Serializable
 
 import org.nlpcraft._
 import org.nlpcraft.nlp.NCNlpSentence
-import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import org.nlpcraft.probe.{NCProbeManager, NCProbeMessage}

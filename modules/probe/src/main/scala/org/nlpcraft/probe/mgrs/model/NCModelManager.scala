@@ -32,7 +32,7 @@
 package org.nlpcraft.probe.mgrs.model
 
 import java.util.regex.{Pattern, PatternSyntaxException}
-import java.util.{Collection ⇒ JCollection, Set ⇒ JSet}
+import java.util.{Set ⇒ JSet, List ⇒ JList}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
@@ -99,11 +99,12 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                             override def run(): Unit =reload(modelId)
                         }.start()
 
-                        override lazy val getId: String = config.getId
-                        override lazy val getToken: String = config.getToken
-                        override lazy val getUpLink: String = config.getUpLink
-                        override lazy val getDownLink: String = config.getDownLink
-                        override lazy val getJarsFolder: String = config.getJarsFolder
+                        override lazy val getId: String = config.id
+                        override lazy val getToken: String = config.token
+                        override lazy val getUpLink: String = config.upLink
+                        override lazy val getDownLink: String = config.downLink
+                        override lazy val getJarsFolder: String = config.jarsFolder
+                        override lazy val getModelClasses: JList[String] = config.modelClasses.toSeq
                     })
 
                     models += id → dec
@@ -140,8 +141,8 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
             tbl.info(logger, Some(s"Models deployed: ${models.size}\n"))
 
-            if (models.isEmpty && config.getJarsFolder == null)
-                throw new NCException("No models deployed and no JAR folder specified.")
+            if (models.isEmpty)
+                throw new NCException("No models deployed.")
         }
 
         super.start()

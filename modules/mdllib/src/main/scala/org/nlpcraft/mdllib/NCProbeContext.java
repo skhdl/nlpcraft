@@ -31,6 +31,8 @@
 
 package org.nlpcraft.mdllib;
 
+import java.util.*;
+
 /**
  * Probe runtime context. Instance of this interface is passed to the model via
  * {@link NCModel#initialize(NCProbeContext)} method when model is initialized for the first time
@@ -86,4 +88,11 @@ public interface NCProbeContext {
      * @return Optional folder to scan for model JARs.
      */
     String getJarsFolder();
+
+    /**
+     * Gets model classes, potentially empty.
+     *
+     * @return List of model classes, potentially empty, this probe was configured with.
+     */
+    List<String> getModelClasses();
 }

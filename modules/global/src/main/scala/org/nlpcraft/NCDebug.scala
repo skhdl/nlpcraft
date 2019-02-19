@@ -48,5 +48,5 @@ trait NCDebug {
     /** Development vs. production mode. */
     protected lazy final val IS_DEBUG: Boolean = isSet("NLPCRAFT_DEBUG")
     /** Verbose output or not. */
-    protected lazy final val IS_PROBE_SILENT: Boolean = isSet("NLPCRAFT_PROBE_SILENT")
+    protected lazy final val IS_PROBE_SILENT: Boolean = !isSet("NLPCRAFT_PROBE_VERBOSE")
 }

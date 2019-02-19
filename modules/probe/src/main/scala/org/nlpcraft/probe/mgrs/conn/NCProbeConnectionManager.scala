@@ -41,7 +41,6 @@ import org.nlpcraft.crypto._
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
-import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.socket._
 import org.nlpcraft.version.NCVersion
@@ -94,8 +93,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
       */
     def send(msg: NCProbeMessage): Unit = {
         // Set probe identification for each message, if necessary.
-        msg.setProbeToken(config.getToken)
-        msg.setProbeId(config.getId)
+        msg.setProbeToken(config.token)
+        msg.setProbeId(config.id)
         msg.setProbeGuid(PROBE_GUID)
     
         p2sQueue.synchronized {
@@ -116,23 +115,23 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
       */
     @throws[Exception]
     private def openP2SSocket(): NCSocket = {
-        val (host, port) = G.splitEndpoint(config.getUpLink)
-        val cryptoKey = NCCipher.makeTokenKey(config.getToken)
+        val (host, port) = G.splitEndpoint(config.upLink)
+        val cryptoKey = NCCipher.makeTokenKey(config.downLink)
     
         logger.info(s"Opening P2S link to '$host:$port'")
     
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.getToken)) // Hash.
+        sock.write(G.makeSha256Hash(config.token)) // Hash.
         sock.write(NCProbeMessage( // Handshake.
             // Type.
             "INIT_HANDSHAKE",
         
             // Payload.
             // Probe identification.
-            "PROBE_TOKEN" → config.getToken,
-            "PROBE_ID" → config.getId,
+            "PROBE_TOKEN" → config.token,
+            "PROBE_ID" → config.id,
             "PROBE_GUID" → PROBE_GUID
         ), cryptoKey)
     
@@ -165,8 +164,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                 hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
         }
     
-        val (host, port) = G.splitEndpoint(config.getDownLink)
-        val cryptoKey = NCCipher.makeTokenKey(config.getToken)
+        val (host, port) = G.splitEndpoint(config.downLink)
+        val cryptoKey = NCCipher.makeTokenKey(config.token)
         val ver = NCVersion.getCurrent
         val tmz = TimeZone.getDefault
     
@@ -175,7 +174,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.getToken)) // Hash, sent clear text.
+        sock.write(G.makeSha256Hash(config.token)) // Hash, sent clear text.
     
         sock.read[NCProbeMessage]().getType match { // Get hash check response.
             case "S2P_HASH_CHECK_OK" ⇒
@@ -185,8 +184,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         
                     // Payload.
                     // Probe identification.
-                    "PROBE_TOKEN" → config.getToken,
-                    "PROBE_ID" → config.getId,
+                    "PROBE_TOKEN" → config.token,
+                    "PROBE_ID" → config.id,
                     "PROBE_GUID" → PROBE_GUID,
         
                     // Handshake data,
@@ -221,7 +220,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     
                 sock
 
-            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Sever does not recognize probe token: ${config.getToken}.")
+            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Sever does not recognize probe token: ${config.token}.")
         }
     }
     
@@ -233,7 +232,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         ctrlThread.interrupt()
         
         // Exit the probe with error code.
-        NCExitManager.fail()
+        System.exit(1)
     }
     
     /**
@@ -276,13 +275,13 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     Thread.sleep(RETRY_TIMEOUT)
                 }
             
-            val cryptoKey = NCCipher.makeTokenKey(config.getToken)
+            val cryptoKey = NCCipher.makeTokenKey(config.token)
             
             while (!t.isInterrupted)
                 try {
                     logger.info(s"Establishing server connection to [" +
-                        s"s2p=${config.getUpLink}, " +
-                        s"p2s=${config.getDownLink}" +
+                        s"s2p=${config.upLink}, " +
+                        s"p2s=${config.downLink}" +
                     s"]")
 
                     s2pSock = openS2PSocket()
@@ -327,8 +326,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                                         if (!p2sThread.isInterrupted && p2sQueue.isEmpty) {
                                             val pingMsg = NCProbeMessage("P2S_PING")
                                             
-                                            pingMsg.setProbeToken(config.getToken)
-                                            pingMsg.setProbeId(config.getId)
+                                            pingMsg.setProbeToken(config.token)
+                                            pingMsg.setProbeId(config.id)
                                             pingMsg.setProbeGuid(PROBE_GUID)
                                             
                                             p2sSock.write(pingMsg, cryptoKey)

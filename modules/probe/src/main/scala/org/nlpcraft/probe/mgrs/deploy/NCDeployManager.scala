@@ -32,12 +32,9 @@
 package org.nlpcraft.probe.mgrs.deploy
 
 import java.io._
-import java.nio.file._
 import java.util.jar.{JarInputStream ⇒ JIS}
-import StandardWatchEventKinds._
 
 import org.nlpcraft.probe.NCProbeManager
-import org.nlpcraft.probe.mgrs.exit.{NCExitManager ⇒ ExitMgr}
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
 import org.nlpcraft.mdllib._
@@ -55,8 +52,6 @@ import scala.collection.mutable.ArrayBuffer
 object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug with DecorateAsScala {
     private val providers = ArrayBuffer.empty[NCModelProvider]
     private val descriptors = ArrayBuffer.empty[NCModelDescriptor]
-    
-    private var watcherThread: Thread = _
     
     /**
       * 
@@ -155,77 +150,10 @@ object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug wit
     }
     
     /**
-      * 
-      * @param dir Directory to watch.
-      */
-    @throws[NCE]
-    private def startJarsWatcher(dir: Path): Unit = {
-        try {
-            val watcher = FileSystems.getDefault.newWatchService()
-    
-            dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY)
-    
-            watcherThread = new Thread() {
-                override def run(): Unit = {
-                    // Sleep for arbitrary 3 secs. to make sure probe has enough time to start
-                    // before we start detecting changes...
-                    Thread.sleep(3000)
-    
-                    logger.trace(s"Watching for changes in: $dir")
-                    
-                    while (!isInterrupted) {
-                        try {
-                            // Wait for changes...
-                            val key = watcher.take()
-                            
-                            var jarsChanged = false
-                            
-                            // Make sure we react to JAR changes only.
-                            for (evt ← key.pollEvents.asScala)
-                                if (evt.kind() != OVERFLOW &&
-                                    evt.asInstanceOf[WatchEvent[Path]].context().toString.endsWith(".jar"))
-                                    jarsChanged = true
-                            
-                            if (!key.reset()) {
-                                // In case directory was removed.
-                                logger.error(s"Watch service failed for: $dir")
-                                
-                                interrupt()
-                            }
-                            
-                            if (jarsChanged) {
-                                if (ExitMgr.isStarted) {
-                                    logger.info(s"New changes detected in '$dir' - restarting probe.")
-                                    
-                                    ExitMgr.restart()
-                                }
-                                else
-                                    logger.warn(s"JARs folder changes detected but probe hasn't started yet (ignoring).")
-                            }
-                        }
-                        catch {
-                            case _: InterruptedException ⇒ interrupt()
-                        }
-                    }
-            
-                    watcher.close()
-                }
-            }
-            
-            watcherThread.start()
-        }
-        catch {
-            case e: Throwable ⇒ throw new NCE("Failed to start directory watch service.", e)
-        }
-    }
-    
-    /**
       * Starts this component.
       */
     @throws[NCE]
     override def start(): NCLifecycle = {
-        require(ExitMgr.isStarted)
-        
         if (config.getProvider == null && config.getJarsFolder == null)
             // This is essentially an assertion.
             throw new NCE("Neither provider nor JARs folder are specified.")
@@ -248,9 +176,6 @@ object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug wit
 
             for (jar ← scanJars(jarsFile) if jar != locJar)
                 providers ++= extractProviders(jar)
-            
-            // Start watcher for JARs folder.
-            startJarsWatcher(jarsFile.toPath)
         }
         
         if (providers.isEmpty) {
@@ -333,15 +258,6 @@ object NCDeployManager extends NCProbeManager("Deploy manager") with NCDebug wit
             errs += s"Model version is too long (16 max): $mdlVer"
         
         errs.toList
-    }
-    
-    /**
-      * Stops this component.
-      */
-    override def stop(): Unit = {
-        G.stopThread(watcherThread)
-        
-        super.stop()
     }
     
     /**

@@ -32,14 +32,13 @@
 package org.nlpcraft.probe
 
 import org.nlpcraft.NCLifecycle
-import org.nlpcraft.probe.dev.NCProbeConfig
 
 /**
   * Base probe manager class.
   */
 abstract class NCProbeManager(name: String) extends NCLifecycle(name) {
     /** Probe configuration this manager was started with. */
-    protected var config: NCProbeConfig = _
+    protected var config: NCProbe.Config.type = _
     
     /**
       * Starts manager with probe configuration.
@@ -47,7 +46,7 @@ abstract class NCProbeManager(name: String) extends NCLifecycle(name) {
       * @param cfg Probe configuration to use.
       * @return Itself for call chaining.
       */
-    def startWithConfig(cfg: NCProbeConfig): NCProbeManager = {
+    def startWithConfig(cfg: NCProbe.Config.type): NCProbeManager = {
         config = cfg
         
         start()
