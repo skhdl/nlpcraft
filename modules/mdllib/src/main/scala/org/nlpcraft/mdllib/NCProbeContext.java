@@ -90,9 +90,9 @@ public interface NCProbeContext {
     String getJarsFolder();
 
     /**
-     * Gets model classes, potentially empty.
+     * Gets model provider classes, potentially empty.
      *
-     * @return List of model classes, potentially empty, this probe was configured with.
+     * @return List of model provider classes, potentially empty, this probe was configured with.
      */
-    List<String> getModelClasses();
+    List<String> getModelProviders();
 }

@@ -104,7 +104,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
                         override lazy val getUpLink: String = config.upLink
                         override lazy val getDownLink: String = config.downLink
                         override lazy val getJarsFolder: String = config.jarsFolder
-                        override lazy val getModelClasses: JList[String] = config.modelClasses.toSeq
+                        override lazy val getModelProviders: JList[String] = config.modelProviders.toSeq
                     })
 
                     models += id → dec

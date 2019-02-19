@@ -120,7 +120,7 @@ object NCProbe extends App with LazyLogging {
         val upLink = hocon.getString("probe.upLink")
         val downLink = hocon.getString("probe.downLink")
         val jarsFolder = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
-        val modelClasses = hocon.getStringList("probe.modelClasses").asScala.toList
+        val modelProviders = hocon.getStringList("probe.modelProviders").asScala.toList
     
         /**
           * 
@@ -134,8 +134,8 @@ object NCProbe extends App with LazyLogging {
             checkEndpoint("probe.upLink", upLink)
             checkEndpoint("probe.downLink", downLink)
             
-            if (jarsFolder == null && modelClasses.isEmpty)
-                throw new IllegalArgumentException("Either 'probe.jarsFolder' or 'probe.modelClasses' " +
+            if (jarsFolder == null && modelProviders.isEmpty)
+                throw new IllegalArgumentException("Either 'probe.jarsFolder' or 'probe.modelProviders' " +
                     "configuration property must be provided.")
         }
     }
@@ -178,7 +178,7 @@ object NCProbe extends App with LazyLogging {
         tbl += ("API Version", ver.version + ", " + ver.date.toString)
         tbl += ("Down-Link", Config.downLink)
         tbl += ("Up-Link", Config.upLink)
-        tbl += ("Model Classes", Config.modelClasses.size)
+        tbl += ("Model providers", Config.modelProviders.size)
         tbl += ("JARs Folder", nvl(Config.jarsFolder))
         
         tbl.info(logger, Some("Probe Configuration:"))

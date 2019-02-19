@@ -54,6 +54,7 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
     private val descriptors = ArrayBuffer.empty[NCModelDescriptor]
     
     /**
+      * Gives a list of JAR files at given path.
       * 
       * @param path Path to scan.
       * @return
@@ -71,22 +72,38 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
     }
     
     /**
+      *
+      * @param clsName Provider class name.
+      */
+    @throws[NCE]
+    private def makeProvider(clsName: String): NCModelProvider =
+        try {
+            makeProvider(Thread.currentThread().getContextClassLoader.loadClass(clsName), clsName)
+        }
+        catch {
+            case e: Throwable  ⇒
+                throw new NCE(s"Failed to load model provider class [" +
+                    s"class=$clsName, " +
+                    s"error=${e.getLocalizedMessage}" +
+                "]")
+        }
+
+    /**
       * 
       * @param cls Provider class.
       * @param src Provider class source.
       */
     @throws[NCE]
-    private def makeProvider(cls: Class[_], src: String): Option[NCModelProvider] =
+    private def makeProvider(cls: Class[_], src: String): NCModelProvider =
         catching(classOf[Throwable]) either cls.newInstance().asInstanceOf[NCModelProvider] match {
-            case Left(_) ⇒
-                logger.error(s"Failed to instantiate model provider [" +
+            case Left(e) ⇒
+                throw new NCE(s"Model provider failed to instantiate [" +
                     s"class=${cls.getName}, " +
-                    s"source=$src" +
+                    s"source=$src, " +
+                    s"error=${e.getLocalizedMessage}" +
                 "]")
-                
-                None
 
-            case Right(provider) ⇒ Some(provider)
+            case Right(provider) ⇒ provider
         }
     
     /**
@@ -95,9 +112,6 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
       */
     @throws[NCE]
     private def extractProviders(jarFile: File): Seq[NCModelProvider] = {
-        // Ack entry.
-        logger.trace(s"Scanning: $jarFile")
-        
         val clsLdr = Thread.currentThread().getContextClassLoader
         
         val classes = mutable.ArrayBuffer.empty[Class[_]]
@@ -112,28 +126,14 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
                     try {
                         val cls = clsLdr.loadClass(clsName)
 
-                        if (classOf[NCModelProvider].isAssignableFrom(cls) && !cls.isInterface) {
+                        if (classOf[NCModelProvider].isAssignableFrom(cls) && !cls.isInterface)
                             classes += cls
-                            
-                            logger.trace(s"Detected model provider [" +
-                                s"class=$cls, " +
-                                s"jarFile=$jarFile" +
-                                s"]")
-                        }
                     }
                     catch {
                         // Errors are possible for JARs like log4j etc, which have runtime dependencies.
-                        // We don't need these messages in log beside trace.
-                        case _: ClassNotFoundException  ⇒
-                            logger.trace(s"Model JAR class not found (ignoring) [" +
-                                s"jarFile=$jarFile, " +
-                                s"class=$clsName" +
-                                s"]")
-                        case _: NoClassDefFoundError ⇒
-                            logger.trace(s"Model JAR no class definition found (ignoring) [" +
-                                s"jarFile=$jarFile, " +
-                                s"class=$clsName" +
-                                s"]")
+                        // We don't need these messages in log beside trace, so ignore...
+                        case _: ClassNotFoundException  ⇒ ()
+                        case _: NoClassDefFoundError ⇒ ()
                     }
                 }
 
@@ -141,12 +141,7 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
             }
         }
     
-        val seq = classes.flatMap(makeProvider(_, jarFile.getPath))
-        
-        // Ack exit.
-        logger.trace(s"Finished scanning JAR: $jarFile")
-        
-        seq
+        classes.map(makeProvider(_, jarFile.getPath))
     }
     
     /**
@@ -154,22 +149,16 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
       */
     @throws[NCE]
     override def start(): NCLifecycle = {
-        if (config.getProvider == null && config.getJarsFolder == null)
-            // This is essentially an assertion.
-            throw new NCE("Neither provider nor JARs folder are specified.")
+        // Add model provider classes first.
+        providers ++= config.modelProviders.map(makeProvider)
         
-        val p = config.getProvider
-        
-        if (p != null)
-            providers += p
-        
-        if (config.getJarsFolder != null) {
-            val jarsFile = new File(config.getJarsFolder)
+        if (config.jarsFolder != null) {
+            val jarsFile = new File(config.jarsFolder)
             
             if (!jarsFile.exists())
-                throw new NCE(s"JAR folder path '${config.getJarsFolder}' does not exist.")
+                throw new NCE(s"JAR folder path '${config.jarsFolder}' does not exist.")
             if (!jarsFile.isDirectory)
-                throw new NCE(s"JAR folder path '${config.getJarsFolder}' is not a directory.")
+                throw new NCE(s"JAR folder path '${config.jarsFolder}' is not a directory.")
 
             val src = this.getClass.getProtectionDomain.getCodeSource
             val locJar = if (src == null) null else new File(src.getLocation.getPath)
@@ -178,47 +167,35 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
                 providers ++= extractProviders(jar)
         }
         
-        if (providers.isEmpty) {
-            require(config.getProvider == null)
+        for (x ← providers) {
+            val dss = x.getDescriptors.asScala
             
-            if (config.getJarsFolder != null) {
-                logger.warn("No model providers found on start.")
-                logger.info(s"Deploy your model JARs into '${config.getJarsFolder}' folder.")
-            }
-            else
-                logger.error("No model providers found on start and no JAR folder is provided.")
-        }
-        else {
-            for (x ← providers) {
-                val dss = x.getDescriptors.asScala
-                
-                if (dss.isEmpty)
-                    logger.error(s"Model provider returns no descriptors: ${x.getClass}")
-                else {
-                    for (ds ← dss) {
-                        val errs = verifyDescriptor(ds)
+            if (dss.isEmpty)
+                throw new NCE(s"Model provider returns no descriptors: ${x.getClass}")
+            else {
+                for (ds ← dss) {
+                    val errs = verifyDescriptor(ds)
+                    
+                    if (errs.nonEmpty) {
+                        def nvl(obj: Any): String = if (obj == null) "<null>" else obj.toString
+
+                        val tbl = NCAsciiTable()
                         
-                        if (errs.nonEmpty) {
-                            def nvl(obj: Any): String = if (obj == null) "<null>" else obj.toString
-    
-                            val tbl = NCAsciiTable()
-                            
-                            tbl += ("ID", nvl(ds.getId))
-                            tbl += ("Name", nvl(ds.getName))
-                            tbl += ("Version", nvl(ds.getVersion))
-                            tbl += ("Errors", errs.map("- " + _))
-                            
-                            tbl.error(logger, Some("Model won't deploy due to invalid descriptor:"))
-                        }
-                        else
-                            descriptors += ds
+                        tbl += ("ID", nvl(ds.getId))
+                        tbl += ("Name", nvl(ds.getName))
+                        tbl += ("Version", nvl(ds.getVersion))
+                        tbl += ("Errors", errs.map("- " + _))
+                        
+                        tbl.error(logger, Some("Model won't deploy due to invalid descriptor:"))
                     }
+                    else
+                        descriptors += ds
                 }
             }
-            
-            if (G.containsDups(descriptors.map(_.getId).toList))
-                throw new NCE("Duplicate model IDs detected.")
         }
+        
+        if (G.containsDups(descriptors.map(_.getId).toList))
+            throw new NCE("Duplicate model IDs detected.")
         
         super.start()
     }
