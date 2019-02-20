@@ -82,10 +82,7 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
         }
         catch {
             case e: Throwable  ⇒
-                throw new NCE(s"Failed to load model provider class [" +
-                    s"class=$clsName, " +
-                    s"error=${e.getLocalizedMessage}" +
-                "]")
+                throw new NCE(s"Failed to load model provider class: $clsName", e)
         }
 
     /**
@@ -99,9 +96,8 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
             case Left(e) ⇒
                 throw new NCE(s"Model provider failed to instantiate [" +
                     s"class=${cls.getName}, " +
-                    s"source=$src, " +
-                    s"error=${e.getLocalizedMessage}" +
-                "]")
+                    s"source=$src" +
+                "]", e)
 
             case Right(provider) ⇒ provider
         }

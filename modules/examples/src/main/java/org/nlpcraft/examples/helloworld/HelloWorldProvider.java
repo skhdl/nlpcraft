@@ -48,7 +48,7 @@ public class HelloWorldProvider extends NCModelProviderAdapter {
      *
      * @throws NCException If any errors occur.
      */
-    HelloWorldProvider() throws NCException {
+    public HelloWorldProvider() throws NCException {
         // Initialize adapter.
         setup(
             // Minimally defined model...

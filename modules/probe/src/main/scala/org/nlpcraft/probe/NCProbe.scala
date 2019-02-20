@@ -76,6 +76,12 @@ object NCProbe extends App with LazyLogging {
                 ConfigFactory.
                     parseFile(new java.io.File(s.substring("-config=".length)))
         }
+        
+        if (!hocon.hasPath("probe"))
+            throw new IllegalStateException(
+                "No configuration found. " +
+                "Place 'probe.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
+            )
     
         /**
           * Null or empty check.
@@ -279,8 +285,8 @@ object NCProbe extends App with LazyLogging {
         catching(classOf[Throwable]) either startManagers(Config) match {
             case Left(e) ⇒ // Exception.
                 e match {
-                    case x: NCException ⇒ logger.error(s"Failed to start probe due to: ${x.getLocalizedMessage}")
-                    case x: Throwable ⇒ logger.error("Failed to start probe due to unexpected error.", x.printStackTrace())
+                    case x: NCException ⇒ logger.error(s"Failed to start probe.", x)
+                    case x: Throwable ⇒ logger.error("Failed to start probe due to unexpected error.", x)
                 }
                 
                 System.exit(1)

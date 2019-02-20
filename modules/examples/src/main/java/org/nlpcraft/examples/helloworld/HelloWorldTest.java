@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * HelloWorld model test.
- *
- * Note that server and {@link org.nlpcraft.examples.helloworld.HelloWorldProbeRunner} must be started before.
  */
 public class HelloWorldTest {
     private NCTestClient client;
