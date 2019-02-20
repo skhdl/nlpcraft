@@ -43,16 +43,19 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * HelloWorld model test.
+ * Hello World example data model test.
+ *
+ * @see HelloWorldModel
  */
 public class HelloWorldTest {
     private NCTestClient client;
     
     @BeforeEach
     void setUp() throws NCException, IOException {
+        // Use all defaults.
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.open("nlpcraft.helloworld.ex"); // See HelloWorldProvider#HelloWorldProvider
+        client.openForModelId("nlpcraft.helloworld.ex");
     }
     
     @AfterEach

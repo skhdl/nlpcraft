@@ -54,7 +54,7 @@ public class TimeTest {
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.open("nlpcraft.time.ex"); // See time_model.json
+        client.openForModelId("nlpcraft.time.ex"); // See time_model.json
     }
     
     @AfterEach

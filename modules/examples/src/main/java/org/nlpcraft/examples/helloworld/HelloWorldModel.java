@@ -32,24 +32,28 @@
 package org.nlpcraft.examples.helloworld;
 
 import org.nlpcraft.NCException;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
+import org.nlpcraft.mdllib.*;
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 
 /**
- * Hello World example model provider.
+ * Hello World example data model.
  * <p>
- * This trivial example simply responds with 'Hello World!' on any user input. This is the simplest
- * user model that can be defined.
+ * This trivial example simply responds with 'Hello World!' on any user input.
+ * This is the simplest user model that can be defined.
+ * <p>
+ * Note that all models must be "wrapped" in {@link NCModelProvider} interface to be deployable
+ * into data probes.
+ *
+ * @see HelloWorldTest
  */
-public class HelloWorldProvider extends NCModelProviderAdapter {
+public class HelloWorldModel extends NCModelProviderAdapter {
     /**
      * Initializes provider.
      *
      * @throws NCException If any errors occur.
      */
-    public HelloWorldProvider() throws NCException {
-        // Initialize adapter.
+    public HelloWorldModel() throws NCException {
+        // Initialize model provider adapter.
         setup(
             // Minimally defined model...
             NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
