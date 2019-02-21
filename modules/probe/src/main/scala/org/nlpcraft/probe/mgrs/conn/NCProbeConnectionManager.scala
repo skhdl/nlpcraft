@@ -116,7 +116,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
       */
     @throws[Exception]
     private def openDownLinkSocket(): NCSocket = {
-        val (host, port) = G.splitEndpoint(config.upLink)
+        val (host, port) = G.splitEndpoint(config.downLink)
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
     
@@ -166,7 +166,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
                 hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
         }
     
-        val (host, port) = G.splitEndpoint(config.downLink)
+        val (host, port) = G.splitEndpoint(config.upLink)
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
         
