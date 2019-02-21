@@ -31,6 +31,7 @@
 
 package org.nlpcraft.probe
 
+import com.sun.javafx.scene.control.skin.TableHeaderRow
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.{G, NCException}
@@ -294,13 +295,15 @@ object NCProbe extends App with LazyLogging {
             case _ ⇒ // Managers started OK.
                 ackStart()
                 checkVersion()
-    
-                Runtime.getRuntime.addShutdownHook(new Thread(() ⇒
-                    ignoring(classOf[Throwable]) {
-                        stopManagers()
-                    }
-                ))
                 
+                Runtime.getRuntime.addShutdownHook(new Thread() {
+                    override def run(): Unit = {
+                        ignoring(classOf[Throwable]) {
+                            stopManagers()
+                        }
+                    }
+                })
+    
                 // Wait indefinitely.
                 ignoring(classOf[InterruptedException]) {
                     Thread.currentThread().join()

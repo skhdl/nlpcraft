@@ -361,7 +361,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
                     upThread.start()
                     dnThread.start()
 
-                    logger.info("Server uplink and downlink established.")
+                    logger.info("Server connection established.")
                     
                     while (!t.isInterrupted && latch.getCount > 0) G.ignoreInterrupt {
                         latch.await()

@@ -86,18 +86,18 @@ object NCScalaSupport {
       * @param f Lambda to convert.
       * @return Runnable object.
       */
-    implicit def toRunnable(f: () ⇒ Unit): Runnable =
+    implicit def toRunnable(f: ⇒ Unit): Runnable =
         new Runnable() {
-            override def run(): Unit = f()
+            override def run(): Unit = f
         }
     
     /**
       * @param f Lambda to convert.
       * @return Callable object.
       */
-    implicit def toCallable[R](f: () ⇒ R): Callable[R] =
+    implicit def toCallable[R](f: ⇒ R): Callable[R] =
         new Callable[R] {
-            override def call(): R = f()
+            override def call(): R = f
         }
 }
 
