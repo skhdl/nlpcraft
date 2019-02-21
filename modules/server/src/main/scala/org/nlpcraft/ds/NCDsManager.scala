@@ -128,6 +128,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
                     ds.modelName,
                     ds.modelVersion,
                     ds.modelConfig,
+                    ds.isTemporary,
                     ds.createdOn
                 )
 
@@ -149,6 +150,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
       * @param mdlName Model name.
       * @param mdlVer Model version.
       * @param mdlCfg Model configuration.
+      * @param isTemp Temporary flag.
       * @return
       */
     @throws[NCE]
@@ -158,7 +160,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: Option[String]
+        mdlCfg: Option[String],
+        isTemp: Boolean
     ): Long = {
         ensureStarted()
 
@@ -174,7 +177,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
                     mdlId,
                     mdlName,
                     mdlVer,
-                    mdlCfg
+                    mdlCfg,
+                    isTemp
                 )
         }
 

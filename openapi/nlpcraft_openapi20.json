@@ -1543,6 +1543,10 @@
                                 "type": "string",
                                 "description": "Optional model configuration string",
                                 "maxLength": 5120
+                            },
+                            "isTemp": {
+                                "type": "boolean",
+                                "description": "Optional flag, ваштув is data source temporary or not. Default false."
                             }
                         }
                     }

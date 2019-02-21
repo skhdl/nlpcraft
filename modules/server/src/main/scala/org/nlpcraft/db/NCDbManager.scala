@@ -169,15 +169,27 @@ object NCDbManager extends NCLifecycle("Database manager") {
     }
     
     /**
-      * Deletes user record with given ID.
+      * Marks as `deleted` user with given ID.
       *
       * @param usrId User ID.
       */
     @throws[NCE]
-    def deleteUser(usrId: Long): Unit = {
+    def markAsDeletedUser(usrId: Long): Unit = {
         ensureStarted()
 
         NCPsql.markAsDeleted("nc_user", "id", usrId)
+    }
+
+    /**
+      * Marks as `deleted` data source with given ID.
+      *
+      * @param dsId Data source ID.
+      */
+    @throws[NCE]
+    def markAsDeletedDataSource(dsId: Long): Unit = {
+        ensureStarted()
+        
+        NCPsql.markAsDeleted("ds_instance", "id", dsId)
     }
 
     /**
@@ -188,8 +200,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
-        
-        NCPsql.markAsDeleted("ds_instance", "id", dsId)
+
+        NCPsql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)
     }
 
     /**
@@ -398,6 +410,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * @param mdlName Model name.
       * @param mdlVer Model version.
       * @param mdlCfg Model config.
+      * @param isTemp Temporary flag.
       */
     @throws[NCE]
     def addDataSource(
@@ -407,7 +420,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: Option[String]
+        mdlCfg: Option[String],
+        isTemp: Boolean
     ): Long = {
         ensureStarted()
 
@@ -420,15 +434,17 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |     model_id,
               |     model_name,
               |     model_ver,
-              |     model_cfg
-              |) VALUES (?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+              |     model_cfg,
+              |     is_temporary
+              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
             id,
             name,
             desc,
             mdlId,
             mdlName,
             mdlVer,
-            mdlCfg.orNull
+            mdlCfg.orNull,
+            isTemp
         )
     }
     

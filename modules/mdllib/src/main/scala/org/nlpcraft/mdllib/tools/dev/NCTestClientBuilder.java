@@ -811,7 +811,8 @@ public class NCTestClientBuilder {
                         Pair.of("shortDesc", "Test data source"),
                         Pair.of("mdlId", mdlId),
                         Pair.of("mdlName", "Test model"),
-                        Pair.of("mdlVer", "Test version")
+                        Pair.of("mdlVer", "Test version"),
+                        Pair.of("isTemp", "true")
                     ),
                     "id",
                     Long.class

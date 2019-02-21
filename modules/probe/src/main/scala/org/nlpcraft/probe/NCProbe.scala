@@ -31,7 +31,6 @@
 
 package org.nlpcraft.probe
 
-import com.sun.javafx.scene.control.skin.TableHeaderRow
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.{G, NCException}
@@ -122,12 +121,12 @@ object NCProbe extends App with LazyLogging {
             }
         }
     
-        val id = hocon.getString("probe.id")
-        val token = hocon.getString("probe.token")
-        val upLink = hocon.getString("probe.upLink") // server-to-probe data pipe (uplink).
-        val downLink = hocon.getString("probe.downLink") // probe-to-server data pipe (downlink).
-        val jarsFolder = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
-        val modelProviders = hocon.getStringList("probe.modelProviders").asScala.toList
+        val id: String = hocon.getString("probe.id")
+        val token: String = hocon.getString("probe.token")
+        val upLink: String = hocon.getString("probe.upLink") // server-to-probe data pipe (uplink).
+        val downLink: String = hocon.getString("probe.downLink") // probe-to-server data pipe (downlink).
+        val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
+        val modelProviders: List[String] = hocon.getStringList("probe.modelProviders").asScala.toList
     
         /**
           * 

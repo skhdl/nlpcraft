@@ -287,7 +287,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                                     mdlId,
                                                     "Test model",
                                                     "Test version",
-                                                    None
+                                                    mdlCfg = None,
+                                                    isTemp = true
                                                 )
                                             )
                                         case None ⇒ None
@@ -765,21 +766,21 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         mdlId: String,
                         mdlName: String,
                         mdlVer: String,
-                        mdlCfg: Option[String]
+                        mdlCfg: Option[String],
+                        isTemp: Option[Boolean]
                     )
                     case class Res(
                         status: String,
                         id: Long
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat8(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
-
                         checkLength("mdlId", req.mdlId, 32)
                         checkLength("mdlName", req.mdlName, 64)
                         checkLength("mdlVer", req.mdlVer, 16)
@@ -793,7 +794,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             req.mdlId,
                             req.mdlName,
                             req.mdlVer,
-                            req.mdlCfg
+                            req.mdlCfg,
+                            isTemp = req.isTemp.getOrElse(false)
                         )
         
                         complete {

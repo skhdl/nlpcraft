@@ -48,6 +48,7 @@ case class NCDataSourceMdo(
     @NCMdoField(column = "model_name") modelName: String,
     @NCMdoField(column = "model_ver") modelVersion: String,
     @NCMdoField(column = "model_cfg") modelConfig: Option[String],
+    @NCMdoField(column = "is_temporary") isTemporary: Boolean,
     
     // Base MDO.
     @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
@@ -65,7 +66,8 @@ object NCDataSourceMdo {
         modelId: String,
         modelName: String,
         modelVersion: String,
-        modelConfig: Option[String]
+        modelConfig: Option[String],
+        isTemp: Boolean
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
         require(shortDesc != null, "Short description cannot be null.")
@@ -81,6 +83,7 @@ object NCDataSourceMdo {
             modelName,
             modelVersion,
             modelConfig,
+            isTemp,
             null,
             null
         )
@@ -94,6 +97,7 @@ object NCDataSourceMdo {
         modelName: String,
         modelVersion: String,
         modelConfig: Option[String],
+        isTemp: Boolean,
         createdOn: Timestamp
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
@@ -111,6 +115,7 @@ object NCDataSourceMdo {
             modelName,
             modelVersion,
             modelConfig,
+            isTemp,
             createdOn,
             null
         )
