@@ -34,7 +34,6 @@ package org.nlpcraft.probe
 import java.io._
 import java.net.{InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.security.Key
-import java.util.{Timer, TimerTask}
 import java.util.concurrent.{ExecutorService, Executors}
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -52,24 +51,23 @@ import org.nlpcraft.socket.NCSocket
 import org.nlpcraft.version.NCVersion
 
 import scala.collection.{Map, mutable}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Probe manager.
   */
 object NCProbeManager extends NCLifecycle("Probe manager") {
-    private final val PROBES_ACK_FREQ_MS = 10 * 60 * 1000
-    
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
-        private val p2sLink = G.splitEndpoint(hocon.getString("probe.links.p2s"))
-        private val s2pLink = G.splitEndpoint(hocon.getString("probe.links.s2p"))
+        private val dnLink = G.splitEndpoint(hocon.getString("probe.links.downLink"))
+        private val upLink = G.splitEndpoint(hocon.getString("probe.links.upLink"))
         
-        val p2sHost: String = p2sLink._1
-        val p2sPort: Int = p2sLink._2
-        val s2pHost: String = s2pLink._1
-        val s2pPort: Int = s2pLink._2
+        val dnHost: String = dnLink._1
+        val dnPort: Int = dnLink._2
+        
+        val upHost: String = upLink._1
+        val upPort: Int = upLink._2
         
         val poolSize: Int = hocon.getInt("probe.poolSize")
         val reconnectTimeoutMs: Long = hocon.getLong("probe.reconnectTimeoutMs")
@@ -77,10 +75,10 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val soTimeoutMs: Int = hocon.getInt("probe.soTimeoutMs")
         
         override def check(): Unit = {
-            assert(p2sPort >= 0 && p2sPort <= 65535,
-                s"Configuration property 'probe.links.p2s' must be >= 0 and <= 65535: $p2sPort")
-            assert(s2pPort >= 0 && s2pPort <= 65535,
-                s"Configuration property 'probe.links.s2p' must be >= 0 and <= 65535: $s2pPort")
+            assert(dnPort >= 0 && dnPort <= 65535,
+                s"Configuration property 'probe.links.upLink' must be >= 0 and <= 65535: $dnPort")
+            assert(upPort >= 0 && upPort <= 65535,
+                s"Configuration property 'probe.links.downLink' must be >= 0 and <= 65535: $upPort")
             assert(reconnectTimeoutMs > 0,
                 s"Configuration property 'probe.reconnectTimeoutMs' must be > 0: $reconnectTimeoutMs")
             assert(poolSize > 0,
@@ -109,9 +107,9 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     private case class ProbeHolder(
         probeKey: ProbeKey,
         probe: NCProbeMdo,
-        var p2sSocket: NCSocket,
-        var s2pSocket: NCSocket,
-        var p2sThread: Thread, // Separate thread listening for messages from the probe.
+        var dnSocket: NCSocket,
+        var upSocket: NCSocket,
+        var dnThread: Thread, // Separate thread listening for messages from the probe.
         cryptoKey: Key, // Encryption key.
         timestamp: Long = G.nowUtcMs()
     ) {
@@ -119,23 +117,19 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
           *
           */
         def close(): Unit = {
-            if (p2sThread != null)
-                G.stopThread(p2sThread)
+            if (dnThread != null)
+                G.stopThread(dnThread)
             
-            if (s2pSocket != null)
-                s2pSocket.close()
+            if (upSocket != null)
+                upSocket.close()
             
-            if (p2sSocket != null)
-                p2sSocket.close()
+            if (dnSocket != null)
+                dnSocket.close()
         }
     }
     
-    private final val EC = ExecutionContext.fromExecutor(
-        Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors())
-    )
-    
-    private var p2sSrv: Thread = _
-    private var s2pSrv: Thread = _
+    private var dnSrv: Thread = _
+    private var upSrv: Thread = _
     private var pingSrv: Thread = _
     
     // All known probes keyed by probe key.
@@ -146,7 +140,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     private var pool: ExecutorService = _
     private var isStopping: AtomicBoolean = _
     private var authPlugin: NCProbeAuthenticationPlugin = _
-    private var timer: Timer = _
     
     /**
       *
@@ -157,19 +150,17 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         Config.check()
         
-        timer = new Timer()
-    
         isStopping = new AtomicBoolean(false)
     
         authPlugin = NCPluginManager.getProbeAuthenticationPlugin
     
         pool = Executors.newFixedThreadPool(Config.poolSize)
     
-        p2sSrv = startServer("p2s-srv", Config.p2sHost, Config.p2sPort, p2sHandler)
-        s2pSrv = startServer("s2p-srv", Config.s2pHost, Config.s2pPort, s2pHandler)
+        dnSrv = startServer("Downlink", Config.dnHost, Config.dnPort, downLinkHandler)
+        upSrv = startServer("Uplink", Config.upHost, Config.upPort, upLinkHandler)
     
-        p2sSrv.start()
-        s2pSrv.start()
+        dnSrv.start()
+        upSrv.start()
     
         pingSrv = G.mkThread("probe-pinger") { t ⇒
             while (!t.isInterrupted) {
@@ -183,12 +174,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         pingSrv.start()
         
-        timer.schedule(new TimerTask() {
-            override def run(): Unit = {
-                ackStats()
-            }
-        }, PROBES_ACK_FREQ_MS)
-    
         super.start()
     }
     
@@ -198,15 +183,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     override def stop(): Unit = {
         checkStopping()
         
-        timer.cancel()
-    
         isStopping = new AtomicBoolean(true)
     
         G.shutdownPool(pool)
     
         G.stopThread(pingSrv)
-        G.stopThread(p2sSrv)
-        G.stopThread(s2pSrv)
+        G.stopThread(dnSrv)
+        G.stopThread(upSrv)
     
         super.stop()
     }
@@ -244,7 +227,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val (sock, cryptoKey) = probes.synchronized {
             probes.get(probeKey) match {
                 case None ⇒ (null, null)
-                case Some(h) ⇒ (h.s2pSocket, h.cryptoKey)
+                case Some(h) ⇒ (h.upSocket, h.cryptoKey)
             }
         }
         
@@ -260,7 +243,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         closeAndRemoveHolder(probeKey)
         
                     case e: Throwable ⇒
-                        logger.error(s"S2P socket error [" +
+                        logger.error(s"Uplink socket error [" +
                             s"sock=$sock, " +
                             s"probeKey=$probeKey, " +
                             s"probeMsg=$probeMsg" +
@@ -286,7 +269,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param fn Function.
       */
     private def startServer(name: String, host: String, port: Int, fn: NCSocket ⇒ Unit): Thread =
-        G.mkThread(s"probe-mgr-$name") { t ⇒
+        G.mkThread(s"probe-mgr-${name.toLowerCase}") { t ⇒
             var srv: ServerSocket = null
             
             while (!t.isInterrupted)
@@ -295,10 +278,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     
                     srv.bind(new InetSocketAddress(host, port))
                     
-                    logger.trace(s"'$name' server is listening on [" +
-                        s"host=$host, " +
-                        s"port=$port" +
-                        s"]")
+                    logger.trace(s"$name server is listening on '$host:$port'")
                     
                     srv.setSoTimeout(Config.soTimeoutMs)
                     
@@ -327,7 +307,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             
                             fut.onFailure {
                                 case e: NCE ⇒ logger.warn(e.getMessage, e)
-                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}", e)
+                                case _: EOFException ⇒ () // Just ignoring.
+                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}")
                             }
                         }
                     }
@@ -341,7 +322,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             val ms = Config.reconnectTimeoutMs
                             
                             // Server socket error must be logged.
-                            logger.warn(s"'$name' server error, re-starting in ${ms / 1000} sec.", e)
+                            logger.warn(s"$name server error, re-starting in ${ms / 1000} sec.", e)
                             
                             G.sleep(ms)
                         }
@@ -352,13 +333,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         }
     
     /**
-      * Processes socket for receiving messages from a probe.
+      * Processes socket for downlink messages.
       *
-      * @param sock Up-link (probe-to-server) socket to process.
+      * @param sock Downlink socket.
       */
     @throws[NCE]
     @throws[IOException]
-    private def p2sHandler(sock: NCSocket): Unit = {
+    private def downLinkHandler(sock: NCSocket): Unit = {
         // Read header token hash message.
         val tokHash = sock.read[String]()
         
@@ -376,7 +357,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val probeId = hsMsg.getProbeId
         val probeGuid = hsMsg.getProbeGuid
     
-        logger.info(s"P2S handshake message received [" +
+        logger.info(s"Downlink handshake message received [" +
             s"probeToken=$probeTkn, " +
             s"probeId=$probeId, " +
             s"proveGuid=$probeGuid" +
@@ -384,7 +365,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         val probeKey = ProbeKey(probeTkn, probeId, probeGuid)
     
-        val threadName = "probe-p2s-" + probeId.toLowerCase + "-" + probeGuid.toLowerCase
+        val threadName = "probe-downlink-" + probeId.toLowerCase + "-" + probeGuid.toLowerCase
     
         val p2sThread = G.mkThread(threadName) { t ⇒
             try {
@@ -395,17 +376,16 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         processMessageFromProbe(sock.read[NCProbeMessage](cryptoKey))
                     }
                     catch {
-                        case _: SocketTimeoutException ⇒ ()
-                        case _: InterruptedException ⇒ () // Normal thread interruption.
-                        case _: InterruptedIOException ⇒ () // Normal thread interruption.
+                        // Normal thread interruption.
+                        case _: SocketTimeoutException | _: InterruptedException | _: InterruptedIOException ⇒ ()
                     
                         case _: EOFException ⇒
-                            logger.info(s"Probe closed p2s connection: $probeKey")
+                            logger.info(s"Probe closed downlink connection: $probeKey")
                         
                             t.interrupt()
                     
                         case e: Throwable ⇒
-                            logger.info(s"Error reading probe p2s socket (${e.getMessage}): $probeKey")
+                            logger.info(s"Error reading probe downlink socket (${e.getMessage}): $probeKey")
                         
                             t.interrupt()
                     }
@@ -432,8 +412,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     null
             
                 case Some(h) ⇒
-                    h.p2sThread = p2sThread
-                    h.p2sSocket = sock
+                    h.dnThread = p2sThread
+                    h.dnSocket = sock
                 
                     h
             }
@@ -443,9 +423,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             probes.synchronized {
                 probes += probeKey → holder
             
-                addProbeToTable(mkProbeTable, holder).info(logger, Some("\nNew probe registered:"))
-            
-                ackStats()
+                addProbeToTable(mkProbeTable, holder).info(logger, Some("New probe registered:"))
             
                 // Bingo!
                 respond("P2S_PROBE_OK")
@@ -467,24 +445,34 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         }
     
     /**
-      * Processes socket for sending messages to a probe.
+      * Processes socket for uplink messages.
       *
-      * @param sock S2P socket to process.
+      * @param sock Uplink socket.
       */
     @throws[NCE]
     @throws[IOException]
-    private def s2pHandler(sock: NCSocket): Unit = {
+    private def upLinkHandler(sock: NCSocket): Unit = {
         // Read header probe token hash message.
         val tokHash = sock.read[String]()
+    
+        var cryptoKey: Key = null
+    
+        def respond(typ: String, pairs: (String, Serializable)*): Unit = {
+            val msg = NCProbeMessage(typ, pairs:_*)
         
-        val cryptoKey = authPlugin.acquireKey(tokHash) match {
+            logger.trace(s"Sending to probe ($typ): $msg")
+        
+            sock.write(msg, cryptoKey)
+        }
+    
+        cryptoKey = authPlugin.acquireKey(tokHash) match {
             case Some(key) ⇒
-                sock.write(NCProbeMessage("S2P_HASH_CHECK_OK"))
+                respond("S2P_HASH_CHECK_OK")
                 
                 key
 
             case None ⇒
-                sock.write(NCProbeMessage("S2P_HASH_CHECK_UNKNOWN"))
+                respond("S2P_HASH_CHECK_UNKNOWN")
     
                 throw new NCE(s"Rejecting probe connection due to unknown probe token hash: $tokHash")
         }
@@ -501,19 +489,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         val probeKey = ProbeKey(probeTkn, probeId, probeGuid)
     
-        logger.info(s"S2P handshake received [" +
+        logger.info(s"Uplink handshake received [" +
             s"probeToken=$probeTkn, " +
             s"probeId=$probeId, " +
             s"proveGuid=$probeGuid" +
             s"]")
-    
-        def respond(typ: String, pairs: (String, Serializable)*): Unit = {
-            val msg = NCProbeMessage(typ, pairs:_*)
-        
-            logger.trace(s"Sending to probe ($typ): $msg")
-        
-            sock.write(msg, cryptoKey)
-        }
     
         if (isMultipleProbeRegistrations(probeKey))
             respond("S2P_PROBE_MULTIPLE_INSTANCES")
@@ -570,9 +550,9 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                                 macAddr = hsMsg.dataOpt[String]("PROBE_HW_ADDR").getOrElse(""),
                                 models = models
                             ),
-                            null, // No P2S socket yet.
+                            null, // No downlink socket yet.
                             sock,
-                            null, // No P2S thread yet.
+                            null, // No downlink thread yet.
                             cryptoKey
                         )
             
@@ -663,16 +643,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
     /**
       *
-      * @param probeGuid
-      * @return
-      */
-    private def getProbeForGuid(probeGuid: String): Option[ProbeHolder] =
-        probes.synchronized {
-            probes.values.find(_.probeKey.probeGuid == probeGuid)
-        }
-    
-    /**
-      *
       * @param modelId
       * @return
       */
@@ -680,17 +650,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         probes.synchronized {
             probes.values.find(_.probe.models.exists(_.id == modelId))
         }
-    
-    /**
-      *
-      */
-    private def ackStats(): Unit = {
-        val tbl = mkProbeTable
-    
-        probes.synchronized { probes.values }.toSeq.sortBy(_.timestamp).foreach(addProbeToTable(tbl, _))
-        
-        tbl.info(logger, Some(s"\nRegistered Probes Statistics (total ${probes.size}):"))
-    }
     
     /**
       *

@@ -29,33 +29,39 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.timer;
+package org.nlpcraft.examples.helloworld;
 
-import org.nlpcraft.*;
-import org.nlpcraft.probe.dev.*;
+import org.nlpcraft.NCException;
+import org.nlpcraft.mdllib.*;
+import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 
 /**
- * In-process probe runner for this example.
+ * Hello World example data model.
  * <p>
- * Note that this probe requires no configuration (it uses local host configuration defaults). However, if necessary,
- * you can set your own configuration properties (see <code>NCProbeConfigBuilder</code> class for details).
+ * This trivial example simply responds with 'Hello World!' on any user input.
+ * This is the simplest user model that can be defined.
+ * <p>
+ * Note that all models must be "wrapped" in {@link NCModelProvider} interface to be deployable
+ * into data probes.
+ *
+ * @see HelloWorldTest
  */
-public class TimerProbeRunner {
+public class HelloWorldModel extends NCModelProviderAdapter {
     /**
-     * In-process probe entry point.
+     * Initializes provider.
      *
-     * @param args Command like arguments (none are required).
+     * @throws NCException If any errors occur.
      */
-    public static void main(String[] args) throws NCException {
-        // 1. Create probe configuration with the provider instance.
-        // 2. Start probe.
-        // 3. Wait synchronously for its exit code.
-        System.exit(
-            NCProbeDevApp.start(
-                NCProbeConfigBuilder.newConfig(
-                    new TimerProvider()
-                ).build()
-            )
+    public HelloWorldModel() throws NCException {
+        // Initialize model provider adapter.
+        setup(
+            // Minimally defined model...
+            NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
+                // Return the same HTML result for any user input.
+                .setQueryFunction(ctx -> NCQueryResult.html(
+                    "Hello World! This model returns the same result for any input..."
+                ))
+                .build()
         );
     }
 }

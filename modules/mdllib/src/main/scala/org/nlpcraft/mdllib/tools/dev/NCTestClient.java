@@ -59,7 +59,7 @@ public interface NCTestClient {
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
-    void open(long dsId) throws NCTestClientException, IOException;
+    void openForDataSourceId(long dsId) throws NCTestClientException, IOException;
     
     /**
      * Connects test client to the server for testing with given model ID. Note that
@@ -69,7 +69,7 @@ public interface NCTestClient {
      * @throws NCTestClientException Thrown if any test system errors occur.
      * @throws IOException Thrown in case of I/O errors.
      */
-    void open(String mdlId) throws NCTestClientException, IOException;
+    void openForModelId(String mdlId) throws NCTestClientException, IOException;
 
     /**
      * Closes test client connection to the server. Removes temporary data source

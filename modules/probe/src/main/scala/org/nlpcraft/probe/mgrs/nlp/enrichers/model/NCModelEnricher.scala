@@ -35,6 +35,7 @@ import org.nlpcraft._
 import org.nlpcraft.mdllib.NCElement
 import org.nlpcraft.nlp._
 import org.nlpcraft.probe._
+import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCSynonym}
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
 import scala.collection.convert.DecorateAsScala

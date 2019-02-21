@@ -96,17 +96,17 @@ public class NCModelBuilder extends NCJsonBuilder {
     /**
      * Creates new model builder with given parameters.
      * 
-     * @param id Unique, <i>immutable</i> ID of the model.
-     * @param name Descriptive name of this model.
-     * @param ver Version of this model using semantic versioning compatible
+     * @param mdlId Unique, <i>immutable</i> ID of the model.
+     * @param mdlName Descriptive name of this model.
+     * @param mdlVer Version of this model using semantic versioning compatible
      *      with (<a href="http://www.semver.org">www.semver.org</a>) specification.
      * @return New model builder.
      */
-    public static NCModelBuilder newModel(String id, String name, String ver) {
+    public static NCModelBuilder newModel(String mdlId, String mdlName, String mdlVer) {
         NCModelBuilder bldr = new NCModelBuilder();
 
         bldr.setDescriptor(
-            NCModelDescriptorBuilder.newDescriptor(id, name, ver).build()
+            NCModelDescriptorBuilder.newDescriptor(mdlId, mdlName, mdlVer).build()
         );
 
         return bldr;

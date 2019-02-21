@@ -54,6 +54,7 @@ import org.nlpcraft.probe.mgrs.nlp.pre._
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft._
+import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 
 import scala.collection._
 import scala.concurrent.ExecutionContext
@@ -62,7 +63,7 @@ import scala.collection.JavaConverters._
 /**
   * Probe NLP manager.
   */
-object NCProbeNlpManager extends NCProbeManager("NLP manager") with NCDebug {
+object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
     private final val EC = ExecutionContext.fromExecutor(
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )

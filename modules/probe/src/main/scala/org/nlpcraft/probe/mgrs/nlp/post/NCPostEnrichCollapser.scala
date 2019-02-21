@@ -37,8 +37,8 @@ import java.io.{Serializable ⇒ JSerializable}
 import org.nlpcraft._
 import org.nlpcraft.nlp.pos._
 import org.nlpcraft.nlp._
-import org.nlpcraft.probe.NCModelDecorator
 import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._
 import scala.collection._

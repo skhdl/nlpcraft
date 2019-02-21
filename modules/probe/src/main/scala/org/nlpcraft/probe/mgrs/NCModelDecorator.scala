@@ -29,34 +29,32 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.lessons.lesson3;
+package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.*;
-import org.nlpcraft.probe.dev.*;
+import org.nlpcraft.mdllib.{NCElement, NCModel}
 
 /**
- * In-process probe runner for this example.
- * <p>
- * Make sure to setup these system properties:
- * <ul>
- *     <li>
- *         <code>NLPCRAFT_PROBE_ID</code>=<code>probe ID</code> (any user defined name).
- *     </li>
- *     <li>
- *         <code>NLPCRAFT_PROBE_TOKEN</code>=<code>probe token</code>.
- *     </li>
- * </ul>
- */
-public class TimeProbeRunner3 {
-    /**
-     *
-     * @param args Command like arguments (none are required).
-     */
-    public static void main(String[] args) throws NCException {
-        NCProbeConfig cfg = NCProbeConfigBuilder.newConfig(new TimeProvider3()).build();
-
-        int exitCode = NCProbeDevApp.start(cfg);
-
-        System.exit(exitCode);
+  *
+  * @param model Decorated model.
+  * @param synonyms Fast-access synonyms map.
+  * @param excludedSynonyms Fast-access excluded synonyms map.
+  * @param additionalStopWordsStems Stemmatized additional stopwords.
+  * @param excludedStopWordsStems Stemmatized excluded stopwords.
+  * @param suspiciousWordsStems Stemmatized suspicious stopwords.
+  * @param elements Map of model elements.
+  */
+case class NCModelDecorator(
+    model: NCModel,
+    synonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
+    excludedSynonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
+    additionalStopWordsStems: Set[String],
+    excludedStopWordsStems: Set[String],
+    suspiciousWordsStems: Set[String],
+    elements: Map[String/*Element ID*/, NCElement]
+) extends java.io.Serializable {
+    override def toString: String = {
+        val ds = model.getDescriptor
+        
+        s"Probe model decorator [id=${ds.getId}, name=${ds.getName}, version=${ds.getVersion}]"
     }
 }
