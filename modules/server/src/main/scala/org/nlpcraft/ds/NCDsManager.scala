@@ -140,6 +140,37 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
             )
         }
     }
+    
+    /**
+      * Adds new temporary data source.
+      *
+      * @param mdlId Model ID.
+      */
+    def addTempDataSource(mdlId: String): Long = {
+        ensureStarted()
+    
+        val newDsId = dsSeq.incrementAndGet()
+        val name = "auto-delete-temp-ds"
+    
+        catching(wrapIE) {
+            dsCache +=
+                newDsId →
+                NCDataSourceMdo(
+                    newDsId,
+                    s"$name",
+                    s"$name-description",
+                    s"$name-model-id",
+                    s"$name-model-name",
+                    s"$name-model-version",
+                    None,
+                    true
+                )
+        }
+        
+        // NOTE: no notification for temp data source.
+        
+        newDsId
+    }
 
     /**
       * Adds new data source.
@@ -150,7 +181,6 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
       * @param mdlName Model name.
       * @param mdlVer Model version.
       * @param mdlCfg Model configuration.
-      * @param isTemp Temporary flag.
       * @return
       */
     @throws[NCE]
@@ -160,8 +190,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: Option[String],
-        isTemp: Boolean
+        mdlCfg: Option[String]
     ): Long = {
         ensureStarted()
 
@@ -178,7 +207,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
                     mdlName,
                     mdlVer,
                     mdlCfg,
-                    isTemp
+                    false
                 )
         }
 
@@ -197,7 +226,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
     }
 
     /**
-      * Deletes data source with given DI.
+      * Deletes data source with given ID.
       *
       * @param dsId ID of the data source to delete.
       */

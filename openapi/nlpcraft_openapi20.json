@@ -312,7 +312,7 @@
                             },
                             "mdlId": {
                                 "type": "string",
-                                "description": "Model ID. Temporary data source for given model ID created and deleted. Cannot be used together with `dsId` parameter.",
+                                "description": "Model ID. Temporary data source for given model ID will be created and deleted. Cannot be used together with `dsId` parameter.",
                                 "maxLength": 32
                             },
 
@@ -1543,10 +1543,6 @@
                                 "type": "string",
                                 "description": "Optional model configuration string",
                                 "maxLength": 5120
-                            },
-                            "isTemp": {
-                                "type": "boolean",
-                                "description": "Optional flag, ваштув is data source temporary or not. Default false."
                             }
                         }
                     }

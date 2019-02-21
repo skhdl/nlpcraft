@@ -141,7 +141,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * @param hash Password hash to remove.
       */
     @throws[NCE]
-    def removePasswordHash(hash: String): Unit = {
+    def erasePasswordHash(hash: String): Unit = {
         ensureStarted()
     
         NCPsql.delete("DELETE FROM passwd_pool WHERE passwd_hash = ?", hash)
@@ -169,24 +169,24 @@ object NCDbManager extends NCLifecycle("Database manager") {
     }
     
     /**
-      * Marks as `deleted` user with given ID.
+      * Marks user as `deleted` with given ID.
       *
       * @param usrId User ID.
       */
     @throws[NCE]
-    def markAsDeletedUser(usrId: Long): Unit = {
+    def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
         NCPsql.markAsDeleted("nc_user", "id", usrId)
     }
 
     /**
-      * Marks as `deleted` data source with given ID.
+      * Marks data source as `deleted` with given ID.
       *
       * @param dsId Data source ID.
       */
     @throws[NCE]
-    def markAsDeletedDataSource(dsId: Long): Unit = {
+    def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
         
         NCPsql.markAsDeleted("ds_instance", "id", dsId)
@@ -198,7 +198,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
       * @param dsId Data source ID.
       */
     @throws[NCE]
-    def deleteDataSource(dsId: Long): Unit = {
+    def eraseDataSource(dsId: Long): Unit = {
         ensureStarted()
 
         NCPsql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)

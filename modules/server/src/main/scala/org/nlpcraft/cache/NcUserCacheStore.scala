@@ -80,7 +80,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
         if (key.isLeft)
             catching(wrapNCE) {
                 NCPsql.sql {
-                    NCDbManager.markAsDeletedUser(key.left.get)
+                    NCDbManager.deleteUser(key.left.get)
                 }
             }
 

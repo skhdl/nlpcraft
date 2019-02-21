@@ -79,9 +79,9 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
                 NCDbManager.getDataSource(id) match {
                     case Some(ds) ⇒
                         if (ds.isTemporary)
-                            NCDbManager.deleteDataSource(id)
+                            NCDbManager.eraseDataSource(id)
                         else
-                            NCDbManager.markAsDeletedDataSource(id)
+                            NCDbManager.deleteDataSource(id)
 
                     case None ⇒ // No-op.
                 }

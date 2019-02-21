@@ -97,7 +97,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     case class InvalidField(fn: String) extends ArgsException(s"API invalid field '$fn'")
     case class EmptyField(fn: String, max: Int) extends ArgsException(s"API field '$fn' value cannot be empty.")
     case class XorFields(f1: String, f2: String)
-        extends ArgsException(s"Only one API field must be defined: '$f1', '$f2'")
+        extends ArgsException(s"Only one API field must be defined: '$f1' or '$f2'")
 
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
@@ -279,18 +279,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             extractClientIP { remoteAddr ⇒
                                 val tmpDsId =
                                     req.mdlId match {
-                                        case Some(mdlId) ⇒
-                                            Some(
-                                                NCDsManager.addDataSource(
-                                                    "test",
-                                                    "Test data source",
-                                                    mdlId,
-                                                    "Test model",
-                                                    "Test version",
-                                                    mdlCfg = None,
-                                                    isTemp = true
-                                                )
-                                            )
+                                        case Some(mdlId) ⇒ Some(NCDsManager.addTempDataSource(mdlId))
                                         case None ⇒ None
                                     }
 
@@ -766,15 +755,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         mdlId: String,
                         mdlName: String,
                         mdlVer: String,
-                        mdlCfg: Option[String],
-                        isTemp: Option[Boolean]
+                        mdlCfg: Option[String]
                     )
                     case class Res(
                         status: String,
                         id: Long
                     )
     
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat8(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -794,8 +782,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             req.mdlId,
                             req.mdlName,
                             req.mdlVer,
-                            req.mdlCfg,
-                            isTemp = req.isTemp.getOrElse(false)
+                            req.mdlCfg
                         )
         
                         complete {
