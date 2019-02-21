@@ -463,16 +463,20 @@ public class NCTestClientBuilder {
                             js.getError(),
                             js.getUpdateTstamp() - js.getCreateTstamp()
                         );
-    
-                    //noinspection OptionalGetWithoutIsPresent
-                    log.info(
-                        "Question `{}` answered {} with result:\n{}",
-                        txt,
-                        res.isSuccessful() ? "successfully" : "unsuccessfully",
-                        res.isSuccessful() ?
-                            mkPrettyString(res.getResultType().get(), res.getResult().get()) :
+
+                    if (res.isSuccessful())
+                        log.info(
+                            "Question `{}` answered successfully with '{}' result:\n{}",
+                            txt,
+                            res.getResultType().get(),
+                            mkPrettyString(res.getResultType().get(), res.getResult().get())
+                        );
+                    else
+                        log.info(
+                            "Question `{}` answered unsuccessfully with result:\n{}",
+                            txt,
                             res.getResultError().get()
-                    );
+                        );
                     
                     return res;
                 }
