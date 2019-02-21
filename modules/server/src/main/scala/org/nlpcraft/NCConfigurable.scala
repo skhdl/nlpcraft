@@ -54,5 +54,7 @@ object NCConfigurable {
     private final val cfgFile = G.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
     
     // Singleton to load full NLPCraft configuration (only once).
-    protected lazy val cfg: Config = ConfigFactory.load(cfgFile)
+    protected lazy val cfg: Config =
+        ConfigFactory.parseFile(new java.io.File(cfgFile)).
+            withFallback(ConfigFactory.load(cfgFile))
 }
