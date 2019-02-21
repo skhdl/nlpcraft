@@ -474,7 +474,7 @@ public class WeatherProvider extends NCModelProviderAdapter {
     /**
      * Initializes model provider.
      */
-    WeatherProvider() {
+    public WeatherProvider() {
         String modelPath = "modules/examples/src/main/java/org/nlpcraft/examples/weather/weather_model.json";
 
         // If no intent is matched respond with some helpful message...

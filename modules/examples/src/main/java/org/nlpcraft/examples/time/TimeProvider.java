@@ -137,7 +137,7 @@ public class TimeProvider extends NCModelProviderAdapter {
         
         // Get local geo data from sentence metadata defaulting to
         // Silicon Valley location in case we are missing that info.
-        GeoDataBean geo = geoOpt.orElseGet(() -> geoMrg.getSiliconValley());
+        GeoDataBean geo = geoOpt.orElseGet(geoMrg::getSiliconValley);
     
         return formatResult(
             geo.getCityName(),
@@ -178,7 +178,7 @@ public class TimeProvider extends NCModelProviderAdapter {
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider() throws NCException {
+    public TimeProvider() throws NCException {
         String path = "modules/examples/src/main/java/org/nlpcraft/examples/time/time_model.json";
 
         NCIntentSolver solver = new NCIntentSolver(
