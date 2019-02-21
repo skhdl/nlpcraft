@@ -29,35 +29,26 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.helloworld;
+package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.NCException;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import java.util.regex.Pattern
+
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 
 /**
- * Hello World example model provider.
- * <p>
- * This trivial example simply responds with 'Hello World!' on any user input. This is the simplest
- * user model that can be defined.
- */
-public class HelloWorldProvider extends NCModelProviderAdapter {
-    /**
-     * Initializes provider.
-     *
-     * @throws NCException If any errors occur.
-     */
-    HelloWorldProvider() throws NCException {
-        // Initialize adapter.
-        setup(
-            // Minimally defined model...
-            NCModelBuilder.newModel("nlpcraft.helloworld.ex", "HelloWorld Example Model", "1.0")
-                // Return the same HTML result for any user input.
-                .setQueryFunction(ctx -> NCQueryResult.html(
-                    "Hello World! This model returns the same result for any input..."
-                ))
-                .build()
-        );
-    }
+  *
+  * @param kind
+  * @param origText
+  * @param wordStem
+  * @param posTag
+  * @param regex
+  */
+case class NCSynonymChunk(
+    kind: NCSynonymChunkKind,
+    origText: String,
+    wordStem: String = null,
+    posTag: String = null,
+    regex: Pattern = null
+) {
+    override def toString = s"($origText|$kind)"
 }

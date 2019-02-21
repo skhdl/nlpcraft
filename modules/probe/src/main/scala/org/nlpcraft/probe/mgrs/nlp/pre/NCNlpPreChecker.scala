@@ -33,9 +33,9 @@ package org.nlpcraft.probe.mgrs.nlp.pre
 
 import org.nlpcraft.NCLifecycle
 import org.nlpcraft.nlp.NCNlpSentence
-import org.nlpcraft.probe.NCModelDecorator
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.tika.langdetect.OptimaizeLangDetector
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 /**
   * Pre-checker.

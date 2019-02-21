@@ -39,9 +39,9 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import org.nlpcraft.crypto._
 import org.nlpcraft.probe._
+import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
-import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.socket._
 import org.nlpcraft.version.NCVersion
@@ -52,7 +52,7 @@ import scala.collection.mutable
 /**
   * Probe down/up link connection manager.
   */
-object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
+object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
     // Uplink retry timeout.
     private final val RETRY_TIMEOUT = 10 * 1000
     // SO_TIMEOUT.
@@ -70,8 +70,8 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     private final val localHost: InetAddress = InetAddress.getLocalHost
     private var hwAddrs: String = _
     
-    // Holding probe-to-server queue.
-    private val p2sQueue = mutable.Queue.empty[Serializable]
+    // Holding downlink queue.
+    private val dnLinkQueue = mutable.Queue.empty[Serializable]
     
     // Control thread.
     private var ctrlThread: Thread = _
@@ -94,15 +94,15 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
       */
     def send(msg: NCProbeMessage): Unit = {
         // Set probe identification for each message, if necessary.
-        msg.setProbeToken(config.getToken)
-        msg.setProbeId(config.getId)
+        msg.setProbeToken(config.token)
+        msg.setProbeId(config.id)
         msg.setProbeGuid(PROBE_GUID)
     
-        p2sQueue.synchronized {
+        dnLinkQueue.synchronized {
             if (!isStopping) {
-                p2sQueue += msg
+                dnLinkQueue += msg
     
-                p2sQueue.notifyAll()
+                dnLinkQueue.notifyAll()
             }
             else
                 logger.trace(s"Message sending ignored b/c of stopping: $msg")
@@ -112,27 +112,28 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
     class HandshakeError(msg: String) extends RuntimeException(msg)
     
     /**
-      * Opens probe-to-server socket.
+      * Opens down link socket.
       */
     @throws[Exception]
-    private def openP2SSocket(): NCSocket = {
-        val (host, port) = G.splitEndpoint(config.getUpLink)
-        val cryptoKey = NCCipher.makeTokenKey(config.getToken)
+    private def openDownLinkSocket(): NCSocket = {
+        val (host, port) = G.splitEndpoint(config.downLink)
+        
+        val cryptoKey = NCCipher.makeTokenKey(config.token)
     
-        logger.info(s"Opening P2S link to '$host:$port'")
+        logger.info(s"Opening downlink to '$host:$port'")
     
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.getToken)) // Hash.
+        sock.write(G.makeSha256Hash(config.token)) // Hash.
         sock.write(NCProbeMessage( // Handshake.
             // Type.
             "INIT_HANDSHAKE",
         
             // Payload.
             // Probe identification.
-            "PROBE_TOKEN" → config.getToken,
-            "PROBE_ID" → config.getId,
+            "PROBE_TOKEN" → config.token,
+            "PROBE_ID" → config.id,
             "PROBE_GUID" → PROBE_GUID
         ), cryptoKey)
     
@@ -141,19 +142,19 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         def err(msg: String) = throw new HandshakeError(msg)
     
         resp.getType match {
-            case "P2S_PROBE_OK" ⇒ logger.info("  |=⇒ P2S handshake OK.") // Bingo!
+            case "P2S_PROBE_OK" ⇒ logger.info("Downlink handshake OK.") // Bingo!
             case "P2S_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
-            case _ ⇒ err(s"Unexpected server message (you may need to update the probe): ${resp.getType}")
+            case _ ⇒ err(s"Unexpected server message: ${resp.getType}")
         }
     
         sock
     }
     
     /**
-      * Opens server-to-probe socket.
+      * Opens uplink socket.
       */
     @throws[Exception]
-    private def openS2PSocket(): NCSocket = {
+    private def openUplinkSocket(): NCSocket = {
         val netItf = NetworkInterface.getByInetAddress(localHost)
     
         hwAddrs = ""
@@ -165,28 +166,30 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                 hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
         }
     
-        val (host, port) = G.splitEndpoint(config.getDownLink)
-        val cryptoKey = NCCipher.makeTokenKey(config.getToken)
-        val ver = NCVersion.getCurrent
-        val tmz = TimeZone.getDefault
-    
-        logger.info(s"Opening S2P link to '$host:$port'")
+        val (host, port) = G.splitEndpoint(config.upLink)
+        
+        val cryptoKey = NCCipher.makeTokenKey(config.token)
+        
+        logger.info(s"Opening uplink to '$host:$port'")
     
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.getToken)) // Hash, sent clear text.
+        sock.write(G.makeSha256Hash(config.token)) // Hash, sent clear text.
     
         sock.read[NCProbeMessage]().getType match { // Get hash check response.
             case "S2P_HASH_CHECK_OK" ⇒
+                val ver = NCVersion.getCurrent
+                val tmz = TimeZone.getDefault
+    
                 sock.write(NCProbeMessage( // Handshake.
                     // Type.
                     "INIT_HANDSHAKE",
         
                     // Payload.
                     // Probe identification.
-                    "PROBE_TOKEN" → config.getToken,
-                    "PROBE_ID" → config.getId,
+                    "PROBE_TOKEN" → config.token,
+                    "PROBE_ID" → config.id,
                     "PROBE_GUID" → PROBE_GUID,
         
                     // Handshake data,
@@ -209,19 +212,21 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                 ), cryptoKey)
     
                 val resp = sock.read[NCProbeMessage](cryptoKey) // Get handshake response.
+                
+                def err(msg: String) = throw new HandshakeError(msg)
     
                 resp.getType match {
-                    case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ throw new HandshakeError("Duplicate probes ID detected. Each probe has to have a unique ID.")
-                    case "S2P_PROBE_DUP_MODEL" ⇒ throw new HandshakeError(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
-                    case "S2P_PROBE_NOT_FOUND" ⇒ throw new HandshakeError("Probe failed to start due to unknown error.")
-                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ throw new HandshakeError(s"Probe version is unsupported: ${ver.version}")
-                    case "S2P_PROBE_OK" ⇒ logger.info("  |==> S2P handshake OK.") // Bingo!
-                    case _ ⇒ throw new HandshakeError(s"Unknown server message (you need to update the probe): ${resp.getType}")
+                    case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err("Duplicate probes ID detected. Each probe has to have a unique ID.")
+                    case "S2P_PROBE_DUP_MODEL" ⇒ err(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
+                    case "S2P_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
+                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Probe version is unsupported: ${ver.version}")
+                    case "S2P_PROBE_OK" ⇒ logger.info("Uplink handshake OK.") // Bingo!
+                    case _ ⇒ err(s"Unknown server message: ${resp.getType}")
                 }
     
                 sock
 
-            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Sever does not recognize probe token: ${config.getToken}.")
+            case "S2P_HASH_CHECK_UNKNOWN" ⇒ throw new HandshakeError(s"Sever does not recognize probe token: ${config.token}.")
         }
     }
     
@@ -233,7 +238,7 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         ctrlThread.interrupt()
         
         // Exit the probe with error code.
-        NCExitManager.fail()
+        System.exit(1)
     }
     
     /**
@@ -245,27 +250,27 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
         require(NCModelManager.isStarted)
         
         ctrlThread = G.mkThread("probe-ctrl-thread") { t ⇒
-            var p2sSock: NCSocket = null
-            var s2pSock: NCSocket = null
+            var dnSock: NCSocket = null
+            var upSock: NCSocket = null
             
-            var p2sThread: Thread = null
-            var s2pThread: Thread = null
+            var dnThread: Thread = null
+            var upThread: Thread = null
     
             /**
               *
               */
             def closeAll(): Unit = {
-                G.stopThread(p2sThread)
-                G.stopThread(s2pThread)
+                G.stopThread(dnThread)
+                G.stopThread(upThread)
     
-                p2sThread = null
-                s2pThread = null
+                dnThread = null
+                upThread = null
 
-                if (p2sSock != null) p2sSock.close()
-                if (s2pSock != null) s2pSock.close()
+                if (dnSock != null) dnSock.close()
+                if (upSock != null) upSock.close()
         
-                p2sSock = null
-                s2pSock = null
+                dnSock = null
+                upSock = null
             }
             
             /**
@@ -276,19 +281,19 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                     Thread.sleep(RETRY_TIMEOUT)
                 }
             
-            val cryptoKey = NCCipher.makeTokenKey(config.getToken)
+            val cryptoKey = NCCipher.makeTokenKey(config.token)
             
             while (!t.isInterrupted)
                 try {
                     logger.info(s"Establishing server connection to [" +
-                        s"s2p=${config.getUpLink}, " +
-                        s"p2s=${config.getDownLink}" +
+                        s"uplink=${config.upLink}, " +
+                        s"downlink=${config.downLink}" +
                     s"]")
 
-                    s2pSock = openS2PSocket()
-                    p2sSock = openP2SSocket()
+                    upSock = openUplinkSocket()
+                    dnSock = openDownLinkSocket()
 
-                    s2pSock.socket.setSoTimeout(SO_TIMEOUT)
+                    upSock.socket.setSoTimeout(SO_TIMEOUT)
 
                     val latch = new CountDownLatch(1)
 
@@ -305,58 +310,58 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                         latch.countDown()
                     }
 
-                    s2pThread = G.mkThread("probe-s2p-link") { t ⇒
+                    upThread = G.mkThread("probe-uplink") { t ⇒
                         // Main reading loop.
                         while (!t.isInterrupted)
                             try
-                                NCCommandManager.processServerMessage(s2pSock.read[NCProbeMessage](cryptoKey))
+                                NCCommandManager.processServerMessage(upSock.read[NCProbeMessage](cryptoKey))
                             catch {
                                 case _: InterruptedIOException | _: InterruptedException ⇒ ()
-                                case _: EOFException ⇒ exit(t, s"S2P server connection closed.")
-                                case e: Exception ⇒ exit(t, s"S2P connection failed: ${e.getMessage}")
+                                case _: EOFException ⇒ exit(t, s"Uplink server connection closed.")
+                                case e: Exception ⇒ exit(t, s"Uplink connection failed: ${e.getMessage}")
                             }
                     }
                     
-                    p2sThread = G.mkThread("probe-p2s-link") { t ⇒
+                    dnThread = G.mkThread("probe-downlink") { t ⇒
                         while (!t.isInterrupted)
                             try {
-                                p2sQueue.synchronized {
-                                    if (p2sQueue.isEmpty) {
-                                        p2sQueue.wait(PING_TIMEOUT)
+                                dnLinkQueue.synchronized {
+                                    if (dnLinkQueue.isEmpty) {
+                                        dnLinkQueue.wait(PING_TIMEOUT)
                                         
-                                        if (!p2sThread.isInterrupted && p2sQueue.isEmpty) {
+                                        if (!dnThread.isInterrupted && dnLinkQueue.isEmpty) {
                                             val pingMsg = NCProbeMessage("P2S_PING")
                                             
-                                            pingMsg.setProbeToken(config.getToken)
-                                            pingMsg.setProbeId(config.getId)
+                                            pingMsg.setProbeToken(config.token)
+                                            pingMsg.setProbeId(config.id)
                                             pingMsg.setProbeGuid(PROBE_GUID)
                                             
-                                            p2sSock.write(pingMsg, cryptoKey)
+                                            dnSock.write(pingMsg, cryptoKey)
                                         }
                                     }
                                     else {
-                                        val msg = p2sQueue.head
+                                        val msg = dnLinkQueue.head
 
                                         // Write head first (without actually removing from queue).
-                                        p2sSock.write(msg, cryptoKey)
+                                        dnSock.write(msg, cryptoKey)
 
                                         // If sent ok - remove from queue.
-                                        p2sQueue.dequeue()
+                                        dnLinkQueue.dequeue()
                                     }
                                 }
                             }
                             catch {
                                 case _: InterruptedIOException | _: InterruptedException ⇒ ()
-                                case _: EOFException ⇒ exit(t, s"P2S server connection closed.")
-                                case e: Exception ⇒ exit(t, s"P2S connection failed: ${e.getMessage}")
+                                case _: EOFException ⇒ exit(t, s"Downlink server connection closed.")
+                                case e: Exception ⇒ exit(t, s"Downlink connection failed: ${e.getMessage}")
                             }
                     }
 
                     // Bingo - start downlink and uplink!
-                    s2pThread.start()
-                    p2sThread.start()
+                    upThread.start()
+                    dnThread.start()
 
-                    logger.info("Server connection OK.")
+                    logger.info("Server connection established.")
                     
                     while (!t.isInterrupted && latch.getCount > 0) G.ignoreInterrupt {
                         latch.await()
@@ -378,10 +383,10 @@ object NCProbeConnectionManager extends NCProbeManager("Connection manager 2") {
                         closeAll()
     
                         // Ack the handshake error message.
-                        logger.error(s"!!! Failed during server connection handshake (aborting).")
+                        logger.error(s"Failed during server connection handshake (aborting).")
 
                         if (e.getMessage != null)
-                            logger.error(s"!!! ${e.getMessage}")
+                            logger.error(e.getMessage)
 
                         abort()
 

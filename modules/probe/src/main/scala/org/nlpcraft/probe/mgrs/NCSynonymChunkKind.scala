@@ -29,22 +29,15 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.echo
-
-import org.nlpcraft.probe.dev.{NCProbeConfig, NCProbeConfigBuilder, NCProbeDevApp}
+package org.nlpcraft.probe.mgrs
 
 /**
-  * In-process probe runner for this example.
-  * <p>
-  * Note that this probe requires no configuration (it uses local host configuration defaults). However, if necessary,
-  * you can set your own configuration properties (see <code>NCProbeConfigBuilder</code> class for details).
+  * Synonym element type.
   */
-object EchoProbeRunner extends App {
-    // Create probe configuration with the provider instance.
-    val cfg = NCProbeConfigBuilder.newConfig(new EchoProvider()).build()
+object NCSynonymChunkKind extends Enumeration {
+    type NCSynonymChunkKind = Value
     
-    // Start probe and wait synchronously for its exit code.
-    val exitCode = NCProbeDevApp.start(cfg)
-    
-    System.exit(exitCode)
+    val TEXT: Value = Value // Simple word.
+    val POS: Value = Value // PoS tag.
+    val REGEX: Value = Value // Regular expression.
 }

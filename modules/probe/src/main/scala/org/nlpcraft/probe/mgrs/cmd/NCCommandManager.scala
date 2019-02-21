@@ -35,15 +35,15 @@ import java.io.Serializable
 
 import org.nlpcraft._
 import org.nlpcraft.nlp.NCNlpSentence
-import org.nlpcraft.probe.mgrs.exit.NCExitManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
-import org.nlpcraft.probe.{NCProbeManager, NCProbeMessage}
+import org.nlpcraft.probe.NCProbeMessage
+import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 
 /**
   * Probe commands processor.
   */
-object NCCommandManager extends NCProbeManager("Commands manager") with NCDebug {
+object NCCommandManager extends NCProbeLifecycle("Commands manager") with NCDebug {
     /**
       *
       * @param msg Server message to process.

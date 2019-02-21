@@ -32,7 +32,7 @@
 package org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious
 
 import org.nlpcraft.nlp._
-import org.nlpcraft.probe.NCModelDecorator
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
 /**

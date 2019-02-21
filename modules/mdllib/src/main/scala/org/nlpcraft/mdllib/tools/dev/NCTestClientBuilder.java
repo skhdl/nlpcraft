@@ -618,19 +618,19 @@ public class NCTestClientBuilder {
         }
         
         @Override
-        public void open(long dsId) throws NCTestClientException, IOException {
+        public void openForDataSourceId(long dsId) throws NCTestClientException, IOException {
             open0(dsId, null);
         }
         
         @Override
-        public void open(String mdlId) throws NCTestClientException, IOException {
+        public void openForModelId(String mdlId) throws NCTestClientException, IOException {
             open0(null, mdlId);
         }
         
         @Override
         public void close() throws NCTestClientException, IOException {
             if (!opened) throw new IllegalStateException("Client is not opened.");
-            if (closed) throw new IllegalStateException("Client already closed.");
+            if (closed) throw new IllegalStateException("Client is already closed.");
             
             if (srv != null) srv.stop(0);
             
@@ -655,7 +655,7 @@ public class NCTestClientBuilder {
         @Override
         public void clearConversation() throws NCTestClientException, IOException {
             if (!opened) throw new IllegalStateException("Client is not opened.");
-            if (closed) throw new IllegalStateException("Client already closed.");
+            if (closed) throw new IllegalStateException("Client is already closed.");
             
             restClearConversation();
         }

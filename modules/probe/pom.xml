@@ -58,13 +58,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.nlpcraft</groupId>
-            <artifactId>mdllib</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
             <version>${scala.config.ver}</version>

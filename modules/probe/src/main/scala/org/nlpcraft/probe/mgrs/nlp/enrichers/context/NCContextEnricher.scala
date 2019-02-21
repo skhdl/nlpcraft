@@ -34,7 +34,7 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.context
 import org.nlpcraft._
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.probe.NCModelDecorator
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
 import scala.collection.mutable

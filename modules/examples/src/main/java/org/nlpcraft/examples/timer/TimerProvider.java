@@ -60,7 +60,7 @@ public class TimerProvider extends NCModelProviderAdapter {
     
     private final Timer timer = new Timer();
     
-    TimerProvider() {
+    public TimerProvider() {
         NCIntentSolver solver = new NCIntentSolver();
 
         // Add a wide-catch intent. Note that terms in the intent will be matched

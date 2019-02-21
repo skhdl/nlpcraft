@@ -32,16 +32,16 @@
 package org.nlpcraft.probe.mgrs.model
 
 import java.util.regex.{Pattern, PatternSyntaxException}
-import java.util.{Collection ⇒ JCollection, Set ⇒ JSet}
+import java.util.{List ⇒ JList, Set ⇒ JSet}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.makro.{NCMacroParser => MacroParser}
+import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._
-import org.nlpcraft.probe.NCSynonymChunkKind._
-import org.nlpcraft.probe._
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
+import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCProbeLifecycle, NCSynonym, NCSynonymChunk}
 import org.nlpcraft.probe.mgrs.deploy._
 
 import scala.collection.JavaConversions._
@@ -52,7 +52,7 @@ import scala.util.control.Exception._
 /**
   * Model manager.
   */
-object NCModelManager extends NCProbeManager("Model manager") with NCDebug with DecorateAsScala {
+object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug with DecorateAsScala {
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
 
@@ -99,11 +99,12 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
                             override def run(): Unit =reload(modelId)
                         }.start()
 
-                        override lazy val getId: String = config.getId
-                        override lazy val getToken: String = config.getToken
-                        override lazy val getUpLink: String = config.getUpLink
-                        override lazy val getDownLink: String = config.getDownLink
-                        override lazy val getJarsFolder: String = config.getJarsFolder
+                        override lazy val getId: String = config.id
+                        override lazy val getToken: String = config.token
+                        override lazy val getUpLink: String = config.upLink
+                        override lazy val getDownLink: String = config.downLink
+                        override lazy val getJarsFolder: String = config.jarsFolder
+                        override lazy val getModelProviders: JList[String] = config.modelProviders.toSeq
                     })
 
                     models += id → dec
@@ -140,8 +141,8 @@ object NCModelManager extends NCProbeManager("Model manager") with NCDebug with 
 
             tbl.info(logger, Some(s"Models deployed: ${models.size}\n"))
 
-            if (models.isEmpty && config.getJarsFolder == null)
-                throw new NCException("No models deployed and no JAR folder specified.")
+            if (models.isEmpty)
+                throw new NCException("No models deployed.")
         }
 
         super.start()

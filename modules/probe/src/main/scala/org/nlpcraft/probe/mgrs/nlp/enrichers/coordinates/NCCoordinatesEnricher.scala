@@ -35,7 +35,7 @@ import org.nlpcraft.makro.NCMacroParser
 import org.nlpcraft.nlp._
 import org.nlpcraft.nlp.numeric._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.probe.NCModelDecorator
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
 import scala.collection._

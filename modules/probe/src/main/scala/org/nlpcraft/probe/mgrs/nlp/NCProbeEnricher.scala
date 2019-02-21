@@ -32,9 +32,9 @@
 package org.nlpcraft.probe.mgrs.nlp
 
 import org.nlpcraft.nlp._
-import org.nlpcraft.probe.NCModelDecorator
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
+import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection._
 

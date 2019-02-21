@@ -29,45 +29,12 @@
  *        /_/
  */
 
-package org.nlpcraft.probe
+package org.nlpcraft.probe.mgrs
 
-import java.util.regex.Pattern
-
-import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.NCNlpSentenceTokenBuffer
+import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 
 import scala.collection.mutable.ArrayBuffer
-
-/**
-  * Synonym element type.
-  */
-object NCSynonymChunkKind extends Enumeration {
-    type NCSynonymChunkKind = Value
-    
-    val TEXT: Value = Value // Simple word.
-    val POS: Value = Value // PoS tag.
-    val REGEX: Value = Value // Regular expression.
-}
-
-import org.nlpcraft.probe.NCSynonymChunkKind._
-
-/**
-  *
-  * @param kind
-  * @param origText
-  * @param wordStem
-  * @param posTag
-  * @param regex
-  */
-case class NCSynonymChunk(
-    kind: NCSynonymChunkKind,
-    origText: String,
-    wordStem: String = null,
-    posTag: String = null,
-    regex: Pattern = null
-) {
-    override def toString = s"($origText|$kind)"
-}
 
 /**
   *
@@ -107,7 +74,7 @@ class NCSynonym(
         else if (isTextOnly)
             toks.stemsHash == stemsHash && toks.stems == stems
         else
-            // Same length.
+        // Same length.
             toks.zip(this).forall {
                 case (tok, chunk) ⇒
                     chunk.kind match {
@@ -120,7 +87,7 @@ class NCSynonym(
     }
     
     override def toString(): String = mkString(" ")
-
+    
     // Orders synonyms from least to most significant.
     override def compare(that: NCSynonym): Int = {
         def compareIsValueSynonym(): Int =
@@ -155,7 +122,7 @@ class NCSynonym(
                                 case _ ⇒
                                     val posRegexCnt = posChunks + regexChunks
                                     val thatPosRegexCnt = that.posChunks + that.regexChunks
-            
+                                    
                                     // Less PoS or regex chunks means less uncertainty, i.e. larger weight.
                                     if (posRegexCnt < thatPosRegexCnt)
                                         1
@@ -165,11 +132,11 @@ class NCSynonym(
                                         0
                             }
                     }
-        }
+            }
     }
-
+    
     override def canEqual(other: Any): Boolean = other.isInstanceOf[NCSynonym]
-
+    
     override def equals(other: Any): Boolean = other match {
         case that: NCSynonym ⇒
             super.equals(that) &&
@@ -183,7 +150,7 @@ class NCSynonym(
                 value == that.value
         case _ ⇒ false
     }
-
+    
     override def hashCode(): Int = {
         val state = Seq(super.hashCode(), isTextOnly, posChunks, regexChunks, isValueSynonym, isElementId, isValueName, value)
         
@@ -207,31 +174,5 @@ object NCSynonym {
         syn ++= chunks
         
         syn
-    }
-}
-
-/**
-  *
-  * @param model Decorated model.
-  * @param synonyms Fast-access synonyms map.
-  * @param excludedSynonyms Fast-access excluded synonyms map.
-  * @param additionalStopWordsStems Stemmatized additional stopwords.
-  * @param excludedStopWordsStems Stemmatized excluded stopwords.
-  * @param suspiciousWordsStems Stemmatized suspicious stopwords.
-  * @param elements Map of model elements.
-  */
-case class NCModelDecorator(
-    model: NCModel,
-    synonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
-    excludedSynonyms: Map[String/*Element ID*/, Map[Int/*Synonym length*/, Seq[NCSynonym]]], // Fast access map.
-    additionalStopWordsStems: Set[String],
-    excludedStopWordsStems: Set[String],
-    suspiciousWordsStems: Set[String],
-    elements: Map[String/*Element ID*/, NCElement]
-) extends java.io.Serializable {
-    override def toString: String = {
-        val ds = model.getDescriptor
-        
-        s"Probe model decorator [id=${ds.getId}, name=${ds.getName}, version=${ds.getVersion}]"
     }
 }

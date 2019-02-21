@@ -29,34 +29,29 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.lessons.lesson2;
+package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.NCException;
-import org.nlpcraft.probe.dev.*;
+import org.nlpcraft.NCLifecycle
+import org.nlpcraft.probe.NCProbe
 
 /**
- * In-process probe runner for this example.
- * <p>
- * Make sure to setup these system properties:
- * <ul>
- *     <li>
- *         <code>NLPCRAFT_PROBE_ID</code>=<code>probe ID</code> (any user defined name).
- *     </li>
- *     <li>
- *         <code>NLPCRAFT_PROBE_TOKEN</code>=<code>probe token</code>.
- *     </li>
- * </ul>
- */
-public class TimeProbeRunner2 {
+  * Base probe manager class.
+  */
+abstract class NCProbeLifecycle(name: String) extends NCLifecycle(name) {
+    /** Probe configuration this manager was started with. */
+    protected var config: NCProbe.Config.type = _
+    
     /**
-     *
-     * @param args Command like arguments (none are required).
-     */
-    public static void main(String[] args) throws NCException {
-        NCProbeConfig cfg = NCProbeConfigBuilder.newConfig(new TimeProvider2()).build();
-
-        int exitCode = NCProbeDevApp.start(cfg);
-
-        System.exit(exitCode);
+      * Starts manager with probe configuration.
+      *
+      * @param cfg Probe configuration to use.
+      * @return Itself for call chaining.
+      */
+    def startWithConfig(cfg: NCProbe.Config.type): NCProbeLifecycle = {
+        config = cfg
+        
+        start()
+        
+        this
     }
 }
