@@ -52,7 +52,7 @@ import scala.collection.mutable
 /**
   * Probe down/up link connection manager.
   */
-object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2") {
+object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
     // Uplink retry timeout.
     private final val RETRY_TIMEOUT = 10 * 1000
     // SO_TIMEOUT.
@@ -142,7 +142,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
         def err(msg: String) = throw new HandshakeError(msg)
     
         resp.getType match {
-            case "P2S_PROBE_OK" ⇒ logger.info("  |=⇒ Downlink handshake OK.") // Bingo!
+            case "P2S_PROBE_OK" ⇒ logger.info("Downlink handshake OK.") // Bingo!
             case "P2S_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
             case _ ⇒ err(s"Unexpected server message: ${resp.getType}")
         }
@@ -170,10 +170,6 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
         
-        val ver = NCVersion.getCurrent
-        
-        val tmz = TimeZone.getDefault
-    
         logger.info(s"Opening uplink to '$host:$port'")
     
         // Connect down socket.
@@ -183,6 +179,9 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
     
         sock.read[NCProbeMessage]().getType match { // Get hash check response.
             case "S2P_HASH_CHECK_OK" ⇒
+                val ver = NCVersion.getCurrent
+                val tmz = TimeZone.getDefault
+    
                 sock.write(NCProbeMessage( // Handshake.
                     // Type.
                     "INIT_HANDSHAKE",
@@ -221,7 +220,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
                     case "S2P_PROBE_DUP_MODEL" ⇒ err(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
                     case "S2P_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
                     case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Probe version is unsupported: ${ver.version}")
-                    case "S2P_PROBE_OK" ⇒ logger.info("  |==> Uplink handshake OK.") // Bingo!
+                    case "S2P_PROBE_OK" ⇒ logger.info("Uplink handshake OK.") // Bingo!
                     case _ ⇒ err(s"Unknown server message: ${resp.getType}")
                 }
     
@@ -362,7 +361,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager 2")
                     upThread.start()
                     dnThread.start()
 
-                    logger.info("Server connection OK.")
+                    logger.info("Server uplink and downlink established.")
                     
                     while (!t.isInterrupted && latch.getCount > 0) G.ignoreInterrupt {
                         latch.await()
