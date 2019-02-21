@@ -507,8 +507,13 @@ public class NCTestClientBuilder {
                         int num = 1;
         
                         for (NCMultipartJson part : parts) {
-                            buf.append(num++).append(". Part type: `").append(part.getResType()).append("`\n");
-                            buf.append("Part body:\n").append(mkPrettyString(part.getResType(), part.getResBody())).append("\n");
+                            buf.append(num++).
+                                append(". Part type: `").
+                                append(part.getResType()).
+                                append("`\n").
+                                append("Part body:\n").
+                                append(mkPrettyString(part.getResType(), part.getResBody())).
+                                append("\n");
                         }
         
                         return buf.toString();

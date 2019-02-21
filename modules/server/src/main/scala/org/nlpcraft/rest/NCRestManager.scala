@@ -90,53 +90,44 @@ object NCRestManager extends NCLifecycle("REST manager") {
     case class SignInFailure(email: String) extends NCE(s"Invalid user credentials for: $email")
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
     case class NotImplemented() extends NCE("Not implemented.")
-    case class OutOfRangeField(fn: String, max: Int) extends NCE(s"API field '$fn' value exceeded max length of $max.")
-    case class InvalidField(fn: String) extends NCE(s"API invalid field '$fn'")
-    case class EmptyField(fn: String, max: Int) extends NCE(s"API field '$fn' value cannot be empty.")
-    
+
+    class ArgsException(msg: String) extends NCE(msg)
+    case class OutOfRangeField(fn: String, max: Int)
+        extends ArgsException(s"API field '$fn' value exceeded max length of $max.")
+    case class InvalidField(fn: String) extends ArgsException(s"API invalid field '$fn'")
+    case class EmptyField(fn: String, max: Int) extends ArgsException(s"API field '$fn' value cannot be empty.")
+    case class XorFields(f1: String, f2: String)
+        extends ArgsException(s"Only one API field must be defined: '$f1', '$f2'")
+
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
             case e: AccessTokenFailure ⇒
                 val errMsg = e.getLocalizedMessage
-    
+
                 NCNotificationManager.addEvent("NC_UNKNOWN_ACCESS_TOKEN",
                     "errMsg" → errMsg
                 )
-                
+
                 complete(StatusCodes.Unauthorized, errMsg)
-                
+
             case e: SignInFailure ⇒
                 val errMsg = e.getLocalizedMessage
-    
+
                 NCNotificationManager.addEvent("NC_SIGNIN_FAILURE",
                     "errMsg" → errMsg,
                     "email" → e.email
                 )
 
                 complete(StatusCodes.Unauthorized, errMsg)
-                
+
             case e: NotImplemented ⇒
                 val errMsg = e.getLocalizedMessage
-    
+
                 NCNotificationManager.addEvent("NC_NOT_IMPLEMENTED")
 
                 complete(StatusCodes.NotImplemented, errMsg)
 
-            case e: OutOfRangeField ⇒
-                val errMsg = e.getLocalizedMessage
-
-                NCNotificationManager.addEvent("NC_INVALID_FIELD")
-
-                complete(StatusCodes.BadRequest, errMsg)
-
-            case e: InvalidField ⇒
-                val errMsg = e.getLocalizedMessage
-
-                NCNotificationManager.addEvent("NC_INVALID_FIELD")
-
-                complete(StatusCodes.BadRequest, errMsg)
-
-            case e: EmptyField ⇒
+            case e: ArgsException ⇒
                 val errMsg = e.getLocalizedMessage
 
                 NCNotificationManager.addEvent("NC_INVALID_FIELD")
@@ -262,7 +253,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     case class Req(
                         accessToken: String,
                         txt: String,
-                        dsId: Long,
+                        dsId: Option[Long],
+                        mdlId: Option[String],
                         isTest: Option[Boolean]
                     )
                     case class Res(
@@ -270,21 +262,41 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         srvReqId: String
                     )
 
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
                         checkLength("accessToken", req.accessToken, 256)
                         checkLength("txt", req.txt, 1024)
+                        checkLengthOpt("mdlId", req.mdlId, 32)
+
+                        if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
+                            throw new XorFields("dsId", "mdlId")
 
                         val userId = authenticate(req.accessToken).id
 
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
                             extractClientIP { remoteAddr ⇒
+                                val tmpDsId =
+                                    req.mdlId match {
+                                        case Some(mdlId) ⇒
+                                            val dsId = NCDsManager.addDataSource(
+                                                "test",
+                                                "Test data source",
+                                                mdlId,
+                                                "Test model",
+                                                "Test version",
+                                                None
+                                            )
+
+                                            Some(dsId)
+                                        case None ⇒ None
+                                    }
+
                                 val newSrvReqId = NCQueryManager.ask(
                                     userId,
                                     req.txt,
-                                    req.dsId,
+                                    tmpDsId.getOrElse(req.dsId.get),
                                     req.isTest.getOrElse(false),
                                     userAgent,
                                     remoteAddr.toOption match {
@@ -292,6 +304,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                         case None ⇒ None
                                     }
                                 )
+
+                                // TODO: delete tmpDsId
 
                                 complete {
                                     Res(API_OK, newSrvReqId)
