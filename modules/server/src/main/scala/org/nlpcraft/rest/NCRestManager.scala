@@ -271,7 +271,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         checkLengthOpt("mdlId", req.mdlId, 32)
 
                         if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
-                            throw new XorFields("dsId", "mdlId")
+                            throw XorFields("dsId", "mdlId")
 
                         val userId = authenticate(req.accessToken).id
 
@@ -280,37 +280,43 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                 val tmpDsId =
                                     req.mdlId match {
                                         case Some(mdlId) ⇒
-                                            val dsId = NCDsManager.addDataSource(
-                                                "test",
-                                                "Test data source",
-                                                mdlId,
-                                                "Test model",
-                                                "Test version",
-                                                None
+                                            Some(
+                                                NCDsManager.addDataSource(
+                                                    "test",
+                                                    "Test data source",
+                                                    mdlId,
+                                                    "Test model",
+                                                    "Test version",
+                                                    None
+                                                )
                                             )
-
-                                            Some(dsId)
                                         case None ⇒ None
                                     }
 
-                                val newSrvReqId = NCQueryManager.ask(
-                                    userId,
-                                    req.txt,
-                                    tmpDsId.getOrElse(req.dsId.get),
-                                    req.isTest.getOrElse(false),
-                                    userAgent,
-                                    remoteAddr.toOption match {
-                                        case Some(a) ⇒ Some(a.getHostAddress)
-                                        case None ⇒ None
+                                try {
+                                    val newSrvReqId =
+                                        NCQueryManager.ask(
+                                            userId,
+                                            req.txt,
+                                            tmpDsId.getOrElse(req.dsId.get),
+                                            req.isTest.getOrElse(false),
+                                            userAgent,
+                                            remoteAddr.toOption match {
+                                                case Some(a) ⇒ Some(a.getHostAddress)
+                                                case None ⇒ None
+                                            }
+                                        )
+
+                                    complete {
+                                        Res(API_OK, newSrvReqId)
                                     }
-                                )
-
-                                // TODO: delete tmpDsId
-
-                                complete {
-                                    Res(API_OK, newSrvReqId)
                                 }
-
+                                finally {
+                                    tmpDsId match {
+                                        case Some(id) ⇒ NCDsManager.deleteDataSource(id)
+                                        case None ⇒ // No-op.
+                                    }
+                                }
                             }
                         }
                     }

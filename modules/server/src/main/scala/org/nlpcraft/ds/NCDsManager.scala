@@ -204,6 +204,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCr
         catching(wrapIE) {
             val ds = dsCache(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
 
+            dsCache -= dsId
+
             // Notification.
             NCNotificationManager.addEvent("NC_DS_DELETE",
                 "dsId" → dsId,
