@@ -292,8 +292,7 @@
                         "type": "object",
                         "required": [
                             "accessToken",
-                            "txt",
-                            "dsId"
+                            "txt"
                         ],
                         "properties": {
                             "accessToken": {
@@ -309,8 +308,14 @@
                             "dsId": {
                                 "type": "integer",
                                 "format": "int64",
-                                "description": "Data source ID"
+                                "description": "Data source ID. Cannot be used together with `mdlId` parameter."
                             },
+                            "mdlId": {
+                                "type": "string",
+                                "description": "Model ID. Temporary data source for given model ID created and deleted. Cannot be used together with `dsId` parameter.",
+                                "maxLength": 32
+                            },
+
                             "isTest": {
                                 "type": "boolean",
                                 "description": "Optional flag on whether request was sent for test reasons or not."
