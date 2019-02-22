@@ -43,7 +43,7 @@ import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
   */
 object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
     // Configuration prefix.
-    private final val CFG = "org.nlpcraft.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin"
+    private final val CFG = "org.nlpcraft.server.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin"
     
     private object Config extends NCConfigurable {
         val probeToken: String = hocon.getString(s"$CFG.probe.token")

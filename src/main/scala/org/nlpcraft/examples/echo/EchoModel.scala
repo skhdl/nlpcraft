@@ -47,7 +47,7 @@ import scala.collection.Seq
   * corresponding to that input. This is a simple demonstration of the JSON output
   * and of most of the NLPCraft-provided data that a user defined model can operate on.
   */
-class EchoProvider extends NCModelProviderAdapter {
+class EchoModel extends NCModelProviderAdapter {
     // Any immutable user defined ID.
     private final val MODEL_ID = "nlpcraft.echo.ex"
     

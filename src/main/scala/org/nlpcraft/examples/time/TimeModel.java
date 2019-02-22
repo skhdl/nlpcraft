@@ -67,7 +67,7 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCountry;
  * It provides HTML response with time and timezone information as well as Google map
  * of the location (default or provided by the user).
  */
-public class TimeProvider extends NCModelProviderAdapter {
+public class TimeModel extends NCModelProviderAdapter {
     // Medium data formatter.
     static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
 
@@ -191,8 +191,8 @@ public class TimeProvider extends NCModelProviderAdapter {
      *
      * @throws NCException If any errors occur.
      */
-    public TimeProvider() throws NCException {
-        String path = "modules/examples/src/main/java/org/nlpcraft/examples/time/time_model.json";
+    public TimeModel() throws NCException {
+        String path = "src/main/scala/org/nlpcraft/examples/time/time_model.json";
 
         NCIntentSolver solver = new NCIntentSolver(
             "time-solver",

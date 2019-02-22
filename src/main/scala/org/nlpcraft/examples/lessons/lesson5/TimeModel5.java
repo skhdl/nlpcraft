@@ -29,10 +29,10 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.lessons.lesson6;
+package org.nlpcraft.examples.lessons.lesson5;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.nlpcraft.NCException;
+import org.nlpcraft.examples.lessons.utils.LessonsUtils;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
 import org.nlpcraft.examples.misc.geo.cities.City;
 import org.nlpcraft.examples.misc.geo.cities.CityData;
@@ -51,92 +51,29 @@ import org.nlpcraft.mdllib.intent.NCIntentSolverContext;
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.time.format.FormatStyle.MEDIUM;
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCity;
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCountry;
 
 /**
- * `Lesson 6` model provider.
+ * `Lesson 5` model provider.
  */
-public class TimeProvider6 extends NCModelProviderAdapter {
+public class TimeModel5 extends NCModelProviderAdapter {
     static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
     // Geo manager.
     static private final GeoManager geoMrg = new GeoManager();
 
-    // Medium data formatter.
-    static private final DateTimeFormatter FMT = DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
-
-    // CSS formatting styles.
-    static private final String CSS1= "style='display: inline-block; min-width: 100px'";
-    static private final String CSS2 = "style='font-weight: 200'";
-
     /**
      * Gets formatted query result.
      *
-     * @param city Detected city.
-     * @param cntry Detected country.
      * @param tmz Timezone ID.
-     * @param lat City latitude.
-     * @param lon City longitude.
      */
-    private static NCQueryResult formatResult(
-        String city,
-        String cntry,
-        String tmz,
-        double lat,
-        double lon
-    ) {
-        String cityFmt = WordUtils.capitalize(city);
-        String cntrFmt = WordUtils.capitalize(cntry);
-
-        // Multipart result consists of HTML fragment and Google static map fragment.
-        return NCQueryResult.jsonMultipart(
-            // HTML block with CSS formatting.
-            NCQueryResult.html(
-                String.format(
-                    "<b %s>Time:</b> <span style='color: #F1C40F'>%s</span><br/>" +
-                    "<b %s>City:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Country:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Timezone:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Local Time:</b> <span %s>%s</span>",
-                    CSS1, ZonedDateTime.now(ZoneId.of(tmz)).format(FMT),
-                    CSS1, CSS2, cityFmt,
-                    CSS1, CSS2, cntrFmt,
-                    CSS1, CSS2, tmz,
-                    CSS1, CSS2, ZonedDateTime.now().format(FMT)
-                )
-            ),
-            // Google static map fragment.
-            NCQueryResult.jsonGmap(
-                String.format(
-                    "{" +
-                        "\"cssStyle\": {" +
-                            "\"width\": \"600px\", " +
-                            "\"height\": \"300px\"" +
-                        "}," +
-                        "\"gmap\": {" +
-                            "\"center\": \"%f,%f\"," +
-                            "\"zoom\": 4," +
-                            "\"scale\": 2," +
-                            "\"size\": \"600x300\", " +
-                            "\"maptype\": \"terrain\", " +
-                            "\"markers\": \"color:red|%f,%f\"" +
-                        "}" +
-                    "}",
-                    lat,
-                    lon,
-                    lat,
-                    lon
-                )
-            )
-        );
+    private static NCQueryResult formatResult(String tmz) {
+        return NCQueryResult.text(LessonsUtils.now(ZoneId.of(tmz)));
     }
-
+    
     /**
      * Callback on intent match.
      *
@@ -148,17 +85,8 @@ public class TimeProvider6 extends NCModelProviderAdapter {
         if (ctx.getIntentTokens().get(1).isEmpty()) {
             Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
     
-            // Get local geo data from sentence metadata defaulting to
-            // Silicon Valley location in case we are missing that info.
-            GeoDataBean geo = geoOpt.orElseGet(() -> geoMrg.getSiliconValley());
-    
-            return formatResult(
-                geo.getCityName(),
-                geo.getCountryName(),
-                geo.getTimezoneName(),
-                geo.getLatitude(),
-                geo.getLongitude()
-            );
+            // Get user's timezone from sentence metadata.
+            return formatResult(geoOpt.isPresent() ? geoOpt.get().getTimezoneName() : "America/Los_Angeles");
         }
 
         // Note that only one 'nlp:geo' token is allowed per model metadata.
@@ -174,13 +102,7 @@ public class TimeProvider6 extends NCModelProviderAdapter {
         if (data == null)
             throw new NCRejection(String.format("No timezone mapping for %s, %s.", city, cntry));
 
-        return formatResult(
-            city,
-            cntry,
-            data.getTimezone(),
-            data.getLatitude(),
-            data.getLongitude()
-        );
+        return formatResult(data.getTimezone());
     }
 
     /**
@@ -188,8 +110,8 @@ public class TimeProvider6 extends NCModelProviderAdapter {
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider6() throws NCException {
-        String path = "modules/examples/src/main/java/org/nlpcraft/examples/lessons/lesson6/time_model6.json";
+    TimeModel5() throws NCException {
+        String path = "src/main/scala/org/nlpcraft/examples/lessons/lesson5/time_model5.json";
 
         NCIntentSolver solver =
             new NCIntentSolver(

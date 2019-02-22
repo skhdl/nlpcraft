@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Weather model test.
- *
- * Note that server and {@link org.nlpcraft.examples.weather.WeatherProbeRunner} must be started before.
  */
 public class WeatherTest {
     private NCTestClient client;

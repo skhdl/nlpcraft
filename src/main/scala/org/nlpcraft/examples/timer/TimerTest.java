@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Timer model test.
- *
- * Note that server and {@link org.nlpcraft.examples.timer.TimerProbeRunner} must be started before.
  */
 public class TimerTest {
     private NCTestClient client;

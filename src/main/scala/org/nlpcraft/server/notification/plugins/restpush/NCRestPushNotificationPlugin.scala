@@ -60,7 +60,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     )
 
     // Configuration prefix.
-    private final val CFG = "org.nlpcraft.notification.plugins.restpush.NCRestPushNotificationPlugin"
+    private final val CFG = "org.nlpcraft.server.notification.plugins.restpush.NCRestPushNotificationPlugin"
 
     private object Config extends NCConfigurable {
         val endpoints: List[String] = hocon.getStringList(s"$CFG.endpoints").asScala.toList

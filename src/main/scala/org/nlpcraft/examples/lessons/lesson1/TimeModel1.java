@@ -40,13 +40,13 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * `Lesson 1` model provider.
  */
-public class TimeProvider1 extends NCModelProviderAdapter {
+public class TimeModel1 extends NCModelProviderAdapter {
     /**
      * Initializes provider.
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider1() throws NCException {
+    TimeModel1() throws NCException {
         // Initialize adapter.
         setup(
             NCModelBuilder.newModel("nlpcraft.time.ex", "Time Example Model", "1.0").

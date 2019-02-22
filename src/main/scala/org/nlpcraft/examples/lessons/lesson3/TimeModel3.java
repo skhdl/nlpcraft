@@ -44,13 +44,13 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * `Lesson 3` model provider.
  */
-public class TimeProvider3 extends NCModelProviderAdapter {
+public class TimeModel3 extends NCModelProviderAdapter {
     /**
      * Initializes provider.
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider3() throws NCException {
+    TimeModel3() throws NCException {
         NCIntentSolver solver =
             new NCIntentSolver(
                 "time-solver",
@@ -65,7 +65,7 @@ public class TimeProvider3 extends NCModelProviderAdapter {
             ctx -> NCQueryResult.text(LessonsUtils.now())
         );
 
-        String path = "modules/examples/src/main/java/org/nlpcraft/examples/lessons/lesson3/time_model3.json";
+        String path = "src/main/scala/org/nlpcraft/examples/lessons/lesson3/time_model3.json";
         NCModel model = NCModelBuilder.newJsonModel(path).setQueryFunction(solver::solve).build();
     
         // Initialize adapter.

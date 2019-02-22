@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.lessons.lesson8;
+package org.nlpcraft.examples.lessons.lesson7;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.nlpcraft.NCException;
@@ -62,11 +62,10 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCity;
 import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCountry;
 
 /**
- * `Lesson 8` model provider.
+ * `Lesson 7` model provider.
  */
-public class TimeProvider8 extends NCModelProviderAdapter {
+public class TimeModel7 extends NCModelProviderAdapter {
     static private final Map<City, CityData> citiesData = CitiesDataProvider.get();
-    
     // Geo manager.
     static private final GeoManager geoMrg = new GeoManager();
 
@@ -102,10 +101,10 @@ public class TimeProvider8 extends NCModelProviderAdapter {
             NCQueryResult.html(
                 String.format(
                     "<b %s>Time:</b> <span style='color: #F1C40F'>%s</span><br/>" +
-                        "<b %s>City:</b> <span %s>%s</span><br/>" +
-                        "<b %s>Country:</b> <span %s>%s</span><br/>" +
-                        "<b %s>Timezone:</b> <span %s>%s</span><br/>" +
-                        "<b %s>Local Time:</b> <span %s>%s</span>",
+                    "<b %s>City:</b> <span %s>%s</span><br/>" +
+                    "<b %s>Country:</b> <span %s>%s</span><br/>" +
+                    "<b %s>Timezone:</b> <span %s>%s</span><br/>" +
+                    "<b %s>Local Time:</b> <span %s>%s</span>",
                     CSS1, ZonedDateTime.now(ZoneId.of(tmz)).format(FMT),
                     CSS1, CSS2, cityFmt,
                     CSS1, CSS2, cntrFmt,
@@ -118,18 +117,18 @@ public class TimeProvider8 extends NCModelProviderAdapter {
                 String.format(
                     "{" +
                         "\"cssStyle\": {" +
-                        "\"width\": \"600px\", " +
-                        "\"height\": \"300px\"" +
+                            "\"width\": \"600px\", " +
+                            "\"height\": \"300px\"" +
                         "}," +
                         "\"gmap\": {" +
-                        "\"center\": \"%f,%f\"," +
-                        "\"zoom\": 4," +
-                        "\"scale\": 2," +
-                        "\"size\": \"600x300\", " +
-                        "\"maptype\": \"terrain\", " +
-                        "\"markers\": \"color:red|%f,%f\"" +
+                            "\"center\": \"%f,%f\"," +
+                            "\"zoom\": 4," +
+                            "\"scale\": 2," +
+                            "\"size\": \"600x300\", " +
+                            "\"maptype\": \"terrain\", " +
+                            "\"markers\": \"color:red|%f,%f\"" +
                         "}" +
-                        "}",
+                    "}",
                     lat,
                     lon,
                     lat,
@@ -195,11 +194,17 @@ public class TimeProvider8 extends NCModelProviderAdapter {
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider8() throws NCException {
-        String path = "modules/examples/src/main/java/org/nlpcraft/examples/lessons/lesson8/time_model8.json";
+    TimeModel7() throws NCException {
+        String path = "src/main/scala/org/nlpcraft/examples/lessons/lesson7/time_model7.json";
 
         NCIntentSolver solver =
-            new NCIntentSolver("time-solver");
+            new NCIntentSolver(
+                "time-solver",
+                () -> {
+                    // Custom not-found function with tailored rejection message.
+                    throw new NCRejection("I can't understand your question.");
+                }
+            );
 
         // Check for exactly one 'x:time' token **without** looking into conversation context.
         // That's an indication of asking for local time only.

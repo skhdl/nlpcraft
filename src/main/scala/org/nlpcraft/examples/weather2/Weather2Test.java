@@ -51,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Weather2 model test.
  *
- * Note that server and {@link org.nlpcraft.examples.weather2.Weather2ProbeRunner} must be started before.
  */
 public class Weather2Test {
     private static final Gson GSON = new Gson();

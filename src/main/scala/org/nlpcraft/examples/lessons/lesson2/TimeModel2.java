@@ -45,13 +45,13 @@ import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
 /**
  * `Lesson 2` model provider.
  */
-public class TimeProvider2 extends NCModelProviderAdapter {
+public class TimeModel2 extends NCModelProviderAdapter {
     /**
      * Initializes provider.
      *
      * @throws NCException If any errors occur.
      */
-    TimeProvider2() throws NCException {
+    TimeModel2() throws NCException {
         NCElement dateTimeElem =
             NCElementBuilder.newElement("x:time").addSynonyms("time", "date").build();
     

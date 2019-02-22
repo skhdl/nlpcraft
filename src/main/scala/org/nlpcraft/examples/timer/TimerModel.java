@@ -65,13 +65,13 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.getNumUnit;
  * As an additional exercise you can quickly add support for settings the alarm to a specific
  * time (and not only for a duration) and can play with the way the system reacts when the timer is up.
  */
-public class TimerProvider extends NCModelProviderAdapter {
+public class TimerModel extends NCModelProviderAdapter {
     private static final DateTimeFormatter FMT =
         DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'").withZone(ZoneId.systemDefault());
     
     private final Timer timer = new Timer();
     
-    public TimerProvider() {
+    public TimerModel() {
         NCIntentSolver solver = new NCIntentSolver();
 
         // Add a wide-catch intent. Note that terms in the intent will be matched
@@ -92,7 +92,7 @@ public class TimerProvider extends NCModelProviderAdapter {
         );
     
         setup(NCModelBuilder.newJsonModel(
-            "modules/examples/src/main/java/org/nlpcraft/examples/timer/timer_model.json").
+            "src/main/scala/org/nlpcraft/examples/timer/timer_model.json").
             setQueryFunction(solver::solve).build());
     }
     

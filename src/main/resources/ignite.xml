@@ -42,7 +42,7 @@
         http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <bean name="cache-store-session-listener" class="javax.cache.configuration.FactoryBuilder.ClassFactory">
-        <constructor-arg value="org.nlpcraft.tx.NCTxCacheStoreSessionListener"/>
+        <constructor-arg value="org.nlpcraft.server.tx.NCTxCacheStoreSessionListener"/>
     </bean>
 
     <bean name="tcp-disco" class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
@@ -120,7 +120,7 @@
             <list>
                 <bean class="org.apache.ignite.cache.QueryEntity">
                     <property name="keyType" value="java.lang.String"/>
-                    <property name="valueType" value="org.nlpcraft.endpoints.NCEndpointCacheValue"/>
+                    <property name="valueType" value="org.nlpcraft.server.endpoints.NCEndpointCacheValue"/>
 
                     <property name="fields">
                         <map>
@@ -174,7 +174,7 @@
         <property name="atomicityMode" value="TRANSACTIONAL"/>
         <property name="cacheStoreFactory">
             <bean class="javax.cache.configuration.FactoryBuilder.ClassFactory">
-                <constructor-arg value="org.nlpcraft.cache.NcUserCacheStore"/>
+                <constructor-arg value="org.nlpcraft.server.cache.NcUserCacheStore"/>
             </bean>
         </property>
     </bean>
@@ -187,7 +187,7 @@
         <property name="atomicityMode" value="TRANSACTIONAL"/>
         <property name="cacheStoreFactory">
             <bean class="javax.cache.configuration.FactoryBuilder.ClassFactory">
-                <constructor-arg value="org.nlpcraft.cache.NcDsCacheStore"/>
+                <constructor-arg value="org.nlpcraft.server.cache.NcDsCacheStore"/>
             </bean>
         </property>
     </bean>

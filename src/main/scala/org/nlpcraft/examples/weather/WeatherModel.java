@@ -41,7 +41,7 @@ import org.nlpcraft.examples.misc.apixu.beans.Location;
 import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
 import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
-import org.nlpcraft.examples.weather2.Weather2Provider;
+import org.nlpcraft.examples.weather2.Weather2Model;
 import org.nlpcraft.mdllib.NCModelProviderAdapter;
 import org.nlpcraft.mdllib.NCQueryResult;
 import org.nlpcraft.mdllib.NCRejection;
@@ -78,11 +78,11 @@ import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
  * intent matching logic. It uses https://www.apixu.com REST service for the actual
  * weather information.
  *
- * Note that this class in exact copy from {@link Weather2Provider} except output formatting.
+ * Note that this class in exact copy from {@link Weather2Model} except output formatting.
  * This implementation uses HTML.
  */
 @SuppressWarnings("Duplicates")
-public class WeatherProvider extends NCModelProviderAdapter {
+public class WeatherModel extends NCModelProviderAdapter {
     // It is demo token and its usage has some restrictions (history data contains one day only, etc).
     // Please register your own account at https://www.apixu.com/pricing.aspx and
     // replace this demo token with your own.
@@ -474,8 +474,8 @@ public class WeatherProvider extends NCModelProviderAdapter {
     /**
      * Initializes model provider.
      */
-    public WeatherProvider() {
-        String modelPath = "modules/examples/src/main/java/org/nlpcraft/examples/weather/weather_model.json";
+    public WeatherModel() {
+        String modelPath = "src/main/scala/org/nlpcraft/examples/weather/weather_model.json";
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {
