@@ -31,8 +31,8 @@
 
 package org.nlpcraft.probe.mgrs.nlp.post
 
-import java.io.{Serializable => JSerializable}
-import java.util.{List => JList}
+import java.io.{Serializable ⇒ JSerializable}
+import java.util.{List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
@@ -42,7 +42,7 @@ import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._
 import scala.collection._
-import scala.collection.mutable.{HashMap => HMap}
+import scala.collection.mutable.{HashMap ⇒ HMap}
 
 /**
   * This collapser handles several tasks:

@@ -32,11 +32,11 @@
 package org.nlpcraft.probe.mgrs.model
 
 import java.util.regex.{Pattern, PatternSyntaxException}
-import java.util.{List => JList, Set => JSet}
+import java.util.{List ⇒ JList, Set ⇒ JSet}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.makro.{NCMacroParser => MacroParser}
+import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
 import org.nlpcraft.mdllib._
 import org.nlpcraft.nlp.opennlp.NCNlpManager
 import org.nlpcraft.nlp.pos._

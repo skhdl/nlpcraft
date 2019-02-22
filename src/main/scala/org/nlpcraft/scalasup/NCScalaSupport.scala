@@ -32,7 +32,7 @@
 package org.nlpcraft.scalasup
 
 import java.util.concurrent.Callable
-import java.util.function.{BiPredicate, Supplier, Function => JFunction, Predicate => JPredicate}
+import java.util.function.{BiPredicate, Supplier, Function ⇒ JFunction, Predicate ⇒ JPredicate}
 
 import scala.language.implicitConversions
 

@@ -32,7 +32,7 @@
 package org.nlpcraft.mdllib
 
 import java.util
-import java.util.{Collections, List => JList}
+import java.util.{Collections, List ⇒ JList}
 
 import org.nlpcraft.mdllib.tools.builder._
 import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
@@ -119,7 +119,7 @@ trait NCModelSpecBase {
                         )
                         .build()
                     )
-                    .setQueryFunction((_: NCQueryContext) => null)
+                    .setQueryFunction((_: NCQueryContext) ⇒ null)
                     .build()
     
             /**

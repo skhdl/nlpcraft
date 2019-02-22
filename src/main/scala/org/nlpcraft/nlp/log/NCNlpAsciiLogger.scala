@@ -32,7 +32,7 @@
 package org.nlpcraft.nlp.log
 
 import java.text.SimpleDateFormat
-import java.util.{Date, List => JList}
+import java.util.{Date, List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.ascii._

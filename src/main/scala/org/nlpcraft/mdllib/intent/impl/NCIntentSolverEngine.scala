@@ -31,7 +31,7 @@
 
 package org.nlpcraft.mdllib.intent.impl
 
-import java.util.{ArrayList => JArrayList, List => JList, Set => JSet}
+import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList, Set ⇒ JSet}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.lang3.tuple.Pair

@@ -31,7 +31,7 @@
 
 package org.nlpcraft.mdllib.tools.scala
 
-import java.util.function.{BiPredicate, Supplier, Function => JFunction, Predicate => JPredicate}
+import java.util.function.{BiPredicate, Supplier, Function ⇒ JFunction, Predicate ⇒ JPredicate}
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.intent.NCIntentSolver._

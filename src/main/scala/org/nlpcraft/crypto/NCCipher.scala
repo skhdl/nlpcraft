@@ -31,7 +31,7 @@
 
 package org.nlpcraft.crypto
 
-import java.security.{Key, SecureRandom, GeneralSecurityException => GSE}
+import java.security.{Key, SecureRandom, GeneralSecurityException ⇒ GSE}
 
 import javax.crypto.Cipher
 import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}

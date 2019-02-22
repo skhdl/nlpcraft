@@ -44,7 +44,7 @@ import org.nlpcraft.{NCE, _}
 import scala.collection.mutable
 import scala.language.existentials
 import scala.reflect.runtime.universe._
-import scala.reflect.runtime.{universe => ru}
+import scala.reflect.runtime.{universe ⇒ ru}
 import scala.util.control.Exception._
 
 sealed case class NCMdoEntityAnnotationException(c: Class[_])

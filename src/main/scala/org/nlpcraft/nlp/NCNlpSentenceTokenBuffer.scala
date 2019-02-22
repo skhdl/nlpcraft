@@ -32,7 +32,7 @@
 package org.nlpcraft.nlp
 
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.{Seq, IndexedSeq => IdxSeq}
+import scala.collection.{Seq, IndexedSeq ⇒ IdxSeq}
 
 /**
   *

@@ -31,8 +31,8 @@
 
 package org.nlpcraft.nlp
 
-import java.io.{Serializable => JSerializable, _}
-import java.util.{List => JList}
+import java.io.{Serializable ⇒ JSerializable, _}
+import java.util.{List ⇒ JList}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii._
@@ -45,7 +45,7 @@ import scala.collection.mutable
   *
   * @param id Internal ID.
   */
-class NCNlpSentenceNote(val id: String) extends mutable.HashMap[String/*Name*/, Serializable/*Value*/]
+class NCNlpSentenceNote(val id: String) extends mutable.HashMap[String/*Name*/, JSerializable/*Value*/]
     with Serializable with NCAsciiLike {
     import NCNlpSentenceNote._
 

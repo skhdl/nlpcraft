@@ -31,7 +31,7 @@
 
 package org.nlpcraft.server.nlp.enrichers.date
 
-import java.util.{Locale, Calendar => C}
+import java.util.{Locale, Calendar ⇒ C}
 
 /**
   * Date parser.

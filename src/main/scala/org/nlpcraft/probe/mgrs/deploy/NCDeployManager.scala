@@ -32,7 +32,7 @@
 package org.nlpcraft.probe.mgrs.deploy
 
 import java.io._
-import java.util.jar.{JarInputStream => JIS}
+import java.util.jar.{JarInputStream ⇒ JIS}
 
 import org.nlpcraft._
 import org.nlpcraft.ascii.NCAsciiTable

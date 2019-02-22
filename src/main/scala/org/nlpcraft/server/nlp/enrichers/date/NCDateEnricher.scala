@@ -32,7 +32,7 @@
 package org.nlpcraft.server.nlp.enrichers.date
 
 import java.time.Instant
-import java.util.{Calendar => C}
+import java.util.{Calendar ⇒ C}
 
 import org.nlpcraft._
 import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
@@ -42,7 +42,7 @@ import org.nlpcraft.util.NCGlobals
 
 import scala.collection.immutable.Iterable
 import scala.collection.mutable
-import scala.collection.mutable.{LinkedHashMap => LHM}
+import scala.collection.mutable.{LinkedHashMap ⇒ LHM}
 
 /**
   * Date enricher.

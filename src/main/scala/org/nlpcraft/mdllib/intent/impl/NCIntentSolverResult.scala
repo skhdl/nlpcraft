@@ -31,7 +31,7 @@
 
 package org.nlpcraft.mdllib.intent.impl
 
-import java.util.{List => JList}
+import java.util.{List ⇒ JList}
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.intent.NCIntentSolver.IntentCallback

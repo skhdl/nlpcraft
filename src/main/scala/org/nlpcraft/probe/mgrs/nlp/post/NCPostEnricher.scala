@@ -33,7 +33,7 @@ package org.nlpcraft.probe.mgrs.nlp.post
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft._
-import org.nlpcraft.nlp.{NCNlpSentence => Sentence, NCNlpSentenceToken => Token}
+import org.nlpcraft.nlp.{NCNlpSentence ⇒ Sentence, NCNlpSentenceToken ⇒ Token}
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.annotation.tailrec

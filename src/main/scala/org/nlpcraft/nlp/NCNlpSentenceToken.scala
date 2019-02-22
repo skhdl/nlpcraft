@@ -31,7 +31,7 @@
 
 package org.nlpcraft.nlp
 
-import java.util.{List => JList}
+import java.util.{List ⇒ JList}
 
 import org.nlpcraft.nlp.pos._
 
