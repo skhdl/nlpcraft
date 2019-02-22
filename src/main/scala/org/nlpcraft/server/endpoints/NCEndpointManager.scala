@@ -49,6 +49,7 @@ import org.nlpcraft.server.mdo.NCQueryStateMdo
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.tx.NCTxManager
 import org.nlpcraft.util.NCGlobals
+import org.nlpcraft.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._

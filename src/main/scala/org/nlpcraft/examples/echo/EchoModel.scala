@@ -35,7 +35,7 @@ import java.util.Optional
 
 import org.nlpcraft.mdllib._
 import org.nlpcraft.mdllib.tools.builder.NCModelBuilder
-import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
+import org.nlpcraft.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 import scala.collection.Seq

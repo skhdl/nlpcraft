@@ -50,6 +50,7 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
 import org.nlpcraft._
+import org.nlpcraft.scalasup.NCScalaSupport._
 import resource._
 
 import scala.collection.JavaConverters._

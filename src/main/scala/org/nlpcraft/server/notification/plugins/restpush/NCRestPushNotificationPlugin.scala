@@ -44,6 +44,7 @@ import org.apache.http.impl.client.HttpClients
 import org.nlpcraft._
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.plugin.apis.NCNotificationPlugin
+import org.nlpcraft.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 

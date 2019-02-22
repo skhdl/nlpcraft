@@ -35,7 +35,7 @@ import java.util
 import java.util.{Collections, List ⇒ JList}
 
 import org.nlpcraft.mdllib.tools.builder._
-import org.nlpcraft.mdllib.tools.scala.NCScalaSupport._
+import org.nlpcraft.scalasup.NCScalaSupport._
 
 /**
   * Base model test trait.
