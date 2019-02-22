@@ -382,7 +382,7 @@
                     <docfilessubdirs>true</docfilessubdirs>
                     <encoding>UTF-8</encoding>
                     <failOnError>false</failOnError>
-                    <sourcepath>${project.basedir}/src/main/scala:${project.basedir}/../probe/src/main/scala</sourcepath>
+                    <sourcepath>${project.basedir}/src/main/scala</sourcepath>
                     <stylesheetfile>${project.basedir}/javadoc/stylesheet.css</stylesheetfile>
                     <bottom>
                         <![CDATA[
@@ -401,13 +401,13 @@
                             <script async defer src="https://buttons.github.io/buttons.js"></script>
                         ]]>
                     </top>
-                    <subpackages>org.nlpcraft.mdllib:org.nlpcraft.probe.dev</subpackages>
+                    <subpackages>org.nlpcraft.model</subpackages>
                     <excludePackageNames>org.nlpcraft.model.impl:org.nlpcraft.model.builder.json:org.nlpcraft.model.builder.impl</excludePackageNames>
                     <groups>
                         <group>
                             <title>Data Model APIs</title>
                             <packages>
-                                org.nlpcraft.mdllib:org.nlpcraft.model.utils:org.nlpcraft.model.intent:org.nlpcraft.model.builder
+                                org.nlpcraft.model:org.nlpcraft.model.utils:org.nlpcraft.model.intent:org.nlpcraft.model.builder
                             </packages>
                         </group>
                         <group>

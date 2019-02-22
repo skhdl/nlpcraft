@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Echo model test.
- *
- * Note that server and {@link org.nlpcraft.examples.echo.EchoProbeRunner} must be started before.
  */
 public class EchoTest {
     private NCTestClient client;

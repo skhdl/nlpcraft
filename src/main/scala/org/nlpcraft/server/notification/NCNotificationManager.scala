@@ -32,7 +32,6 @@
 package org.nlpcraft.server.notification
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.plugin.NCPluginManager
 import org.nlpcraft.server.plugin.apis.NCNotificationPlugin
 
