@@ -29,14 +29,33 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+package org.nlpcraft.model.builder;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Exception used by builders.
+ *
+ * @see NCModelBuilder
+ * @see NCElementBuilder
+ * @see NCModelDescriptorBuilder
+ */
+public class NCBuilderException extends RuntimeException {
+    /**
+     * Creates builder exception with given message.
+     *
+     * @param errMsg Error message.
+     */
+    public NCBuilderException(String errMsg) {
+        super(errMsg);
+    }
+
+    /**
+     * Creates builder exception with given error message and cause.
+     *
+     * @param errMsg Error message.
+     * @param cause Cause of this exception.
+     */
+    public NCBuilderException(String errMsg, Throwable cause) {
+        super(errMsg, cause);
+    }
+}
+

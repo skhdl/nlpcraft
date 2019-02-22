@@ -29,14 +29,45 @@
  *        /_/
  */
 
-package org.nlpcraft.model
+package org.nlpcraft.model.impl
 
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+import org.nlpcraft.model.{NCMetadata, NCToken}
 
 /**
-  * Model test suite.
+  *
+  * @param srvReqId
+  * @param elmId
+  * @param elmGrp
+  * @param parentId
+  * @param value
+  * @param tokMeta
+  * @param elmMeta
   */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+private[nlpcraft] class NCTokenImpl(
+    srvReqId: String,
+    elmId: String,
+    elmGrp: String,
+    parentId: String,
+    value: String,
+    tokMeta: NCMetadata,
+    elmMeta: NCMetadata
+) extends NCToken with Serializable {
+    override def getMetadata: NCMetadata = tokMeta
+    override def getElementMetadata: NCMetadata = elmMeta
+    override def getServerRequestId: String = srvReqId
+    override def getId: String = elmId
+    override def getGroup: String = elmGrp
+    override def getParentId: String = parentId
+    override def isUserDefined: Boolean = !elmId.startsWith("nlp:")
+    override def isSystemDefined: Boolean = elmId.startsWith("nlp:")
+    override def getValue: String = value
+
+    override def toString: String =
+        // NOTE: we don't print type and free words status on purpose.
+        s"Token [" +
+            s"id=$elmId, " +
+            s"text=${tokMeta.getString("NLP_NORMTEXT")}, " +
+            s"group=$elmGrp, " +
+            s"value=$value" +
+        s"]"
+}

@@ -38,7 +38,7 @@ import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
 import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
-import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
+import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
@@ -234,7 +234,7 @@ object NCProbe extends App with LazyLogging {
         NCCoordinatesEnricher.start()
         NCConversationManager.start()
         NCProbeNlpManager.startWithConfig(cfg)
-        NCProbeConnectionManager.startWithConfig(cfg)
+        NCConnectionManager.startWithConfig(cfg)
     }
     
     /**
@@ -242,7 +242,7 @@ object NCProbe extends App with LazyLogging {
       */
     private def stopManagers(): Unit = {
         // Order is important!
-        NCProbeConnectionManager.stop()
+        NCConnectionManager.stop()
         NCProbeNlpManager.stop()
         NCConversationManager.stop()
         NCCoordinatesEnricher.stop()

@@ -29,14 +29,58 @@
  *        /_/
  */
 
-package org.nlpcraft.model
+package org.nlpcraft.model.builder.impl;
 
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+import org.nlpcraft.model.NCModelDescriptor;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Default model descriptor implementation.
+ */
+public class NCModelDescriptorImpl implements NCModelDescriptor {
+    private String id;
+    private String name;
+    private String ver;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getVersion() {
+        return ver;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        assert name != null;
+
+        this.name = name;
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     *
+     * @param ver
+     */
+    public void setVersion(String ver) {
+        assert ver != null;
+
+        this.ver = ver;
+    }
+}

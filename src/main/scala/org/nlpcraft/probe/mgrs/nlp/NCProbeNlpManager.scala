@@ -38,12 +38,12 @@ import java.util.function.Predicate
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCDebug
 import org.nlpcraft.model._
-import org.nlpcraft.model.tools.impl.NCMetadataImpl
+import org.nlpcraft.model.impl.NCMetadataImpl
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
-import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
+import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 import org.nlpcraft.probe.mgrs.nlp.enrichers.context.NCContextEnricher
@@ -129,7 +129,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
                     "txt" → txt
                 )
                 
-                NCProbeConnectionManager.send(msg)
+                NCConnectionManager.send(msg)
         }
     }
 
@@ -237,7 +237,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
                 addOptional(msg, "resBody", resBody)
             }
 
-            NCProbeConnectionManager.send(msg)
+            NCConnectionManager.send(msg)
             
             if (errMsg.isEmpty)
                 logger.trace(s"OK response $msgName [srvReqId=$srvReqId, type=${resType.getOrElse("")}]")

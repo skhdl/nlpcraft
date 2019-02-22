@@ -31,9 +31,9 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.model.tools.builder.NCElementBuilder;
-import org.nlpcraft.model.tools.builder.NCModelBuilder;
-import org.nlpcraft.model.tools.builder.NCModelDescriptorBuilder;
+import org.nlpcraft.model.builder.NCElementBuilder;
+import org.nlpcraft.model.builder.NCModelBuilder;
+import org.nlpcraft.model.builder.NCModelDescriptorBuilder;
 
 import java.util.Collections;
 import java.util.List;

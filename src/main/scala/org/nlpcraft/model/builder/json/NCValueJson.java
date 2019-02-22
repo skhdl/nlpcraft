@@ -29,14 +29,28 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+package org.nlpcraft.model.builder.json;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * JSON parsing bean.
+ */
+public class NCValueJson {
+    private String name;
+    private String[] synonyms = new String[0];
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String[] getSynonyms() {
+        return synonyms;
+    }
+    
+    public void setSynonyms(String[] synonyms) {
+        this.synonyms = synonyms;
+    }
+}

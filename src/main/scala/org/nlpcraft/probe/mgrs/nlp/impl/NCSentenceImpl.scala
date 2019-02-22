@@ -34,7 +34,7 @@ package org.nlpcraft.probe.mgrs.nlp.impl
 import java.util.Optional
 
 import org.nlpcraft.model._
-import org.nlpcraft.model.tools.impl._
+import org.nlpcraft.model.impl._
 import org.nlpcraft.common.nlp._
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 

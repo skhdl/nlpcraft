@@ -31,33 +31,58 @@
 
 package org.nlpcraft.examples.weather;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.common.NCException;
-import org.nlpcraft.model.tools.dev.NCTestClient;
-import org.nlpcraft.model.tools.dev.NCTestClientBuilder;
+import org.nlpcraft.model.test.NCTestClient;
+import org.nlpcraft.model.test.NCTestClientBuilder;
+import org.nlpcraft.model.test.NCTestResult;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Weather model test.
+ * Weather2 model test.
+ *
  */
 public class WeatherTest {
+    private static final Gson GSON = new Gson();
+    private static final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+    
     private NCTestClient client;
     
     @BeforeEach
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.openForModelId("nlpcraft.weather.ex"); // See weather_model.json
+        client.openForModelId("nlpcraft.weather2.ex");  // See weather_model.json
     }
     
     @AfterEach
     void tearDown() throws NCException, IOException {
         client.close();
+    }
+    
+    private void checkIntent(String txt, String intentId, boolean shouldBeSame) throws NCException, IOException {
+        NCTestResult res = client.ask(txt);
+    
+        assertTrue(res.isSuccessful());
+        
+        assert res.getResult().isPresent();
+    
+        Map<String, Object> map = GSON.fromJson(res.getResult().get(), MAP_RESP);
+    
+        if (shouldBeSame)
+            assertEquals(intentId, map.get("intentId"));
+        else
+            assertNotEquals(intentId, map.get("intentId"));
     }
     
     @Test
@@ -67,13 +92,16 @@ public class WeatherTest {
     
         // Only latin charset is supported.
         assertTrue(client.ask("El tiempo en España").isFailed());
+    
+        // Unexpected intent ID.
+        checkIntent("LA weather", "INVALID-INTENT-ID", false);
         
         // Should be passed.
-        assertTrue(client.ask("What's the local weather forecast?").isSuccessful());
-        assertTrue(client.ask("What's the weather in Moscow?").isSuccessful());
-
+        checkIntent("What's the local weather forecast?", "fcast|date?|city?", true);
+        checkIntent("What's the weather in Moscow?", "curr|date?|city?", true);
+    
         // Can be answered with conversation.
-        assertTrue(client.ask("Moscow").isSuccessful());
+        checkIntent("Moscow", "curr|date?|city?", true);
         
         client.clearConversation();
     

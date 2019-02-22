@@ -35,8 +35,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nlpcraft.common.NCException;
-import org.nlpcraft.model.tools.dev.NCTestClient;
-import org.nlpcraft.model.tools.dev.NCTestClientBuilder;
+import org.nlpcraft.model.test.NCTestClient;
+import org.nlpcraft.model.test.NCTestClientBuilder;
 
 import java.io.IOException;
 

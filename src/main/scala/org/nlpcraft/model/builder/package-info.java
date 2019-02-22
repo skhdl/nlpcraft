@@ -29,14 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
-
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Contains model builder.
+ */
+package org.nlpcraft.model.builder;

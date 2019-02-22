@@ -44,7 +44,7 @@ import org.nlpcraft.model.NCToken;
 import org.nlpcraft.model.NCVariant;
 import org.nlpcraft.model.intent.impl.NCIntentSolverEngine;
 import org.nlpcraft.model.intent.impl.NCIntentSolverResult;
-import org.nlpcraft.model.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.builder.NCModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

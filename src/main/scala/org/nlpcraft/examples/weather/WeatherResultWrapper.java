@@ -29,14 +29,43 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+package org.nlpcraft.examples.weather;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Weather result wrapper for JSON formatting.
+ *
+ * @param <T> the type parameter
+ */
+public class WeatherResultWrapper<T> {
+    private final String intentId;
+    private final T result;
+    
+    /**
+     * Instantiates new bean instance.
+     *
+     * @param intentId Intent ID.
+     * @param result Execution result bean.
+     */
+    public WeatherResultWrapper(String intentId, T result) {
+        this.intentId = intentId;
+        this.result = result;
+    }
+    
+    /**
+     * Gets intent id.
+     *
+     * @return Intent id.
+     */
+    public String getIntentId() {
+        return intentId;
+    }
+    
+    /**
+     * Gets execution result bean.
+     *
+     * @return Execution result bean.
+     */
+    public T getResult() {
+        return result;
+    }
+}

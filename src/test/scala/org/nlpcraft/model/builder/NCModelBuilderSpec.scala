@@ -29,14 +29,33 @@
  *        /_/
  */
 
-package org.nlpcraft.model
+package org.nlpcraft.model.builder
 
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCException
+import org.nlpcraft.model._
+import org.scalatest.FlatSpec
 
 /**
-  * Model test suite.
+  * Model builder test.
   */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+class NCModelBuilderSpec extends FlatSpec with NCModelSpecBase {
+    behavior of "model"
+    
+    it should "properly build a valid model" in {
+        try {
+            println(makeValidModelProvider.makeModel(""))
+            
+            assert(true)
+        }
+        catch {
+            case e: NCException ⇒ e.printStackTrace(); assert(false)
+        }
+    }
+
+    it should "load model from JSON file" in {
+        val mdl = NCModelBuilder.newJsonModel(U.getStream("time_model.json"))
+
+        println(s"Model loaded: $mdl")
+    }
+}

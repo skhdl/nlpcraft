@@ -48,7 +48,7 @@ import org.nlpcraft.model.intent.NCIntentSolver.CONV_INTENT;
 import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
 import org.nlpcraft.model.intent.NCIntentSolver.TERM;
 import org.nlpcraft.model.intent.NCIntentSolverContext;
-import org.nlpcraft.model.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.builder.NCModelBuilder;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

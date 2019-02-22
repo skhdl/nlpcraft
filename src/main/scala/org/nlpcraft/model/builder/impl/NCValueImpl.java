@@ -29,14 +29,31 @@
  *        /_/
  */
 
-package org.nlpcraft.model
+package org.nlpcraft.model.builder.impl;
 
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+import org.nlpcraft.model.NCElement;
+
+import java.util.List;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Default value implementation.
+ */
+public class NCValueImpl implements NCElement.NCValue {
+    private final String name;
+    private final List<String> synonyms;
+    
+    public NCValueImpl(String name, List<String> synonyms) {
+        this.name = name;
+        this.synonyms = synonyms;
+    }
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public List<String> getSynonyms() {
+        return synonyms;
+    }
+}

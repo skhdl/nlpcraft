@@ -34,7 +34,7 @@ package org.nlpcraft.examples.echo
 import java.util.Optional
 
 import org.nlpcraft.model._
-import org.nlpcraft.model.tools.builder.NCModelBuilder
+import org.nlpcraft.model.builder.NCModelBuilder
 import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._

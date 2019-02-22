@@ -34,7 +34,7 @@ package org.nlpcraft.model
 import java.util
 import java.util.{Collections, List ⇒ JList}
 
-import org.nlpcraft.model.tools.builder._
+import org.nlpcraft.model.builder._
 import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 /**

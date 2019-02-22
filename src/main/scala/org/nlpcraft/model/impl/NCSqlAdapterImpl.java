@@ -29,14 +29,48 @@
  *        /_/
  */
 
-package org.nlpcraft.model
+package org.nlpcraft.model.impl;
 
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+import org.nlpcraft.model.utils.NCTokenSqlAdapter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ *
+ * @param <T>
+ */
+public class NCSqlAdapterImpl<T> implements NCTokenSqlAdapter<T> {
+    private final String clause;
+    private final List<T> params;
+
+    /**
+     *
+     * @param clause
+     * @param param
+     */
+    public NCSqlAdapterImpl(String clause, T param) {
+        this.clause = clause;
+        this.params = Collections.singletonList(param);
+    }
+
+    /**
+     *
+     * @param clause
+     * @param param1
+     * @param param2
+     */
+    public NCSqlAdapterImpl(String clause, T param1, T param2) {
+        this.clause = clause;
+        this.params = Arrays.asList(param1, param2);
+    }
+
+    @Override public String getClause() {
+        return clause;
+    }
+    
+    @Override public List<T> getClauseParameters() {
+        return params;
+    }
+}

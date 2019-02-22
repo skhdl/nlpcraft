@@ -29,14 +29,44 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+package org.nlpcraft.model.builder.json;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * JSON parsing bean.
+ */
+public class NCMacroJson {
+    private String name;
+    private String macro;
+
+    /**
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getMacro() {
+        return macro;
+    }
+
+    /**
+     *
+     * @param macro
+     */
+    public void setMacro(String macro) {
+        this.macro = macro;
+    }
+}

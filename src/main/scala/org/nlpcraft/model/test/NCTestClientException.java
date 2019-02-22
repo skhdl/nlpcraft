@@ -29,14 +29,28 @@
  *        /_/
  */
 
-package org.nlpcraft.model
-
-import org.nlpcraft.model.builder.NCModelBuilderSpec
-import org.scalatest.Suites
+package org.nlpcraft.model.test;
 
 /**
-  * Model test suite.
-  */
-class NCModelSuite extends Suites(
-    new NCModelBuilderSpec
-)
+ * Test client exception. This exception is thrown internally by the test framework.
+ */
+public class NCTestClientException extends RuntimeException {
+    /**
+     * Creates new exception with given parameters.
+     *
+     * @param message Error message.
+     * @param cause Error cause.
+     */
+    NCTestClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
+    /**
+     * Creates new exception with given error message.
+     *
+     * @param message Error message.
+     */
+    NCTestClientException(String message) {
+        super(message);
+    }
+}

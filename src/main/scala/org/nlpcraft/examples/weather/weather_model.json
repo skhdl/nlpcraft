@@ -30,10 +30,10 @@
  */
 
 {
-    "id": "nlpcraft.weather.ex",
-    "name": "Weather Example Model",
+    "id": "nlpcraft.weather2.ex",
+    "name": "Weather Example Model 2",
     "version": "1.0",
-    "description": "Weather example model.",
+    "description": "Weather example model 2.",
     "vendorName": "NLPCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",

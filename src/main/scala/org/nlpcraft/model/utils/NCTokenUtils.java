@@ -33,7 +33,7 @@ package org.nlpcraft.model.utils;
 
 import org.nlpcraft.model.NCMetadata;
 import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.tools.impl.NCSqlAdapterImpl;
+import org.nlpcraft.model.impl.NCSqlAdapterImpl;
 
 import java.sql.Timestamp;
 import java.util.Arrays;

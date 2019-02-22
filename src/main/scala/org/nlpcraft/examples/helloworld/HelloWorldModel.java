@@ -35,7 +35,7 @@ import org.nlpcraft.common.NCException;
 import org.nlpcraft.model.NCModelProvider;
 import org.nlpcraft.model.NCModelProviderAdapter;
 import org.nlpcraft.model.NCQueryResult;
-import org.nlpcraft.model.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.builder.NCModelBuilder;
 
 /**
  * Hello World example data model.

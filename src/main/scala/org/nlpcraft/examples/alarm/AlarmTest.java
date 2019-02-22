@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.examples.time;
+package org.nlpcraft.examples.alarm;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,18 +43,16 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Time model test.
- *
- * Note that server and {@link org.nlpcraft.examples.time.TimeProbeRunner} must be started before.
+ * Timer model test.
  */
-public class TimeTest {
+public class AlarmTest {
     private NCTestClient client;
     
     @BeforeEach
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.openForModelId("nlpcraft.time.ex"); // See time_model.json
+        client.openForModelId("nlpcraft.timer.ex"); // See alarm_model.json
     }
     
     @AfterEach
@@ -69,12 +67,10 @@ public class TimeTest {
     
         // Only latin charset is supported.
         assertTrue(client.ask("El tiempo en España").isFailed());
-
+        
         // Should be passed.
-        assertTrue(client.ask("What time is it now in New York City?").isSuccessful());
-        assertTrue(client.ask("What's the time in Moscow?").isSuccessful());
-        assertTrue(client.ask("Show me time of the day in London.").isSuccessful());
-        assertTrue(client.ask("Give me San Francisco's current date and time.").isSuccessful());
-        assertTrue(client.ask("What's the local time?").isSuccessful());
+        assertTrue(client.ask("Ping me in 3 minutes").isSuccessful());
+        assertTrue(client.ask("Buzz me in an hour and 15mins").isSuccessful());
+        assertTrue(client.ask("Set my alarm for 30s").isSuccessful());
     }
 }
