@@ -32,7 +32,7 @@
 package org.nlpcraft.server.plugin
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 
 /**
   * Base plugin trait.

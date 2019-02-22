@@ -31,6 +31,8 @@
 
 package org.nlpcraft
 
+import org.nlpcraft.common.NCLifecycle
+
 /**
   * NLPCraft lifecycle components test helper.
   */

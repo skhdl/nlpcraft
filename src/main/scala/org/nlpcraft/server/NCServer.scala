@@ -36,8 +36,8 @@ import java.util.Date
 import java.util.concurrent.CountDownLatch
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft._
-import org.nlpcraft.ascii.NCAsciiTable
+import org.nlpcraft.common._
+import org.nlpcraft.common.ascii.NCAsciiTable
 
 import scala.compat.Platform._
 
@@ -110,7 +110,7 @@ trait NCServer extends LazyLogging {
      * Acks server start.
      */
     protected def ackStart() {
-        val dur = s"[${G.format((currentTime - startMsec) / 1000.0, 2)}s]"
+        val dur = s"[${U.format((currentTime - startMsec) / 1000.0, 2)}s]"
 
         val tbl = NCAsciiTable()
 

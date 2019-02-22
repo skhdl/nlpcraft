@@ -34,12 +34,13 @@ package org.nlpcraft.probe.mgrs.model
 import java.util.regex.{Pattern, PatternSyntaxException}
 import java.util.{List ⇒ JList, Set ⇒ JSet}
 
-import org.nlpcraft._
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.makro.{NCMacroParser ⇒ MacroParser}
-import org.nlpcraft.mdllib._
-import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.nlp.pos._
+import org.nlpcraft.common._
+import org.nlpcraft.common.{NCDebug, NCException, NCLifecycle}
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.makro.{NCMacroParser ⇒ MacroParser}
+import org.nlpcraft.model._
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.pos._
 import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 import org.nlpcraft.probe.mgrs.deploy._
 import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCProbeLifecycle, NCSynonym, NCSynonymChunk}
@@ -373,7 +374,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add straight element synonyms (Duplications printed as warnings)
             val synsChunks = for (syn ← elm.getSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (!IS_PROBE_SILENT && G.containsDups(synsChunks.toList))
+            if (!IS_PROBE_SILENT && U.containsDups(synsChunks.toList))
                 logger.warn(s"Element synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
@@ -386,7 +387,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add value synonyms.
             val valNames = elm.getValues.map(_.getName)
 
-            if (!IS_PROBE_SILENT && G.containsDups(valNames.toList))
+            if (!IS_PROBE_SILENT && U.containsDups(valNames.toList))
                 logger.warn(s"Element values names duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
@@ -419,7 +420,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
                             Some(valSyns)
                     })
 
-                if (!IS_PROBE_SILENT && G.containsDups(vChunks.toList))
+                if (!IS_PROBE_SILENT && U.containsDups(vChunks.toList))
                     logger.warn(s"Element synonyms duplicate (ignoring) [" +
                         s"model=${mdl.getDescriptor.getId}, " +
                         s"elementId=$elmId, " +
@@ -434,7 +435,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add excluded synonyms (Duplications printed as warnings)
             val exclChunks = for (syn ← elm.getExcludedSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (!IS_PROBE_SILENT && G.containsDups(exclChunks.toList))
+            if (!IS_PROBE_SILENT && U.containsDups(exclChunks.toList))
                 logger.warn(s"Element exclude synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +

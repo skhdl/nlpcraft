@@ -35,11 +35,12 @@ import java.io.Serializable
 import java.util.concurrent.Executors
 import java.util.function.Predicate
 
-import org.nlpcraft._
-import org.nlpcraft.mdllib._
-import org.nlpcraft.mdllib.tools.impl.NCMetadataImpl
-import org.nlpcraft.nlp.NCNlpSentence
-import org.nlpcraft.nlp.log.NCNlpAsciiLogger
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCDebug
+import org.nlpcraft.model._
+import org.nlpcraft.model.tools.impl.NCMetadataImpl
+import org.nlpcraft.common.nlp.NCNlpSentence
+import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
@@ -344,7 +345,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
         }
 
         // Execute model query asynchronously.
-        G.asFuture(
+        U.asFuture(
             _ ⇒ {
                 val res = mdl.model.query(qryCtx)
 

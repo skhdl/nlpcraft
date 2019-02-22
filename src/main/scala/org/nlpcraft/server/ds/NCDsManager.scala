@@ -33,7 +33,8 @@ package org.nlpcraft.server.ds
 
 import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.ignite.NCIgniteHelpers._

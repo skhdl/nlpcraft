@@ -31,15 +31,15 @@
 
 package org.nlpcraft.examples.lessons.lesson3;
 
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.lessons.utils.LessonsUtils;
-import org.nlpcraft.mdllib.NCModel;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCRejection;
-import org.nlpcraft.mdllib.intent.NCIntentSolver;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.NON_CONV_INTENT;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.NCModel;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.NCRejection;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
 
 /**
  * `Lesson 3` model provider.

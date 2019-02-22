@@ -34,7 +34,7 @@ package org.nlpcraft.examples.misc.geo.keycdn;
 import com.google.gson.Gson;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.ResponseBean;
-import org.nlpcraft.mdllib.NCSentence;
+import org.nlpcraft.model.NCSentence;
 
 import java.io.BufferedReader;
 import java.io.IOException;

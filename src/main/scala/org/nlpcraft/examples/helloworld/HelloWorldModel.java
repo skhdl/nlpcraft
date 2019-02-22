@@ -31,11 +31,11 @@
 
 package org.nlpcraft.examples.helloworld;
 
-import org.nlpcraft.NCException;
-import org.nlpcraft.mdllib.NCModelProvider;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.common.NCException;
+import org.nlpcraft.model.NCModelProvider;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
 
 /**
  * Hello World example data model.

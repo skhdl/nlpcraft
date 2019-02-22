@@ -31,7 +31,8 @@
 
 package org.nlpcraft.server.nlp.preproc
 
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.nlp.spell.NCSpellCheckManager
 
 import scala.collection._

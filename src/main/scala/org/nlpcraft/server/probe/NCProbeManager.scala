@@ -37,8 +37,8 @@ import java.security.Key
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.{ExecutorService, Executors}
 
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.nlp.NCNlpSentence
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.probe.NCProbeMessage
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
@@ -47,9 +47,10 @@ import org.nlpcraft.server.plugin.NCPluginManager
 import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.server.proclog.NCProcessLogManager
 import org.nlpcraft.server.query.NCQueryManager
-import org.nlpcraft.socket.NCSocket
-import org.nlpcraft.version.NCVersion
-import org.nlpcraft.{NCLifecycle, _}
+import org.nlpcraft.common.socket.NCSocket
+import org.nlpcraft.common.version.NCVersion
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.{Map, mutable}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -61,8 +62,8 @@ import scala.concurrent.Future
 object NCProbeManager extends NCLifecycle("Probe manager") {
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
-        private val dnLink = G.splitEndpoint(hocon.getString("probe.links.downLink"))
-        private val upLink = G.splitEndpoint(hocon.getString("probe.links.upLink"))
+        private val dnLink = U.splitEndpoint(hocon.getString("probe.links.downLink"))
+        private val upLink = U.splitEndpoint(hocon.getString("probe.links.upLink"))
         
         val dnHost: String = dnLink._1
         val dnPort: Int = dnLink._2
@@ -112,14 +113,14 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         var upSocket: NCSocket,
         var dnThread: Thread, // Separate thread listening for messages from the probe.
         cryptoKey: Key, // Encryption key.
-        timestamp: Long = G.nowUtcMs()
+        timestamp: Long = U.nowUtcMs()
     ) {
         /**
           *
           */
         def close(): Unit = {
             if (dnThread != null)
-                G.stopThread(dnThread)
+                U.stopThread(dnThread)
             
             if (upSocket != null)
                 upSocket.close()
@@ -163,9 +164,9 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         dnSrv.start()
         upSrv.start()
     
-        pingSrv = G.mkThread("probe-pinger") { t ⇒
+        pingSrv = U.mkThread("probe-pinger") { t ⇒
             while (!t.isInterrupted) {
-                G.sleep(Config.pingTimeoutMs)
+                U.sleep(Config.pingTimeoutMs)
             
                 val pingMsg = NCProbeMessage("S2P_PING")
             
@@ -186,11 +187,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         isStopping = new AtomicBoolean(true)
     
-        G.shutdownPool(pool)
+        U.shutdownPool(pool)
     
-        G.stopThread(pingSrv)
-        G.stopThread(dnSrv)
-        G.stopThread(upSrv)
+        U.stopThread(pingSrv)
+        U.stopThread(dnSrv)
+        U.stopThread(upSrv)
     
         super.stop()
     }
@@ -270,7 +271,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param fn Function.
       */
     private def startServer(name: String, host: String, port: Int, fn: NCSocket ⇒ Unit): Thread =
-        G.mkThread(s"probe-mgr-${name.toLowerCase}") { t ⇒
+        U.mkThread(s"probe-mgr-${name.toLowerCase}") { t ⇒
             var srv: ServerSocket = null
             
             while (!t.isInterrupted)
@@ -296,7 +297,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             // Note that server socket must be closed and created again.
                             // So, error should be thrown.
                             case e: Exception ⇒
-                                G.close(sock)
+                                U.close(sock)
                                 
                                 throw e
                         }
@@ -318,18 +319,18 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     case e: Exception ⇒
                         if (!isStopping.get) {
                             // Release socket asap.
-                            G.close(srv)
+                            U.close(srv)
                             
                             val ms = Config.reconnectTimeoutMs
                             
                             // Server socket error must be logged.
                             logger.warn(s"$name server error, re-starting in ${ms / 1000} sec.", e)
                             
-                            G.sleep(ms)
+                            U.sleep(ms)
                         }
                 }
                 finally {
-                    G.close(srv)
+                    U.close(srv)
                 }
         }
     
@@ -368,7 +369,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         val threadName = "probe-downlink-" + probeId.toLowerCase + "-" + probeGuid.toLowerCase
     
-        val p2sThread = G.mkThread(threadName) { t ⇒
+        val p2sThread = U.mkThread(threadName) { t ⇒
             try {
                 sock.socket.setSoTimeout(Config.soTimeoutMs)
             
@@ -677,7 +678,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param hol Probe holder to add.
       */
     private def addProbeToTable(tbl: NCAsciiTable, hol: ProbeHolder): NCAsciiTable = {
-        val delta = (G.nowUtcMs() / 1000) - (hol.timestamp / 1000)
+        val delta = (U.nowUtcMs() / 1000) - (hol.timestamp / 1000)
         
         tbl += (
             hol.probe.probeId,
@@ -719,7 +720,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                 "NORMTEXT" → nlpSen.text,
                 "USER_AGENT" → usrAgent.orNull,
                 "REMOTE_ADDR" → rmtAddr.orNull,
-                "RECEIVE_TSTAMP" → G.nowUtcMs(),
+                "RECEIVE_TSTAMP" → U.nowUtcMs(),
                 "FIRST_NAME" → usr.firstName,
                 "LAST_NAME" → usr.lastName,
                 "EMAIL" → usr.email,

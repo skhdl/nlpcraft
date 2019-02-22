@@ -32,23 +32,23 @@
 package org.nlpcraft.examples.time;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
 import org.nlpcraft.examples.misc.geo.cities.City;
 import org.nlpcraft.examples.misc.geo.cities.CityData;
 import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
 import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCRejection;
-import org.nlpcraft.mdllib.NCToken;
-import org.nlpcraft.mdllib.intent.NCIntentSolver;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.AND;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.CONV_INTENT;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.NON_CONV_INTENT;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.TERM;
-import org.nlpcraft.mdllib.intent.NCIntentSolverContext;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.NCRejection;
+import org.nlpcraft.model.NCToken;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.intent.NCIntentSolver.AND;
+import org.nlpcraft.model.intent.NCIntentSolver.CONV_INTENT;
+import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
+import org.nlpcraft.model.intent.NCIntentSolver.TERM;
+import org.nlpcraft.model.intent.NCIntentSolverContext;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -57,8 +57,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.time.format.FormatStyle.MEDIUM;
-import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCity;
-import static org.nlpcraft.mdllib.utils.NCTokenUtils.getGeoCountry;
+import static org.nlpcraft.model.utils.NCTokenUtils.getGeoCity;
+import static org.nlpcraft.model.utils.NCTokenUtils.getGeoCountry;
 
 /**
  * Time example model provider.

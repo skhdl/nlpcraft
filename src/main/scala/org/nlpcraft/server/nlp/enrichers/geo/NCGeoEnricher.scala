@@ -31,9 +31,9 @@
 
 package org.nlpcraft.server.nlp.enrichers.geo
 
-import org.nlpcraft._
-import org.nlpcraft.nlp._
-import org.nlpcraft.nlp.pos.NCPennTreebank
+import org.nlpcraft.common._
+import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.server.geo.NCGeoLocationKind._
 import org.nlpcraft.server.geo._
 import org.nlpcraft.server.json.NCJson
@@ -71,7 +71,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
     @throws[NCE]
     // TODO: refactor... incomprehensible!
     private final val COMMONS: Map[NCGeoLocationKind, Set[String]]  =
-        G.getFilesResources(EXCEPTIONS_PATH).
+        U.getFilesResources(EXCEPTIONS_PATH).
             flatMap(f ⇒
                 NCJson.extractResource[immutable.Map[String, immutable.Set[String]]](f, ignoreCase = false).
                     map(p ⇒ NCGeoLocationKind.withName(p._1.toUpperCase) → p._2)

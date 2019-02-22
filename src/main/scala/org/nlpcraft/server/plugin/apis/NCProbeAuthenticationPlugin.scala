@@ -33,7 +33,7 @@ package org.nlpcraft.server.plugin.apis
 
 import java.security.Key
 
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 import org.nlpcraft.server.plugin.NCPlugin
 
 /**

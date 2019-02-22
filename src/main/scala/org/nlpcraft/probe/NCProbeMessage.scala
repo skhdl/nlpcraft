@@ -33,8 +33,8 @@ package org.nlpcraft.probe
 
 import java.io._
 
-import org.nlpcraft._
-import org.nlpcraft.ascii._
+import org.nlpcraft.common._
+import org.nlpcraft.common.ascii._
 
 import scala.collection.mutable
 
@@ -45,7 +45,7 @@ import scala.collection.mutable
   */
 class NCProbeMessage(val typ: String) extends mutable.HashMap[String/*Name*/, Serializable/*Value*/]
     with Serializable with NCAsciiLike {
-    private val guid = G.genGuid()
+    private val guid = U.genGuid()
     private val hash = guid.hashCode()
     
     put("TYPE", typ)

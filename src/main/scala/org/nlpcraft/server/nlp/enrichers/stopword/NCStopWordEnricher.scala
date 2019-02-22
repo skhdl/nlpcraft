@@ -31,10 +31,11 @@
 
 package org.nlpcraft.server.nlp.enrichers.stopword
 
-import org.nlpcraft._
-import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.nlp.pos.NCPennTreebank
-import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.pos.NCPennTreebank
+import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher._
 
@@ -683,14 +684,14 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
         ensureStopped()
 
         // Stemmatization is done already by generator.
-        POSSESSIVE_WORDS = G.readTextGzipResource("stopwords/possessive_words.txt.gz", "UTF-8", logger).toSet
-        FIRST_WORDS = G.readTextGzipResource("stopwords/first_words.txt.gz", "UTF-8", logger).toSet
-        NOUN_WORDS = G.readTextGzipResource("stopwords/noun_words.txt.gz", "UTF-8", logger).toSet
+        POSSESSIVE_WORDS = U.readTextGzipResource("stopwords/possessive_words.txt.gz", "UTF-8", logger).toSet
+        FIRST_WORDS = U.readTextGzipResource("stopwords/first_words.txt.gz", "UTF-8", logger).toSet
+        NOUN_WORDS = U.readTextGzipResource("stopwords/noun_words.txt.gz", "UTF-8", logger).toSet
 
         // Case sensitive.
         val m =
             readStopWords(
-                G.readResource("stopwords/stop_words.txt", "UTF-8", logger).
+                U.readResource("stopwords/stop_words.txt", "UTF-8", logger).
                     map(_.trim).filter(s ⇒ !s.isEmpty && !s.startsWith("#")).toSeq
             )
 

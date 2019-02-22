@@ -34,7 +34,8 @@ package org.nlpcraft.server.query
 import java.sql.Timestamp
 
 import org.apache.ignite.IgniteCache
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
@@ -98,7 +99,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         
         val txt0 = txt.trim()
         
-        val rcvTstamp = new Timestamp(G.nowUtcMs())
+        val rcvTstamp = new Timestamp(U.nowUtcMs())
         
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
@@ -110,7 +111,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
         if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
         
-        val srvReqId = G.genGuid()
+        val srvReqId = U.genGuid()
     
         catching(wrapIE) {
             // Enlist for tracking.
@@ -187,7 +188,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
         
-        val now = new Timestamp(G.nowUtcMs())
+        val now = new Timestamp(U.nowUtcMs())
     
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -234,7 +235,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def setResult(srvReqId: String, resType: String, resBody: String): Unit = {
         ensureStarted()
         
-        val now = new Timestamp(G.nowUtcMs())
+        val now = new Timestamp(U.nowUtcMs())
         
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -300,7 +301,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft
     def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
-        val now = new Timestamp(G.nowUtcMs())
+        val now = new Timestamp(U.nowUtcMs())
 
         val userSrvReqIds =
             catching(wrapIE) {

@@ -31,11 +31,11 @@
 
 package org.nlpcraft.examples.lessons.lesson1;
 
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.lessons.utils.LessonsUtils;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
 
 /**
  * `Lesson 1` model provider.

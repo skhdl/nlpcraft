@@ -35,7 +35,7 @@ import java.sql.SQLException
 
 import com.typesafe.scalalogging.Logger
 import org.apache.ignite.IgniteException
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 
 import scala.util.control.Exception._
 

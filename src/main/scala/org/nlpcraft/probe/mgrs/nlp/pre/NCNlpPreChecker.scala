@@ -33,8 +33,8 @@ package org.nlpcraft.probe.mgrs.nlp.pre
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.tika.langdetect.OptimaizeLangDetector
-import org.nlpcraft.NCLifecycle
-import org.nlpcraft.nlp.NCNlpSentence
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 /**

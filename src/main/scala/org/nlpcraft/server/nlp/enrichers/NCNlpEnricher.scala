@@ -32,8 +32,9 @@
 package org.nlpcraft.server.nlp.enrichers
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft._
-import org.nlpcraft.nlp._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp._
 
 import scala.collection._
 

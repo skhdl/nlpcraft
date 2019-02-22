@@ -34,9 +34,10 @@ package org.nlpcraft.probe.mgrs.deploy
 import java.io._
 import java.util.jar.{JarInputStream ⇒ JIS}
 
-import org.nlpcraft._
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.mdllib._
+import org.nlpcraft.common._
+import org.nlpcraft.common.{NCDebug, NCLifecycle}
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.model._
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import resource.managed
 
@@ -189,7 +190,7 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug w
             }
         }
         
-        if (G.containsDups(descriptors.map(_.getId).toList))
+        if (U.containsDups(descriptors.map(_.getId).toList))
             throw new NCE("Duplicate model IDs detected.")
         
         super.start()

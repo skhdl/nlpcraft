@@ -37,7 +37,7 @@ import org.apache.ignite.cache.store.{CacheStoreAdapter, CacheStoreSession}
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.resources.CacheStoreSessionResource
 import org.apache.ignite.{IgniteException, Ignition}
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 import org.nlpcraft.server.tx.NCTxManager
 
 import scala.util.control.Exception._

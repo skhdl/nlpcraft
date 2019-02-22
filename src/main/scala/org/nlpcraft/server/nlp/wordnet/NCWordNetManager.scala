@@ -34,7 +34,8 @@ package org.nlpcraft.server.nlp.wordnet
 import net.sf.extjwnl.data.POS._
 import net.sf.extjwnl.data.{IndexWord, POS, PointerType}
 import net.sf.extjwnl.dictionary.{Dictionary, MorphologicalProcessor}
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.JavaConverters._
 

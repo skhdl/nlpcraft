@@ -31,17 +31,17 @@
 
 package org.nlpcraft.examples.timer;
 
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCRejection;
-import org.nlpcraft.mdllib.NCToken;
-import org.nlpcraft.mdllib.intent.NCIntentSolver;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.AND;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.NON_CONV_INTENT;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.TERM;
-import org.nlpcraft.mdllib.intent.NCIntentSolverContext;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
-import org.nlpcraft.mdllib.utils.NCTokenUtils;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.NCRejection;
+import org.nlpcraft.model.NCToken;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.intent.NCIntentSolver.AND;
+import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
+import org.nlpcraft.model.intent.NCIntentSolver.TERM;
+import org.nlpcraft.model.intent.NCIntentSolverContext;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.utils.NCTokenUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -51,8 +51,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
-import static org.nlpcraft.mdllib.utils.NCTokenUtils.getNumFrom;
-import static org.nlpcraft.mdllib.utils.NCTokenUtils.getNumUnit;
+import static org.nlpcraft.model.utils.NCTokenUtils.getNumFrom;
+import static org.nlpcraft.model.utils.NCTokenUtils.getNumUnit;
 
 /**
  * Timer example model provider.

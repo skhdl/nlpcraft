@@ -31,9 +31,9 @@
 
 package org.nlpcraft.server.nlp.enrichers.quote
 
-import org.nlpcraft._
-import org.nlpcraft.nlp._
-import org.nlpcraft.nlp.pos.NCPennTreebank
+import org.nlpcraft.common._
+import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher._
 

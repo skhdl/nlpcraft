@@ -34,11 +34,12 @@ package org.nlpcraft.server.nlp.enrichers.date
 import java.time.Instant
 import java.util.{Calendar ⇒ C}
 
-import org.nlpcraft._
-import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 import org.nlpcraft.server.nlp.enrichers.date.NCDateConstants._
-import org.nlpcraft.util.NCGlobals
+import org.nlpcraft.common.util.NCUtils
 
 import scala.collection.immutable.Iterable
 import scala.collection.mutable
@@ -126,7 +127,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
         def read(res: String): LHM_SS = {
             val m: LHM_SS = new LHM_SS()
 
-            val map = NCGlobals.readTextGzipResource(res, "UTF-8", logger).map(p ⇒ {
+            val map = NCUtils.readTextGzipResource(res, "UTF-8", logger).map(p ⇒ {
                 val pair = p.split("\\|")
 
                 pair.head.trim → pair.last.trim
@@ -151,7 +152,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
         require(cacheFull != null)
         require(cacheParts != null)
 
-        val base = G.nowUtcMs()
+        val base = U.nowUtcMs()
 
         val dates = findDates(ns)
 
@@ -321,7 +322,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
         if (seq.length != 2)
             throw mkError()
 
-        val now = G.nowUtc()
+        val now = U.nowUtc()
     
         NCDateRange(
             Instant.from(now.minusHours(parse(seq.head)).minusMinutes(parse(seq.last))).toEpochMilli,

@@ -35,10 +35,11 @@ import java.text.SimpleDateFormat
 import java.util.function.Predicate
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft._
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.mdllib._
-import org.nlpcraft.mdllib.utils.NCTokenUtils._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCDebug
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.model._
+import org.nlpcraft.model.utils.NCTokenUtils._
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -57,7 +58,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
     // Short-Term-Memory.
     private val stm = mutable.TreeSet.empty[NCConversationItem]
     private var ctx = new java.util.HashSet[NCToken]()
-    private var lastUpdateTstamp = G.nowUtcMs()
+    private var lastUpdateTstamp = U.nowUtcMs()
     
     /**
       *
@@ -79,7 +80,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
       *
       */
     def update(): Unit = stm.synchronized {
-        val now = G.nowUtcMs()
+        val now = U.nowUtcMs()
     
         if (now - lastUpdateTstamp > CONV_CLEAR_DELAY) {
             if (!IS_PROBE_SILENT)

@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs.nlp.post
 
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 /**
  * Post-check exception that contains error code.

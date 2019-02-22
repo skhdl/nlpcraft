@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.NCLifecycle
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.probe.NCProbe
 
 /**

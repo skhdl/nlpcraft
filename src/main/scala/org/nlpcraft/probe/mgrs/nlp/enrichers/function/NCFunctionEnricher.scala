@@ -31,10 +31,10 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function
 
-import org.nlpcraft.NCLifecycle
-import org.nlpcraft.makro.NCMacroParser
-import org.nlpcraft.nlp._
-import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.makro.NCMacroParser
+import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.NCFunction._

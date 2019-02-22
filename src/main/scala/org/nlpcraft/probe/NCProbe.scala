@@ -33,10 +33,10 @@ package org.nlpcraft.probe
 
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.nlp.dict.NCDictionaryManager
-import org.nlpcraft.nlp.numeric.NCNumericManager
-import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.nlp.dict.NCDictionaryManager
+import org.nlpcraft.common.nlp.numeric.NCNumericManager
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.conn.NCProbeConnectionManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
@@ -52,8 +52,8 @@ import org.nlpcraft.probe.mgrs.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious.NCSuspiciousNounsEnricher
 import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, NCPostEnricher}
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
-import org.nlpcraft.version.{NCVersion, NCVersionManager}
-import org.nlpcraft.{G, NCException}
+import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
+import org.nlpcraft.common._
 
 import scala.collection.JavaConverters._
 import scala.compat.Platform.currentTime
@@ -196,7 +196,7 @@ object NCProbe extends App with LazyLogging {
       * Asks server start.
       */
     private def ackStart() {
-        val dur = s"[${G.format((currentTime - executionStart) / 1000.0, 2)} sec]"
+        val dur = s"[${U.format((currentTime - executionStart) / 1000.0, 2)} sec]"
         
         val tbl = NCAsciiTable()
         

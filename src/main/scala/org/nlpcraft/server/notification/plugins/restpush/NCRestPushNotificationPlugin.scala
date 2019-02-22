@@ -41,10 +41,10 @@ import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
-import org.nlpcraft._
+import org.nlpcraft.common._
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.plugin.apis.NCNotificationPlugin
-import org.nlpcraft.scalasup.NCScalaSupport._
+import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 
@@ -93,8 +93,8 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     // Bounded buffer of events to be flushed.
     private final val queues = Config.endpoints.indices.map(_ ⇒ new util.LinkedList[Event]())
     // Local hosts.
-    private final val intlIp = G.getInternalAddress.getHostAddress
-    private final val extIp = G.getExternalIp
+    private final val intlIp = U.getInternalAddress.getHostAddress
+    private final val extIp = U.getExternalIp
 
     private final val httpClient = HttpClients.createDefault
 
@@ -141,7 +141,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
       * @param params Optional set of named parameters.
       */
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
-        val evt = Event(evtName, params.toMap.asJava, G.nowUtcMs(), intlIp, extIp)
+        val evt = Event(evtName, params.toMap.asJava, U.nowUtcMs(), intlIp, extIp)
 
         queues.foreach(queue ⇒
             // Note, that between batches sending endpoint queues can be oversized.

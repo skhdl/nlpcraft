@@ -37,15 +37,16 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.{Properties, TimeZone}
 
-import org.nlpcraft.crypto._
+import org.nlpcraft.common.crypto._
 import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
-import org.nlpcraft.socket._
-import org.nlpcraft.version.NCVersion
-import org.nlpcraft.{NCLifecycle, _}
+import org.nlpcraft.common.socket._
+import org.nlpcraft.common.version.NCVersion
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.mutable
 
@@ -61,7 +62,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
     private final val PING_TIMEOUT = 5 * 1000
     
     // Internal probe GUID.
-    final val PROBE_GUID = G.genGuid()
+    final val PROBE_GUID = U.genGuid()
     
     // Internal semaphores.
     private val stopSem: AtomicInteger = new AtomicInteger(1)
@@ -116,7 +117,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
       */
     @throws[Exception]
     private def openDownLinkSocket(): NCSocket = {
-        val (host, port) = G.splitEndpoint(config.downLink)
+        val (host, port) = U.splitEndpoint(config.downLink)
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
     
@@ -125,7 +126,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.token)) // Hash.
+        sock.write(U.makeSha256Hash(config.token)) // Hash.
         sock.write(NCProbeMessage( // Handshake.
             // Type.
             "INIT_HANDSHAKE",
@@ -166,7 +167,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
                 hwAddrs = addrs.foldLeft("")((s, b) ⇒ s + (if (s == "") f"$b%02X" else f"-$b%02X"))
         }
     
-        val (host, port) = G.splitEndpoint(config.upLink)
+        val (host, port) = U.splitEndpoint(config.upLink)
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
         
@@ -175,7 +176,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
     
-        sock.write(G.makeSha256Hash(config.token)) // Hash, sent clear text.
+        sock.write(U.makeSha256Hash(config.token)) // Hash, sent clear text.
     
         sock.read[NCProbeMessage]().getType match { // Get hash check response.
             case "S2P_HASH_CHECK_OK" ⇒
@@ -198,7 +199,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
                     "PROBE_OS_VER" → sysProps.getProperty("os.version"),
                     "PROBE_OS_NAME" → sysProps.getProperty("os.name"),
                     "PROBE_OS_ARCH" → sysProps.getProperty("os.arch"),
-                    "PROBE_START_TSTAMP" → G.nowUtcMs(),
+                    "PROBE_START_TSTAMP" → U.nowUtcMs(),
                     "PROBE_TMZ_ID" → tmz.getID,
                     "PROBE_TMZ_ABBR" → tmz.getDisplayName(false, TimeZone.SHORT),
                     "PROBE_TMZ_NAME" → tmz.getDisplayName(),
@@ -249,7 +250,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
         require(NCCommandManager.isStarted)
         require(NCModelManager.isStarted)
         
-        ctrlThread = G.mkThread("probe-ctrl-thread") { t ⇒
+        ctrlThread = U.mkThread("probe-ctrl-thread") { t ⇒
             var dnSock: NCSocket = null
             var upSock: NCSocket = null
             
@@ -260,8 +261,8 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
               *
               */
             def closeAll(): Unit = {
-                G.stopThread(dnThread)
-                G.stopThread(upThread)
+                U.stopThread(dnThread)
+                U.stopThread(upThread)
     
                 dnThread = null
                 upThread = null
@@ -277,7 +278,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
               * 
               */
             def timeout(): Unit =
-                if (!t.isInterrupted) G.ignoreInterrupt {
+                if (!t.isInterrupted) U.ignoreInterrupt {
                     Thread.sleep(RETRY_TIMEOUT)
                 }
             
@@ -310,7 +311,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
                         latch.countDown()
                     }
 
-                    upThread = G.mkThread("probe-uplink") { t ⇒
+                    upThread = U.mkThread("probe-uplink") { t ⇒
                         // Main reading loop.
                         while (!t.isInterrupted)
                             try
@@ -322,7 +323,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
                             }
                     }
                     
-                    dnThread = G.mkThread("probe-downlink") { t ⇒
+                    dnThread = U.mkThread("probe-downlink") { t ⇒
                         while (!t.isInterrupted)
                             try {
                                 dnLinkQueue.synchronized {
@@ -363,7 +364,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
 
                     logger.info("Server connection established.")
                     
-                    while (!t.isInterrupted && latch.getCount > 0) G.ignoreInterrupt {
+                    while (!t.isInterrupted && latch.getCount > 0) U.ignoreInterrupt {
                         latch.await()
                     }
                     
@@ -426,7 +427,7 @@ object NCProbeConnectionManager extends NCProbeLifecycle("Connection manager") {
     override def stop(): Unit = {
         setStopping()
     
-        G.stopThread(ctrlThread)
+        U.stopThread(ctrlThread)
         
         super.stop()
     }

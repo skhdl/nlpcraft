@@ -31,9 +31,10 @@
 
 package org.nlpcraft.server.geo
 
-import org.nlpcraft.nlp.dict.{NCDictionaryManager, NCDictionaryType}
+import org.nlpcraft.common.nlp.dict.{NCDictionaryManager, NCDictionaryType}
 import org.nlpcraft.server.json.NCJson
-import org.nlpcraft.{NCE, NCLifecycle, _}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.{immutable, mutable}
 
@@ -188,7 +189,7 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
         )
         val citiesMap = mutable.HashMap.empty[CityKey, NCGeoCity]
         
-        for (f ← G.getFilesResources(CTRY_DIR)) {
+        for (f ← U.getFilesResources(CTRY_DIR)) {
             val cntr = NCJson.extractResource[JsonCountryHolder](f, ignoreCase = true)
             
             val gCntr = cntrMap(cntr.name)
@@ -225,7 +226,7 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
         val dicts = NCDictionaryManager.get(NCDictionaryType.WORD_COMMON)
         
         def readJss(dir: String): Seq[String] =
-            if (G.hasResource(dir)) G.getFilesResources(dir).filter(_.endsWith(".json")) else Seq.empty
+            if (U.hasResource(dir)) U.getFilesResources(dir).filter(_.endsWith(".json")) else Seq.empty
         
         def extract(res: String, ignoreCase: Boolean): Seq[NCGeoSynonym] =
             NCJson.extractResource[List[NCGeoSynonym]](res, ignoreCase)

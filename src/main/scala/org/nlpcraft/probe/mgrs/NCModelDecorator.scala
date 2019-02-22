@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.mdllib.{NCElement, NCModel}
+import org.nlpcraft.model.{NCElement, NCModel}
 
 /**
   *

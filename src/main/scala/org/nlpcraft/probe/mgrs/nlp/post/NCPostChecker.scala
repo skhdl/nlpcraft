@@ -32,8 +32,8 @@
 package org.nlpcraft.probe.mgrs.nlp.post
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.NCLifecycle
-import org.nlpcraft.nlp.{NCNlpSentence ⇒ Sentence}
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp.{NCNlpSentence ⇒ Sentence}
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 /**

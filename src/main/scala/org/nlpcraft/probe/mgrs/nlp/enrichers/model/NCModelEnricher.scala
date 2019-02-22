@@ -31,9 +31,9 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.model
 
-import org.nlpcraft._
-import org.nlpcraft.mdllib.NCElement
-import org.nlpcraft.nlp._
+import org.nlpcraft.common._
+import org.nlpcraft.model.NCElement
+import org.nlpcraft.common.nlp._
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 import org.nlpcraft.probe.mgrs.{NCModelDecorator, NCSynonym}
 

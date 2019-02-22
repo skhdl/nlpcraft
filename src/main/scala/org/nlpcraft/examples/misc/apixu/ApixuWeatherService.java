@@ -33,12 +33,12 @@ package org.nlpcraft.examples.misc.apixu;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.misc.apixu.beans.CurrentResponse;
 import org.nlpcraft.examples.misc.apixu.beans.DayInfo;
 import org.nlpcraft.examples.misc.apixu.beans.DaysList;
 import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
-import org.nlpcraft.mdllib.NCRejection;
+import org.nlpcraft.model.NCRejection;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

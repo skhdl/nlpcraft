@@ -402,12 +402,12 @@
                         ]]>
                     </top>
                     <subpackages>org.nlpcraft.mdllib:org.nlpcraft.probe.dev</subpackages>
-                    <excludePackageNames>org.nlpcraft.mdllib.tools.scala:org.nlpcraft.mdllib.tools.impl:org.nlpcraft.mdllib.tools.builder.json:org.nlpcraft.mdllib.tools.impl:org.nlpcraft.mdllib.tools.builder.impl</excludePackageNames>
+                    <excludePackageNames>org.nlpcraft.model.tools.scala:org.nlpcraft.model.tools.impl:org.nlpcraft.model.tools.builder.json:org.nlpcraft.model.tools.impl:org.nlpcraft.model.tools.builder.impl</excludePackageNames>
                     <groups>
                         <group>
                             <title>Data Model</title>
                             <packages>
-                                org.nlpcraft.mdllib:org.nlpcraft.mdllib.utils:org.nlpcraft.mdllib.intent:org.nlpcraft.mdllib.tools.builder
+                                org.nlpcraft.mdllib:org.nlpcraft.model.utils:org.nlpcraft.model.intent:org.nlpcraft.model.tools.builder
                             </packages>
                         </group>
                         <group>
@@ -416,7 +416,7 @@
                         </group>
                         <group>
                             <title>Model Test Framework</title>
-                            <packages>org.nlpcraft.mdllib.tools.dev</packages>
+                            <packages>org.nlpcraft.model.tools.dev</packages>
                         </group>
                     </groups>
                     <header>

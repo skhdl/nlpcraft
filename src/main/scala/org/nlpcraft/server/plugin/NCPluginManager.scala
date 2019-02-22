@@ -33,7 +33,8 @@ package org.nlpcraft.server.plugin
 
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.plugin.apis.{NCNotificationPlugin, NCProbeAuthenticationPlugin}
-import org.nlpcraft.{NCE, NCLifecycle}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.reflect.runtime.universe._
 

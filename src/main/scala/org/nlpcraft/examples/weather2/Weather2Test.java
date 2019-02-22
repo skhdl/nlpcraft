@@ -36,10 +36,10 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.nlpcraft.NCException;
-import org.nlpcraft.mdllib.tools.dev.NCTestClient;
-import org.nlpcraft.mdllib.tools.dev.NCTestClientBuilder;
-import org.nlpcraft.mdllib.tools.dev.NCTestResult;
+import org.nlpcraft.common.NCException;
+import org.nlpcraft.model.tools.dev.NCTestClient;
+import org.nlpcraft.model.tools.dev.NCTestClientBuilder;
+import org.nlpcraft.model.tools.dev.NCTestResult;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

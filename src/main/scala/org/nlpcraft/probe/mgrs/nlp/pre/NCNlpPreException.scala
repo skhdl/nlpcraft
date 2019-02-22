@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs.nlp.pre
 
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 /**
   * NLP pre-check exception that contains error code.

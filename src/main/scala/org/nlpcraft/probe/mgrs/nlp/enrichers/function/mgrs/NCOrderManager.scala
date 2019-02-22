@@ -32,7 +32,7 @@
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 /**
   * Order manager helper.
@@ -54,5 +54,5 @@ object NCOrderManager extends LazyLogging {
       * @param file File.
       */
     private def readSort(file: String): Set[String] =
-        G.readTextResource(s"sort/$file", "UTF-8", logger).toSet
+        U.readTextResource(s"sort/$file", "UTF-8", logger).toSet
 }

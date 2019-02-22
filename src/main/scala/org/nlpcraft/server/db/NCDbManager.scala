@@ -34,7 +34,8 @@ package org.nlpcraft.server.db
 import java.sql.Timestamp
 import java.time.LocalDate
 
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.db.postgres.NCPsql.Implicits._
@@ -88,7 +89,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         if (!schemaExists)
             try {
                 NCPsql.sql {
-                    G.readResource(SCHEMA_PATH, "UTF-8").
+                    U.readResource(SCHEMA_PATH, "UTF-8").
                         map(_.trim).
                         filter(p ⇒ !p.startsWith("--")). // Skip full-line comments.
                         map(p ⇒ { // Remove partial comments.

@@ -31,9 +31,9 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.context
 
-import org.nlpcraft._
-import org.nlpcraft.nlp._
-import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common._
+import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
@@ -48,7 +48,7 @@ object NCContextEnricher extends NCProbeEnricher("Context-based enricher") {
     @throws[NCE]
     private final val GEO_PRE_WORDS: Seq[Seq[String]] =
         // NOTE: stemmatisation is done already by generator.
-        G.readTextResource(s"context/geo_pre_words.txt", "UTF-8", logger).toSeq.map(_.split(" ").toSeq)
+        U.readTextResource(s"context/geo_pre_words.txt", "UTF-8", logger).toSeq.map(_.split(" ").toSeq)
 
     private final val GEO_KIND_STOPS =
         Map(

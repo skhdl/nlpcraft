@@ -36,7 +36,7 @@ import java.util.zip._
 
 import com.typesafe.scalalogging.LazyLogging
 import net.liftweb.json.{compact ⇒ liftCompact, pretty ⇒ liftPretty, render ⇒ liftRender, _}
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 import scala.annotation.tailrec
 import scala.language.implicitConversions
@@ -253,14 +253,14 @@ object NCJson {
      *
      * @param f File to extract from.
      */
-    private def readFile(f: File): String = removeComments(G.readFile(f, "UTF8").mkString)
+    private def readFile(f: File): String = removeComments(U.readFile(f, "UTF8").mkString)
 
     /**
       * Reads stream.
       *
       * @param in Stream to extract from.
       */
-    private def readStream(in: InputStream): String = removeComments(G.readStream(in, "UTF8").mkString)
+    private def readStream(in: InputStream): String = removeComments(U.readStream(in, "UTF8").mkString)
 
     /**
      * Extracts type `T` from given JSON `file`.
@@ -305,7 +305,7 @@ object NCJson {
     @throws[NCE]
     def extractResource[T: Manifest](res: String, ignoreCase: Boolean): T =
         try {
-            val in = G.getStream(res)
+            val in = U.getStream(res)
 
             if (ignoreCase) NCJson(readStream(in).toLowerCase).json.extract[T] else NCJson(readStream(in)).json.extract[T]
         }

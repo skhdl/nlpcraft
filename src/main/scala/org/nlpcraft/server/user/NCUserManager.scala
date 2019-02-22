@@ -36,8 +36,9 @@ import java.util.{Timer, TimerTask}
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
-import org.nlpcraft._
-import org.nlpcraft.blowfish.NCBlowfishHasher
+import org.nlpcraft.common._
+import org.nlpcraft.common.{NCException, NCLifecycle}
+import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
@@ -128,7 +129,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
             new TimerTask() {
                 def run() {
                     try {
-                        val now = G.nowUtcMs()
+                        val now = U.nowUtcMs()
 
                         // Check access tokens for expiration.
                         catching(wrapIE) {
@@ -288,7 +289,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         catching(wrapIE) {
             tokenSigninCache(acsTkn) match {
                 case Some(ses) ⇒
-                    val now = G.nowUtcMs()
+                    val now = U.nowUtcMs()
 
                     // Update login session.
                     tokenSigninCache += acsTkn → SigninSession(acsTkn, ses.userId, ses.signinMs, now, ses.endpoint)
@@ -347,7 +348,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
         catching(wrapIE) {
             NCTxManager.startTx {
-                userCache(Right(G.normalizeEmail(email))) match {
+                userCache(Right(U.normalizeEmail(email))) match {
                     case Some(usr) ⇒
                         NCPsql.sql {
                             if (!NCDbManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
@@ -363,8 +364,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
                                         entry.getValue.acsToken // Already signed in.
                                     case None ⇒
-                                        val acsTkn = NCBlowfishHasher.hash(G.genGuid())
-                                        val now = G.nowUtcMs()
+                                        val acsTkn = NCBlowfishHasher.hash(U.genGuid())
+                                        val now = U.nowUtcMs()
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, None)
 
@@ -578,7 +579,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
         isAdmin: Boolean,
         event: Option[String]
     ): Long = {
-        val normEmail = G.normalizeEmail(email)
+        val normEmail = U.normalizeEmail(email)
 
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
@@ -617,7 +618,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
 
             // "Stir up" password pool with each user.
             (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
-                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(G.genGuid()))
+                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(U.genGuid()))
             )
 
             event match {

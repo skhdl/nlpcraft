@@ -33,8 +33,8 @@ package org.nlpcraft.server.probe.plugins.auth.basic
 
 import java.security.Key
 
-import org.nlpcraft._
-import org.nlpcraft.crypto.NCCipher
+import org.nlpcraft.common._
+import org.nlpcraft.common.crypto.NCCipher
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
 
@@ -56,7 +56,7 @@ object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
     
     Config.check()
     
-    private val srvHash = G.makeSha256Hash(Config.probeToken)
+    private val srvHash = U.makeSha256Hash(Config.probeToken)
     private val cryptoKey = NCCipher.makeTokenKey(Config.probeToken)
     
     /**

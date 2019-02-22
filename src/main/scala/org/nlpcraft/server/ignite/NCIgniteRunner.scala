@@ -33,7 +33,7 @@ package org.nlpcraft.server.ignite
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.{IgniteException, Ignition}
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 import scala.sys.SystemProperties
 
@@ -60,7 +60,7 @@ object NCIgniteRunner extends LazyLogging {
         sysProps.put("java.net.preferIPv4Stack", "true")
 
         // Start Ignite node.
-        val ignite = Ignition.start(G.getStream(cfgRes))
+        val ignite = Ignition.start(U.getStream(cfgRes))
 
         try {
             body

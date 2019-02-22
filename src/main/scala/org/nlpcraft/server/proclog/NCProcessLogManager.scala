@@ -33,7 +33,8 @@ package org.nlpcraft.server.proclog
 
 import java.sql.Timestamp
 
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql

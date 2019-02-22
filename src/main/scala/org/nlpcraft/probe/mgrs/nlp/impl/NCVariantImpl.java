@@ -31,8 +31,8 @@
 
 package org.nlpcraft.probe.mgrs.nlp.impl;
 
-import org.nlpcraft.mdllib.NCToken;
-import org.nlpcraft.mdllib.NCVariant;
+import org.nlpcraft.model.NCToken;
+import org.nlpcraft.model.NCVariant;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.nlpcraft.mdllib.utils.NCTokenUtils.*;
+import static org.nlpcraft.model.utils.NCTokenUtils.*;
 
 /**
  *

@@ -33,8 +33,9 @@ package org.nlpcraft.probe.mgrs.cmd
 
 import java.io.Serializable
 
-import org.nlpcraft._
-import org.nlpcraft.nlp.NCNlpSentence
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCDebug
+import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.probe.NCProbeMessage
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager

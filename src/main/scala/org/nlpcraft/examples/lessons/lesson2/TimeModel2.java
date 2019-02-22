@@ -31,16 +31,16 @@
 
 package org.nlpcraft.examples.lessons.lesson2;
 
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.lessons.utils.LessonsUtils;
-import org.nlpcraft.mdllib.NCElement;
-import org.nlpcraft.mdllib.NCModelProviderAdapter;
-import org.nlpcraft.mdllib.NCQueryResult;
-import org.nlpcraft.mdllib.NCRejection;
-import org.nlpcraft.mdllib.intent.NCIntentSolver;
-import org.nlpcraft.mdllib.intent.NCIntentSolver.INTENT;
-import org.nlpcraft.mdllib.tools.builder.NCElementBuilder;
-import org.nlpcraft.mdllib.tools.builder.NCModelBuilder;
+import org.nlpcraft.model.NCElement;
+import org.nlpcraft.model.NCModelProviderAdapter;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.NCRejection;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.intent.NCIntentSolver.INTENT;
+import org.nlpcraft.model.tools.builder.NCElementBuilder;
+import org.nlpcraft.model.tools.builder.NCModelBuilder;
 
 /**
  * `Lesson 2` model provider.

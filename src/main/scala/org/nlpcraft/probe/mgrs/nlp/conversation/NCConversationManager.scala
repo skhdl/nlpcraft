@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs.nlp.conversation
 
-import org.nlpcraft.NCDebug
+import org.nlpcraft.common.NCDebug
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 
 import scala.collection._

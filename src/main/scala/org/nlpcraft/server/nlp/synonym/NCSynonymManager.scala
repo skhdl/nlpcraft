@@ -31,7 +31,8 @@
 
 package org.nlpcraft.server.nlp.synonym
 
-import org.nlpcraft._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.json.NCJson
 import org.nlpcraft.server.nlp.synonym.NCSynonymType._
 import org.nlpcraft.server.nlp.wordnet.NCWordNetManager

@@ -37,7 +37,8 @@ import org.apache.ignite.IgniteTransactions
 import org.apache.ignite.lang.IgniteUuid
 import org.apache.ignite.transactions.{Transaction, TransactionConcurrency, TransactionIsolation}
 import org.nlpcraft.server.ignite.NCIgniteNLPCraft
-import org.nlpcraft.{NCE, NCLifecycle, _}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.mutable
 import scala.util.control.Exception.catching
@@ -63,7 +64,7 @@ object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNLPCr
       */
     override def stop(): Unit = {
         // Close all still attached JDBC connections on stop.
-        cons.values.foreach(G.close)
+        cons.values.foreach(U.close)
         
         super.stop()
     }
@@ -188,7 +189,7 @@ object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNLPCr
             cons.synchronized {
                 cons.remove(tx.xid) match {
                     // If there was a JDBC connection - explicitly close it on tx close.
-                    case Some(con) ⇒ G.close(con)
+                    case Some(con) ⇒ U.close(con)
                     case None ⇒ ()
                 }
             }

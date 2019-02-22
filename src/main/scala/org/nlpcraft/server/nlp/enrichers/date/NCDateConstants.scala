@@ -31,7 +31,7 @@
 
 package org.nlpcraft.server.nlp.enrichers.date
 
-import org.nlpcraft.makro.NCMacroParser
+import org.nlpcraft.common.makro.NCMacroParser
 
 /**
  * Date enricher constants.

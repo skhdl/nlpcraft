@@ -35,9 +35,10 @@ import java.io.{Serializable ⇒ JSerializable}
 import java.util.{List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft._
-import org.nlpcraft.nlp._
-import org.nlpcraft.nlp.pos._
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.pos._
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._

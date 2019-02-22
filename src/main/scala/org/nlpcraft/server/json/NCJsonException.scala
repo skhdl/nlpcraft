@@ -31,7 +31,7 @@
 
 package org.nlpcraft.server.json
 
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 
 /**
  * Base JSON exception.

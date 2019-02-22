@@ -40,6 +40,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import org.apache.commons.validator.routines.UrlValidator
+import org.nlpcraft.common.{NCException, NCLifecycle}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
@@ -48,7 +49,7 @@ import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.probe.NCProbeManager
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.user.NCUserManager
-import org.nlpcraft.{NCE, NCException, NCLifecycle}
+import org.nlpcraft.common._
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
 

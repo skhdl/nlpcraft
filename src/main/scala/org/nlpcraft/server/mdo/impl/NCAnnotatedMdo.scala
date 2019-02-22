@@ -35,11 +35,11 @@ import java.lang.reflect.{Constructor, Method}
 import java.sql.ResultSet
 
 import com.thoughtworks.paranamer.{AnnotationParanamer, BytecodeReadingParanamer, CachingParanamer}
-import org.nlpcraft.ascii.{NCAsciiLike, NCAsciiTable}
-import org.nlpcraft.crypto.NCCipher
+import org.nlpcraft.common.ascii.{NCAsciiLike, NCAsciiTable}
+import org.nlpcraft.common.crypto.NCCipher
 import org.nlpcraft.server.db.postgres.NCPsql.Implicits.RsParser
 import org.nlpcraft.server.json.{NCJson, NCJsonLike}
-import org.nlpcraft.{NCE, _}
+import org.nlpcraft.common._
 
 import scala.collection.mutable
 import scala.language.existentials
@@ -331,7 +331,7 @@ trait NCAnnotatedMdo[T <: NCAnnotatedMdo[T]] extends NCJsonLike with NCAsciiLike
             None
         else
             v match {
-                case s: String ⇒ Some(s""""${G.escapeJson(s)}"""")
+                case s: String ⇒ Some(s""""${U.escapeJson(s)}"""")
                 case _: Unit ⇒ None
                 case z: Boolean ⇒ Some(z.toString)
                 case b: Byte ⇒ Some(b.toString)
@@ -348,7 +348,7 @@ trait NCAnnotatedMdo[T <: NCAnnotatedMdo[T]] extends NCJsonLike with NCAsciiLike
                 case d: java.util.Date ⇒ Some(d.getTime.toString) // Special handling for dates.
                 case Some(s) ⇒ jsonValue(s)
                 case None ⇒ None // Skip 'None' values.
-                case _ ⇒ Some(s""""${G.escapeJson(v.toString)}"""")
+                case _ ⇒ Some(s""""${U.escapeJson(v.toString)}"""")
             }
     
     /**

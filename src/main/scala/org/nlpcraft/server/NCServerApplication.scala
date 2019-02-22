@@ -32,9 +32,9 @@
 package org.nlpcraft.server
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.nlp.dict.NCDictionaryManager
-import org.nlpcraft.nlp.numeric.NCNumericManager
-import org.nlpcraft.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.dict.NCDictionaryManager
+import org.nlpcraft.common.nlp.numeric.NCNumericManager
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
@@ -53,8 +53,8 @@ import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.rest.NCRestManager
 import org.nlpcraft.server.tx.NCTxManager
 import org.nlpcraft.server.user.NCUserManager
-import org.nlpcraft.util.NCGlobals
-import org.nlpcraft.version.NCVersionManager
+import org.nlpcraft.common.util.NCUtils
+import org.nlpcraft.common.version.NCVersionManager
 
 /**
   * Main server entry-point.
@@ -71,7 +71,7 @@ object NCServerApplication extends NCIgniteServer("ignite.xml") with LazyLogging
         initialize()
 
         try {
-            NCGlobals.ignoreInterrupt {
+            NCUtils.ignoreInterrupt {
                 lifecycle.await()
             }
         }

@@ -32,7 +32,7 @@
 package org.nlpcraft.server
 
 import com.typesafe.config.{Config, ConfigFactory}
-import org.nlpcraft._
+import org.nlpcraft.common._
 
 /**
   * Mixin for configuration factory defined by default in `nlpcraft.conf` file. Use `NLPCRAFT_CONFIG_FILE`
@@ -52,7 +52,7 @@ trait NCConfigurable {
 }
 
 object NCConfigurable {
-    private final val cfgFile = G.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
+    private final val cfgFile = U.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
     
     // Singleton to load full NLPCraft configuration (only once).
     protected lazy val cfg: Config =

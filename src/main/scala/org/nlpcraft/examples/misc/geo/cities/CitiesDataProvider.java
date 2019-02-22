@@ -32,7 +32,7 @@
 package org.nlpcraft.examples.misc.geo.cities;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.NCException;
+import org.nlpcraft.common.NCException;
 
 import java.io.File;
 import java.io.IOException;

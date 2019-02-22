@@ -32,8 +32,8 @@
 package org.nlpcraft.server.nlp.enrichers
 
 import org.apache.ignite.IgniteCache
-import org.nlpcraft.ascii.NCAsciiTable
-import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteNLPCraft
 import org.nlpcraft.server.nlp.enrichers.basenlp.NCBaseNlpEnricher
@@ -43,7 +43,8 @@ import org.nlpcraft.server.nlp.enrichers.numeric.NCNumericEnricher
 import org.nlpcraft.server.nlp.enrichers.quote.NCQuoteEnricher
 import org.nlpcraft.server.nlp.enrichers.stopword.NCStopWordEnricher
 import org.nlpcraft.server.nlp.preproc.NCPreProcessManager
-import org.nlpcraft.{NCE, NCLifecycle}
+import org.nlpcraft.common._
+import org.nlpcraft.common.NCLifecycle
 
 import scala.util.control.Exception.catching
 

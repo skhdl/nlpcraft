@@ -31,7 +31,7 @@
 
 package org.nlpcraft.probe.mgrs
 
-import org.nlpcraft.nlp.NCNlpSentenceTokenBuffer
+import org.nlpcraft.common.nlp.NCNlpSentenceTokenBuffer
 import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 
 import scala.collection.mutable.ArrayBuffer

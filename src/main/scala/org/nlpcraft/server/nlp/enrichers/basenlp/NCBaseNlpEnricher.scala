@@ -31,10 +31,10 @@
 
 package org.nlpcraft.server.nlp.enrichers.basenlp
 
-import org.nlpcraft._
-import org.nlpcraft.nlp.opennlp.NCNlpManager
-import org.nlpcraft.nlp.pos.NCPennTreebank
-import org.nlpcraft.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.common._
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.pos.NCPennTreebank
+import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
 import scala.collection._

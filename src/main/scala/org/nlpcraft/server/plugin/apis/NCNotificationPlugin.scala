@@ -31,7 +31,7 @@
 
 package org.nlpcraft.server.plugin.apis
 
-import org.nlpcraft.NCE
+import org.nlpcraft.common._
 import org.nlpcraft.server.plugin.NCPlugin
 
 /**
