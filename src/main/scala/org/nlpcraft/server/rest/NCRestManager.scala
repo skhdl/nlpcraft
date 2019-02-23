@@ -74,7 +74,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     private final val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
     private object Config extends NCConfigurable {
-        final val prefix = "sever.rest"
+        final val prefix = "server.rest"
         
         val host: String = hocon.getString(s"$prefix.host")
         val port: Int = hocon.getInt(s"$prefix.port")

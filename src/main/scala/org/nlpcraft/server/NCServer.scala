@@ -198,15 +198,14 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
                         }
                     }
                 })
-    
-                val igniteCfg = args.find(_.startsWith("-igniteConfig=")) match {
-                    case None ⇒ null // Will use default on the classpath 'ignite.xml'.
-                    case Some(s) ⇒ s.substring("-config=".length)
-                }
-    
-                NCIgniteRunner.runWith(igniteCfg, start())
         }
     }
-    
-    start()
+
+    NCIgniteRunner.runWith(
+        args.find(_.startsWith("-igniteConfig=")) match {
+            case None ⇒ null // Will use default on the classpath 'ignite.xml'.
+            case Some(s) ⇒ s.substring("-config=".length)
+        },
+        start()
+    )
 }
