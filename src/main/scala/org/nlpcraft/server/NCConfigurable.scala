@@ -62,7 +62,7 @@ object NCConfigurable {
         if (!x.hasPath("probe"))
             throw new IllegalStateException(
                 "No configuration found. " +
-                    "Place 'nlpcraft.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
+                "Place 'nlpcraft.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
             )
         x
     }
