@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.{Properties, TimeZone}
 
 import org.nlpcraft.common.crypto._
-import org.nlpcraft.probe._
 import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
@@ -46,7 +45,6 @@ import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.common.socket._
 import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
 
 import scala.collection.mutable
 
@@ -383,12 +381,12 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                         // Clean up.
                         closeAll()
     
-                        // Ack the handshake error message.
-                        logger.error(s"Failed during server connection handshake (aborting).")
-
                         if (e.getMessage != null)
                             logger.error(e.getMessage)
-
+    
+                        // Ack the handshake error message.
+                        logger.error(s"Failed during server connection handshake (aborting).")
+    
                         abort()
 
                     case e: IOException ⇒

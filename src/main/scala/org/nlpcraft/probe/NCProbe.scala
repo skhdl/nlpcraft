@@ -60,7 +60,7 @@ import scala.compat.Platform.currentTime
 import scala.util.control.Exception._
 
 /**
-  * Data probe.
+  * Data probe.                                                                                         
   */
 object NCProbe extends App with LazyLogging {
     object Config {
@@ -76,12 +76,25 @@ object NCProbe extends App with LazyLogging {
                 ConfigFactory.
                     parseFile(new java.io.File(s.substring("-config=".length)))
         }
+    
+        /**
+          *
+          * @param errMsgs
+          */
+        private def abortError(errMsgs: String*): Unit = {
+            errMsgs.foreach(s ⇒ println(s"ERROR: $s"))
+            
+            System.exit(1)
+        }
         
-        if (!hocon.hasPath("probe"))
-            throw new IllegalStateException(
-                "No configuration found. " +
-                "Place 'probe.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
+        if (!hocon.hasPath("probe")) {
+            abortError(
+                "No configuration found.",
+                "Place 'probe.conf' file in the same folder or use '-config=path' to set the path to config file."
             )
+            
+            System.exit(1)
+        }
     
         /**
           * Null or empty check.
@@ -101,25 +114,38 @@ object NCProbe extends App with LazyLogging {
             val prop = s"Configuration property '$name'"
 
             if (isEmpty(ep))
-                throw new IllegalArgumentException(s"$prop cannot be null or empty.")
+                abortError(s"$prop cannot be null or empty.")
             
             val idx = ep.indexOf(':')
             
             if (idx == -1)
-                throw new IllegalArgumentException(s"$prop is invalid: $ep ('host:port' or 'ip-addr:port' format).")
+                abortError(s"$prop is invalid: $ep ('host:port' or 'ip-addr:port' format).")
             
             try {
                 val port = ep.substring(idx + 1).toInt
             
                 // 0 to 65536
                 if (port < 0 || port > 65536)
-                    throw new IllegalArgumentException(s"$prop port is out of [0, 65536) range in: $port.")
+                    abortError(s"$prop port is out of [0, 65536) range in: $port.")
             }
             catch {
                 case _: NumberFormatException ⇒
-                    throw new IllegalArgumentException(s"$prop port is invalid in: $ep.")
+                    abortError(s"$prop port is invalid in: $ep.")
             }
         }
+        
+        if (!hocon.hasPath("probe.id"))
+            abortError("Configuration property 'probe.id' not found.")
+        if (!hocon.hasPath("probe.token"))
+            abortError("Configuration property 'probe.token' not found.")
+        if (!hocon.hasPath("probe.upLink"))
+            abortError("Configuration property 'probe.upLink' not found.")
+        if (!hocon.hasPath("probe.downLink"))
+            abortError("Configuration property 'probe.downLink' not found.")
+        if (!hocon.hasPathOrNull("probe.jarsFolder"))
+            abortError("Configuration property 'probe.jarsFolder' not found.")
+        if (!hocon.hasPath("probe.modelProviders"))
+            abortError("Configuration property 'probe.modelProviders' not found.")
     
         val id: String = hocon.getString("probe.id")
         val token: String = hocon.getString("probe.token")
@@ -133,15 +159,15 @@ object NCProbe extends App with LazyLogging {
           */
         def check(): Unit = {
             if (isEmpty(id))
-                throw new IllegalArgumentException("Configuration property 'probe.id' cannot be empty.")
+                abortError("Configuration property 'probe.id' cannot be empty.")
             if (isEmpty(token))
-                throw new IllegalArgumentException("Configuration property 'probe.token' cannot be empty.")
+                abortError("Configuration property 'probe.token' cannot be empty.")
             
             checkEndpoint("probe.upLink", upLink)
             checkEndpoint("probe.downLink", downLink)
             
             if (jarsFolder == null && modelProviders.isEmpty)
-                throw new IllegalArgumentException("Either 'probe.jarsFolder' or 'probe.modelProviders' " +
+                abortError("Either 'probe.jarsFolder' or 'probe.modelProviders' " +
                     "configuration property must be provided.")
         }
     }
@@ -279,6 +305,9 @@ object NCProbe extends App with LazyLogging {
     
     private def start(): Unit = {
         asciiLogo()
+    
+        Config.check()
+    
         ackConfig()
     
         catching(classOf[Throwable]) either startManagers(Config) match {
@@ -291,9 +320,6 @@ object NCProbe extends App with LazyLogging {
                 System.exit(1)
 
             case _ ⇒ // Managers started OK.
-                ackStart()
-                checkVersion()
-                
                 Runtime.getRuntime.addShutdownHook(new Thread() {
                     override def run(): Unit = {
                         ignoring(classOf[Throwable]) {
@@ -301,6 +327,9 @@ object NCProbe extends App with LazyLogging {
                         }
                     }
                 })
+    
+                ackStart()
+                checkVersion()
     
                 // Wait indefinitely.
                 ignoring(classOf[InterruptedException]) {

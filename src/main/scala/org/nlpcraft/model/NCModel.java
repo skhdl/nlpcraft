@@ -249,7 +249,7 @@ public interface NCModel {
      * used only for internal purposes. Note that model ID <b>must</b> be immutable - changing
      * model ID is equal to creating a new model. Model name and version are both
      * exposed to the end user and can be changed. Note that model version should be
-     * compatible with (<a href="http://www.semver.org">www.semver.org</a>) specification.
+     * compatible with <a href="http://www.semver.org">www.semver.org</a> specification.
      * <br><br>
      * <b>JSON</b>
      * <br>
