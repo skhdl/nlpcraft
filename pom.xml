@@ -496,7 +496,7 @@
                                     <resource>reference.conf</resource>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.nlpcraft.runner.NCRunner</mainClass>
+                                    <mainClass>org.nlpcraft.NCStart</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
