@@ -35,7 +35,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.nlpcraft.common._
 
 /**
-  * Mixin for configuration factory defined by default in `nlpcraft.conf` file. Use `NLPCRAFT_CONFIG_FILE`
+  * Mixin for configuration factory defined by default in `application.conf` file. Use `NLPCRAFT_CONFIG_FILE`
   * system property or environment variable to override the default.
   */
 trait NCConfigurable {
@@ -52,17 +52,17 @@ trait NCConfigurable {
 }
 
 object NCConfigurable {
-    private final val cfgFile = U.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("nlpcraft.conf")
+    private final val cfgFile = U.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("application.conf")
     
     // Singleton to load full NLPCraft configuration (only once).
     protected lazy val cfg: Config = {
         val x = ConfigFactory.parseFile(new java.io.File(cfgFile)).
             withFallback(ConfigFactory.load(cfgFile))
         
-        if (!x.hasPath("probe"))
+        if (!x.hasPath("server"))
             throw new IllegalStateException(
                 "No configuration found. " +
-                    "Place 'nlpcraft.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
+                    "Place 'application.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
             )
         x
     }
