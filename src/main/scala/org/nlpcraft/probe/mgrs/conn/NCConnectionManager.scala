@@ -39,7 +39,7 @@ import java.util.{Properties, TimeZone}
 
 import org.nlpcraft.common.crypto._
 import org.nlpcraft.probe._
-import org.nlpcraft.probe.mgrs.NCProbeLifecycle
+import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager

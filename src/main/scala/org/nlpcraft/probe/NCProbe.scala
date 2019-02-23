@@ -152,7 +152,6 @@ object NCProbe extends App with LazyLogging {
     private def asciiLogo() {
         val NL = System getProperty "line.separator"
         
-        val copyright = s"Copyright (C) DataLingvo, Inc."
         val ver = NCVersion.getCurrent
         
         val s = NL +
@@ -164,7 +163,7 @@ object NCProbe extends App with LazyLogging {
             raw"       /_/                                  $NL$NL" +
             s"Data Probe$NL" +
             s"Version: ${ver.version}$NL" +
-            raw"$copyright$NL"
+            raw"${NCVersion.copyright}$NL"
         
         println(s)
     }

@@ -42,7 +42,7 @@ import org.nlpcraft.model.impl.NCMetadataImpl
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.probe._
-import org.nlpcraft.probe.mgrs.NCProbeLifecycle
+import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
 import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager

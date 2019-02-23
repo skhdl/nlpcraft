@@ -36,8 +36,7 @@ import java.io.Serializable
 import org.nlpcraft.common._
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.model.NCToken
-import org.nlpcraft.probe.NCProbeMessage
-import org.nlpcraft.probe.mgrs.NCProbeLifecycle
+import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 

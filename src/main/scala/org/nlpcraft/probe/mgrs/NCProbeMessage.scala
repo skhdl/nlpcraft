@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.probe
+package org.nlpcraft.probe.mgrs
 
 import java.io._
 

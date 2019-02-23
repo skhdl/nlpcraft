@@ -41,6 +41,8 @@ import org.nlpcraft.common._
   * release the new version will be added to this object manually.
   */
 object NCVersion extends LazyLogging {
+    final val copyright = s"Copyright (C) DataLingvo, Inc."
+    
     /**
       *
       * @param version Semver-based release version of the NLPCraft.

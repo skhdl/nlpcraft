@@ -39,7 +39,6 @@ import java.util.concurrent.{ExecutorService, Executors}
 
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.nlp.NCNlpSentence
-import org.nlpcraft.probe.NCProbeMessage
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.server.notification.NCNotificationManager
@@ -51,6 +50,7 @@ import org.nlpcraft.common.socket.NCSocket
 import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.probe.mgrs.NCProbeMessage
 
 import scala.collection.{Map, mutable}
 import scala.concurrent.ExecutionContext.Implicits.global

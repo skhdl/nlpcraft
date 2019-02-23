@@ -49,7 +49,7 @@ trait NCServer extends LazyLogging {
     protected val COPYRIGHT = /*@copyright*/"Copyright (C) DataLingvo, Inc."
 
     // Version number. Can be changed at build time.
-    protected val VER = /*@version*/"0.5.0"
+    protected val VER = /*@version*/"0.1.0"
 
     // Build number. Can be changed at build time.
     protected val BUILD: String = /*@build*/new SimpleDateFormat("MMddyyyy").format(new Date())
