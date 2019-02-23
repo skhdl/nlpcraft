@@ -36,7 +36,7 @@ import org.apache.ignite.{Ignite, Ignition}
 /**
  * Mixin for 'nlpcraft' ignite cluster instance.
  */
-trait NCIgniteNLPCraft extends NCIgniteExceptions {
+trait NCIgniteInstance extends NCIgniteExceptions {
     // 'NLPCraft' ignite instance.
     protected def ignite: Ignite = Ignition.ignite("nlpcraft")
 }

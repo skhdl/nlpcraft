@@ -35,7 +35,7 @@ import org.apache.ignite.IgniteCache
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.nlp.enrichers.basenlp.NCBaseNlpEnricher
 import org.nlpcraft.server.nlp.enrichers.date.NCDateEnricher
 import org.nlpcraft.server.nlp.enrichers.geo.NCGeoEnricher
@@ -51,7 +51,7 @@ import scala.util.control.Exception.catching
 /**
   * Enrichment pipeline manager.
   */
-object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgniteNLPCraft {
+object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgniteInstance {
     // NOTE: this cache is independent from datasource.
     @volatile private var cache: IgniteCache[String, NCNlpSentence] = _
     

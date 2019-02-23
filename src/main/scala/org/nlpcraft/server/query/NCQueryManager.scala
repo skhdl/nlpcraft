@@ -40,7 +40,7 @@ import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCQueryStateMdo
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.server.notification.NCNotificationManager
@@ -56,7 +56,7 @@ import scala.util.control.Exception._
 /**
   * Query state machine.
   */
-object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteNLPCraft {
+object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance {
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
     
     private final val MAX_WORDS = 100

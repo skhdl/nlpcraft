@@ -44,7 +44,7 @@ import scala.collection.JavaConverters._
 /*
  * Helpers for working with Ignite.
  */
-object NCIgniteHelpers extends NCIgniteNLPCraft {
+object NCIgniteHelpers extends NCIgniteInstance {
     /**
      * Helper for work with ignite cache.
      *

@@ -45,7 +45,7 @@ import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCQueryStateMdo
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.tx.NCTxManager
@@ -59,7 +59,7 @@ import scala.util.control.Exception.catching
 /**
   * Query result notification endpoints manager.
   */
-object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteNLPCraft {
+object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteInstance {
     private object Config extends NCConfigurable {
         final val prefix = "server.endpoint"
         

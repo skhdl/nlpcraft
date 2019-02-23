@@ -42,14 +42,14 @@ import scala.sys.SystemProperties
  */
 object NCIgniteRunner extends LazyLogging {
     /**
-     * Starts Ignite node with given Ignite install directory and configuration path,
-     * executes given function and stops the node.
-     *
-     * @param cfgRes XML resource for Ignite node.
-     * @param body Function to execute on running Ignite node.
-     */
+      * Starts Ignite node.
+      *
+      * @param cfgPath Full path for configuration file or `null` for default on the
+      *               class path `ignite.xml` file.
+      * @param body Function to execute on running Ignite node.
+      */
     @throws[IgniteException]
-    def runWith(cfgRes: String, body: ⇒ Unit) {
+    def runWith(cfgPath: String, body: ⇒ Unit) {
         val sysProps = new SystemProperties
 
         // Set up Ignite system properties.
@@ -60,7 +60,7 @@ object NCIgniteRunner extends LazyLogging {
         sysProps.put("java.net.preferIPv4Stack", "true")
 
         // Start Ignite node.
-        val ignite = Ignition.start(U.getStream(cfgRes))
+        val ignite = if (cfgPath == null) Ignition.start(U.getStream("ignite.xml")) else Ignition.start(cfgPath)
 
         try {
             body

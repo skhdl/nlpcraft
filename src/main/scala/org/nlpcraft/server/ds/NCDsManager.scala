@@ -38,7 +38,7 @@ import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.notification.NCNotificationManager
 
@@ -48,7 +48,7 @@ import scala.util.control.Exception.catching
 /**
   * Data sources manager.
   */
-object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteNLPCraft{
+object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInstance{
     // Caches.
     @volatile private var dsCache: IgniteCache[Long, NCDataSourceMdo] = _
     @volatile private var dsSeq: IgniteAtomicSequence = _

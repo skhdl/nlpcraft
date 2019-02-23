@@ -44,7 +44,7 @@ import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCUserMdo
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.tx.NCTxManager
@@ -55,7 +55,7 @@ import scala.util.control.Exception._
 /**
   * User management (signup, add, delete, update) manager.
   */
-object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
+object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     // Static email validator.
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
 

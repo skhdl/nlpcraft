@@ -36,7 +36,7 @@ import java.sql.Connection
 import org.apache.ignite.IgniteTransactions
 import org.apache.ignite.lang.IgniteUuid
 import org.apache.ignite.transactions.{Transaction, TransactionConcurrency, TransactionIsolation}
-import org.nlpcraft.server.ignite.NCIgniteNLPCraft
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 
@@ -47,7 +47,7 @@ import scala.util.control.Exception.catching
   * Transaction manager based on Ignite transaction management. It manages both Ignite cache
   * and JDBC operations, and allows for multi-threaded transactions.
   */
-object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteNLPCraft {
+object NCTxManager extends NCLifecycle("Transaction manager") with NCIgniteInstance {
     // Internal log switch.
     private final val LOG_TX = false
     

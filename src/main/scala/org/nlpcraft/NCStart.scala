@@ -32,7 +32,7 @@
 package org.nlpcraft
 
 import org.nlpcraft.probe.NCProbe
-import org.nlpcraft.server.NCServerApplication
+import org.nlpcraft.server.NCServer
 
 /**
   * Server or probe command line starter.
@@ -68,5 +68,5 @@ object NCStart extends App {
     else if (idxSrv == -1 && idxPrb != -1)
         NCProbe.main(removeParam(idxPrb))
     else if (idxSrv != -1 && idxPrb == -1)
-        NCServerApplication.main(removeParam(idxSrv))
+        NCServer.main(removeParam(idxSrv))
 }

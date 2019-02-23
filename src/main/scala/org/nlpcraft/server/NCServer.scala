@@ -31,67 +31,46 @@
 
 package org.nlpcraft.server
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.concurrent.CountDownLatch
-
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.nlp.dict.NCDictionaryManager
+import org.nlpcraft.common.nlp.numeric.NCNumericManager
+import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.version._
+import org.nlpcraft.server.db.NCDbManager
+import org.nlpcraft.server.ds.NCDsManager
+import org.nlpcraft.server.endpoints.NCEndpointManager
+import org.nlpcraft.server.geo.NCGeoManager
+import org.nlpcraft.server.ignite.{NCIgniteInstance, NCIgniteRunner}
+import org.nlpcraft.server.nlp.enrichers.NCNlpEnricherManager
+import org.nlpcraft.server.nlp.preproc.NCPreProcessManager
+import org.nlpcraft.server.nlp.spell.NCSpellCheckManager
+import org.nlpcraft.server.nlp.synonym.NCSynonymManager
+import org.nlpcraft.server.nlp.wordnet.NCWordNetManager
+import org.nlpcraft.server.notification.NCNotificationManager
+import org.nlpcraft.server.plugin.NCPluginManager
+import org.nlpcraft.server.probe.NCProbeManager
+import org.nlpcraft.server.proclog.NCProcessLogManager
+import org.nlpcraft.server.query.NCQueryManager
+import org.nlpcraft.server.rest.NCRestManager
+import org.nlpcraft.server.tx.NCTxManager
+import org.nlpcraft.server.user.NCUserManager
 
-import scala.compat.Platform._
+import scala.compat.Platform.currentTime
+import scala.util.control.Exception.{catching, ignoring}
 
 /**
- * Basic NLPCraft server component trait.
- */
-trait NCServer extends LazyLogging {
-    // Copyright blurb. Can be changed at build time.
-    protected val COPYRIGHT = /*@copyright*/"Copyright (C) DataLingvo, Inc."
-
-    // Version number. Can be changed at build time.
-    protected val VER = /*@version*/"0.1.0"
-
-    // Build number. Can be changed at build time.
-    protected val BUILD: String = /*@build*/new SimpleDateFormat("MMddyyyy").format(new Date())
-
-    private val startMsec = currentTime
-
+  * NlpCraft server app.
+  */
+object NCServer extends App with NCIgniteInstance with LazyLogging {
     /**
-     * Lifecycle latch for the server.
-     */
-    val lifecycle = new CountDownLatch(1)
-
-    /**
-     * Stops the server by counting down (i.e. releasing) the lifecycle latch.
-     */
-    def stop(): Unit = {
-        lifecycle.countDown()
-
-        logger.info(s"Server stopped: ${name()}")
-    }
-
-    /**
-     * Starts the server.
-     */
-    def start(): Unit = {
-        sys.props.put("NLPCRAFT_SERVER_NAME", name())
-
-        asciiLogo()
-    }
-
-    /**
-     * Gets name of the server for logging purposes.
-     *
-     * @return Descriptive name of the server.
-     */
-    def name(): String
-
-    /**
-     * Prints ASCII-logo.
-     */
+      * Prints ASCII-logo.
+      */
     private def asciiLogo() {
         val NL = System getProperty "line.separator"
-
+        val ver = NCVersion.getCurrent
+        
         val s = NL +
             raw"    _   ____      ______           ______   $NL" +
             raw"   / | / / /___  / ____/________ _/ __/ /_  $NL" +
@@ -99,25 +78,135 @@ trait NCServer extends LazyLogging {
             raw" / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
             raw"/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/    $NL" +
             raw"       /_/                                  $NL$NL" +
-            s"${name()}$NL" +
-            s"Version: $VER - $BUILD$NL" +
-            raw"$COPYRIGHT$NL"
-
+            s"Server$NL" +
+            s"Version: ${ver.version}$NL" +
+            raw"${NCVersion.copyright}$NL"
+        
         logger.info(s)
     }
-
+    
     /**
-     * Acks server start.
-     */
+      * Starts all managers.
+      */
+    private def startManagers(): Unit = {
+        NCVersionManager.start()
+        NCPluginManager.start()
+        NCTxManager.start()
+        NCDbManager.start()
+        NCProcessLogManager.start()
+        NCWordNetManager.start()
+        NCDictionaryManager.start()
+        NCSpellCheckManager.start()
+        NCSynonymManager.start()
+        NCPreProcessManager.start()
+        NCGeoManager.start()
+        NCNlpManager.start()
+        NCNumericManager.start()
+        NCNlpEnricherManager.start()
+        NCNotificationManager.start()
+        NCUserManager.start()
+        NCDsManager.start()
+        NCProbeManager.start()
+        NCQueryManager.start()
+        NCEndpointManager.start()
+        NCRestManager.start()
+    }
+    
+    /**
+      * Checks server version for update.
+      */
+    private def checkVersion(): Unit =
+        NCVersionManager.checkForUpdates(
+            "server",
+            // Additional parameters.
+            Map(
+                "IGNITE_VERSION" → ignite.version().toString,
+                "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
+            )
+        )
+    
+    /**
+      * Stops all managers.
+      */
+    private def stopManagers(): Unit = {
+        NCRestManager.stop()
+        NCEndpointManager.stop()
+        NCQueryManager.stop()
+        NCDsManager.stop()
+        NCUserManager.stop()
+        NCNotificationManager.stop()
+        NCNlpEnricherManager.stop()
+        NCNumericManager.stop()
+        NCNlpManager.stop()
+        NCGeoManager.stop()
+        NCPreProcessManager.stop()
+        NCSynonymManager.stop()
+        NCSpellCheckManager.stop()
+        NCDictionaryManager.stop()
+        NCWordNetManager.stop()
+        NCProcessLogManager.stop()
+        NCDbManager.stop()
+        NCTxManager.stop()
+        NCPluginManager.stop()
+        NCVersionManager.stop()
+    }
+    
+    /**
+      * Acks server start.
+      */
     protected def ackStart() {
-        val dur = s"[${U.format((currentTime - startMsec) / 1000.0, 2)}s]"
-
+        val dur = s"[${U.format((currentTime - executionStart) / 1000.0, 2)}s]"
+        
         val tbl = NCAsciiTable()
-
+        
         tbl.margin(top = 1, bottom = 1)
-
-        tbl += s"${name()} started $dur"
-
+        
+        tbl += s"Server started $dur"
+        
         tbl.info(logger)
     }
+    
+    /**
+      *
+      */
+    private def start(): Unit = {
+        // Fetch custom config file path, if any.
+        args.find(_.startsWith("-config=")) match {
+            case None ⇒ ()
+            case Some(s) ⇒ System.setProperty("NLPCRAFT_CONFIG_FILE", s.substring("-config=".length))
+        }
+    
+        asciiLogo()
+    
+        catching(classOf[Throwable]) either startManagers() match {
+            case Left(e) ⇒ // Exception.
+                e match {
+                    case x: NCException ⇒ logger.error(s"Failed to start server.", x)
+                    case x: Throwable ⇒ logger.error("Failed to start server due to unexpected error.", x)
+                }
+            
+                System.exit(1)
+        
+            case _ ⇒ // Managers started OK.
+                ackStart()
+                checkVersion()
+            
+                Runtime.getRuntime.addShutdownHook(new Thread() {
+                    override def run(): Unit = {
+                        ignoring(classOf[Throwable]) {
+                            stopManagers()
+                        }
+                    }
+                })
+    
+                val igniteCfg = args.find(_.startsWith("-igniteConfig=")) match {
+                    case None ⇒ null // Will use default on the classpath 'ignite.xml'.
+                    case Some(s) ⇒ s.substring("-config=".length)
+                }
+    
+                NCIgniteRunner.runWith(igniteCfg, start())
+        }
+    }
+    
+    start()
 }
