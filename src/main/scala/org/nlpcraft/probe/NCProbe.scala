@@ -169,6 +169,9 @@ object NCProbe extends App with LazyLogging {
             if (jarsFolder == null && modelProviders.isEmpty)
                 abortError("Either 'probe.jarsFolder' or 'probe.modelProviders' " +
                     "configuration property must be provided.")
+            
+            if (modelProviders.distinct.size != modelProviders.size)
+                abortError("Configuration property 'probe.modelProviders' cannot have duplicates.")
         }
     }
     
@@ -209,7 +212,7 @@ object NCProbe extends App with LazyLogging {
         tbl += ("API Version", ver.version + ", " + ver.date.toString)
         tbl += ("Down-Link", Config.downLink)
         tbl += ("Up-Link", Config.upLink)
-        tbl += ("Model providers", Config.modelProviders.size)
+        tbl += ("Model providers", Config.modelProviders)
         tbl += ("JARs Folder", nvl(Config.jarsFolder))
         
         tbl.info(logger, Some("Probe Configuration:"))
