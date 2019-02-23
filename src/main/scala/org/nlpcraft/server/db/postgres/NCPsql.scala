@@ -78,25 +78,27 @@ object NCPsql extends LazyLogging {
 
     // Type safe and eager settings container.
     private object Config extends NCConfigurable {
-        val url: String = hocon.getString("postgres.jdbc.url")
-        val driver: String = hocon.getString("postgres.jdbc.driver")
-        val username: String = hocon.getString("postgres.jdbc.username")
-        val passwd: String = hocon.getString("postgres.jdbc.password")
-        val maxStmt: Int = hocon.getInt("postgres.c3p0.maxStatements")
-        val initPoolSize: Int = hocon.getInt("postgres.c3p0.pool.initSize")
-        val minPoolSize: Int = hocon.getInt("postgres.c3p0.pool.minSize")
-        val maxPoolSize: Int = hocon.getInt("postgres.c3p0.pool.maxSize")
-        val acqInc: Int = hocon.getInt("postgres.c3p0.pool.acquireIncrement")
+        final val prefix = "server.postgres"
+        
+        val url: String = hocon.getString(s"$prefix.jdbc.url")
+        val driver: String = hocon.getString(s"$prefix.jdbc.driver")
+        val username: String = hocon.getString(s"$prefix.jdbc.username")
+        val passwd: String = hocon.getString(s"$prefix.jdbc.password")
+        val maxStmt: Int = hocon.getInt(s"$prefix.c3p0.maxStatements")
+        val initPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.initSize")
+        val minPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.minSize")
+        val maxPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.maxSize")
+        val acqInc: Int = hocon.getInt(s"$prefix.c3p0.pool.acquireIncrement")
 
         override def check(): Unit = {
             require(minPoolSize <= maxPoolSize,
-                s"Configuration property 'postgres.c3p0.pool.minSize' ($minPoolSize) must be <= 'postgres.c3p0.pool.maxSize' ($maxPoolSize).")
+                s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
             require(minPoolSize <= initPoolSize,
-                s"Configuration property 'postgres.c3p0.pool.minSize' ($minPoolSize) must be <= 'postgres.c3p0.pool.initSize' ($initPoolSize).")
+                s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.initSize' ($initPoolSize).")
             require(initPoolSize <= maxPoolSize,
-                s"Configuration property 'postgres.c3p0.pool.initSize' ($initPoolSize) must be <= 'postgres.c3p0.pool.maxSize' ($maxPoolSize).")
+                s"Configuration property '$prefix.c3p0.pool.initSize' ($initPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
             require(acqInc > 0,
-                s"Configuration property 'postgres.c3p0.pool.acquireIncrement' must be > 0: $acqInc")
+                s"Configuration property '$prefix.c3p0.pool.acquireIncrement' must be > 0: $acqInc")
         }
     }
 

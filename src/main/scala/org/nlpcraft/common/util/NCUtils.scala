@@ -51,7 +51,6 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCDebug
-import org.nlpcraft.common.scalasup.NCScalaSupport._
 import resource._
 
 import scala.collection.JavaConverters._

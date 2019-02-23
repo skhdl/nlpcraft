@@ -34,8 +34,8 @@ package org.nlpcraft.probe.mgrs.cmd
 import java.io.Serializable
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCDebug
 import org.nlpcraft.common.nlp.NCNlpSentence
+import org.nlpcraft.model.NCToken
 import org.nlpcraft.probe.NCProbeMessage
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import org.nlpcraft.probe.mgrs.nlp.NCProbeNlpManager
@@ -63,7 +63,7 @@ object NCCommandManager extends NCProbeLifecycle("Commands manager") with NCDebu
                     NCConversationManager.get(
                         msg.data[Long]("usrId"),
                         msg.data[Long]("dsId")
-                    ).clear(_ ⇒ true)
+                    ).clear((_: NCToken) ⇒ true)
                 
                 case "S2P_ASK" ⇒
                     NCProbeNlpManager.ask(

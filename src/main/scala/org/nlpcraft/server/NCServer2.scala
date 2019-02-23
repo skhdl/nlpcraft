@@ -29,45 +29,13 @@
  *        /_/
  */
 
-package org.nlpcraft.server.probe.plugins.auth.basic
+package org.nlpcraft.server
 
-import java.security.Key
-
-import org.nlpcraft.common._
-import org.nlpcraft.common.crypto.NCCipher
-import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
+import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.server.ignite.NCIgniteNLPCraft
 
 /**
-  * Basic probe authentication plugin.
+  * NlpCraft server app.
   */
-object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
-    // Configuration prefix.
-    private final val CFG = "server.org.nlpcraft.server.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin"
-    
-    private object Config extends NCConfigurable {
-        val probeToken: String = hocon.getString(s"$CFG.probe.token")
-    
-        override def check(): Unit = {
-            require(probeToken != null,
-                s"Configuration property '$CFG.probe.token' must be specified.")
-        }
-    }
-    
-    Config.check()
-    
-    private val srvHash = U.makeSha256Hash(Config.probeToken)
-    private val cryptoKey = NCCipher.makeTokenKey(Config.probeToken)
-    
-    /**
-      * 
-      * @param probeTokenHash Probe token hash.
-      * @return An encryption key for a given probe token hash, or `None` if given hash is unknown or invalid.
-      */
-    override def acquireKey(probeTokenHash: String): Option[Key] = {
-        if (probeTokenHash != srvHash)
-            None
-        else
-            Some(cryptoKey)
-    }
+class NCServer2 extends App with NCIgniteNLPCraft with LazyLogging {
 }

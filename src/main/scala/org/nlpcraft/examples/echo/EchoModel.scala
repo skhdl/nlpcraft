@@ -34,8 +34,8 @@ package org.nlpcraft.examples.echo
 import java.util.Optional
 
 import org.nlpcraft.model._
+import org.nlpcraft.common._
 import org.nlpcraft.model.builder.NCModelBuilder
-import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 import scala.collection.Seq

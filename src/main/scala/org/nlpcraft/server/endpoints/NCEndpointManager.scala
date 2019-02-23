@@ -50,7 +50,6 @@ import org.nlpcraft.server.mdo.NCQueryStateMdo
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.tx.NCTxManager
 import org.nlpcraft.common.util.NCUtils
-import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -62,23 +61,25 @@ import scala.util.control.Exception.catching
   */
 object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteNLPCraft {
     private object Config extends NCConfigurable {
-        val maxQueueSize: Int = hocon.getInt("endpoint.queue.maxSize")
-        val maxQueueUserSize: Int = hocon.getInt("endpoint.queue.maxPerUserSize")
-        val maxQueueCheckPeriodMs: Long = hocon.getLong("endpoint.queue.checkPeriodMins") * 60 * 1000
-        val delaysMs: Seq[Long] = hocon.getLongList("endpoint.delaysSecs").toSeq.map(p ⇒ p * 1000)
+        final val prefix = "server.endpoint"
+        
+        val maxQueueSize: Int = hocon.getInt(s"$prefix.queue.maxSize")
+        val maxQueueUserSize: Int = hocon.getInt(s"$prefix.queue.maxPerUserSize")
+        val maxQueueCheckPeriodMs: Long = hocon.getLong(s"$prefix.queue.checkPeriodMins") * 60 * 1000
+        val delaysMs: Seq[Long] = hocon.getLongList(s"$prefix.delaysSecs").toSeq.map(p ⇒ p * 1000)
         val delaysCnt: Int = delaysMs.size
 
         override def check(): Unit = {
             require(maxQueueSize > 0,
-                s"Configuration parameter 'endpoint.queue.maxSize' must > 0: $maxQueueSize")
+                s"Configuration parameter '$prefix.queue.maxSize' must > 0: $maxQueueSize")
             require(maxQueueUserSize > 0,
-                s"Configuration parameter 'endpoint.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
+                s"Configuration parameter '$prefix.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
             require(maxQueueCheckPeriodMs > 0,
-                s"Configuration parameter 'endpoint.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
+                s"Configuration parameter '$prefix.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
             require(delaysMs.nonEmpty,
-                s"Configuration parameter 'endpoint.delaysSecs' cannot be empty.")
+                s"Configuration parameter '$prefix.delaysSecs' cannot be empty.")
             delaysMs.foreach(delayMs ⇒ require(delayMs > 0,
-                s"Configuration parameter 'endpoint.delaysSecs' must contain only positive values: $delayMs"))
+                s"Configuration parameter '$prefix.delaysSecs' must contain only positive values: $delayMs"))
         }
     }
 

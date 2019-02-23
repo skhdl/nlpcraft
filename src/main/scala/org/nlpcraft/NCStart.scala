@@ -35,39 +35,38 @@ import org.nlpcraft.probe.NCProbe
 import org.nlpcraft.server.NCServerApplication
 
 /**
-  * Components runner. TODO:
+  * Server or probe command line starter.
   */
-object NCRunner extends App {
+object NCStart extends App {
     val seq = args.toSeq
-    val minSeq = seq.map(_.toLowerCase)
 
-    def getPosition(words: String*): Option[Int] = {
-        val lcWords = words.map(_.toLowerCase).toSet
-
-        val idxs = minSeq.zipWithIndex.flatMap { case (lcWord, idx) ⇒
-            if (lcWords.contains(lcWord)) Some(idx) else None
-        }
-
-        // TODO: errors text.
-        idxs.size match {
-            case 0 ⇒ None
-            case 1 ⇒ Some(idxs.head)
-            case _ ⇒ throw new IllegalArgumentException(s"Unexpected arguments: ${seq.mkString(", ")}")
-        }
+    val idxSrv = seq.indexWhere(_ == "-server")
+    val idxPrb = seq.indexWhere(_ == "-probe")
+    
+    /**
+      *
+      * @param idx
+      * @return
+      */
+    def removeParam(idx: Int): Array[String] =
+        (seq.slice(0, idx) ++ seq.slice(idx + 1, seq.length)).toArray
+    
+    /**
+      * 
+      * @param msg
+      */
+    def error(msg: String): Unit = {
+        System.err.println(msg)
+        
+        System.exit(1)
     }
 
-    val idxSrv = getPosition("-s", "-server", "s", "server")
-    val idxProve = getPosition("-p", "-probe", "p", "probe")
-
-    def skip(idx: Int): Array[String] = (seq.slice(0, idx) ++ seq.slice(idx + 1, seq.length)).toArray
-
-    // TODO: errors text.
-    if (idxSrv.isEmpty && idxProve.isEmpty)
-        throw new IllegalArgumentException("Server or probe parameter must be set")
-    else if (idxSrv.nonEmpty && idxProve.nonEmpty)
-        throw new IllegalArgumentException("Server or probe parameter must be set")
-    else if (idxSrv.isEmpty && idxProve.nonEmpty)
-        NCProbe.main(skip(idxProve.get))
-    else if (idxSrv.nonEmpty && idxProve.isEmpty)
-        NCServerApplication.main(skip(idxSrv.get))
+    if (idxSrv == -1 && idxPrb == -1)
+        error("ERROR: either '-server' or '-probe' parameter must be set.")
+    else if (idxSrv != -1 && idxPrb != -1)
+        error("ERROR: both '-server' and '-probe' parameters cannot be set.")
+    else if (idxSrv == -1 && idxPrb != -1)
+        NCProbe.main(removeParam(idxPrb))
+    else if (idxSrv != -1 && idxPrb == -1)
+        NCServerApplication.main(removeParam(idxSrv))
 }

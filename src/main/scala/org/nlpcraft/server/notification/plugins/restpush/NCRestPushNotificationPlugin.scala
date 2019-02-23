@@ -44,7 +44,6 @@ import org.apache.http.impl.client.HttpClients
 import org.nlpcraft.common._
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.plugin.apis.NCNotificationPlugin
-import org.nlpcraft.common.scalasup.NCScalaSupport._
 
 import scala.collection.JavaConverters._
 
@@ -61,7 +60,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     )
 
     // Configuration prefix.
-    private final val CFG = "org.nlpcraft.server.notification.plugins.restpush.NCRestPushNotificationPlugin"
+    private final val CFG = "server.org.nlpcraft.server.notification.plugins.restpush.NCRestPushNotificationPlugin"
 
     private object Config extends NCConfigurable {
         val endpoints: List[String] = hocon.getStringList(s"$CFG.endpoints").asScala.toList

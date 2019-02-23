@@ -62,8 +62,10 @@ import scala.concurrent.Future
 object NCProbeManager extends NCLifecycle("Probe manager") {
     // Type safe and eager configuration container.
     private[probe] object Config extends NCConfigurable {
-        private val dnLink = U.splitEndpoint(hocon.getString("probe.links.downLink"))
-        private val upLink = U.splitEndpoint(hocon.getString("probe.links.upLink"))
+        final val prefix = "server.probe"
+        
+        private val dnLink = U.splitEndpoint(hocon.getString(s"$prefix.links.downLink"))
+        private val upLink = U.splitEndpoint(hocon.getString(s"$prefix.links.upLink"))
         
         val dnHost: String = dnLink._1
         val dnPort: Int = dnLink._2
@@ -71,24 +73,24 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val upHost: String = upLink._1
         val upPort: Int = upLink._2
         
-        val poolSize: Int = hocon.getInt("probe.poolSize")
-        val reconnectTimeoutMs: Long = hocon.getLong("probe.reconnectTimeoutMs")
-        val pingTimeoutMs: Long = hocon.getLong("probe.pingTimeoutMs")
-        val soTimeoutMs: Int = hocon.getInt("probe.soTimeoutMs")
+        val poolSize: Int = hocon.getInt(s"$prefix.poolSize")
+        val reconnectTimeoutMs: Long = hocon.getLong(s"$prefix.reconnectTimeoutMs")
+        val pingTimeoutMs: Long = hocon.getLong(s"$prefix.pingTimeoutMs")
+        val soTimeoutMs: Int = hocon.getInt(s"$prefix.soTimeoutMs")
         
         override def check(): Unit = {
             assert(dnPort >= 0 && dnPort <= 65535,
-                s"Configuration property 'probe.links.upLink' must be >= 0 and <= 65535: $dnPort")
+                s"Configuration property '$prefix.links.upLink' must be >= 0 and <= 65535: $dnPort")
             assert(upPort >= 0 && upPort <= 65535,
-                s"Configuration property 'probe.links.downLink' must be >= 0 and <= 65535: $upPort")
+                s"Configuration property '$prefix.links.downLink' must be >= 0 and <= 65535: $upPort")
             assert(reconnectTimeoutMs > 0,
-                s"Configuration property 'probe.reconnectTimeoutMs' must be > 0: $reconnectTimeoutMs")
+                s"Configuration property '$prefix.reconnectTimeoutMs' must be > 0: $reconnectTimeoutMs")
             assert(poolSize > 0,
-                s"Configuration property 'probe.poolSize' must be > 0: $poolSize")
+                s"Configuration property '$prefix.poolSize' must be > 0: $poolSize")
             assert(soTimeoutMs > 0,
-                s"Configuration property 'probe.soTimeoutMs' must be > 0: $soTimeoutMs")
+                s"Configuration property '$prefix.soTimeoutMs' must be > 0: $soTimeoutMs")
             assert(pingTimeoutMs > 0,
-                s"Configuration property 'probe.pingTimeoutMs' timeout must be > 0: $pingTimeoutMs")
+                s"Configuration property '$prefix.pingTimeoutMs' timeout must be > 0: $pingTimeoutMs")
         }
     }
     

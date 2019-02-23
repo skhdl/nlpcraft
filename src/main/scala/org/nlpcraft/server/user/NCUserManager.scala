@@ -79,19 +79,22 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteNLPCraft {
     )
 
     private object Config extends NCConfigurable {
+        final val prefix = "server.user"
+        
+        val pwdPoolBlowup: Int = hocon.getInt(s"$prefix.pwdPoolBlowup")
+        val timeoutScannerFreqMins: Int = hocon.getInt(s"$prefix.timeoutScannerFreqMins")
+        val accessTokenExpireTimeoutMins: Int = hocon.getInt(s"$prefix.accessTokenExpireTimeoutMins")
+    
         lazy val scannerMs: Int = timeoutScannerFreqMins * 60 * 1000
         lazy val expireMs: Int = accessTokenExpireTimeoutMins * 60 * 1000
-        val pwdPoolBlowup: Int = hocon.getInt("user.pwdPoolBlowup")
-        val timeoutScannerFreqMins: Int = hocon.getInt("user.timeoutScannerFreqMins")
-        val accessTokenExpireTimeoutMins: Int = hocon.getInt("user.accessTokenExpireTimeoutMins")
 
         override def check(): Unit = {
             require(pwdPoolBlowup > 1,
-                s"Configuration parameter 'user.pwdPoolBlowup' must be > 1")
+                s"Configuration parameter '$prefix.pwdPoolBlowup' must be > 1")
             require(timeoutScannerFreqMins > 0,
-                s"Configuration parameter 'user.timeoutScannerFreqMins' must be > 0")
+                s"Configuration parameter '$prefix.timeoutScannerFreqMins' must be > 0")
             require(accessTokenExpireTimeoutMins > 0,
-                s"Configuration parameter 'user.accessTokenExpireTimeoutMins' must be > 0")
+                s"Configuration parameter '$prefix.accessTokenExpireTimeoutMins' must be > 0")
         }
     }
 

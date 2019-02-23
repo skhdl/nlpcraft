@@ -74,14 +74,16 @@ object NCRestManager extends NCLifecycle("REST manager") {
     private final val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
     private object Config extends NCConfigurable {
-        val host: String = hocon.getString("rest.host")
-        val port: Int = hocon.getInt("rest.port")
+        final val prefix = "sever.rest"
+        
+        val host: String = hocon.getString(s"$prefix.host")
+        val port: Int = hocon.getInt(s"$prefix.port")
 
         override def check(): Unit = {
             require(port > 0 && port < 65535,
-                s"Configuration property port 'rest.port' must be > 0 and < 65535: $port")
+                s"Configuration property port '$prefix.port' must be > 0 and < 65535: $port")
             require(host != null,
-                s"Configuration property port 'rest.host' must be specified.")
+                s"Configuration property port '$prefix.host' must be specified.")
         }
     }
 

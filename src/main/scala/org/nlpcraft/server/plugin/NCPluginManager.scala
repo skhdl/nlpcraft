@@ -48,8 +48,8 @@ object NCPluginManager extends NCLifecycle("Plugin manager") {
     private val mirror = runtimeMirror(getClass.getClassLoader)
     
     private object Config extends NCConfigurable {
-        val notifyPluginClass: String = hocon.getString("plugins.notification")
-        val probeAuthPluginClass: String = hocon.getString("plugins.probe.auth")
+        val notifyPluginClass: String = hocon.getString("server.plugins.notification")
+        val probeAuthPluginClass: String = hocon.getString("server.plugins.probe.auth")
     }
     
     Config.check()
