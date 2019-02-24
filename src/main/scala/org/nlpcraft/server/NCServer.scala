@@ -31,6 +31,8 @@
 
 package org.nlpcraft.server
 
+import java.util.concurrent.CountDownLatch
+
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
@@ -177,6 +179,8 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         }
     
         asciiLogo()
+
+        val lifecycle = new CountDownLatch(1)
     
         catching(classOf[Throwable]) either startManagers() match {
             case Left(e) ⇒ // Exception.
@@ -196,8 +200,14 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
                         ignoring(classOf[Throwable]) {
                             stopManagers()
                         }
+
+                        lifecycle.countDown()
                     }
                 })
+
+                U.ignoreInterrupt {
+                    lifecycle.await()
+                }
         }
     }
 

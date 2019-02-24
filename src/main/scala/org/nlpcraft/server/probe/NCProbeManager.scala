@@ -39,6 +39,10 @@ import java.util.concurrent.{ExecutorService, Executors}
 
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.nlp.NCNlpSentence
+import org.nlpcraft.common.socket.NCSocket
+import org.nlpcraft.common.version.NCVersion
+import org.nlpcraft.common.{NCLifecycle, _}
+import org.nlpcraft.probe.mgrs.NCProbeMessage
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.server.notification.NCNotificationManager
@@ -46,11 +50,6 @@ import org.nlpcraft.server.plugin.NCPluginManager
 import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
 import org.nlpcraft.server.proclog.NCProcessLogManager
 import org.nlpcraft.server.query.NCQueryManager
-import org.nlpcraft.common.socket.NCSocket
-import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
-import org.nlpcraft.probe.mgrs.NCProbeMessage
 
 import scala.collection.{Map, mutable}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -189,7 +188,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
         isStopping = new AtomicBoolean(true)
     
-        U.shutdownPool(pool)
+        U.shutdownPools(pool)
     
         U.stopThread(pingSrv)
         U.stopThread(dnSrv)
@@ -273,67 +272,95 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param fn Function.
       */
     private def startServer(name: String, host: String, port: Int, fn: NCSocket ⇒ Unit): Thread =
-        U.mkThread(s"probe-mgr-${name.toLowerCase}") { t ⇒
-            var srv: ServerSocket = null
-            
-            while (!t.isInterrupted)
+        new Thread(s"probe-mgr-${name.toLowerCase}") {
+            private var srv: ServerSocket = null
+            @volatile private var stopped = false
+
+            override def isInterrupted: Boolean = super.isInterrupted || stopped
+
+            override def interrupt(): Unit = {
+                super.interrupt()
+
+                U.close(srv)
+
+                stopped = true
+            }
+
+            override def run(): Unit = {
+                logger.trace(s"Thread started: $name")
+
                 try {
-                    srv = new ServerSocket()
-                    
-                    srv.bind(new InetSocketAddress(host, port))
-                    
-                    logger.trace(s"$name server is listening on '$host:$port'")
-                    
-                    srv.setSoTimeout(Config.soTimeoutMs)
-                    
-                    while (!t.isInterrupted) {
-                        var sock: Socket = null
-                        
-                        try {
-                            sock = srv.accept()
-                            
-                            logger.trace(s"'$name' server accepted new connection.")
-                        }
-                        catch {
-                            case _: InterruptedIOException ⇒ // No-op.
-                            // Note that server socket must be closed and created again.
-                            // So, error should be thrown.
-                            case e: Exception ⇒
-                                U.close(sock)
-                                
-                                throw e
-                        }
-                        
-                        if (sock != null) {
-                            val fut = Future {
-                                fn(NCSocket(sock, sock.getRemoteSocketAddress.toString))
+                    body()
+
+                    logger.trace(s"Thread exited: $name")
+                }
+                catch {
+                    case _: InterruptedException ⇒ logger.trace(s"Thread interrupted: $name")
+                    case e: Throwable ⇒ logger.error(s"Unexpected error during thread execution: $name", e)
+                }
+                finally
+                    stopped = true
+            }
+
+            private def body(): Unit =
+                while (!isInterrupted)
+                    try {
+                        srv = new ServerSocket()
+
+                        srv.bind(new InetSocketAddress(host, port))
+
+                        logger.trace(s"$name server is listening on '$host:$port'")
+
+                        srv.setSoTimeout(Config.soTimeoutMs)
+
+                        while (!isInterrupted) {
+                            var sock: Socket = null
+
+                            try {
+                                sock = srv.accept()
+
+                                logger.trace(s"'$name' server accepted new connection.")
                             }
-                            
-                            fut.onFailure {
-                                case e: NCE ⇒ logger.warn(e.getMessage, e)
-                                case _: EOFException ⇒ () // Just ignoring.
-                                case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}")
+                            catch {
+                                case _: InterruptedIOException ⇒ // No-op.
+                                // Note that server socket must be closed and created again.
+                                // So, error should be thrown.
+                                case e: Exception ⇒
+                                    U.close(sock)
+
+                                    throw e
+                            }
+
+                            if (sock != null) {
+                                val fut = Future {
+                                    fn(NCSocket(sock, sock.getRemoteSocketAddress.toString))
+                                }
+
+                                fut.onFailure {
+                                    case e: NCE ⇒ logger.warn(e.getMessage, e)
+                                    case _: EOFException ⇒ () // Just ignoring.
+                                    case e: Throwable ⇒ logger.warn(s"Ignoring socket error: ${e.getLocalizedMessage}")
+                                }
                             }
                         }
                     }
-                }
-                catch {
-                    case e: Exception ⇒
-                        if (!isStopping.get) {
-                            // Release socket asap.
-                            U.close(srv)
-                            
-                            val ms = Config.reconnectTimeoutMs
-                            
-                            // Server socket error must be logged.
-                            logger.warn(s"$name server error, re-starting in ${ms / 1000} sec.", e)
-                            
-                            U.sleep(ms)
-                        }
-                }
-                finally {
-                    U.close(srv)
-                }
+                    catch {
+                        case e: Exception ⇒
+                            if (!isStopping.get) {
+                                // Release socket asap.
+                                U.close(srv)
+
+                                val ms = Config.reconnectTimeoutMs
+
+                                // Server socket error must be logged.
+                                logger.warn(s"$name server error, re-starting in ${ms / 1000} sec.", e)
+
+                                U.sleep(ms)
+                            }
+                    }
+                    finally {
+                        U.close(srv)
+                    }
         }
     
     /**

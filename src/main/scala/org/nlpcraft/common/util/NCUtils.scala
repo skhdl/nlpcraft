@@ -996,12 +996,11 @@ object NCUtils extends NCDebug with LazyLogging {
                     case _: InterruptedException ⇒ logger.trace(s"Thread interrupted: $name")
                     case e: Throwable ⇒ logger.error(s"Unexpected error during thread execution: $name", e)
                 }
-                finally {
+                finally
                     stopped = true
-                }
             }
         }
-    
+
     /**
       * System-wide process of normalizing emails (trim & lower case).
       *
@@ -1218,15 +1217,22 @@ object NCUtils extends NCDebug with LazyLogging {
         }
     
     /**
-      * Shuts down executor service and waits for its finish.
+      * Shuts down executor services and waits for their finish.
       *
-      * @param es Executor service.
+      * @param ess Executor services.
       */
-    def shutdownPool(es: ExecutorService): Unit =
-        if (es != null) {
-            es.shutdown()
-            es.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
-        }
+    def shutdownPools(ess: ExecutorService*): Unit = {
+        val seq = ess.filter(_ != null)
+
+        seq.foreach(_.shutdown())
+        seq.foreach(es ⇒
+            try
+                es.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
+            catch {
+                case _: InterruptedException ⇒ () // Safely ignore.
+            }
+        )
+    }
     
     /**
       * Gets full path for given file name in user's home folder.

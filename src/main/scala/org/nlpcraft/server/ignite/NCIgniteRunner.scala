@@ -62,9 +62,8 @@ object NCIgniteRunner extends LazyLogging {
         // Start Ignite node.
         val ignite = if (cfgPath == null) Ignition.start(U.getStream("ignite.xml")) else Ignition.start(cfgPath)
 
-        try {
+        try
             body
-        }
         finally
             Ignition.stop(ignite.name(), true)
     }

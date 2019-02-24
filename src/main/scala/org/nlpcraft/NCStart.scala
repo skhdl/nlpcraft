@@ -38,35 +38,41 @@ import org.nlpcraft.server.NCServer
   * Server or probe command line starter.
   */
 object NCStart extends App {
-    val seq = args.toSeq
-
-    val idxSrv = seq.indexWhere(_ == "-server")
-    val idxPrb = seq.indexWhere(_ == "-probe")
-    
     /**
       *
-      * @param idx
-      * @return
       */
-    def removeParam(idx: Int): Array[String] =
-        (seq.slice(0, idx) ++ seq.slice(idx + 1, seq.length)).toArray
-    
-    /**
-      * 
-      * @param msg
-      */
-    def error(msg: String): Unit = {
-        System.err.println(msg)
-        
-        System.exit(1)
+    private def execute(): Unit = {
+        val seq = args.toSeq
+
+        val idxSrv = seq.indexWhere(_ == "-server")
+        val idxPrb = seq.indexWhere(_ == "-probe")
+
+        /**
+          *
+          * @param idx
+          * @return
+          */
+        def removeParam(idx: Int): Array[String] = seq.drop(1).toArray
+
+        /**
+          *
+          * @param msg
+          */
+        def error(msg: String): Unit = {
+            System.err.println(msg)
+
+            System.exit(1)
+        }
+
+        if (idxSrv != 0 && idxPrb != 0)
+            error("ERROR: either '-server' or '-probe' parameter must be set.")
+        else if (idxSrv == 0 && idxPrb == 0)
+            error("ERROR: both '-server' and '-probe' parameters cannot be set.")
+        else if (idxSrv != 0 && idxPrb == 0)
+            NCProbe.main(removeParam(idxPrb))
+        else if (idxSrv == 0 && idxPrb != 0)
+            NCServer.main(removeParam(idxSrv))
     }
 
-    if (idxSrv == -1 && idxPrb == -1)
-        error("ERROR: either '-server' or '-probe' parameter must be set.")
-    else if (idxSrv != -1 && idxPrb != -1)
-        error("ERROR: both '-server' and '-probe' parameters cannot be set.")
-    else if (idxSrv == -1 && idxPrb != -1)
-        NCProbe.main(removeParam(idxPrb))
-    else if (idxSrv != -1 && idxPrb == -1)
-        NCServer.main(removeParam(idxSrv))
+    execute()
 }

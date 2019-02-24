@@ -41,15 +41,13 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
 import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.SqlQuery
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCQueryStateMdo
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.tx.NCTxManager
-import org.nlpcraft.common.util.NCUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -127,7 +125,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         httpCli = HttpClients.createDefault
 
         sender =
-            NCUtils.mkThread("endpoint-sender-thread") {
+            U.mkThread("endpoint-sender-thread") {
                 thread ⇒ {
                     while (!thread.isInterrupted) {
                         mux.synchronized {
@@ -277,7 +275,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             )
         })
 
-        NCUtils.asFuture(
+        U.asFuture(
         _ ⇒ {
             val post = new HttpPost(ep)
 
@@ -361,17 +359,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
       * Stops this component.
       */
     override def stop(): Unit = {
-        if (cleaner != null) {
-            try
-                cleaner.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
-            catch {
-                case _: InterruptedException ⇒ () // Safely ignore.
-            }
-
-            cleaner = null
-        }
-
-        NCUtils.stopThread(sender)
+        U.shutdownPools(cleaner)
+        U.stopThread(sender)
 
         cache = null
         httpCli = null
@@ -390,7 +379,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         
         ensureStarted()
 
-        NCUtils.asFuture(
+        U.asFuture(
             _ ⇒ {
                 val t = U.nowUtcMs()
 
@@ -421,7 +410,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
         ensureStarted()
 
-        NCUtils.asFuture(
+        U.asFuture(
             _ ⇒ {
                 catching(wrapIE) {
                     NCTxManager.startTx {
@@ -444,7 +433,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
     def cancelNotifications(usrId: Long): Unit = {
         ensureStarted()
 
-        NCUtils.asFuture(
+        U.asFuture(
             _ ⇒ {
                 val query: SqlQuery[String, NCEndpointCacheValue] =
                     new SqlQuery(

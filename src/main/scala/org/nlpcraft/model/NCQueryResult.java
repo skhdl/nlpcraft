@@ -31,8 +31,8 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.model.intent.NCIntentSolver;
 import org.nlpcraft.common.util.NCUtils;
+import org.nlpcraft.model.intent.NCIntentSolver;
 
 import java.io.Serializable;
 import java.util.Arrays;

@@ -116,15 +116,7 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
 
     override def stop(): Unit = {
         if (timers != null) {
-            timers.foreach(_.shutdown())
-
-            timers.foreach(timer ⇒
-                try
-                    timer.awaitTermination(Long.MaxValue, TimeUnit.MILLISECONDS)
-                catch {
-                    case _: InterruptedException ⇒ logger.warn("Failed to await notification timer.")
-                }
-            )
+            U.shutdownPools(timers:_*)
 
             timers = null
         }
