@@ -378,7 +378,7 @@
                     <!-- Required as of JDK 8u121 -->
                     <additionalparam>--allow-script-in-comments</additionalparam>
 
-                    <javadocDirectory>${project.basedir}/src/main/javadoc</javadocDirectory>
+                    <javadocDirectory>${project.basedir}/javadoc</javadocDirectory>
                     <docfilessubdirs>true</docfilessubdirs>
                     <encoding>UTF-8</encoding>
                     <failOnError>false</failOnError>
