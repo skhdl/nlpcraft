@@ -531,13 +531,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.plugin.ver}</version>
                 <executions>
                     <execution>
+                        <id>dir</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <outputDirectory>libs</outputDirectory>
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>
