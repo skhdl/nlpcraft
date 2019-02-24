@@ -271,71 +271,74 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param port Local port to bind.
       * @param fn Function.
       */
-    private def startServer(name: String, host: String, port: Int, fn: NCSocket ⇒ Unit): Thread =
-        new Thread(s"probe-mgr-${name.toLowerCase}") {
-            private var srv: ServerSocket = null
+    private def startServer(name: String, host: String, port: Int, fn: NCSocket ⇒ Unit): Thread = {
+        val thName = name.toLowerCase
+        
+        new Thread(s"probe-mgr-$thName") {
+            private var srv: ServerSocket = _
+    
             @volatile private var stopped = false
-
+    
             override def isInterrupted: Boolean = super.isInterrupted || stopped
-
+    
             override def interrupt(): Unit = {
                 super.interrupt()
-
+                
                 U.close(srv)
-
+                
                 stopped = true
             }
-
+    
             override def run(): Unit = {
-                logger.trace(s"Thread started: $name")
-
+                logger.trace(s"Thread started: $thName")
+                
                 try {
                     body()
-
-                    logger.trace(s"Thread exited: $name")
+                    
+                    logger.trace(s"Thread exited: $thName")
                 }
                 catch {
-                    case _: InterruptedException ⇒ logger.trace(s"Thread interrupted: $name")
-                    case e: Throwable ⇒ logger.error(s"Unexpected error during thread execution: $name", e)
+                    case _: InterruptedException ⇒ logger.trace(s"Thread interrupted: $thName")
+                    case e: Throwable ⇒ logger.error(s"Unexpected error during thread execution: $thName", e)
                 }
                 finally
                     stopped = true
             }
-
+    
             private def body(): Unit =
                 while (!isInterrupted)
                     try {
                         srv = new ServerSocket()
-
+                        
                         srv.bind(new InetSocketAddress(host, port))
-
-                        logger.trace(s"$name server is listening on '$host:$port'")
-
+                        
+                        logger.info(s"$name server is listening on '$host:$port'")
+                        
                         srv.setSoTimeout(Config.soTimeoutMs)
-
+                        
                         while (!isInterrupted) {
                             var sock: Socket = null
-
+                            
                             try {
                                 sock = srv.accept()
-
+                                
                                 logger.trace(s"'$name' server accepted new connection.")
                             }
                             catch {
                                 case _: InterruptedIOException ⇒ // No-op.
+                                
                                 // Note that server socket must be closed and created again.
                                 // So, error should be thrown.
                                 case e: Exception ⇒
                                     U.close(sock)
-
+                                    
                                     throw e
                             }
-
                             if (sock != null) {
                                 val fut = Future {
                                     fn(NCSocket(sock, sock.getRemoteSocketAddress.toString))
                                 }
-
+                                
                                 fut.onFailure {
                                     case e: NCE ⇒ logger.warn(e.getMessage, e)
                                     case _: EOFException ⇒ () // Just ignoring.
@@ -349,12 +352,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             if (!isStopping.get) {
                                 // Release socket asap.
                                 U.close(srv)
-
+                                
                                 val ms = Config.reconnectTimeoutMs
-
+    
                                 // Server socket error must be logged.
                                 logger.warn(s"$name server error, re-starting in ${ms / 1000} sec.", e)
-
+                                
                                 U.sleep(ms)
                             }
                     }
@@ -362,6 +365,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         U.close(srv)
                     }
         }
+    }
     
     /**
       * Processes socket for downlink messages.
