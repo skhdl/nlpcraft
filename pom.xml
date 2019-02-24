@@ -239,7 +239,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-log4j</artifactId>
+            <artifactId>ignite-log4j2</artifactId>
             <version>${ignite.ver}</version>
         </dependency>
         <dependency>
