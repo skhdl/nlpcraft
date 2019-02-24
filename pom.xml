@@ -85,7 +85,7 @@
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.dependency.plugin.ver>3.0.1</maven.dependency.plugin.ver>
         <maven.shade.plugin.ver>3.1.0</maven.shade.plugin.ver>
-        <maven.assembly.plugin.ver>3.1.0</maven.assembly.plugin.ver>
+        <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
 
         <akka.http.2.11.ver>10.1.5</akka.http.2.11.ver>
         <akka.stream.2.11.ver>2.5.19</akka.stream.2.11.ver>
@@ -518,7 +518,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>${project.name}-${project.version}</finalName>
+                            <outputDirectory>libs</outputDirectory>
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>
                             </descriptors>
@@ -526,7 +526,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
