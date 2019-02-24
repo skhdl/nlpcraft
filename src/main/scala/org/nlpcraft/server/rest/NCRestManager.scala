@@ -76,14 +76,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
     private object Config extends NCConfigurable {
         final val prefix = "server.rest"
         
-        val host: String = hocon.getString(s"$prefix.host")
-        val port: Int = hocon.getInt(s"$prefix.port")
+        val host: String = getString(s"$prefix.host")
+        val port: Int = getInt(s"$prefix.port")
 
         override def check(): Unit = {
-            require(port > 0 && port < 65535,
-                s"Configuration property port '$prefix.port' must be > 0 and < 65535: $port")
-            require(host != null,
-                s"Configuration property port '$prefix.host' must be specified.")
+            if (!(port > 0 && port < 65535))
+                abortError(s"Configuration property port '$prefix.port' must be > 0 and < 65535: $port")
+            if (host == null)
+                abortError(s"Configuration property port '$prefix.host' must be specified.")
         }
     }
 

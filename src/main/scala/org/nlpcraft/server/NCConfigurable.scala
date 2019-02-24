@@ -32,17 +32,89 @@
 package org.nlpcraft.server
 
 import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 
 /**
   * Mixin for configuration factory defined by default in `application.conf` file. Use `NLPCRAFT_CONFIG_FILE`
   * system property or environment variable to override the default.
   */
-trait NCConfigurable {
+trait NCConfigurable extends LazyLogging {
     import NCConfigurable._
     
     // Accessor to the loaded config.
-    protected val hocon: Config = cfg
+    private val hocon: Config = cfg
+    
+    /**
+      * Gets mandatory configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getInt(name: String): Int = {
+        if (!hocon.hasPath(name))
+            abortError(s"Configuration property '$name' not found.")
+        
+        hocon.getInt(name)
+    }
+    
+    /**
+      * Gets mandatory configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getLong(name: String): Long = {
+        if (!hocon.hasPath(name))
+            abortError(s"Configuration property '$name' not found.")
+        
+        hocon.getLong(name)
+    }
+    
+    /**
+      * Gets mandatory configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getLongList(name: String): java.util.List[java.lang.Long] = {
+        if (!hocon.hasPath(name))
+            abortError(s"Configuration property '$name' not found.")
+        
+        hocon.getLongList(name)
+    }
+
+    /**
+      * Gets mandatory configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getString(name: String): String = {
+        if (!hocon.hasPath(name))
+            abortError(s"Configuration property '$name' not found.")
+        
+        hocon.getString(name)
+    }
+    
+    /**
+      * Gets mandatory configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getStringList(name: String): java.util.List[String] = {
+        if (!hocon.hasPath(name))
+            abortError(s"Configuration property '$name' not found.")
+        
+        hocon.getStringList(name)
+    }
+
+    /**
+      *
+      * @param errMsgs
+      */
+    protected def abortError(errMsgs: String*): Unit = {
+        errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
+        
+        // Abort immediately.
+        System.exit(1)
+    }
 
     /**
      * Calling this function will touch the object and trigger

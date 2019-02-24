@@ -63,25 +63,25 @@ object NCRestPushNotificationPlugin extends NCNotificationPlugin {
     private final val CFG = "server.org.nlpcraft.server.notification.plugins.restpush.NCRestPushNotificationPlugin"
 
     private object Config extends NCConfigurable {
-        val endpoints: List[String] = hocon.getStringList(s"$CFG.endpoints").asScala.toList
-        val flushMsec: Long = hocon.getLong(s"$CFG.flushSecs") * 1000
-        val maxBufferSize: Int = hocon.getInt(s"$CFG.maxBufferSize")
-        val batchSize: Int = hocon.getInt(s"$CFG.batchSize")
+        val endpoints: List[String] = getStringList(s"$CFG.endpoints").asScala.toList
+        val flushMsec: Long = getLong(s"$CFG.flushSecs") * 1000
+        val maxBufferSize: Int = getInt(s"$CFG.maxBufferSize")
+        val batchSize: Int = getInt(s"$CFG.batchSize")
 
         override def check(): Unit = {
             val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
             // Note, we support duplicated URLs in endpoints list.
-            endpoints.foreach(ep ⇒ require(urlVal.isValid(ep),
-                s"Invalid value in '$CFG.endpoints' configuration property: $ep"))
-            require(flushMsec > 0,
-                s" Configuration property '$CFG.flushSecs' must be > 0: $flushMsec")
-            require(maxBufferSize > 0 ,
-                s"Configuration property '$CFG.maxBufferSize' must be > 0: $maxBufferSize")
-            require(batchSize > 1 ,
-                s"Configuration property '$CFG.batchSize' must be > 1: $batchSize")
-            require(endpoints.nonEmpty,
-                s"Configuration property '$CFG.endpoints' must have at least one REST endpoint.")
+            endpoints.foreach(ep ⇒ if (!urlVal.isValid(ep))
+                abortError(s"Invalid value in '$CFG.endpoints' configuration property: $ep"))
+            if (flushMsec <= 0)
+                abortError(s" Configuration property '$CFG.flushSecs' must be > 0: $flushMsec")
+            if (maxBufferSize <= 0)
+                abortError(s"Configuration property '$CFG.maxBufferSize' must be > 0: $maxBufferSize")
+            if (batchSize <= 1)
+                abortError(s"Configuration property '$CFG.batchSize' must be > 1: $batchSize")
+            if (endpoints.isEmpty)
+                abortError(s"Configuration property '$CFG.endpoints' must have at least one REST endpoint.")
         }
     }
 

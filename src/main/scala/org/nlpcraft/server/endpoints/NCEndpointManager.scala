@@ -63,23 +63,25 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
     private object Config extends NCConfigurable {
         final val prefix = "server.endpoint"
         
-        val maxQueueSize: Int = hocon.getInt(s"$prefix.queue.maxSize")
-        val maxQueueUserSize: Int = hocon.getInt(s"$prefix.queue.maxPerUserSize")
-        val maxQueueCheckPeriodMs: Long = hocon.getLong(s"$prefix.queue.checkPeriodMins") * 60 * 1000
-        val delaysMs: Seq[Long] = hocon.getLongList(s"$prefix.delaysSecs").toSeq.map(p ⇒ p * 1000)
+        val maxQueueSize: Int = getInt(s"$prefix.queue.maxSize")
+        val maxQueueUserSize: Int = getInt(s"$prefix.queue.maxPerUserSize")
+        val maxQueueCheckPeriodMs: Long = getLong(s"$prefix.queue.checkPeriodMins") * 60 * 1000
+        val delaysMs: Seq[Long] = getLongList(s"$prefix.delaysSecs").toSeq.map(p ⇒ p * 1000)
         val delaysCnt: Int = delaysMs.size
 
         override def check(): Unit = {
-            require(maxQueueSize > 0,
-                s"Configuration parameter '$prefix.queue.maxSize' must > 0: $maxQueueSize")
-            require(maxQueueUserSize > 0,
-                s"Configuration parameter '$prefix.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
-            require(maxQueueCheckPeriodMs > 0,
-                s"Configuration parameter '$prefix.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
-            require(delaysMs.nonEmpty,
-                s"Configuration parameter '$prefix.delaysSecs' cannot be empty.")
-            delaysMs.foreach(delayMs ⇒ require(delayMs > 0,
-                s"Configuration parameter '$prefix.delaysSecs' must contain only positive values: $delayMs"))
+            if (maxQueueSize <= 0)
+                abortError(s"Configuration parameter '$prefix.queue.maxSize' must > 0: $maxQueueSize")
+            if (maxQueueUserSize <= 0)
+                abortError(s"Configuration parameter '$prefix.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
+            if (maxQueueCheckPeriodMs <= 0)
+                abortError(s"Configuration parameter '$prefix.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
+            if (delaysMs.isEmpty)
+                abortError(s"Configuration parameter '$prefix.delaysSecs' cannot be empty.")
+            delaysMs.foreach(delayMs ⇒
+                if (delayMs <= 0)
+                    abortError(s"Configuration parameter '$prefix.delaysSecs' must contain only positive values: $delayMs")
+            )
         }
     }
 

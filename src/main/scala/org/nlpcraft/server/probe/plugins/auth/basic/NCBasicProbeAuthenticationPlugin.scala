@@ -46,11 +46,11 @@ object NCBasicProbeAuthenticationPlugin extends NCProbeAuthenticationPlugin {
     private final val CFG = "server.org.nlpcraft.server.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin"
     
     private object Config extends NCConfigurable {
-        val probeToken: String = hocon.getString(s"$CFG.probe.token")
+        val probeToken: String = getString(s"$CFG.probe.token")
     
         override def check(): Unit = {
-            require(probeToken != null,
-                s"Configuration property '$CFG.probe.token' must be specified.")
+            if (probeToken == null)
+                abortError(s"Configuration property '$CFG.probe.token' must be specified.")
         }
     }
     

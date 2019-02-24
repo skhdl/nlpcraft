@@ -80,25 +80,25 @@ object NCPsql extends LazyLogging {
     private object Config extends NCConfigurable {
         final val prefix = "server.postgres"
         
-        val url: String = hocon.getString(s"$prefix.jdbc.url")
-        val driver: String = hocon.getString(s"$prefix.jdbc.driver")
-        val username: String = hocon.getString(s"$prefix.jdbc.username")
-        val passwd: String = hocon.getString(s"$prefix.jdbc.password")
-        val maxStmt: Int = hocon.getInt(s"$prefix.c3p0.maxStatements")
-        val initPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.initSize")
-        val minPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.minSize")
-        val maxPoolSize: Int = hocon.getInt(s"$prefix.c3p0.pool.maxSize")
-        val acqInc: Int = hocon.getInt(s"$prefix.c3p0.pool.acquireIncrement")
+        val url: String = getString(s"$prefix.jdbc.url")
+        val driver: String = getString(s"$prefix.jdbc.driver")
+        val username: String = getString(s"$prefix.jdbc.username")
+        val passwd: String = getString(s"$prefix.jdbc.password")
+        val maxStmt: Int = getInt(s"$prefix.c3p0.maxStatements")
+        val initPoolSize: Int = getInt(s"$prefix.c3p0.pool.initSize")
+        val minPoolSize: Int = getInt(s"$prefix.c3p0.pool.minSize")
+        val maxPoolSize: Int = getInt(s"$prefix.c3p0.pool.maxSize")
+        val acqInc: Int = getInt(s"$prefix.c3p0.pool.acquireIncrement")
 
         override def check(): Unit = {
-            require(minPoolSize <= maxPoolSize,
-                s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
-            require(minPoolSize <= initPoolSize,
-                s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.initSize' ($initPoolSize).")
-            require(initPoolSize <= maxPoolSize,
-                s"Configuration property '$prefix.c3p0.pool.initSize' ($initPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
-            require(acqInc > 0,
-                s"Configuration property '$prefix.c3p0.pool.acquireIncrement' must be > 0: $acqInc")
+            if (minPoolSize > maxPoolSize)
+                abortError(s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
+            if (minPoolSize > initPoolSize)
+                abortError(s"Configuration property '$prefix.c3p0.pool.minSize' ($minPoolSize) must be <= '$prefix.c3p0.pool.initSize' ($initPoolSize).")
+            if (initPoolSize > maxPoolSize)
+                abortError(s"Configuration property '$prefix.c3p0.pool.initSize' ($initPoolSize) must be <= '$prefix.c3p0.pool.maxSize' ($maxPoolSize).")
+            if (acqInc <= 0)
+                abortError(s"Configuration property '$prefix.c3p0.pool.acquireIncrement' must be > 0: $acqInc")
         }
     }
 
