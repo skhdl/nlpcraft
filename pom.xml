@@ -86,6 +86,7 @@
         <maven.dependency.plugin.ver>3.0.1</maven.dependency.plugin.ver>
         <maven.shade.plugin.ver>3.1.0</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
+        <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
 
         <akka.http.2.11.ver>10.1.5</akka.http.2.11.ver>
         <akka.stream.2.11.ver>2.5.19</akka.stream.2.11.ver>
@@ -297,6 +298,26 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.clean.plugin.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/libs</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala.plugin.ver}</version>
@@ -326,7 +347,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
