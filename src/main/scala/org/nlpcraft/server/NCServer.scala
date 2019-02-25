@@ -131,26 +131,34 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
       * Stops all managers.
       */
     private def stopManagers(): Unit = {
-        NCRestManager.stop()
-        NCEndpointManager.stop()
-        NCQueryManager.stop()
-        NCDsManager.stop()
-        NCUserManager.stop()
-        NCNotificationManager.stop()
-        NCNlpEnricherManager.stop()
-        NCNumericManager.stop()
-        NCNlpManager.stop()
-        NCGeoManager.stop()
-        NCPreProcessManager.stop()
-        NCSynonymManager.stop()
-        NCSpellCheckManager.stop()
-        NCDictionaryManager.stop()
-        NCWordNetManager.stop()
-        NCProcessLogManager.stop()
-        NCDbManager.stop()
-        NCTxManager.stop()
-        NCPluginManager.stop()
-        NCVersionManager.stop()
+        Seq(
+            NCRestManager,
+            NCEndpointManager,
+            NCQueryManager,
+            NCDsManager,
+            NCUserManager,
+            NCNotificationManager,
+            NCNlpEnricherManager,
+            NCNumericManager,
+            NCNlpManager,
+            NCGeoManager,
+            NCPreProcessManager,
+            NCSynonymManager,
+            NCSpellCheckManager,
+            NCDictionaryManager,
+            NCWordNetManager,
+            NCProcessLogManager,
+            NCDbManager,
+            NCTxManager,
+            NCPluginManager,
+            NCVersionManager
+        ).foreach(p ⇒
+            try
+                p.stop()
+            catch {
+                case e: Exception ⇒ logger.warn(s"Error stopping manager.", e)
+            }
+        )
     }
     
     /**

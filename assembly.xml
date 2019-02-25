@@ -43,21 +43,21 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>${project.name}-${project.version}-all-dependencies.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/apidocs</directory>
-            <outputDirectory>/javadoc</outputDirectory>
+            <outputDirectory>javadoc</outputDirectory>
             <includes>
                 <include>**/*.*</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>*.conf</include>
                 <include>*.xml</include>
