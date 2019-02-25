@@ -197,7 +197,7 @@
             <!-- Ignite contains 13 version but it contains 12. -->
             <exclusions>
                 <exclusion>
-                    <groupId>org.jetbrains</groupId>
+                    <groupId>com.intellij</groupId>
                     <artifactId>annotations</artifactId>
                 </exclusion>
             </exclusions>

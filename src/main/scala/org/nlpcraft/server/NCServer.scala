@@ -130,7 +130,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
     /**
       * Stops all managers.
       */
-    private def stopManagers(): Unit = {
+    private def stopManagers(): Unit =
         Seq(
             NCRestManager,
             NCEndpointManager,
@@ -159,8 +159,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
                 case e: Exception ⇒ logger.warn("Error stopping manager.", e)
             }
         )
-    }
-    
+
     /**
       * Acks server start.
       */
@@ -225,7 +224,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
     NCIgniteRunner.runWith(
         args.find(_.startsWith("-igniteConfig=")) match {
             case None ⇒ null // Will use default on the classpath 'ignite.xml'.
-            case Some(s) ⇒ s.substring("-config=".length)
+            case Some(s) ⇒ s.substring(s.indexOf("=") + 1)
         },
         start()
     )
