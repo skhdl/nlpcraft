@@ -49,7 +49,7 @@ layout: default
     <div class="container-fluid">
         <div class="row">
             <div class="col-4">
-                <div class="section-title"><span>About</span> NLPCraft</div>
+                <div class="section-title"><span>About</span> NlpCraft</div>
                 <section>
                     <p>
                         NLPCraft is an open source library for adding Natural Language Interface
@@ -183,6 +183,46 @@ layout: default
                         context.
                     </p>
                 </section>
+            </div>
+        </div>
+        <div class="learn-more">
+            <a href="docs.html">Learn more <i class="align-text-bottom fas fa-angle-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<div id="howitworks" class="bottom-arrow main-section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">How <span>It Works</span></div>
+            </div>
+        </div>
+        <div class="row d-flex flex-wrap align-items-center">
+            <div class="col-6">
+                <section>
+                    <p>
+                        There are three main software components to:
+                        <!--NlpCraft consists of the three software components.-->
+                        <br><br>
+                        A <b>data model</b> specifies how to interpret user input, how to query a data
+                        source, and how to format the result back. Developers use model-as-a-code approach
+                        to build models using any JVM language like Java or Scala.
+                        <br><br>
+                        A <b>probe</b> is a DMZ-deployed application designed to securely
+                        deploy and manage data models. Each probe can manage multiple models and you can
+                        have many probes.
+                        <br><br>
+                        A <b>server</b> provides REST endpoint for user applications to securely query data
+                        sources via data models deployed in data probes.
+
+                    </p>
+                </section>
+            </div>
+            <div class="col-6">
+                <center>
+                    <img class="img-fluid" src="{{ 'images/homepage-fig1.1.png' | relative_url}}">
+                </center>
             </div>
         </div>
         <div class="learn-more">
