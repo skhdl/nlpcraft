@@ -36,6 +36,7 @@ import java.util.{Timer, TimerTask}
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
+import org.hashids.Hashids
 import org.nlpcraft.common._
 import org.nlpcraft.common.{NCException, NCLifecycle}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
@@ -68,6 +69,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
     // Access token timeout scanner.
     @volatile private var scanner: Timer = _
+    
+    private val hashids = new Hashids(NCBlowfishHasher.salt(), 8)
 
     // Session holder.
     private case class SigninSession(
@@ -367,7 +370,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                         entry.getValue.acsToken // Already signed in.
                                     case None ⇒
-                                        val acsTkn = NCBlowfishHasher.hash(U.genGuid())
+                                        val acsTkn = hashids.encode(System.currentTimeMillis())
                                         val now = U.nowUtcMs()
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, None)

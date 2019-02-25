@@ -624,25 +624,25 @@ public class NCBlowfishHasher {
     }
 
     /**
-     * Perform the central password hashing step.
+     * Perform the central hashing step.
      *
-     * @param passwd Password to hash.
-     * @param salt Binary salt to hash with the password.
+     * @param str String to hash.
+     * @param salt Binary salt to hash with the string.
      * @param strength Binary logarithm of the number of rounds of hashing to apply.
-     * @return Array containing the binary hashed password.
+     * @return Array containing the binary hashed string.
      */
-    private byte[] cryptRaw(byte passwd[], byte salt[], int strength) {
+    private byte[] cryptRaw(byte str[], byte salt[], int strength) {
         assert(strength >= 4 && strength <= 31);
         assert(salt.length == SALT_LEN);
 
         initKey();
 
-        enhancedKeySchedule(salt, passwd);
+        enhancedKeySchedule(salt, str);
 
         int rounds = 1 << strength;
 
         for (int i = 0; i < rounds; i++) {
-            key(passwd);
+            key(str);
             key(salt);
         }
 
@@ -665,23 +665,23 @@ public class NCBlowfishHasher {
     }
 
     /**
-     * Hashes a password using the OpenBSD Blowfish-based scheme using default salt.
+     * Hashes a given string using the OpenBSD Blowfish-based scheme using default salt.
      *
-     * @param passwd Password to hash.
-     * @return Hash for password.
+     * @param str String to hash.
+     * @return Hash for given string.
      */
-    public static String hash(String passwd) {
-        return hash(passwd, salt());
+    public static String hash(String str) {
+        return hash(str, salt());
     }
 
     /**
-     * Hashes a password using the OpenBSD Blowfish-based scheme.
+     * Hashes a given string using the OpenBSD Blowfish-based scheme.
      *
-     * @param passwd Password to hash.
+     * @param str String to hash.
      * @param salt Salt to hash with (perhaps generated using {@link #salt()}) method.
-     * @return Hash for password.
+     * @return Hash for the given string.
      */
-    public static String hash(String passwd, String salt) {
+    public static String hash(String str, String salt) {
         char minor = (char)0;
 
         int off;
@@ -711,7 +711,7 @@ public class NCBlowfishHasher {
         byte[] passwdB;
 
         try {
-            passwdB = (passwd + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
+            passwdB = (str + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
         }
         catch (UnsupportedEncodingException e) {
             throw new AssertionError(e.getLocalizedMessage());
