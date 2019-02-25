@@ -156,7 +156,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             try
                 p.stop()
             catch {
-                case e: Exception ⇒ logger.warn(s"Error stopping manager.", e)
+                case e: Exception ⇒ logger.warn("Error stopping manager.", e)
             }
         )
     }
