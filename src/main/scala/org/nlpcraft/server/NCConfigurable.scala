@@ -133,7 +133,7 @@ object NCConfigurable extends LazyLogging {
         
         if (!x.hasPath("server")) {
             logger.error("No configuration found. ")
-            logger.error("Place 'application.conf' config file in the same folder or use '-config=path' to set alternative path to config file.")
+            logger.error("Place 'application.conf' config file in the same folder or use '-config=path' to set the path to config file.")
             
             System.exit(1)
         }

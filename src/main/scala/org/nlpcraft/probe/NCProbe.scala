@@ -82,7 +82,7 @@ object NCProbe extends App with LazyLogging {
           * @param errMsgs
           */
         private def abortError(errMsgs: String*): Unit = {
-            errMsgs.foreach(s ⇒ println(s"ERROR: $s"))
+            errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
             
             System.exit(1)
         }
