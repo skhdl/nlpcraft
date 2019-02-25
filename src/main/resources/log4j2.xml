@@ -31,7 +31,7 @@
           /_/
 -->
 
-<Configuration status="INFO" shutdownHook="disable">
+<Configuration status="INFO">
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{MMM-dd HH:mm:ss} [%-5p] %m%n"/>
@@ -44,10 +44,10 @@
         <Logger name="org.nlpcraft" level="TRACE" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
-        <Logger name="org.apache.ignite" level="WARN" additivity="false">
+        <Logger name="com.mchange" level="WARN" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
-        <Logger name="com.mchange" level="WARN" additivity="false">
+        <Logger name="org.apache.ignite" level="WARN" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
     </Loggers>
