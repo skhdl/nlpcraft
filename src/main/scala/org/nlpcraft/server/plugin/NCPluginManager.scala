@@ -76,12 +76,12 @@ object NCPluginManager extends NCLifecycle("Plugin manager") {
         try {
             val plugin = mirror.reflectModule(mirror.staticModule(clsName)).instance.asInstanceOf[T]
             
-            logger.info(s"${pluginName.capitalize} plugin instantiated: $clsName")
+            logger.info(s"${pluginName.capitalize} plugin installed: $clsName")
             
             plugin
         }
         catch {
-            case e: Exception ⇒ throw new NCE(s"Failed to instantiate $pluginName plugin: ${e.getLocalizedMessage}")
+            case e: Exception ⇒ throw new NCE(s"Failed to install $pluginName plugin: ${e.getLocalizedMessage}")
         }
     
     /**

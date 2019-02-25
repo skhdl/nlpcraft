@@ -179,6 +179,9 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         }
     
         asciiLogo()
+        
+        // Check upfront that configuration is provided.
+        new NCConfigurable {}.check()
 
         val lifecycle = new CountDownLatch(1)
     

@@ -53,7 +53,7 @@ object NCIgniteRunner extends LazyLogging {
         val sysProps = new SystemProperties
 
         // Set up Ignite system properties.
-        sysProps.put("IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "false")
+        sysProps.put("IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "true")
         sysProps.put("IGNITE_ANSI_OFF", "false")
         sysProps.put("IGNITE_QUIET", sysProps.get("IGNITE_QUIET").getOrElse(true).toString)
         sysProps.put("IGNITE_UPDATE_NOTIFIER", "false")

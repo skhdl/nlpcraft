@@ -123,7 +123,7 @@ trait NCConfigurable extends LazyLogging {
     def check(): Unit = ()
 }
 
-object NCConfigurable {
+object NCConfigurable extends LazyLogging {
     private final val cfgFile = U.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("application.conf")
     
     // Singleton to load full NLPCraft configuration (only once).
@@ -131,11 +131,13 @@ object NCConfigurable {
         val x = ConfigFactory.parseFile(new java.io.File(cfgFile)).
             withFallback(ConfigFactory.load(cfgFile))
         
-        if (!x.hasPath("server"))
-            throw new IllegalStateException(
-                "No configuration found. " +
-                "Place 'application.conf' config file in the same folder or use '-config=path' to set alternative path to config file."
-            )
+        if (!x.hasPath("server")) {
+            logger.error("No configuration found. ")
+            logger.error("Place 'application.conf' config file in the same folder or use '-config=path' to set alternative path to config file.")
+            
+            System.exit(1)
+        }
+        
         x
     }
 }
