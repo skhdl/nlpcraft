@@ -984,10 +984,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
         
         bindFut.onFailure {
             case _ ⇒
-                logger.info(
-                    s"REST server failed to start on '$url'. " +
-                    s"Use default config file or 'NLPCRAFT_CONFIG_FILE' system property to provide custom configuration file with correct REST host and port."
-                )
+                logger.info(s"REST server failed to start on '$url'.")
         }
     
         bindFut.onSuccess {

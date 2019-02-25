@@ -175,7 +175,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         // Fetch custom config file path, if any.
         args.find(_.startsWith("-config=")) match {
             case None ⇒ ()
-            case Some(s) ⇒ System.setProperty("NLPCRAFT_CONFIG_FILE", s.substring("-config=".length))
+            case Some(s) ⇒ System.setProperty("__NLPCRAFT_CONFIG_FILE", s.substring("-config=".length))
         }
     
         asciiLogo()

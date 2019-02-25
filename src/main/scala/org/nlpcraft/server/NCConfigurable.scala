@@ -36,8 +36,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 
 /**
-  * Mixin for configuration factory defined by default in `application.conf` file. Use `NLPCRAFT_CONFIG_FILE`
-  * system property or environment variable to override the default.
+  * Mixin for configuration factory defined by default in `application.conf` file. U
   */
 trait NCConfigurable extends LazyLogging {
     import NCConfigurable._
@@ -124,7 +123,7 @@ trait NCConfigurable extends LazyLogging {
 }
 
 object NCConfigurable extends LazyLogging {
-    private final val cfgFile = U.sysEnv("NLPCRAFT_CONFIG_FILE").getOrElse("application.conf")
+    private final val cfgFile = U.sysEnv("__NLPCRAFT_CONFIG_FILE").getOrElse("application.conf")
     
     // Singleton to load full NLPCraft configuration (only once).
     protected lazy val cfg: Config = {
