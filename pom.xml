@@ -400,7 +400,7 @@
                 <version>${maven.javadoc.plugin.ver}</version>
                 <configuration>
                     <!-- Required as of JDK 8u121 -->
-                    <additionalparam>--allow-script-in-comments</additionalparam>
+                    <additionalparam>--allow-script-in-comments, -Xdoclint:none</additionalparam>
 
                     <javadocDirectory>${project.basedir}/javadoc</javadocDirectory>
                     <docfilessubdirs>true</docfilessubdirs>

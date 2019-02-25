@@ -31,31 +31,16 @@
 
 package org.nlpcraft.model.builder;
 
-import org.nlpcraft.model.NCElement;
-import org.nlpcraft.model.NCMetadata;
-import org.nlpcraft.model.NCModel;
-import org.nlpcraft.model.NCModelDescriptor;
-import org.nlpcraft.model.NCProbeContext;
-import org.nlpcraft.model.NCQueryContext;
-import org.nlpcraft.model.NCQueryResult;
-import org.nlpcraft.model.builder.impl.NCModelImpl;
-import org.nlpcraft.model.builder.impl.NCValueImpl;
-import org.nlpcraft.model.builder.json.NCElementJson;
-import org.nlpcraft.model.builder.json.NCMacroJson;
-import org.nlpcraft.model.builder.json.NCModelJson;
-import org.nlpcraft.model.impl.NCMetadataImpl;
-
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.google.gson.*;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.impl.*;
+import org.nlpcraft.model.builder.json.*;
+import org.nlpcraft.model.impl.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * Model builder for {@link NCModel} instances.
@@ -74,10 +59,67 @@ import java.util.stream.Collectors;
  * the {@link #setQueryFunction(Function) query function}
  * must be set.
  */
-public class NCModelBuilder extends NCJsonBuilder {
+public class NCModelBuilder {
     /** */
     private final NCModelImpl impl;
-    
+
+    /** */
+    protected static final Gson gson = new Gson();
+
+    /**
+     * Reads JSON file and creates JSON representation object of given type.
+     *
+     * @param filePath File path.
+     * @param claxx JSON representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading JSON.
+     */
+    static private <T> T readFile(String filePath, Class<T> claxx) throws NCBuilderException {
+        try (Reader reader = new BufferedReader(new FileReader(filePath))) {
+            return gson.fromJson(reader, claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load JSON from: " + filePath, e);
+        }
+    }
+
+    /**
+     * Reads JSON file and creates JSON representation object of given type.
+     *
+     * @param in Input stream.
+     * @param claxx JSON representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading JSON.
+     */
+    static private <T> T readFile(InputStream in, Class<T> claxx) throws NCBuilderException {
+        try (Reader reader = new BufferedReader(new InputStreamReader(in))) {
+            return gson.fromJson(reader, claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load JSON from stream.", e);
+        }
+    }
+
+    /**
+     * Reads JSON string and creates JSON representation object of given type.
+     *
+     * @param jsonStr JSON string to read from.
+     * @param claxx JSON representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading JSON.
+     */
+    static private <T> T readString(String jsonStr, Class<T> claxx) throws NCBuilderException {
+        try (Reader reader = new BufferedReader(new StringReader(jsonStr))) {
+            return gson.fromJson(reader, claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load JSON from string.", e);
+        }
+    }
+
     /**
      *
      */
@@ -135,8 +177,9 @@ public class NCModelBuilder extends NCJsonBuilder {
      * 
      * @param filePath JSON file path to load from.
      * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
      */
-    public static NCModelBuilder newJsonModel(String filePath) {
+    public static NCModelBuilder newJsonModel(String filePath) throws NCBuilderException {
         NCModelBuilder bldr = new NCModelBuilder();
 
         bldr.ingestJsonModel(readFile(filePath, NCModelJson.class));
@@ -151,8 +194,9 @@ public class NCModelBuilder extends NCJsonBuilder {
      *
      * @param in Input stream to load JSON model from.
      * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
      */
-    public static NCModelBuilder newJsonModel(InputStream in) {
+    public static NCModelBuilder newJsonModel(InputStream in) throws NCBuilderException {
         NCModelBuilder bldr = new NCModelBuilder();
         
         bldr.ingestJsonModel(readFile(in, NCModelJson.class));
@@ -167,8 +211,9 @@ public class NCModelBuilder extends NCJsonBuilder {
      * 
      * @param jsonStr JSON string to load model from.
      * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
      */
-    public static NCModelBuilder newJsonStringModel(String jsonStr) {
+    public static NCModelBuilder newJsonStringModel(String jsonStr) throws NCBuilderException {
         NCModelBuilder bldr = new NCModelBuilder();
 
         bldr.ingestJsonModel(readString(jsonStr, NCModelJson.class));

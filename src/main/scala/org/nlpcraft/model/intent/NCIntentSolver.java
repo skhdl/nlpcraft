@@ -32,7 +32,6 @@
 package org.nlpcraft.model.intent;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.common.NCException;
 import org.nlpcraft.model.NCMetadata;
 import org.nlpcraft.model.NCModel;
 import org.nlpcraft.model.NCModelProvider;
@@ -975,8 +974,8 @@ public class NCIntentSolver {
         /**
          *
          */
-        private NCException mkOperatorError(Object v1, Object v2) {
-            return new NCException(String.format("Unexpected operator: %s for elements: %s, %s",
+        private IllegalArgumentException mkOperatorError(Object v1, Object v2) {
+            return new IllegalArgumentException(String.format("Unexpected operator: %s for elements: %s, %s",
                 op, v1.toString(), v2.toString()));
         }
 
@@ -992,7 +991,7 @@ public class NCIntentSolver {
                 String name = param.substring(1);
 
                 if (name.isEmpty())
-                    throw new NCException("Empty meta parameter name.");
+                    throw new IllegalArgumentException("Empty meta parameter name.");
 
                 NCMetadata tokMeta = tok.getMetadata();
                 NCMetadata elmMeta = tok.getElementMetadata();
@@ -1009,7 +1008,7 @@ public class NCIntentSolver {
                     case "value":  v1 = tok.getValue().trim(); break;
                     case "parent": v1 = tok.getParentId().trim(); break;
 
-                    default: throw new NCException("Unexpected parameter: " + param);
+                    default: throw new IllegalArgumentException("Unexpected parameter: " + param);
             }
 
             Object v2 = value;

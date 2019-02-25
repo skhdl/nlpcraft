@@ -49,7 +49,7 @@ class NCModelBuilderSpec extends FlatSpec with NCModelSpecBase {
             assert(true)
         }
         catch {
-            case e: NCException ⇒ e.printStackTrace(); assert(false)
+            case e: NCBuilderException ⇒ e.printStackTrace(); assert(false)
         }
     }
 

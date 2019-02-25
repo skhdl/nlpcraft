@@ -51,7 +51,7 @@ import java.util.Collection;
  * method to get properly constructed {@link NCElement} instance. Note that at the minimum the element
  * {@link #setId(String) ID} must be set.
  */
-public class NCElementBuilder extends NCJsonBuilder {
+public class NCElementBuilder {
     private final NCElementImpl impl;
 
     /**
