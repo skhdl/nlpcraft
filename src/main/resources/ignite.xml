@@ -194,7 +194,16 @@
 
     <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <property name="igniteInstanceName" value="nlpcraft"/>
+
+        <!-- Note that 'shutdownHook' option doesn't work when Ignite is used with log4j2 for some reasons. -->
+        <property name="gridLogger">
+            <bean class="org.apache.ignite.logger.log4j2.Log4J2Logger">
+                <constructor-arg type="java.net.URL" value="classpath:log4j2.xml"/>
+            </bean>
+        </property>
+
         <property name="localHost" value="127.0.0.1"/>
+
         <property name="communicationSpi">
             <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
                 <!-- Override local port. -->

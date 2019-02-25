@@ -31,7 +31,6 @@
 
 package org.nlpcraft.server.nlp.spell
 
-import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.json.NCJson
 

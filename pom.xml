@@ -74,7 +74,7 @@
         <extjwnl.ver>2.0.0</extjwnl.ver>
         <extjwnl.data.wn31.ver>1.2</extjwnl.data.wn31.ver>
         <maven.jar.plugin.ver>3.0.0</maven.jar.plugin.ver>
-        <maven.compiler.plugin.ver>3.6.1</maven.compiler.plugin.ver>
+        <maven.compiler.plugin.ver>3.8.0</maven.compiler.plugin.ver>
         <maven.enforcer.plugin.ver>1.4.1</maven.enforcer.plugin.ver>
         <maven.surefire.plugin.ver>2.19.1</maven.surefire.plugin.ver>
         <stringmetric.ver>0.27.4</stringmetric.ver>
@@ -84,8 +84,7 @@
         <apache.httpcomponents.ver>4.5.4</apache.httpcomponents.ver>
         <apache.opennlp.ver>1.9.0</apache.opennlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
-        <maven.dependency.plugin.ver>3.0.1</maven.dependency.plugin.ver>
-        <maven.shade.plugin.ver>3.1.0</maven.shade.plugin.ver>
+        <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
 
@@ -120,8 +119,17 @@
         </license>
     </licenses>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.ver}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- Ensure that Ignite Spring-based configuration file have proper access to Ignite classes. -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
@@ -198,7 +206,7 @@
             <!-- Ignite contains 13 version but it contains 12. -->
             <exclusions>
                 <exclusion>
-                    <groupId>org.jetbrains</groupId>
+                    <groupId>com.intellij</groupId>
                     <artifactId>annotations</artifactId>
                 </exclusion>
             </exclusions>
@@ -290,16 +298,6 @@
             <version>${junit.ver}</version>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.ver}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
@@ -518,6 +516,7 @@
                                 ${project.build.directory}/${project.name}-${project.version}-all-dependencies.jar
                             </outputFile>
                             <transformers>
+                                <!--reference.conf - akka configuration file.-->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>reference.conf</resource>
                                 </transformer>
@@ -547,6 +546,7 @@
                         </goals>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
                             <outputDirectory>libs</outputDirectory>
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>

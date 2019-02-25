@@ -47,5 +47,8 @@
         <Logger name="com.mchange" level="WARN" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
+        <Logger name="org.apache.ignite" level="WARN" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+        </Logger>
     </Loggers>
 </Configuration>
