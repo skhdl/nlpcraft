@@ -172,8 +172,6 @@ public class NCModelBuilder {
 
     /**
      * Creates new model builder and loads model definition from JSON file.
-     * Look at {@code model_template.json} file in the examples package for
-     * the JSON model template.
      * 
      * @param filePath JSON file path to load from.
      * @return New model builder.
@@ -189,8 +187,6 @@ public class NCModelBuilder {
     
     /**
      * Creates new model builder and loads JSON model definition from input stream.
-     * Look at {@code model_template.json} file in the examples package for
-     * the JSON model template.
      *
      * @param in Input stream to load JSON model from.
      * @return New model builder.
@@ -206,8 +202,6 @@ public class NCModelBuilder {
 
     /**
      * Creates new model builder and loads JSON model definition from given JSON string.
-     * Look at {@code model_template.json} file in the examples package for
-     * the JSON model template.
      * 
      * @param jsonStr JSON string to load model from.
      * @return New model builder.
