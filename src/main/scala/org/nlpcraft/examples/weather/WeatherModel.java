@@ -320,8 +320,6 @@ public class WeatherModel extends NCModelProviderAdapter {
      * Initializes model provider.
      */
     public WeatherModel() {
-        String modelPath = "src/main/scala/org/nlpcraft/examples/weather/weather_model.json";
-
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {
             throw new NCRejection("Weather request is ambiguous.");
@@ -332,10 +330,13 @@ public class WeatherModel extends NCModelProviderAdapter {
         solver.addIntent(mkIntent("fcast|date?|city?", "wt:fcast"), this::onForecastMatch);
         solver.addIntent(mkIntent("curr|date?|city?", "wt:curr"), this::onCurrentMatch);
 
-        setup(NCModelBuilder
-            .newJsonModel(modelPath)
-            .setQueryFunction(solver::solve)
-            .build()
+        setup(NCModelBuilder.
+            newJsonModel(WeatherModel.class.
+                getClassLoader().
+                getResourceAsStream("org/nlpcraft/examples/weather/weather_model.json")
+            ).
+            setQueryFunction(solver::solve).
+            build()
         );
     }
 }
