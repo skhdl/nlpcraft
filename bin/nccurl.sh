@@ -36,7 +36,12 @@
 # - 1st parameter is REST URL unique suffix (i.e. user/signin)
 # - 2nd parameter is JSON payload
 #
-# Example usage (signin):
-#   $nccurl user/signin '{"email": "admin@admin.com", "passwd": "admin"}'
+# Example usage:
+#   $./nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}'
+#   $./nccurl.sh ask '{"acsTok": "OgJanjDzk", "txt": "Hi!", "mdlId": "nlpcraft.helloworld.ex"}'
+#   $./nccurl.sh check '{"acsTok": "OgJanjDzk"}'
+#
+# For pretty JSON output pipe curl to 'python -m json.tool':
+#   $./nccurl.sh check '{"acsTok": "OgJanjDzk"}' | python -m json.tool
 
 curl -d "$2" -H 'Content-Type: application/json' http://localhost:8081/api/v1/$1

@@ -258,7 +258,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
             post {
                 /**/path(API / "ask") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         txt: String,
                         dsId: Option[Long],
                         mdlId: Option[String],
@@ -273,14 +273,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("txt", req.txt, 1024)
                         checkLengthOpt("mdlId", req.mdlId, 32)
 
                         if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
                             throw XorFields("dsId", "mdlId")
 
-                        val userId = authenticate(req.accessToken).id
+                        val userId = authenticate(req.acsTok).id
 
                         optionalHeaderValueByName("User-Agent") { userAgent ⇒
                             extractClientIP { remoteAddr ⇒
@@ -320,7 +320,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "cancel") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         srvReqIds: Set[String]
                     )
                     case class Res(
@@ -331,9 +331,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        val initiatorUsr = authenticate(req.accessToken)
+                        val initiatorUsr = authenticate(req.acsTok)
 
                         if (
                             !initiatorUsr.isAdmin &&
@@ -350,7 +350,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "check") {
                     case class Req(
-                        accessToken: String
+                        acsTok: String
                     )
                     case class QueryState(
                         srvReqId: String,
@@ -375,9 +375,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        val userId = authenticate(req.accessToken).id
+                        val userId = authenticate(req.acsTok).id
 
                         val states =
                             NCQueryManager.check(userId).map(p ⇒
@@ -403,7 +403,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "clear" / "conversation") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         dsId: Long
                     )
                     case class Res(
@@ -414,9 +414,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        val userId = authenticate(req.accessToken).id
+                        val userId = authenticate(req.acsTok).id
 
                         NCProbeManager.clearConversation(userId, req.dsId)
         
@@ -428,7 +428,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "user" / "add") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        acsTok: String,
                         
                         // New user.
                         email: String,
@@ -447,14 +447,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("email", req.email, 64)
                         checkLength("passwd", req.passwd, 64)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
                         checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
                         
                         val id = NCUserManager.addUser(
                             req.email,
@@ -473,7 +473,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "user" / "passwd" / "reset") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        acsTok: String,
                         userId: Option[Long],
                         newPasswd: String
                     )
@@ -485,10 +485,10 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("newPasswd", req.newPasswd, 64)
 
-                        val initiatorUsr = authenticate(req.accessToken)
+                        val initiatorUsr = authenticate(req.acsTok)
                         val usrId = getUserId(initiatorUsr, req.userId)
 
                         NCUserManager.resetPassword(
@@ -503,7 +503,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "user" / "delete") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         id: Option[Long]
                     )
                     case class Res(
@@ -514,9 +514,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        val initiatorUsr = authenticate(req.accessToken)
+                        val initiatorUsr = authenticate(req.acsTok)
                         val usrId = getUserId(initiatorUsr, req.id)
     
                         NCUserManager.deleteUser(usrId)
@@ -529,7 +529,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "user" / "update") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        acsTok: String,
         
                         // Update user.
                         id: Option[Long],
@@ -546,12 +546,12 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("firstName", req.firstName, 64)
                         checkLength("lastName", req.lastName, 64)
                         checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
 
-                        val initiatorUsr = authenticate(req.accessToken)
+                        val initiatorUsr = authenticate(req.acsTok)
                         val usrId = getUserId(initiatorUsr, req.id)
 
                         NCUserManager.updateUser(
@@ -606,7 +606,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "user" / "signout") {
                     case class Req(
-                        accessToken: String
+                        acsTok: String
                     )
                     case class Res(
                         status: String
@@ -616,11 +616,11 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        authenticate(req.accessToken)
+                        authenticate(req.acsTok)
     
-                        NCUserManager.signout(req.accessToken)
+                        NCUserManager.signout(req.acsTok)
                         
                         complete {
                             Res(API_OK)
@@ -634,7 +634,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     )
                     case class Res(
                         status: String,
-                        accessToken: String
+                        acsTok: String
                     )
 
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
@@ -660,7 +660,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "user" / "all") {
                     case class Req(
                         // Caller.
-                        accessToken: String
+                        acsTok: String
                     )
                     case class ResUser(
                         id: Long,
@@ -681,9 +681,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
         
                         val usrLst = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
                             mdo.id,
@@ -702,7 +702,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "user" / "endpoint" / "register") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         endpoint: String
                     )
                     case class Res(
@@ -713,13 +713,13 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("endpoint", req.endpoint, 2083)
 
                         if (!urlVal.isValid(req.endpoint))
                             throw InvalidField(req.endpoint)
 
-                        val usrId = authenticate(req.accessToken).id
+                        val usrId = authenticate(req.acsTok).id
 
                         NCUserManager.registerEndpoint(usrId, req.endpoint)
 
@@ -730,7 +730,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "user" / "endpoint" / "remove") {
                     case class Req(
-                        accessToken: String
+                        acsTok: String
                     )
                     case class Res(
                         status: String
@@ -740,9 +740,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        val usrId = authenticate(req.accessToken).id
+                        val usrId = authenticate(req.acsTok).id
 
                         NCUserManager.removeEndpoint(usrId)
 
@@ -754,7 +754,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "ds" / "add") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        acsTok: String,
         
                         // Data source.
                         name: String,
@@ -773,7 +773,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
                         checkLength("mdlId", req.mdlId, 32)
@@ -781,7 +781,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         checkLength("mdlVer", req.mdlVer, 16)
                         checkLengthOpt("mdlCfg", req.mdlCfg, 512000)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
         
                         val id = NCDsManager.addDataSource(
                             req.name,
@@ -800,7 +800,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "ds" / "update") {
                     case class Req(
                         // Caller.
-                        accessToken: String,
+                        acsTok: String,
         
                         // Update data source.
                         id: Long,
@@ -815,9 +815,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
 
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
                         checkLength("name", req.name, 128)
                         checkLength("shortDesc", req.shortDesc, 128)
         
@@ -835,7 +835,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 /**/path(API / "ds" / "all") {
                     case class Req(
                         // Caller.
-                        accessToken: String
+                        acsTok: String
                     )
                     case class ResDs(
                         id: Long,
@@ -856,9 +856,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
         
                         val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
                             mdo.id,
@@ -877,7 +877,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "ds" / "delete") {
                     case class Req(
-                        accessToken: String,
+                        acsTok: String,
                         id: Long
                     )
                     case class Res(
@@ -888,9 +888,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
     
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
         
                         NCDsManager.deleteDataSource(req.id)
         
@@ -901,7 +901,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 } ~
                 /**/path(API / "probe" / "all") {
                     case class Req(
-                        accessToken: String
+                        acsTok: String
                     )
                     case class Model(
                         id: String,
@@ -940,9 +940,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
 
                     entity(as[Req]) { req ⇒
-                        checkLength("accessToken", req.accessToken, 256)
+                        checkLength("acsTok", req.acsTok, 256)
 
-                        authenticateAsAdmin(req.accessToken)
+                        authenticateAsAdmin(req.acsTok)
     
                         val probeLst = NCProbeManager.getAllProbes.map(mdo ⇒ Probe(
                             mdo.probeToken,

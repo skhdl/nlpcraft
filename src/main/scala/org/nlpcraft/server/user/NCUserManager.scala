@@ -153,7 +153,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                     // Notification.
                                     NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
-                                        "accessToken" → ses.acsToken,
+                                        "acsTok" → ses.acsToken,
                                         "userId" → ses.userId,
                                         "signinMs" → ses.signinMs,
                                         "lastAccessMs" → ses.lastAccessMs
@@ -256,7 +256,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                         // Notification.
                         NCNotificationManager.addEvent("NC_USER_SIGNED_OUT",
-                            "accessToken" → ses.acsToken,
+                            "acsTok" → ses.acsToken,
                             "userId" → ses.userId,
                             "signinMs" → ses.signinMs,
                             "lastAccessMs" → ses.lastAccessMs

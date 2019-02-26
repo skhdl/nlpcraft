@@ -53,11 +53,11 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "dsId"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -106,10 +106,10 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken"
+                            "acsTok"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -236,11 +236,11 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "srvReqIds"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -291,11 +291,11 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "txt"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -378,10 +378,10 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken"
+                                "acsTok"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "maxLength": 256,
                                     "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
@@ -486,13 +486,13 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "firstName",
                             "lastName",
                             "isAdmin"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -561,10 +561,10 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken"
+                                "acsTok"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "maxLength": 256,
                                     "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
@@ -614,7 +614,7 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "email",
                             "passwd",
                             "firstName",
@@ -622,7 +622,7 @@
                             "isAdmin"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -712,11 +712,11 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "endpoint"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -777,10 +777,10 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken"
+                            "acsTok"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256
@@ -860,7 +860,7 @@
                             "type": "object",
                             "required": [
                                 "status",
-                                "accessToken"
+                                "acsTok"
                             ],
                             "properties": {
                                 "status": {
@@ -870,7 +870,7 @@
                                         "API_OK"
                                     ]
                                 },
-                                "accessToken": {
+                                "acsTok": {
                                     "type": "string",
                                     "description": "Temporary (session) access token that should be used for further REST calls"
                                 }
@@ -906,10 +906,10 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken"
+                            "acsTok"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "maxLength": 256,
                                 "description": "Previously obtained access token to release.",
                                 "type": "string"
@@ -1023,11 +1023,11 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "newPasswd"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "maxLength": 256,
                                 "description": "Previously obtained access token to release.",
                                 "type": "string"
@@ -1082,10 +1082,10 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken"
+                                "acsTok"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "maxLength": 256,
                                     "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
@@ -1272,10 +1272,10 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken"
+                                "acsTok"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "maxLength": 256,
                                     "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
@@ -1380,11 +1380,11 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken",
+                                "acsTok",
                                 "id"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "maxLength": 256,
                                     "description": "Access token obtain via '/api/signin' call",
                                     "type": "string"
@@ -1435,13 +1435,13 @@
                         "schema": {
                             "type": "object",
                             "required": [
-                                "accessToken",
+                                "acsTok",
                                 "id",
                                 "name",
                                 "shortDesc"
                             ],
                             "properties": {
-                                "accessToken": {
+                                "acsTok": {
                                     "type": "string",
                                     "description": "Access token obtain via '/api/signin' call",
                                     "maxLength": 256
@@ -1501,7 +1501,7 @@
                     "schema": {
                         "type": "object",
                         "required": [
-                            "accessToken",
+                            "acsTok",
                             "name",
                             "shortDesc",
                             "mdlId",
@@ -1509,7 +1509,7 @@
                             "mdlVer"
                         ],
                         "properties": {
-                            "accessToken": {
+                            "acsTok": {
                                 "type": "string",
                                 "description": "Access token obtain via '/api/signin' call",
                                 "maxLength": 256

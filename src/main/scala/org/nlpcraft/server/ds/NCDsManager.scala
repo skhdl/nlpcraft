@@ -35,6 +35,7 @@ import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
@@ -152,17 +153,17 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     
         val newDsId = dsSeq.incrementAndGet()
         val name = "auto-delete-temp-ds"
-    
+        
         catching(wrapIE) {
             dsCache +=
                 newDsId →
                 NCDataSourceMdo(
                     newDsId,
                     s"$name",
-                    s"$name-description",
-                    s"$name-model-id",
-                    s"$name-model-name",
-                    s"$name-model-version",
+                    s"description",
+                    s"$mdlId",
+                    s"model-name",
+                    s"${NCVersion.getCurrent.version}",
                     None,
                     true
                 )

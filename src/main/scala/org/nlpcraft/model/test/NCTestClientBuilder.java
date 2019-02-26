@@ -786,7 +786,7 @@ public class NCTestClientBuilder {
             checkStatus(gson.fromJson(
                 post(
                     "clear/conversation",
-                    Pair.of("accessToken", acsTok),
+                    Pair.of("acsTok", acsTok),
                     Pair.of("dsId", dsId)
                 ),
                 TYPE_RESP)
@@ -806,7 +806,7 @@ public class NCTestClientBuilder {
                 checkAndExtract(
                     post(
                         "ds/add",
-                        Pair.of("accessToken", acsTok),
+                        Pair.of("acsTok", acsTok),
                         Pair.of("name", "test"),
                         Pair.of("shortDesc", "Test data source"),
                         Pair.of("mdlId", mdlId),
@@ -834,7 +834,7 @@ public class NCTestClientBuilder {
                 gson.fromJson(
                     post(
                         "ds/delete",
-                        Pair.of("accessToken", acsTok),
+                        Pair.of("acsTok", acsTok),
                         Pair.of("id", dsId)
                     ),
                     TYPE_RESP
@@ -853,7 +853,7 @@ public class NCTestClientBuilder {
                 gson.fromJson(
                     post(
                         "user/endpoint/register",
-                        Pair.of("accessToken", acsTok),
+                        Pair.of("acsTok", acsTok),
                         Pair.of("endpoint", endpoint)
                     ),
                     TYPE_RESP
@@ -872,7 +872,7 @@ public class NCTestClientBuilder {
                 gson.fromJson(
                     post(
                         "user/endpoint/remove",
-                        Pair.of("accessToken", acsTok)
+                        Pair.of("acsTok", acsTok)
                     ),
                     TYPE_RESP
                 )
@@ -893,7 +893,7 @@ public class NCTestClientBuilder {
                     Pair.of("email", email),
                     Pair.of("passwd", pswd)
                 ),
-                "accessToken",
+                "acsTok",
                 String.class
             );
         }
@@ -909,7 +909,7 @@ public class NCTestClientBuilder {
             Map<String, Object> m = gson.fromJson(
                 post(
                     "ds/all",
-                    Pair.of("accessToken", acsTok)
+                    Pair.of("acsTok", acsTok)
                 ),
                 TYPE_RESP
             );
@@ -931,7 +931,7 @@ public class NCTestClientBuilder {
             return checkAndExtract(
                 post(
                     "ask",
-                    Pair.of("accessToken", acsTok),
+                    Pair.of("acsTok", acsTok),
                     Pair.of("txt", txt),
                     Pair.of("dsId", dsId),
                     Pair.of("isTest", true)
@@ -951,7 +951,7 @@ public class NCTestClientBuilder {
             checkStatus(gson.fromJson(
                 post(
                     "user/signout",
-                    Pair.of("accessToken", acsTok)
+                    Pair.of("acsTok", acsTok)
                 ),
                 TYPE_RESP)
             );

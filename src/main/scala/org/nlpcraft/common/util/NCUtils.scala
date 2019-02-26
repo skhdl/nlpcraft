@@ -70,19 +70,6 @@ object NCUtils extends NCDebug with LazyLogging {
     private final val DEC_FMT0 = mkDecimalFormat("#0")
     private final val DEC_FMT1 = mkDecimalFormat("#0.0")
     private final val DEC_FMT2 = mkDecimalFormat("#0.00")
-    
-    // Regex for private JSON information hiding.
-    private final val JS_VAL = "[ ]?\"[^\"]*\""
-    private final val PASSWD_REGEX = s""""passwd":$JS_VAL""".r
-    private final val PASSWORD_REGEX = s""""password":$JS_VAL""".r
-    private final val OLD_PASSWD_REGEX = s""""oldPassword":$JS_VAL""".r
-    private final val NEW_PASSWD_REGEX = s""""newPassword":$JS_VAL""".r
-    private final val LOGIN_TKN_REGEX = s""""loginTkn":$JS_VAL""".r
-    
-    // Regex for private URI information hiding.
-    private final val GET_VAL = """[^&,]*"""
-    private final val PROBE_TKN_REGEX = s"probeToken=$GET_VAL".r
-    private final val ACCESS_TKN_REGEX = s"accessToken=$GET_VAL".r
 
     private final lazy val DEC_FMT_SYMS = new DecimalFormatSymbols(Locale.US)
 
@@ -265,49 +252,6 @@ object NCUtils extends NCDebug with LazyLogging {
         catch {
             case _: InterruptedException ⇒ ()
         }
-    
-    /**
-      * Hides private information from the given JSON string so that it can be
-      * safely printed in log file, etc.
-      *
-      * @param json JSON string to hide private information in.
-      * @return Hidden string.
-      */
-    def hideJsonPrivates(json: String): String = {
-        if (!IS_DEBUG) {
-            var s = PASSWD_REGEX.replaceAllIn(json, "\"passwd\": \"********\"")
-            s = OLD_PASSWD_REGEX.replaceAllIn(s, "\"oldPassword\": \"********\"")
-            s = NEW_PASSWD_REGEX.replaceAllIn(s, "\"newPassword\": \"********\"")
-            s = PASSWORD_REGEX.replaceAllIn(s, "\"password\": \"********\"")
-            s = LOGIN_TKN_REGEX.replaceAllIn(s, "\"loginTkn\": \"********\"")
-            
-            // TODO: add any other private information hiding here.
-            
-            s
-        }
-        else
-            json
-    }
-    
-    /**
-      * Hides private information from the given URI string so that it can be
-      * safely printed in log file, etc.
-      *
-      * @param uri URI string to hide private information in.
-      * @return Hidden string.
-      */
-    def hideUriPrivates(uri: String): String = {
-        if (!IS_DEBUG) {
-            var s = PROBE_TKN_REGEX.replaceAllIn(uri, "probeToken=********")
-            s = ACCESS_TKN_REGEX.replaceAllIn(s, "accessToken=********")
-            
-            // TODO: add any other private information hiding here.
-            
-            s
-        }
-        else
-            uri
-    }
 
     /**
       * Converts object's package name into path.
