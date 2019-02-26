@@ -320,7 +320,7 @@ public class WeatherModel extends NCModelProviderAdapter {
      * Initializes model provider.
      */
     public WeatherModel() {
-        String modelPath = "src/main/scala/org/nlpcraft/examples/weather2/weather_model.json";
+        String modelPath = "src/main/scala/org/nlpcraft/examples/weather/weather_model.json";
 
         // If no intent is matched respond with some helpful message...
         NCIntentSolver solver = new NCIntentSolver("solver", () -> {

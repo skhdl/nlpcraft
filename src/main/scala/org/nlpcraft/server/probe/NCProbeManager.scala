@@ -464,8 +464,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     "Probe ID",
                     "OS",
                     "Timezone",
-                    "API ver.",
-                    "Uptime",
+                    "Host",
                     "Models"
                 )
             
@@ -703,15 +702,14 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param hol Probe holder to add.
       */
     private def addProbeToTable(tbl: NCAsciiTable, hol: ProbeHolder): NCAsciiTable = {
-        val delta = (U.nowUtcMs() / 1000) - (hol.timestamp / 1000)
+        val probe = hol.probe
         
         tbl += (
-            hol.probe.probeId,
-            s"${hol.probe.osName} ver. ${hol.probe.osVersion}",
-            s"${hol.probe.tmzAbbr}, ${hol.probe.tmzId}",
-            s"${hol.probe.probeApiVersion}",
-            s"${delta / 3600}:${(delta % 3600) / 60}:${delta % 60}",
-            s"${hol.probe.models}"
+            probe.probeId,
+            s"${probe.osName} ver. ${probe.osVersion}",
+            s"${probe.tmzAbbr}, ${probe.tmzId}",
+            s"${probe.hostName} (${probe.hostAddr})",
+            probe.models.map(m ⇒ s"ID: ${m.id}, ver.${m.version}").toSeq
         )
         
         tbl
