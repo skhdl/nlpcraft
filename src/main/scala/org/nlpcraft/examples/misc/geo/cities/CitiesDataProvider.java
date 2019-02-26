@@ -34,37 +34,47 @@ package org.nlpcraft.examples.misc.geo.cities;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nlpcraft.common.NCException;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * City-timezone map provider.
  */
 public class CitiesDataProvider {
-    private static final String DATA_FILE = "cities_timezones.txt";
-
     /**
      * Creates and returns cities timezone map for all cities with a population > 15000 or capitals.
      *
      * @return Cities timezone map.
      */
     public static Map<City, CityData> get() throws NCException {
-        URL url = CitiesDataProvider.class.getClassLoader().getResource(DATA_FILE);
-
-        if (url == null)
-            throw new IllegalArgumentException("File not found: " + DATA_FILE);
-
-        System.out.println();
-
         try {
-            return Files.
-                lines(Paths.get(new File(url.getFile()).getAbsolutePath())).
+            List<String> lines = new ArrayList<>();
+            
+            try (BufferedReader reader =
+                 new BufferedReader(new InputStreamReader(
+                     Objects.requireNonNull(
+                        CitiesDataProvider.class.
+                        getClassLoader().
+                        getResourceAsStream("org/nlpcraft/examples/misc/geo/cities/cities_timezones.txt"))
+                ))) {
+                String line = reader.readLine();
+                
+                while (line != null) {
+                    lines.add(line);
+                    
+                    line = reader.readLine();
+                }
+            }
+            
+            return
+                lines.stream().
                 filter(p -> !p.startsWith("#")).
                 map(String::trim).
                 filter(p -> !p.isEmpty()).
@@ -78,7 +88,7 @@ public class CitiesDataProvider {
                 collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         }
         catch (IOException e) {
-            throw new NCException("Failed to read data file: " + DATA_FILE, e);
+            throw new NCException("Failed to read data file.", e);
         }
     }
 }

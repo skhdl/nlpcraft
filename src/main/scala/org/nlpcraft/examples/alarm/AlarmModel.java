@@ -35,12 +35,12 @@ import org.nlpcraft.model.NCModelProviderAdapter;
 import org.nlpcraft.model.NCQueryResult;
 import org.nlpcraft.model.NCRejection;
 import org.nlpcraft.model.NCToken;
+import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.intent.NCIntentSolver;
 import org.nlpcraft.model.intent.NCIntentSolver.AND;
 import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
 import org.nlpcraft.model.intent.NCIntentSolver.TERM;
 import org.nlpcraft.model.intent.NCIntentSolverContext;
-import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.utils.NCTokenUtils;
 
 import java.time.LocalDateTime;
@@ -92,8 +92,9 @@ public class AlarmModel extends NCModelProviderAdapter {
         );
     
         setup(NCModelBuilder.newJsonModel(
-            "src/main/scala/org/nlpcraft/examples/timer/alarm_model.json").
-            setQueryFunction(solver::solve).build());
+            AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/timer/alarm_model.json")).
+            setQueryFunction(solver::solve).build()
+        );
     }
     
     /**
