@@ -141,7 +141,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
         def err(msg: String) = throw new HandshakeError(msg)
     
         resp.getType match {
-            case "P2S_PROBE_OK" ⇒ logger.info("Downlink handshake OK.") // Bingo!
+            case "P2S_PROBE_OK" ⇒ logger.trace("Downlink handshake OK.") // Bingo!
             case "P2S_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
             case _ ⇒ err(s"Unexpected server message: ${resp.getType}")
         }
@@ -216,10 +216,9 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
     
                 resp.getType match {
                     case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err("Duplicate probes ID detected. Each probe has to have a unique ID.")
-                    case "S2P_PROBE_DUP_MODEL" ⇒ err(s"Attempt to deploy model with duplicate ID: ${resp.data[String]("PROBE_MODEL_ID")}")
                     case "S2P_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
                     case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Probe version is unsupported: ${ver.version}")
-                    case "S2P_PROBE_OK" ⇒ logger.info("Uplink handshake OK.") // Bingo!
+                    case "S2P_PROBE_OK" ⇒ logger.trace("Uplink handshake OK.") // Bingo!
                     case _ ⇒ err(s"Unknown server message: ${resp.getType}")
                 }
     

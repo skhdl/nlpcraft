@@ -41,13 +41,13 @@
         <Root level="INFO">
             <AppenderRef ref="CONSOLE"/>
         </Root>
-        <Logger name="org.nlpcraft" level="TRACE" additivity="false">
+        <Logger name="org.nlpcraft" level="INFO" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
         <Logger name="com.mchange" level="WARN" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
-        <Logger name="org.apache.ignite" level="WARN" additivity="false">
+        <Logger name="org.apache.ignite" level="ERROR" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
     </Loggers>

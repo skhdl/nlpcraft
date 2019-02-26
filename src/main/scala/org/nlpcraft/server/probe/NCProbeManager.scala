@@ -457,8 +457,19 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         if (holder != null)
             probes.synchronized {
                 probes += probeKey → holder
+    
+                val tbl = NCAsciiTable()
+    
+                tbl #= (
+                    "Probe ID",
+                    "OS",
+                    "Timezone",
+                    "API ver.",
+                    "Uptime",
+                    "Models"
+                )
             
-                addProbeToTable(mkProbeTable, holder).info(logger, Some("New probe registered:"))
+                addProbeToTable(tbl, holder).info(logger, Some("New probe registered:"))
             
                 // Bingo!
                 respond("P2S_PROBE_OK")
@@ -549,55 +560,44 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                             )
                         }.toSet
     
-                probes.synchronized {
-                    // Check that this probe's models haven't been already deployed
-                    // by another probe - in which case reject this probe.
-                    // NOTE: model can be deployed only once by a probe.
-                    models.find(mdl ⇒ probes.values.flatMap(_.probe.models).exists(_ == mdl))
-                } match {
-                    case Some(m) ⇒
-                        // Send direct message here.
-                        respond("S2P_PROBE_DUP_MODEL", "PROBE_MODEL_ID" → m.id)
-        
-                    case None ⇒
-                        val probeApiDate = hsMsg.data[java.time.LocalDate]("PROBE_API_DATE")
-                        
-                        val holder = ProbeHolder(
-                            probeKey,
-                            NCProbeMdo(
-                                probeToken = hsMsg.data[String]("PROBE_TOKEN"),
-                                probeId = hsMsg.data[String]("PROBE_ID"),
-                                probeGuid = probeGuid,
-                                probeApiVersion = probeApiVer,
-                                probeApiDate = probeApiDate,
-                                osVersion = hsMsg.data[String]("PROBE_OS_VER"),
-                                osName = hsMsg.data[String]("PROBE_OS_NAME"),
-                                osArch = hsMsg.data[String]("PROBE_OS_ARCH"),
-                                startTstamp = new java.sql.Timestamp(hsMsg.data[Long]("PROBE_START_TSTAMP")),
-                                tmzId = hsMsg.data[String]("PROBE_TMZ_ID"),
-                                tmzAbbr = hsMsg.data[String]("PROBE_TMZ_ABBR"),
-                                tmzName = hsMsg.data[String]("PROBE_TMZ_NAME"),
-                                userName = hsMsg.data[String]("PROBE_SYS_USERNAME"),
-                                javaVersion = hsMsg.data[String]("PROBE_JAVA_VER"),
-                                javaVendor = hsMsg.data[String]("PROBE_JAVA_VENDOR"),
-                                hostName = hsMsg.data[String]("PROBE_HOST_NAME"),
-                                hostAddr = hsMsg.data[String]("PROBE_HOST_ADDR"),
-                                macAddr = hsMsg.dataOpt[String]("PROBE_HW_ADDR").getOrElse(""),
-                                models = models
-                            ),
-                            null, // No downlink socket yet.
-                            sock,
-                            null, // No downlink thread yet.
-                            cryptoKey
-                        )
-            
-                        pending.synchronized {
-                            pending += probeKey → holder
-                        }
-            
-                        // Bingo!
-                        respond("S2P_PROBE_OK")
+
+                val probeApiDate = hsMsg.data[java.time.LocalDate]("PROBE_API_DATE")
+                
+                val holder = ProbeHolder(
+                    probeKey,
+                    NCProbeMdo(
+                        probeToken = hsMsg.data[String]("PROBE_TOKEN"),
+                        probeId = hsMsg.data[String]("PROBE_ID"),
+                        probeGuid = probeGuid,
+                        probeApiVersion = probeApiVer,
+                        probeApiDate = probeApiDate,
+                        osVersion = hsMsg.data[String]("PROBE_OS_VER"),
+                        osName = hsMsg.data[String]("PROBE_OS_NAME"),
+                        osArch = hsMsg.data[String]("PROBE_OS_ARCH"),
+                        startTstamp = new java.sql.Timestamp(hsMsg.data[Long]("PROBE_START_TSTAMP")),
+                        tmzId = hsMsg.data[String]("PROBE_TMZ_ID"),
+                        tmzAbbr = hsMsg.data[String]("PROBE_TMZ_ABBR"),
+                        tmzName = hsMsg.data[String]("PROBE_TMZ_NAME"),
+                        userName = hsMsg.data[String]("PROBE_SYS_USERNAME"),
+                        javaVersion = hsMsg.data[String]("PROBE_JAVA_VER"),
+                        javaVendor = hsMsg.data[String]("PROBE_JAVA_VENDOR"),
+                        hostName = hsMsg.data[String]("PROBE_HOST_NAME"),
+                        hostAddr = hsMsg.data[String]("PROBE_HOST_ADDR"),
+                        macAddr = hsMsg.dataOpt[String]("PROBE_HW_ADDR").getOrElse(""),
+                        models = models
+                    ),
+                    null, // No downlink socket yet.
+                    sock,
+                    null, // No downlink thread yet.
+                    cryptoKey
+                )
+    
+                pending.synchronized {
+                    pending += probeKey → holder
                 }
+    
+                // Bingo!
+                respond("S2P_PROBE_OK")
             }
         }
     }
@@ -681,28 +681,20 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param modelId
       * @return
       */
-    private def getProbeForModelId(modelId: String): Option[ProbeHolder] =
-        probes.synchronized {
-            probes.values.find(_.probe.models.exists(_.id == modelId))
+    private def getProbeForModelId(modelId: String): Option[ProbeHolder] = {
+        val candidates = probes.synchronized {
+            probes.values.filter(_.probe.models.exists(_.id == modelId)).toSeq
         }
-    
-    /**
-      *
-      * @return
-      */
-    private def mkProbeTable: NCAsciiTable =  {
-        val tbl = NCAsciiTable()
         
-        tbl #= (
-            "Probe ID",
-            "OS",
-            "Timezone",
-            "API ver.",
-            "Uptime",
-            "Models"
-        )
+        val sz = candidates.size
         
-        tbl
+        if (sz == 1)
+            Some(candidates.head)
+        else if (sz == 0)
+            None
+        else
+            // Load balance using random indexing.
+            Some(candidates(scala.util.Random.nextInt(sz)))
     }
     
     /**
@@ -719,7 +711,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             s"${hol.probe.tmzAbbr}, ${hol.probe.tmzId}",
             s"${hol.probe.probeApiVersion}",
             s"${delta / 3600}:${(delta % 3600) / 60}:${delta % 60}",
-            s"${hol.probe.models.size}"
+            s"${hol.probe.models}"
         )
         
         tbl

@@ -47,7 +47,7 @@ import org.nlpcraft.server.mdo._
   */
 object NCDbManager extends NCLifecycle("Database manager") {
     // Relative database schema path.
-    private final val SCHEMA_PATH = "sql/schema.sql"
+    private final val SCHEMA_PATH = "postgres/schema.sql"
     
     /**
       * Starts manager.
