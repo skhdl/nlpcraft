@@ -35,28 +35,42 @@ if [[ $1 = "" ]] ; then
     exit -1
 fi
 
-dir=nlpcraft
 zipDir=zips
-zipPath=../${zipDir}
-tmpDirPath=${zipPath}/${dir}
-zipFilePath=${zipPath}/${dir}-$1.zip
-
-rm -R ${zipPath} 2> /dev/null
-
-mkdir ${zipPath}
-mkdir ${tmpDirPath}
-
-rsync -avzq ../ ${tmpDirPath} --exclude '**/.DS_Store' --exclude .github --exclude .git --exclude .idea --exclude target --exclude ${zipDir}
+tmpDir=nlpcraft
+zipFile=nlpcraft-$1.zip
 
 curDir=$(pwd)
-cd ${zipPath}
-zip -rq ${zipFilePath} ${dir} 2> /dev/null
-cd ${curDir}
-rm -R ${tmpDirPath} 2> /dev/null
 
-shasum -a 1 ${zipFilePath} > ${zipFilePath}.sha1
-shasum -a 256 ${zipFilePath} > ${zipFilePath}.sha256
-md5 ${zipFilePath} > ${zipFilePath}.md5
-gpg --detach-sign ${zipFilePath}
+cd ../
+
+rm -R ${zipDir} 2> /dev/null
+
+mkdir ${zipDir}
+mkdir ${zipDir}/${tmpDir}
+
+rsync -avzq bin ${zipDir}/${tmpDir} --exclude '**/.DS_Store' --exclude bin/prepare.sh
+rsync -avzq openapi ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
+rsync -avzq postgres ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
+rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
+cp assembly.xml ${zipDir}/${tmpDir}
+cp pom.xml ${zipDir}/${tmpDir}
+cp README.md ${zipDir}/${tmpDir}
+cp LICENSE ${zipDir}/${tmpDir}
+cp CODE_OF_CONDUCT.md ${zipDir}/${tmpDir}
+
+mvn clean package
+rsync -avzq target/apidocs/** ${zipDir}/${tmpDir}/javadoc --exclude '**/.DS_Store'
+
+cd ${zipDir}
+zip -rq ${zipFile} ${tmpDir} 2> /dev/null
+
+rm -R ${tmpDir} 2> /dev/null
+
+shasum -a 1 ${zipFile} > ${zipFile}.sha1
+shasum -a 256 ${zipFile} > ${zipFile}.sha256
+md5 ${zipFile} > ${zipFile}.md5
+gpg --detach-sign ${zipFile}
+
+cd ${curDir}
 
 echo "Files prepared in folder: ${zipDir}"
