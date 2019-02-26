@@ -34,8 +34,7 @@ package org.nlpcraft.server.db
 import java.sql.Timestamp
 import java.time.LocalDate
 
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.db.postgres.NCPsql
 import org.nlpcraft.server.db.postgres.NCPsql.Implicits._
@@ -46,17 +45,12 @@ import org.nlpcraft.server.mdo._
   * Note that all functions in this class expect outside `NCPsql.sql()` block.
   */
 object NCDbManager extends NCLifecycle("Database manager") {
-    // Relative database schema path.
-    private final val SCHEMA_PATH = "postgres/schema.sql"
-    
     /**
       * Starts manager.
       */
     @throws[NCE]
     override def start(): NCLifecycle = {
         ensureStopped()
-
-        checkSchema()
 
         super.start()
     }
@@ -68,48 +62,6 @@ object NCDbManager extends NCLifecycle("Database manager") {
         checkStopping()
 
         super.stop()
-    }
-
-    /**
-      * Checks and initializes, if necessary, the database schema.
-      */
-    private def checkSchema(): Unit = {
-        val schemaExists =
-            NCPsql.sql {
-                try {
-                    NCPsql.selectSingle[String]("SELECT NULL FROM base LIMIT 1")
-
-                    true
-                }
-                catch {
-                    case _: NCE ⇒ false
-                }
-            }
-
-        if (!schemaExists)
-            try {
-                NCPsql.sql {
-                    U.readResource(SCHEMA_PATH, "UTF-8").
-                        map(_.trim).
-                        filter(p ⇒ !p.startsWith("--")). // Skip full-line comments.
-                        map(p ⇒ { // Remove partial comments.
-                            val idx = p.indexOf("--")
-
-                            if (idx < 0) p else p.take(idx)
-                        }).
-                        mkString(" ").
-                        split(";"). // Split by SQL statements.
-                        map(_.trim).
-                        foreach(sql ⇒ NCPsql.ddl(sql))
-                }
-                
-                logger.info("DB schema has been created.")
-            }
-            catch {
-                case e: NCE ⇒
-                    throw new NCE(s"Failed to auto-create database schema - " +
-                        s"clear existing tables and create schema manually using '$SCHEMA_PATH' file.", e)
-            }
     }
 
     /**
