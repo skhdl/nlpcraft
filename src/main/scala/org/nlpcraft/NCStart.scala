@@ -31,13 +31,15 @@
 
 package org.nlpcraft
 
+import com.typesafe.scalalogging.LazyLogging
+import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.probe.NCProbe
 import org.nlpcraft.server.NCServer
 
 /**
   * Server or probe command line starter.
   */
-object NCStart extends App {
+object NCStart extends App with LazyLogging {
     /**
       *
       */
@@ -56,18 +58,38 @@ object NCStart extends App {
 
         /**
           *
-          * @param msg
+          * @param msgs
           */
-        def error(msg: String): Unit = {
-            System.err.println(msg)
+        def error(msgs: String*): Unit = {
+            val NL = System getProperty "line.separator"
+            val ver = NCVersion.getCurrent
+    
+            val s = NL +
+                raw"    _   ____      ______           ______   $NL" +
+                raw"   / | / / /___  / ____/________ _/ __/ /_  $NL" +
+                raw"  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/  $NL" +
+                raw" / /|  / / /_/ / /___/ /  / /_/ / __/ /_    $NL" +
+                raw"/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/    $NL" +
+                raw"       /_/                                  $NL$NL" +
+                s"Version: ${ver.version}$NL" +
+                raw"${NCVersion.copyright}$NL"
+    
+            logger.info(s)
+            
+            for (msg ← msgs)
+                logger.error(msg)
+    
+            logger.info("Usage:")
+            logger.info("  Use '-server' argument to start server.")
+            logger.info("  Use '-probe' argument to start probe.")
 
             System.exit(1)
         }
 
         if (idxSrv != 0 && idxPrb != 0)
-            error("ERROR: either '-server' or '-probe' parameter must be set.")
+            error("Either '-server' or '-probe' argument must be set.")
         else if (idxSrv == 0 && idxPrb == 0)
-            error("ERROR: both '-server' and '-probe' parameters cannot be set.")
+            error("Both '-server' and '-probe' arguments cannot be set.")
         else if (idxSrv != 0 && idxPrb == 0)
             NCProbe.main(removeParam(idxPrb))
         else if (idxSrv == 0 && idxPrb != 0)
