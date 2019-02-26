@@ -36,10 +36,8 @@ import java.util.{Timer, TimerTask}
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
-import org.hashids.Hashids
-import org.nlpcraft.common._
-import org.nlpcraft.common.{NCException, NCLifecycle}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
+import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.db.NCDbManager
 import org.nlpcraft.server.db.postgres.NCPsql
