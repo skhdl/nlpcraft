@@ -34,7 +34,7 @@ package org.nlpcraft.server.ignite
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.{IgniteException, Ignition}
 import org.nlpcraft.common._
-
+import java.io.File
 import scala.sys.SystemProperties
 
 /**
@@ -60,7 +60,20 @@ object NCIgniteRunner extends LazyLogging {
         sysProps.put("java.net.preferIPv4Stack", "true")
 
         // Start Ignite node.
-        val ignite = if (cfgPath == null) Ignition.start(U.getStream("ignite.xml")) else Ignition.start(cfgPath)
+        val ignite =
+            if (cfgPath != null)
+                // 1. Higher priority. It is defined.
+                Ignition.start(cfgPath)
+            else {
+                // 2. Tries to find config in the same folder with jar.
+                val cfg = new File("ignite.xml")
+
+                if (cfg.exists() && cfg.isFile)
+                    Ignition.start(cfg.getAbsolutePath)
+                else
+                    // 3. Tries to start with config from jar.
+                    Ignition.start(U.getStream("ignite.xml"))
+            }
 
         try
             body

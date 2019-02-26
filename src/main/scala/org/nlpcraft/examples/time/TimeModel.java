@@ -42,13 +42,13 @@ import org.nlpcraft.model.NCModelProviderAdapter;
 import org.nlpcraft.model.NCQueryResult;
 import org.nlpcraft.model.NCRejection;
 import org.nlpcraft.model.NCToken;
+import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.intent.NCIntentSolver;
 import org.nlpcraft.model.intent.NCIntentSolver.AND;
 import org.nlpcraft.model.intent.NCIntentSolver.CONV_INTENT;
 import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
 import org.nlpcraft.model.intent.NCIntentSolver.TERM;
 import org.nlpcraft.model.intent.NCIntentSolverContext;
-import org.nlpcraft.model.builder.NCModelBuilder;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -192,8 +192,6 @@ public class TimeModel extends NCModelProviderAdapter {
      * @throws NCException If any errors occur.
      */
     public TimeModel() throws NCException {
-        String path = "src/main/scala/org/nlpcraft/examples/time/time_model.json";
-
         NCIntentSolver solver = new NCIntentSolver(
             "time-solver",
             // Custom not-found function with tailored rejection message.
@@ -232,6 +230,12 @@ public class TimeModel extends NCModelProviderAdapter {
         );
 
         // Initialize adapter.
-        setup(NCModelBuilder.newJsonModel(path).setQueryFunction(solver::solve).build());
+        setup(
+            NCModelBuilder.
+                newJsonModel(TimeModel.class.
+                    getClassLoader().
+                    getResourceAsStream("org/nlpcraft/examples/time/time_model.json")
+                ).setQueryFunction(solver::solve).build()
+        );
     }
 }
