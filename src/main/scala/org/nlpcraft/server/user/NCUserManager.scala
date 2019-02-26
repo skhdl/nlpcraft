@@ -70,8 +70,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     // Access token timeout scanner.
     @volatile private var scanner: Timer = _
     
-    private val hashids = new Hashids(NCBlowfishHasher.salt(), 8)
-
     // Session holder.
     private case class SigninSession(
         acsToken: String,
@@ -370,7 +368,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                         entry.getValue.acsToken // Already signed in.
                                     case None ⇒
-                                        val acsTkn = hashids.encode(System.currentTimeMillis())
+                                        val acsTkn = U.gen8ByteId()
                                         val now = U.nowUtcMs()
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, None)

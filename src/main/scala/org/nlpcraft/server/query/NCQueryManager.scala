@@ -111,7 +111,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
         
-        val srvReqId = U.genGuid()
+        val srvReqId = U.gen8ByteId()
     
         catching(wrapIE) {
             // Enlist for tracking.

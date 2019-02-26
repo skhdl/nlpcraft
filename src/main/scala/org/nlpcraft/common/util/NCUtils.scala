@@ -49,8 +49,10 @@ import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
+import org.hashids.Hashids
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCDebug
+import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import resource._
 
 import scala.collection.JavaConverters._
@@ -66,6 +68,8 @@ import scala.util.control.Exception.ignoring
   * Project-wide, global utilities ans miscellaneous functions.
   */
 object NCUtils extends NCDebug with LazyLogging {
+    private val hashids = new Hashids(NCBlowfishHasher.salt(), 8)
+    
     // Various decimal formats.
     private final val DEC_FMT0 = mkDecimalFormat("#0")
     private final val DEC_FMT1 = mkDecimalFormat("#0.0")
@@ -1197,6 +1201,11 @@ object NCUtils extends NCDebug with LazyLogging {
       * Note that this is not compatible with Ignite-generated UUIDs.
       */
     def genGuid(): String = UUID.randomUUID().toString.toUpperCase()
+    
+    /**
+      * Generates 8-bytes (relatively) unique ID good for a short-term usage.
+      */
+    def gen8ByteId(): String = hashids.encode(System.currentTimeMillis())
     
     /**
       * Converts non-empty sequence of '\n' and '\s' into one ' '.

@@ -60,7 +60,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
     private final val PING_TIMEOUT = 5 * 1000
     
     // Internal probe GUID.
-    final val PROBE_GUID = U.genGuid()
+    final val PROBE_GUID = U.gen8ByteId()
     
     // Internal semaphores.
     private val stopSem: AtomicInteger = new AtomicInteger(1)
