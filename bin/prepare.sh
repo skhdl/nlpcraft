@@ -54,9 +54,7 @@ rsync -avzq postgres ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 cp assembly.xml ${zipDir}/${tmpDir}
 cp pom.xml ${zipDir}/${tmpDir}
-cp README.md ${zipDir}/${tmpDir}
 cp LICENSE ${zipDir}/${tmpDir}
-cp CODE_OF_CONDUCT.md ${zipDir}/${tmpDir}
 
 mvn clean package
 rsync -avzq target/apidocs/** ${zipDir}/${tmpDir}/javadoc --exclude '**/.DS_Store'
