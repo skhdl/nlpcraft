@@ -528,7 +528,8 @@ public interface NCToken extends Serializable {
      *     <tr>
      *         <td>NUM_UNIT</td>
      *         <td>
-     *             Optional numeric value unit (e.g. "mm", "cm", "ft").
+     *             Optional numeric value unit (e.g. "mm", "cm", "ft"). See <code>NUM_UNITTYPE</code>
+     *             for specific values of units and unit types.
      *         </td>
      *         <td>{@link String}</td>
      *         <td>Yes</td>
@@ -536,7 +537,181 @@ public interface NCToken extends Serializable {
      *     <tr>
      *         <td>NUM_UNITTYPE</td>
      *         <td>
-     *             Optional type of the numeric value unit (e.g. "length", "force", "mass").
+     *             Optional type of the numeric value unit (e.g. "length", "force", "mass"):
+     *             <table class="dl-table" summary="">
+     *                  <tr>
+     *                      <th><code>NUM_UNITTYPE</code></th>
+     *                      <th><code>NUM_UNIT</code></th>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>mass</td>
+     *                      <td>feet per second, grams, kilogram, grain, dram, ounce, pound, hundredweight, ton, tonne, slug</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>torque</td>
+     *                      <td>newton meter</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>area</td>
+     *                      <td>square meter, acre, are, hectare, square inches, square feet, square yards, square miles</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>paper quantity</td>
+     *                      <td>paper bale</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>force</td>
+     *                      <td>kilopond, pond</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>pressure</td>
+     *                      <td>pounds per square inch</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>solid angle</td>
+     *                      <td>steradian</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>pressure, stress</td>
+     *                      <td>pascal</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>luminous flux</td>
+     *                      <td>lumen</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>amount of substance</td>
+     *                      <td>mole</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>luminance</td>
+     *                      <td>candela per square metre</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>angle</td>
+     *                      <td>radian, degree</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>magnetic flux density, magnetic field</td>
+     *                      <td>tesla</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>power, radiant flux</td>
+     *                      <td>watt</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>datetime</td>
+     *                      <td>second, minute, hour, day, week, month, year</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>electrical inductance</td>
+     *                      <td>henry</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>electric charge</td>
+     *                      <td>coulomb</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>temperature</td>
+     *                      <td>kelvin, centigrade, fahrenheit</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>voltage, electrical</td>
+     *                      <td>volt</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>momentum</td>
+     *                      <td>kilogram meters per second</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>amount of heat</td>
+     *                      <td>calorie</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>electrical capacitance</td>
+     *                      <td>farad</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>radioactive decay</td>
+     *                      <td>becquerel</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>electrical conductance</td>
+     *                      <td>siemens</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>luminous intensity</td>
+     *                      <td>candela</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>work, energy</td>
+     *                      <td>joule</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>quantities</td>
+     *                      <td>dozen</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>density</td>
+     *                      <td>density</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>sound</td>
+     *                      <td>decibel</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>electrical resistance, impedence</td>
+     *                      <td>ohm</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>force, weight</td>
+     *                      <td>newton</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>light quantity</td>
+     *                      <td>lumen seconds</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>length</td>
+     *                      <td>meter, millimeter, centimeter, decimeter, kilometer, astronomical unit, light year, parsec, inch, foot, yard, mile, nautical mile</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>refractive index</td>
+     *                      <td>diopter</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>frequency</td>
+     *                      <td>hertz, angular frequency</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>power</td>
+     *                      <td>kilowatt, horsepower, bar</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>magnetic flux</td>
+     *                      <td>weber</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>current</td>
+     *                      <td>ampere</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>acceleration of gravity</td>
+     *                      <td>gravity imperial, gravity metric</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>volume</td>
+     *                      <td>cubic meter, liter, milliliter, centiliter, deciliter, hectoliter, cubic inch, cubic foot, cubic yard, acre-foot, teaspoon, tablespoon, fluid ounce, cup, gill, pint, quart, gallon</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>speed</td>
+     *                      <td>miles per hour, meters per second</td>
+     *                  </tr>
+     *                  <tr>
+     *                      <td>illuminance</td>
+     *                      <td>lux</td>
+     *                  </tr>
+     *             </table>
      *         </td>
      *         <td>{@link String}</td>
      *         <td>Yes</td>
