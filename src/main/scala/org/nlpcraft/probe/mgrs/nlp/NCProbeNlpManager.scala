@@ -35,14 +35,11 @@ import java.io.Serializable
 import java.util.concurrent.Executors
 import java.util.function.Predicate
 
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCDebug
-import org.nlpcraft.model._
-import org.nlpcraft.model.impl.NCMetadataImpl
+import org.nlpcraft.common.{NCDebug, _}
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
-import org.nlpcraft.probe._
-import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
+import org.nlpcraft.model._
+import org.nlpcraft.model.impl.NCMetadataImpl
 import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
 import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
@@ -56,6 +53,7 @@ import org.nlpcraft.probe.mgrs.nlp.enrichers.suspicious.NCSuspiciousNounsEnriche
 import org.nlpcraft.probe.mgrs.nlp.impl._
 import org.nlpcraft.probe.mgrs.nlp.post._
 import org.nlpcraft.probe.mgrs.nlp.pre._
+import org.nlpcraft.probe.mgrs.{NCProbeLifecycle, NCProbeMessage}
 
 import scala.collection.JavaConverters._
 import scala.collection._
