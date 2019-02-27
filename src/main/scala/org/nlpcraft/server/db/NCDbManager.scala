@@ -116,7 +116,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |FROM nc_user
               |WHERE
               |    email = ? AND
-              |    deleted = FALSE""".stripMargin,
+              |    deleted = FALSE
+              """.stripMargin,
             email
         )
     }
@@ -262,13 +263,14 @@ object NCDbManager extends NCLifecycle("Database manager") {
         
         NCPsql.selectSingle[NCDataSourceMdo](
             s"""
-               |SELECT *
-               |FROM ds_instance
-               |WHERE
-               |    id = ? AND
-               |    deleted = FALSE
+            |SELECT *
+            |FROM ds_instance
+            |WHERE
+            |    id = ? AND
+            |    deleted = FALSE
             """.stripMargin,
-            dsId)
+            dsId
+        )
     }
 
     /**
@@ -282,10 +284,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
         
         NCPsql.select[NCUserMdo](
             s"""
-               |SELECT *
-               |FROM nc_user
-               |WHERE deleted = FALSE
-            """.stripMargin)
+            |SELECT *
+            |FROM nc_user
+            |WHERE deleted = FALSE
+            """.stripMargin
+        )
     }
     
     /**
@@ -299,10 +302,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
         
         NCPsql.select[NCDataSourceMdo](
             s"""
-               |SELECT *
-               |FROM ds_instance
-               |WHERE deleted = FALSE
-            """.stripMargin)
+            |SELECT *
+            |FROM ds_instance
+            |WHERE deleted = FALSE
+            """.stripMargin
+        )
     }
 
     /**
@@ -341,7 +345,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    last_ds_id,
               |    is_admin
               | )
-              | VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              """.stripMargin,
             id,
             firstName,
             lastName,
@@ -389,7 +394,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |     model_ver,
               |     model_cfg,
               |     is_temporary
-              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""".stripMargin,
+              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              """.stripMargin,
             id,
             name,
             desc,
@@ -431,8 +437,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         
         NCPsql.insertSingle(
             """
-              |INSERT
-              |  INTO proc_log (
+              |INSERT INTO proc_log (
               |     user_id,
               |     srv_req_id,
               |     txt,
@@ -444,9 +449,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |     rmt_address,
               |     recv_tstamp
               | )
-              | VALUES (
-              |     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-              | )""".stripMargin,
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              """.stripMargin,
             usrId,
             srvReqId,
             txt,
@@ -473,11 +477,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
         ensureStarted()
         NCPsql.insertSingle(
             """
-              |UPDATE proc_log
-              |SET
-              |    status = ?,
-              |    cancel_tstamp = ?
-              |WHERE srv_req_id = ?
+            |UPDATE proc_log
+            |SET
+            |    status = ?,
+            |    cancel_tstamp = ?
+            |WHERE srv_req_id = ?
             """.stripMargin,
             "QRY_CANCELLED",
             tstamp,
@@ -514,7 +518,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    res_body_gzip = ?,
               |    resp_tstamp = ?
               |WHERE srv_req_id = ?
-               """.stripMargin,
+              """.stripMargin,
             QRY_READY.toString,
             errMsg,
             resType,
@@ -594,7 +598,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    probe_host_addr = ?,
               |    probe_mac_addr = ?
               |WHERE srv_req_id = ?
-            """.stripMargin,
+              """.stripMargin,
             probeToken,
             probeId,
             probeGuid,

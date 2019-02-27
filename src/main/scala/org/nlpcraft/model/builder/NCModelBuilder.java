@@ -373,68 +373,69 @@ public class NCModelBuilder {
             for (Map.Entry<String, Object> entry : js.getUserMetadata().entrySet())
                 addUserMetadata(entry.getKey(), (Serializable)entry.getValue());
 
-        for (NCElementJson e : js.getElements()) {
-            NCMetadata elmMeta = new NCMetadataImpl();
-
-            if (e.getMetadata() != null)
-                for (Map.Entry<String, Object> entry : e.getMetadata().entrySet())
-                    elmMeta.put(entry.getKey(), (Serializable)entry.getValue());
-
-            addElement(new NCElement() {
-                private final List<String> syns =
-                    e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms());
-                private final List<String> exclSyns =
-                    e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms());
-                private final List<NCValue> values =
-                    e.getValues() == null ?
-                        Collections.emptyList() :
-                        Arrays.stream(e.getValues()).map(
-                            p -> new NCValueImpl(
-                                p.getName(),
-                                p.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(p.getSynonyms())
-                            )
-                        ).collect(Collectors.toList());
-                
-                @Override
-                public List<NCValue> getValues() {
-                    return values;
-                }
-
-                @Override
-                public String getParentId() {
-                    return e.getParentId();
-                }
-
-                @Override
-                public String getDescription() {
-                    return e.getDescription();
-                }
-
-                @Override
-                public String getId() {
-                    return e.getId();
-                }
-
-                @Override
-                public String getGroup() {
-                    return e.getGroup();
-                }
-
-                @Override
-                public NCMetadata getMetadata() {
-                    return elmMeta;
-                }
-
-                @Override
-                public List<String> getSynonyms() {
-                    return syns;
-                }
-
-                @Override
-                public List<String> getExcludedSynonyms() {
-                    return exclSyns;
-                }
-            });
+        if (js.getElements() != null)
+            for (NCElementJson e : js.getElements()) {
+                NCMetadata elmMeta = new NCMetadataImpl();
+        
+                if (e.getMetadata() != null)
+                    for (Map.Entry<String, Object> entry : e.getMetadata().entrySet())
+                        elmMeta.put(entry.getKey(), (Serializable)entry.getValue());
+        
+                addElement(new NCElement() {
+                    private final List<String> syns =
+                        e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms());
+                    private final List<String> exclSyns =
+                        e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms());
+                    private final List<NCValue> values =
+                        e.getValues() == null ?
+                            Collections.emptyList() :
+                            Arrays.stream(e.getValues()).map(
+                                p -> new NCValueImpl(
+                                    p.getName(),
+                                    p.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(p.getSynonyms())
+                                )
+                            ).collect(Collectors.toList());
+                    
+                    @Override
+                    public List<NCValue> getValues() {
+                        return values;
+                    }
+        
+                    @Override
+                    public String getParentId() {
+                        return e.getParentId();
+                    }
+        
+                    @Override
+                    public String getDescription() {
+                        return e.getDescription();
+                    }
+        
+                    @Override
+                    public String getId() {
+                        return e.getId();
+                    }
+        
+                    @Override
+                    public String getGroup() {
+                        return e.getGroup();
+                    }
+        
+                    @Override
+                    public NCMetadata getMetadata() {
+                        return elmMeta;
+                    }
+        
+                    @Override
+                    public List<String> getSynonyms() {
+                        return syns;
+                    }
+        
+                    @Override
+                    public List<String> getExcludedSynonyms() {
+                        return exclSyns;
+                    }
+                });
         }
     }
 
