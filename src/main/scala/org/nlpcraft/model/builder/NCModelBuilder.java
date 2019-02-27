@@ -178,6 +178,9 @@ public class NCModelBuilder {
      * @throws NCBuilderException Thrown in case of any errors building the model.
      */
     public static NCModelBuilder newJsonModel(String filePath) throws NCBuilderException {
+        if (filePath == null)
+            throw new IllegalArgumentException("JSON file path cannot be null.");
+
         NCModelBuilder bldr = new NCModelBuilder();
 
         bldr.ingestJsonModel(readFile(filePath, NCModelJson.class));
@@ -193,6 +196,9 @@ public class NCModelBuilder {
      * @throws NCBuilderException Thrown in case of any errors building the model.
      */
     public static NCModelBuilder newJsonModel(InputStream in) throws NCBuilderException {
+        if (in == null)
+            throw new IllegalArgumentException("JSON input stream cannot be null (wrong JSON file path?).");
+
         NCModelBuilder bldr = new NCModelBuilder();
         
         bldr.ingestJsonModel(readFile(in, NCModelJson.class));
@@ -208,6 +214,9 @@ public class NCModelBuilder {
      * @throws NCBuilderException Thrown in case of any errors building the model.
      */
     public static NCModelBuilder newJsonStringModel(String jsonStr) throws NCBuilderException {
+        if (jsonStr == null)
+            throw new IllegalArgumentException("JSON input string cannot be null.");
+
         NCModelBuilder bldr = new NCModelBuilder();
 
         bldr.ingestJsonModel(readString(jsonStr, NCModelJson.class));
