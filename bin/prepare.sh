@@ -43,6 +43,8 @@ curDir=$(pwd)
 
 cd ../
 
+mvn clean package
+
 rm -R ${zipDir} 2> /dev/null
 
 mkdir ${zipDir}
@@ -52,11 +54,9 @@ rsync -avzq bin ${zipDir}/${tmpDir} --exclude '**/.DS_Store' --exclude bin/prepa
 rsync -avzq openapi ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq postgres ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
-cp assembly.xml ${zipDir}/${tmpDir}
-cp pom.xml ${zipDir}/${tmpDir}
+rsync -avzq build ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 cp LICENSE ${zipDir}/${tmpDir}
 
-mvn clean package
 rsync -avzq target/apidocs/** ${zipDir}/${tmpDir}/javadoc --exclude '**/.DS_Store'
 
 cd ${zipDir}

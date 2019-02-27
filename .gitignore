@@ -4,7 +4,8 @@ _site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
-zips
 target
 out
-libs
+build
+zips
+

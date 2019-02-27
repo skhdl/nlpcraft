@@ -323,7 +323,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.basedir}/libs</directory>
+                            <directory>${project.basedir}/build</directory>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -563,7 +563,7 @@
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
                             <attach>false</attach>
-                            <outputDirectory>libs</outputDirectory>
+                            <outputDirectory>build</outputDirectory>
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>
                             </descriptors>
