@@ -228,10 +228,10 @@ object NCIntentSolverEngine extends LazyLogging {
                 )
             )
 
-            tbl.trace(logger, Some(s"Found matching intents:"))
+            tbl.info(logger, Some(s"Found matching intents:"))
         }
         else
-            logger.trace("No matching intent found.")
+            logger.info("No matching intent found.")
 
         sorted.map(m ⇒
             NCIntentSolverResult(
@@ -324,19 +324,19 @@ object NCIntentSolverEngine extends LazyLogging {
         }
         
         if (abort) {
-            logger.trace(s"Intent didn't match because of missing term (variant #$varIdx): $intent")
+            logger.info(s"Intent didn't match because of missing term (variant #$varIdx): $intent")
     
             // 1. Match was aborted.
             None
         }
         else if (senToks.exists(tok ⇒ !tok.used && tok.tok.isUserDefined)) {
-            logger.trace(s"Intent didn't match because of not exact match (variant #$varIdx): $intent")
+            logger.info(s"Intent didn't match because of not exact match (variant #$varIdx): $intent")
 
             // 2. Not an exact match with user tokens.
             None
         }
         else if (!senToks.exists(tok ⇒ tok.used && !tok.conv)) {
-            logger.trace(s"Intent didn't match because all tokens came from conversation (variant #$varIdx): $intent")
+            logger.info(s"Intent didn't match because all tokens came from conversation (variant #$varIdx): $intent")
 
             // 3. All tokens came from history.
             None

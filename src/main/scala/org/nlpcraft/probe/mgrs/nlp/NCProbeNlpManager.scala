@@ -171,7 +171,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         dsModelCfg: String,
         test: Boolean
     ): Unit = {
-        logger.trace(s"New sentence received: ${nlpSen.text}")
+        logger.info(s"Sentence received: ${nlpSen.text}")
     
         /**
           *
@@ -237,9 +237,9 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             NCConnectionManager.send(msg)
             
             if (errMsg.isEmpty)
-                logger.trace(s"OK response $msgName [srvReqId=$srvReqId, type=${resType.getOrElse("")}]")
+                logger.info(s"OK response $msgName sent [srvReqId=$srvReqId, type=${resType.getOrElse("")}]")
             else
-                logger.trace(s"REJECT response $msgName [srvReqId=$srvReqId, response=${errMsg.get}]")
+                logger.info(s"REJECT response $msgName sent [srvReqId=$srvReqId, response=${errMsg.get}]")
         }
 
         val mdl = NCModelManager.getModel(dsModelId).getOrElse(throw new NCE(s"Model not found: $dsModelId"))

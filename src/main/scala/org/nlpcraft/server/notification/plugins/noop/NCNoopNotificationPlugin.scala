@@ -46,6 +46,6 @@ object NCNoopNotificationPlugin extends NCNotificationPlugin {
     override def onEvent(evtName: String, params: (String, Any)*): Unit = {
         val paramsStr = params.map(p ⇒ s"${p._1}=${p._2}").mkString(", ")
     
-        logger.info(s"Notification event [name=$evtName, $paramsStr]")
+        logger.trace(s"Notification event [name=$evtName, $paramsStr]")
     }
 }

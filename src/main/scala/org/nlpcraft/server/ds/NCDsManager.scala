@@ -152,17 +152,16 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
         ensureStarted()
     
         val newDsId = dsSeq.incrementAndGet()
-        val name = "auto-delete-temp-ds"
         
         catching(wrapIE) {
             dsCache +=
                 newDsId →
                 NCDataSourceMdo(
                     newDsId,
-                    s"$name",
-                    s"description",
+                    "auto-delete-temp-ds",
+                    s"tmp",
                     s"$mdlId",
-                    s"model-name",
+                    s"tmp",
                     s"${NCVersion.getCurrent.version}",
                     None,
                     true
