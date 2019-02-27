@@ -109,7 +109,7 @@ trait NCConfigurable extends LazyLogging {
       * @param errMsgs
       */
     protected def abortError(errMsgs: String*): Unit = {
-        errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
+        errMsgs.foreach(s ⇒ logger.error(s))
         
         // Abort immediately.
         System.exit(1)
