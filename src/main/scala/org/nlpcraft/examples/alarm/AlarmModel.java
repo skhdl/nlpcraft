@@ -81,7 +81,7 @@ public class AlarmModel extends NCModelProviderAdapter {
         solver.addIntent(
             new NON_CONV_INTENT(
                 "timer|num{1+}",
-                new TERM("id == x:timer", 1, 1),
+                new TERM("id == x:alarm", 1, 1),
                 new TERM(
                     new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
                     0,
@@ -92,7 +92,7 @@ public class AlarmModel extends NCModelProviderAdapter {
         );
     
         setup(NCModelBuilder.newJsonModel(
-            AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/timer/alarm_model.json")).
+            AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/alarm/alarm_model.json")).
             setQueryFunction(solver::solve).build()
         );
     }

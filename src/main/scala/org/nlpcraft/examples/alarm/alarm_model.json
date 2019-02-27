@@ -30,10 +30,10 @@
  */
 
 {
-    "id": "nlpcraft.timer.ex",
-    "name": "Timer Example Model",
+    "id": "nlpcraft.alarm.ex",
+    "name": "Alarm Example Model",
     "version": "1.0",
-    "description": "Timer example model.",
+    "description": "Alarm example model.",
     "vendorName": "NLPCraft",
     "vendorUrl": "https://www.nlpcraft.org",
     "vendorContact": "Support",
@@ -46,8 +46,8 @@
     ],
     "elements": [
         {
-            "id": "x:timer",
-            "description": "Timer token indicator.",
+            "id": "x:alarm",
+            "description": "Alarm token indicator.",
             "synonyms": [
                 "{ping|buzz|wake|call|hit} {me|up|me up|*}",
                 "{set|*} {my|*} {wake|wake up|*} {alarm|timer|clock|buzzer|call} {up|*}"
