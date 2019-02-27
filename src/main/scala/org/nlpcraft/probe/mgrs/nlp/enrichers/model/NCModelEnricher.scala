@@ -257,12 +257,11 @@ object NCModelEnricher extends NCProbeEnricher("Model enricher") with DecorateAs
             val elm = m.element
             val syn = m.synonym
     
-            if (!IS_PROBE_SILENT)
-                logger.debug(s"Model '${mdl.model.getDescriptor.getId}' element found (${idx + 1} of $matchCnt) [" +
-                    s"elementId=${m.element.getId}, " +
-                    s"synonym=${m.synonym}, " +
-                    s"tokens=${tokString(m.tokens)}" +
-                    s"]")
+            logger.trace(s"Model '${mdl.model.getDescriptor.getId}' element found (${idx + 1} of $matchCnt) [" +
+                s"elementId=${m.element.getId}, " +
+                s"synonym=${m.synonym}, " +
+                s"tokens=${tokString(m.tokens)}" +
+                s"]")
 
             val tokIdxs = m.tokens.map(_.index)
 

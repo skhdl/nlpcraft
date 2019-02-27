@@ -51,7 +51,6 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
 import org.hashids.Hashids
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCDebug
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import resource._
 
@@ -67,7 +66,7 @@ import scala.util.control.Exception.ignoring
 /**
   * Project-wide, global utilities ans miscellaneous functions.
   */
-object NCUtils extends NCDebug with LazyLogging {
+object NCUtils extends LazyLogging {
     private val hashids = new Hashids(NCBlowfishHasher.salt(), 8)
     
     // Various decimal formats.

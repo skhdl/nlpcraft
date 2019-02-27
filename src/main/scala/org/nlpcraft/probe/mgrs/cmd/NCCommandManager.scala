@@ -43,7 +43,7 @@ import org.nlpcraft.probe.mgrs.nlp.conversation.NCConversationManager
 /**
   * Probe commands processor.
   */
-object NCCommandManager extends NCProbeLifecycle("Commands manager") with NCDebug {
+object NCCommandManager extends NCProbeLifecycle("Commands manager") {
     /**
       *
       * @param msg Server message to process.

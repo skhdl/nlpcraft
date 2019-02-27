@@ -35,7 +35,6 @@ import java.io._
 import java.util.jar.{JarInputStream ⇒ JIS}
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.{NCDebug, NCLifecycle}
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model._
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
@@ -49,7 +48,7 @@ import scala.util.control.Exception._
 /**
   * Model deployment manager.
   */
-object NCDeployManager extends NCProbeLifecycle("Deploy manager") with NCDebug with DecorateAsScala {
+object NCDeployManager extends NCProbeLifecycle("Deploy manager") with DecorateAsScala {
     private val providers = ArrayBuffer.empty[NCModelProvider]
     private val descriptors = ArrayBuffer.empty[NCModelDescriptor]
     

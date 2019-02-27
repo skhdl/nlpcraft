@@ -38,7 +38,7 @@ import scala.compat.Platform._
   * Basic abstract class defining internal service/manager/component lifecycle. Components that
   * extend this class are typically called 'managers'.
   */
-abstract class NCLifecycle(name: String) extends LazyLogging with NCDebug {
+abstract class NCLifecycle(name: String) extends LazyLogging {
     private val startMsec = currentTime
 
     @volatile private var started = false

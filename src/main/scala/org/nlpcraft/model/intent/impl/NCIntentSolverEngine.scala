@@ -36,7 +36,6 @@ import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList, Set ⇒ JSet}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.lang3.tuple.Pair
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCDebug
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model.intent.NCIntentSolver._
 import org.nlpcraft.model.utils.NCTokenUtils._
@@ -48,7 +47,7 @@ import scala.collection.mutable
 /**
   * Intent solver that finds the best matching intent given user sentence.
   */
-object NCIntentSolverEngine extends NCDebug with LazyLogging {
+object NCIntentSolverEngine extends LazyLogging {
     private class Weight extends Ordered[Weight] {
         private val weights: Array[Int] = new Array(5)
     
@@ -217,24 +216,22 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
                 }
             )
 
-        if (!IS_PROBE_SILENT) {
-            if (sorted.nonEmpty) {
-                val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Weight / Variant)")
+        if (sorted.nonEmpty) {
+            val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Weight / Variant)")
 
-                sorted.foreach(m ⇒
-                    tbl += (
-                        s"#${m.variantIdx}",
-                        m.intentMatch.intent.getId,
-                        mkPickTokens(m.intentMatch),
-                        Seq(m.intentMatch.weight, m.variant)
-                    )
+            sorted.foreach(m ⇒
+                tbl += (
+                    s"#${m.variantIdx}",
+                    m.intentMatch.intent.getId,
+                    mkPickTokens(m.intentMatch),
+                    Seq(m.intentMatch.weight, m.variant)
                 )
+            )
 
-                tbl.trace(logger, Some(s"Found matching intents:"))
-            }
-            else
-                logger.trace("No matching intent found.")
+            tbl.trace(logger, Some(s"Found matching intents:"))
         }
+        else
+            logger.trace("No matching intent found.")
 
         sorted.map(m ⇒
             NCIntentSolverResult(
@@ -327,22 +324,19 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
         }
         
         if (abort) {
-            if (!IS_PROBE_SILENT)
-                logger.trace(s"Intent didn't match because of missing term (variant #$varIdx): $intent")
+            logger.trace(s"Intent didn't match because of missing term (variant #$varIdx): $intent")
     
             // 1. Match was aborted.
             None
         }
         else if (senToks.exists(tok ⇒ !tok.used && tok.tok.isUserDefined)) {
-            if (!IS_PROBE_SILENT)
-                logger.trace(s"Intent didn't match because of not exact match (variant #$varIdx): $intent")
+            logger.trace(s"Intent didn't match because of not exact match (variant #$varIdx): $intent")
 
             // 2. Not an exact match with user tokens.
             None
         }
         else if (!senToks.exists(tok ⇒ tok.used && !tok.conv)) {
-            if (!IS_PROBE_SILENT)
-                logger.trace(s"Intent didn't match because all tokens came from conversation (variant #$varIdx): $intent")
+            logger.trace(s"Intent didn't match because all tokens came from conversation (variant #$varIdx): $intent")
 
             // 3. All tokens came from history.
             None
@@ -470,6 +464,5 @@ object NCIntentSolverEngine extends NCDebug with LazyLogging {
       * @param intent
       */
     def ackNewIntent(name: String, intent: INTENT): Unit =
-        if (!IS_PROBE_SILENT)
-            logger.info(s"Intent added for '$name' solver: $intent")
+        logger.trace(s"Intent added for '$name' solver: $intent")
 }

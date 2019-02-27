@@ -35,7 +35,6 @@ import java.util.regex.{Pattern, PatternSyntaxException}
 import java.util.{List ⇒ JList, Set ⇒ JSet}
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.{NCDebug, NCException, NCLifecycle}
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.makro.{NCMacroParser ⇒ MacroParser}
 import org.nlpcraft.model._
@@ -53,7 +52,7 @@ import scala.util.control.Exception._
 /**
   * Model manager.
   */
-object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug with DecorateAsScala {
+object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsScala {
     // Deployed models keyed by their IDs.
     private val models = mutable.HashMap.empty[String, NCModelDecorator]
 
@@ -331,24 +330,22 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
                                 s"max=$maxCnt" +
                             s"]")
 
-                        if (!IS_PROBE_SILENT) {
-                            if (value == null)
-                                logger.trace(s"$kind #${col.size} added [" +
-                                    s"model=${mdl.getDescriptor.getId}, " +
-                                    s"elementId=$elmId, " +
-                                    s"synonym=${chunks.mkString(" ")}" +
-                                    s"]")
-                            else
-                                logger.trace(s"$kind #${col.size} added [" +
-                                    s"model=${mdl.getDescriptor.getId}, " +
-                                    s"elementId=$elmId, " +
-                                    s"synonym=${chunks.mkString(" ")}, " +
-                                    s"value=$value" +
-                                    s"]")
-                        }
+                        if (value == null)
+                            logger.trace(s"$kind #${col.size} added [" +
+                                s"model=${mdl.getDescriptor.getId}, " +
+                                s"elementId=$elmId, " +
+                                s"synonym=${chunks.mkString(" ")}" +
+                                s"]")
+                        else
+                            logger.trace(s"$kind #${col.size} added [" +
+                                s"model=${mdl.getDescriptor.getId}, " +
+                                s"elementId=$elmId, " +
+                                s"synonym=${chunks.mkString(" ")}, " +
+                                s"value=$value" +
+                                s"]")
                     }
-                    else if (!IS_PROBE_SILENT)
-                        logger.warn(
+                    else
+                        logger.trace(
                             s"$kind already added (ignoring) [" +
                                 s"model=${mdl.getDescriptor.getId}, " +
                                 s"elementId=$elmId, " +
@@ -374,8 +371,8 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add straight element synonyms (Duplications printed as warnings)
             val synsChunks = for (syn ← elm.getSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (!IS_PROBE_SILENT && U.containsDups(synsChunks.toList))
-                logger.warn(s"Element synonyms duplicate (ignoring) [" +
+            if (U.containsDups(synsChunks.toList))
+                logger.trace(s"Element synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
                     s"synonym=${synsChunks.diff(synsChunks.distinct).distinct.map(_.mkString(",")).mkString(";")}" +
@@ -387,8 +384,8 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add value synonyms.
             val valNames = elm.getValues.map(_.getName)
 
-            if (!IS_PROBE_SILENT && U.containsDups(valNames.toList))
-                logger.warn(s"Element values names duplicate (ignoring) [" +
+            if (U.containsDups(valNames.toList))
+                logger.trace(s"Element values names duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
                     s"names=${valNames.diff(valNames.distinct).distinct.mkString(",")}" +
@@ -420,8 +417,8 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
                             Some(valSyns)
                     })
 
-                if (!IS_PROBE_SILENT && U.containsDups(vChunks.toList))
-                    logger.warn(s"Element synonyms duplicate (ignoring) [" +
+                if (U.containsDups(vChunks.toList))
+                    logger.trace(s"Element synonyms duplicate (ignoring) [" +
                         s"model=${mdl.getDescriptor.getId}, " +
                         s"elementId=$elmId, " +
                         s"value=$valName, " +
@@ -435,8 +432,8 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with NCDebug wit
             // Add excluded synonyms (Duplications printed as warnings)
             val exclChunks = for (syn ← elm.getExcludedSynonyms.flatMap(parser.expand)) yield chunkSplit(syn)
 
-            if (!IS_PROBE_SILENT && U.containsDups(exclChunks.toList))
-                logger.warn(s"Element exclude synonyms duplicate (ignoring) [" +
+            if (U.containsDups(exclChunks.toList))
+                logger.trace(s"Element exclude synonyms duplicate (ignoring) [" +
                     s"model=${mdl.getDescriptor.getId}, " +
                     s"elementId=$elmId, " +
                     s"exclude=${exclChunks.diff(exclChunks.distinct).distinct.map(_.mkString(",")).mkString(";")}" +

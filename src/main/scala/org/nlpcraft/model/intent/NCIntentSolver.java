@@ -1520,12 +1520,7 @@ public class NCIntentSolver {
      * Finds the best matching intent for given sentence and calls its callback function to get the final query result.
      * If no matching intent is found a not-found function will be called, if provided. If not-found function
      * wasn't provided, the {@link NCRejection} exception with default rejection message will be thrown.
-     * <p>
-     * The specific algorithm of selecting the best matching intent is relatively complex and can be challenging to
-     * trace and understand. During development and testing phase it is highly recommended <i>to
-     * use {@code NLPCRAFT_PROBE_VERBOSE} system property</i> to make sure that solver logs out all debugging
-     * information.
-     * 
+     *
      * @param ctx Sentence's context to find the best match for.
      * @return Query result.
      */

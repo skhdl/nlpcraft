@@ -36,7 +36,6 @@ import java.util.function.Predicate
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
-import org.nlpcraft.common.NCDebug
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model._
 import org.nlpcraft.model.utils.NCTokenUtils._
@@ -48,7 +47,7 @@ import scala.concurrent.duration._
 /**
   * Conversation as an ordered set of utterances.
   */
-case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogging {
+case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
     // After 10 mins pause between questions we clear the STM.
     private final val CONV_CLEAR_DELAY = 10.minutes.toMillis
     
@@ -83,11 +82,10 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
         val now = U.nowUtcMs()
     
         if (now - lastUpdateTstamp > CONV_CLEAR_DELAY) {
-            if (!IS_PROBE_SILENT)
-                logger.trace(s"Conversation reset by timeout [" +
-                    s"usrId=$usrId, " +
-                    s"dsId=$dsId" +
-                s"]")
+            logger.trace(s"Conversation reset by timeout [" +
+                s"usrId=$usrId, " +
+                s"dsId=$dsId" +
+            s"]")
         
             stm.clear()
         }
@@ -117,8 +115,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
         for (item ← stm)
             item.tokens.removeIf(p)
     
-        if (!IS_PROBE_SILENT)
-            logger.trace(s"Manually cleared conversation for some tokens.")
+        logger.trace(s"Manually cleared conversation for some tokens.")
     }
     
     /**
@@ -144,12 +141,11 @@ case class NCConversation(usrId: Long, dsId: Long) extends NCDebug with LazyLogg
             lastUpdateTstamp
         )
     
-        if (!IS_PROBE_SILENT)
-            logger.trace(s"Added new sentence to the conversation [" +
-                s"usrId=$usrId, " +
-                s"dsId=$dsId, " +
-                s"text=${sen.getNormalizedText}" +
-            s"]")
+        logger.trace(s"Added new sentence to the conversation [" +
+            s"usrId=$usrId, " +
+            s"dsId=$dsId, " +
+            s"text=${sen.getNormalizedText}" +
+        s"]")
     }
     
     /**

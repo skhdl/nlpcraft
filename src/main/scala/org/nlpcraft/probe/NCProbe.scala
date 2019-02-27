@@ -216,8 +216,6 @@ object NCProbe extends App with LazyLogging {
         tbl += ("JARs Folder", nvl(Config.jarsFolder))
         
         tbl.info(logger, Some("Probe Configuration:"))
-        
-        logger.info("Set '-DNLPCRAFT_PROBE_VERBOSE=true' JVM system property to turn on verbose probe logging.")
     }
     
     /**

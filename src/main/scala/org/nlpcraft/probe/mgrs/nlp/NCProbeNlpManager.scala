@@ -35,7 +35,7 @@ import java.io.Serializable
 import java.util.concurrent.Executors
 import java.util.function.Predicate
 
-import org.nlpcraft.common.{NCDebug, _}
+import org.nlpcraft.common._
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.model._
@@ -62,7 +62,7 @@ import scala.concurrent.ExecutionContext
 /**
   * Probe NLP manager.
   */
-object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
+object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
     private final val EC = ExecutionContext.fromExecutor(
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )
@@ -171,8 +171,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
         dsModelCfg: String,
         test: Boolean
     ): Unit = {
-        if (!IS_PROBE_SILENT)
-            logger.info(s"New sentence received: ${nlpSen.text}")
+        logger.trace(s"New sentence received: ${nlpSen.text}")
     
         /**
           *
@@ -285,14 +284,12 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
         // Collapse again.
         senSeq = senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p))
 
-        if (!IS_PROBE_SILENT) {
-            val sz = senSeq.size
+        val sz = senSeq.size
 
-            // Print here because validation can change sentence.
-            senSeq.zipWithIndex.foreach(p ⇒
-                NCNlpAsciiLogger.prepareTable(p._1).info(logger,
-                    Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
-        }
+        // Print here because validation can change sentence.
+        senSeq.zipWithIndex.foreach(p ⇒
+            NCNlpAsciiLogger.prepareTable(p._1).info(logger,
+                Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
 
         // Final validation before execution.
         try
@@ -318,8 +315,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") with NCDebug {
         // Update STM and recalculate context.
         conv.update()
 
-        if (!IS_PROBE_SILENT)
-            conv.ack()
+        conv.ack()
 
         val unitedSen =
             new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq)

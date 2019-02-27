@@ -31,7 +31,6 @@
 
 package org.nlpcraft.probe.mgrs.nlp.conversation
 
-import org.nlpcraft.common.NCDebug
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 
 import scala.collection._
@@ -39,7 +38,7 @@ import scala.collection._
 /**
   * Conversation manager.
   */
-object NCConversationManager extends NCProbeLifecycle("Conversation manager") with NCDebug {
+object NCConversationManager extends NCProbeLifecycle("Conversation manager") {
     case class Key(userId: Long, dsId: Long)
     
     // TODO: add periodic garbage collector for stale conversations.
