@@ -55,6 +55,8 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
 
     private final val NUM_FMT = new DecimalFormat()
 
+    private final val ORD_SUFFIXES = Set("st", "th", "nd", "rd")
+
     @volatile private var genNums: Map[String, Int] = _
     @volatile private var unitsOrigs: Map[String, NCNumericUnit] = _
     @volatile private var unitsStem: Map[String, NCNumericUnit] = _
@@ -241,6 +243,40 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
     }
 
     /**
+      *
+      * @param ch
+      * @return
+      */
+    private def isDigitChar(ch: Char): Boolean = Character.isDigit(ch) || ch == '.'
+
+    /**
+      *
+      * @param s
+      * @return
+      */
+    private def isDigitText(s: String): Boolean = s.forall(isDigitChar)
+
+    /**
+      *
+      * @param normTxt
+      * @return
+      */
+    private def isOrdinal(normTxt: String): Boolean =
+        ORD_SUFFIXES.exists(
+            s ⇒
+                normTxt.endsWith(s) &&
+                normTxt.length != s.length &&
+                isDigitText(normTxt.take(normTxt.length - s.length))
+        )
+
+    /**
+      *
+      * @param s
+      * @return
+      */
+    private def canBeNum(s: String): Boolean = s.forall(isDigitChar) || s.forall(Character.isLetter)
+
+    /**
       * Gets `numerics` which found in the given sentence.
       *
       * @param ns Sentence.
@@ -252,12 +288,7 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
         // word 'and' marked as NUMBER (POS CC)
         // 3. Condition CD + letter or digit - to avoid detection as CD some symbols like `==`
         // (unexpected Stanford behaviour)
-        def isDigitChar(ch: Char): Boolean = Character.isDigit(ch) || ch == '.'
-        def isOk(s: String): Boolean = s.forall(isDigitChar) || s.forall(Character.isLetter)
-
-        val cds = ns.filter(p ⇒ p.pos == "CD" && isOk(p.origText) || p.pos.head == "N")
-
-        def isDigitText(normTxt: String): Boolean = normTxt.forall(isDigitChar)
+        val cds = ns.filter(p ⇒ p.pos == "CD" && canBeNum(p.origText) || p.pos.head == "N" || isOrdinal(p.normText))
 
         val grpd: Seq[Seq[NCNlpSentenceToken]] =
             cds.groupBy(cd ⇒ {
