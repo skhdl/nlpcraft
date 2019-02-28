@@ -31,6 +31,7 @@
 
 package org.nlpcraft.examples.time;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.text.WordUtils;
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
@@ -53,6 +54,7 @@ import org.nlpcraft.model.intent.NCIntentSolverContext;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,9 +78,11 @@ public class TimeModel extends NCModelProviderAdapter {
     
     // Geo manager.
     static private final GeoManager geoMrg = new GeoManager();
+    
+    static private final Gson gson = new Gson();
 
     /**
-     * Gets multipart query result.
+     * Gets JSON query result.
      *
      * @param city Detected city.
      * @param cntry Detected country.
@@ -86,54 +90,17 @@ public class TimeModel extends NCModelProviderAdapter {
      * @param lat City latitude.
      * @param lon City longitude.
      */
-    private static NCQueryResult formatResult(String city, String cntry, String tmz, double lat, double lon) {
-        String cityFmt = WordUtils.capitalize(city);
-        String cntrFmt = WordUtils.capitalize(cntry);
-
-        String css1 = "style='display: inline-block; min-width: 100px'";
-        String css2 = "style='font-weight: 200'";
-
-        // Multipart result consists of HTML fragment and Google static map fragment.
-        return NCQueryResult.jsonMultipart(
-            // HTML block with CSS formatting.
-            NCQueryResult.html(
-                String.format(
-                    "<b %s>Time:</b> <span style='color: #F1C40F'>%s</span><br/>" +
-                    "<b %s>City:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Country:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Timezone:</b> <span %s>%s</span><br/>" +
-                    "<b %s>Local Time:</b> <span %s>%s</span>",
-                    css1, ZonedDateTime.now(ZoneId.of(tmz)).format(FMT),
-                    css1, css2, cityFmt,
-                    css1, css2, cntrFmt,
-                    css1, css2, tmz,
-                    css1, css2, ZonedDateTime.now().format(FMT)
-                )
-            ),
-            // Google static map fragment.
-            NCQueryResult.jsonGmap(
-                String.format(
-                    "{" +
-                        "\"cssStyle\": {" +
-                            "\"width\": \"600px\", " +
-                            "\"height\": \"300px\"" +
-                        "}," +
-                        "\"gmap\": {" +
-                            "\"center\": \"%f,%f\"," +
-                            "\"zoom\": 4," +
-                            "\"scale\": 2," +
-                            "\"size\": \"600x300\", " +
-                            "\"maptype\": \"terrain\", " +
-                            "\"markers\": \"color:red|%f,%f\"" +
-                        "}" +
-                    "}",
-                    lat,
-                    lon,
-                    lat,
-                    lon
-                )
-            )
-        );
+    private static NCQueryResult mkResult(String city, String cntry, String tmz, double lat, double lon) {
+        Map<String, Object> res = new HashMap<>();
+        
+        res.put("city", WordUtils.capitalize(city));
+        res.put("country", WordUtils.capitalize(cntry));
+        res.put("timezone", tmz);
+        res.put("lat", lat);
+        res.put("lon", lon);
+        res.put("localTime", ZonedDateTime.now(ZoneId.of(tmz)).format(FMT));
+    
+        return NCQueryResult.jsonTable(gson.toJson(res));
     }
 
     /**
@@ -152,7 +119,7 @@ public class TimeModel extends NCModelProviderAdapter {
         // Silicon Valley location in case we are missing that info.
         GeoDataBean geo = geoOpt.orElseGet(geoMrg::getSiliconValley);
     
-        return formatResult(
+        return mkResult(
             geo.getCityName(),
             geo.getCountryName(),
             geo.getTimezoneName(),
@@ -179,7 +146,7 @@ public class TimeModel extends NCModelProviderAdapter {
         CityData data = citiesData.get(new City(city, cntry));
 
         if (data != null)
-            return formatResult(city, cntry, data.getTimezone(), data.getLatitude(), data.getLongitude());
+            return mkResult(city, cntry, data.getTimezone(), data.getLatitude(), data.getLongitude());
         else
             // We don't have timezone mapping for parsed GEO location.
             // Instead of defaulting to a local time - we reject with a specific error message for cleaner UX.
