@@ -95,7 +95,6 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
             None
     }
 
-
     /**
       * Starts this component.
       */
@@ -254,9 +253,9 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
         // 3. Condition CD + letter or digit - to avoid detection as CD some symbols like `==`
         // (unexpected Stanford behaviour)
         def isDigitChar(ch: Char): Boolean = Character.isDigit(ch) || ch == '.'
-        def isOk(ch: Char): Boolean = isDigitChar(ch) || Character.isLetter(ch)
+        def isOk(s: String): Boolean = s.forall(isDigitChar) || s.forall(Character.isLetter)
 
-        val cds = ns.filter(p ⇒ p.pos == "CD" && p.origText.forall(isOk) || p.pos.head == "N")
+        val cds = ns.filter(p ⇒ p.pos == "CD" && isOk(p.origText) || p.pos.head == "N")
 
         def isDigitText(normTxt: String): Boolean = normTxt.forall(isDigitChar)
 
