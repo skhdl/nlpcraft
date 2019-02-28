@@ -37,7 +37,7 @@ import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.apicodes.NCApiStatusCode.NCApiStatusCode
 import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.db.utils.NCSql
 import org.nlpcraft.server.mdo.NCProbeMdo
 
 /**
@@ -57,7 +57,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     : Unit = {
         ensureStarted()
     
-        NCPsql.sql {
+        NCSql.sql {
             NCDbManager.updateCancelProcessingLog(
                 srvReqId,
                 tstamp
@@ -84,7 +84,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     ): Unit = {
         ensureStarted()
     
-        NCPsql.sql {
+        NCSql.sql {
             NCDbManager.updateReadyProcessingLog(
                 srvReqId,
                 errMsg.orNull,
@@ -108,7 +108,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     ): Unit = {
         ensureStarted()
         
-        NCPsql.sql {
+        NCSql.sql {
             NCDbManager.updateProbeProcessingLog(
                 srvReqId,
                 probe.probeToken,
@@ -162,7 +162,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
     ): Unit = {
         ensureStarted()
         
-        NCPsql.sql {
+        NCSql.sql {
             NCDbManager.newProcessingLog(
                 usrId,
                 srvReqId,

@@ -40,7 +40,7 @@ import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.db.utils.NCSql
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
@@ -105,7 +105,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        usersSeq = NCPsql.sqlNoTx {
+        usersSeq = NCSql.sqlNoTx {
             ignite.atomicSequence(
                 "usersSeq",
                 NCDbManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
@@ -352,7 +352,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCTxManager.startTx {
                 userCache(Right(U.normalizeEmail(email))) match {
                     case Some(usr) ⇒
-                        NCPsql.sql {
+                        NCSql.sql {
                             if (!NCDbManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
                                 None
                             else {
@@ -492,7 +492,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
             val salt = NCBlowfishHasher.hash(usr.email)
 
-            NCPsql.sql {
+            NCSql.sql {
                 // Add actual hash for the password.
                 // NOTE: we don't "stir up" password pool for password resets.
                 NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
@@ -614,7 +614,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                 }
             }
 
-        NCPsql.sql {
+        NCSql.sql {
             // Add actual hash for the password.
             NCDbManager.addPasswordHash(NCBlowfishHasher.hash(pswd, salt))
 

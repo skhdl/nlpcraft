@@ -29,6 +29,8 @@
 --          /_/
 --
 
+USE nlpcraft;
+
 DROP TABLE IF EXISTS proc_log CASCADE;
 DROP TABLE IF EXISTS ds_instance CASCADE;
 DROP TABLE IF EXISTS nc_user CASCADE;

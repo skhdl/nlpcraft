@@ -31,11 +31,13 @@
 
 --
 -- +=================================+
--- | Postgres SQL schema definition. |
+-- | MYSQL SQL schema definition. |
 -- +=================================+
 --
--- NOTE: database 'nlpcraft' should be created and owned by 'nlpcraft' user.
+-- NOTE: database 'nlpcraft' should be created.
 --
+
+USE nlpcraft;
 
 --
 -- User table.
@@ -47,20 +49,18 @@ CREATE TABLE nc_user (
     avatar_url TEXT NULL, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR(64) NOT NULL,
     last_name VARCHAR(64) NOT NULL,
-    last_ds_id BIGINT NULL ,
-    is_admin BOOL NOT NULL, -- Whether or not created with admin token.
+    last_ds_id BIGINT NULL,
+    is_admin BOOLEAN NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR(64) NOT NULL,
 
-    deleted BOOL NOT NULL DEFAULT false,
-    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    deleted BOOLEAN NOT NULL DEFAULT false,
+    created_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3),
     deleted_on TIMESTAMP NULL,
-    last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
+    last_modified_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3)
 );
 
 CREATE INDEX nc_user_idx_1 ON nc_user(email);
 CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
-
-CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
 
 --
 -- Pool of password hashes.
@@ -77,17 +77,17 @@ DROP TABLE IF EXISTS ds_instance CASCADE;
 CREATE TABLE ds_instance (
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL, -- User friendly (non-unique) name of the data source.
-    short_desc VARCHAR(128), -- Short, optional description additional to the name.
+    short_desc VARCHAR(128) NULL, -- Short, optional description additional to the name.
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
     model_cfg TEXT NULL,
     is_temporary BOOLEAN NOT NULL,
 
-    deleted BOOL NOT NULL DEFAULT false,
-    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    deleted BOOLEAN NOT NULL DEFAULT false,
+    created_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3),
     deleted_on TIMESTAMP NULL,
-    last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
+    last_modified_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3)
 );
 
 --
@@ -95,7 +95,6 @@ CREATE TABLE ds_instance (
 --
 DROP TABLE IF EXISTS proc_log CASCADE;
 CREATE TABLE proc_log (
-    -- Common part.
     srv_req_id VARCHAR(64) PRIMARY KEY,
     txt VARCHAR(1024) NULL,
     user_id BIGINT NULL,
@@ -105,9 +104,9 @@ CREATE TABLE proc_log (
     user_agent VARCHAR(512) NULL,
     rmt_address VARCHAR(256) NULL,
     -- Ask and result timestamps.
-    recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
-    resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.
-    cancel_tstamp TIMESTAMP NULL, -- Cancel timestamp.
+    recv_tstamp TIMESTAMP(3) NOT NULL, -- Initial receive timestamp.
+    resp_tstamp TIMESTAMP(3) NULL, -- Result or error response timestamp.
+    cancel_tstamp TIMESTAMP(3) NULL, -- Cancel timestamp.
     -- Result parts.
     res_type VARCHAR(32) NULL,
     res_body_gzip TEXT NULL, -- GZIP-ed result body.
@@ -121,7 +120,7 @@ CREATE TABLE proc_log (
     probe_os_version VARCHAR(512) NULL,
     probe_os_name VARCHAR(512) NULL,
     probe_os_arch VARCHAR(512) NULL,
-    probe_start_tstamp TIMESTAMP NULL,
+    probe_start_tstamp TIMESTAMP(3) NULL,
     probe_tmz_id VARCHAR(64) NULL,
     probe_tmz_abbr VARCHAR(64) NULL,
     probe_tmz_name VARCHAR(64) NULL,
@@ -132,5 +131,6 @@ CREATE TABLE proc_log (
     probe_host_addr VARCHAR(512) NULL,
     probe_mac_addr VARCHAR(512) NULL,
     -- Whether or not this is a test run.
-    is_test BOOL NOT NULL DEFAULT FALSE
+    is_test BOOLEAN NOT NULL DEFAULT FALSE
 );
+

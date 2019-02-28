@@ -34,15 +34,16 @@ package org.nlpcraft.server.db
 import java.sql.Timestamp
 import java.time.LocalDate
 
+import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import org.nlpcraft.server.db.postgres.NCPsql
-import org.nlpcraft.server.db.postgres.NCPsql.Implicits._
+import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.db.utils.NCSql.Implicits._
 import org.nlpcraft.server.mdo._
 
 /**
-  * Provides basic CRUD and often used operations on PostgreSQL RDBMS.
-  * Note that all functions in this class expect outside `NCPsql.sql()` block.
+  * Provides basic CRUD and often used operations on RDBMS.
+  * Note that all functions in this class expect outside `NCSql.sql()` block.
   */
 object NCDbManager extends NCLifecycle("Database manager") {
     /**
@@ -73,7 +74,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def isKnownPasswordHash(hash: String): Boolean = {
         ensureStarted()
     
-        NCPsql.exists("passwd_pool WHERE passwd_hash = ?", hash)
+        NCSql.exists("passwd_pool WHERE passwd_hash = ?", hash)
     }
     
     /**
@@ -85,7 +86,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def addPasswordHash(hash: String): Unit = {
         ensureStarted()
     
-        NCPsql.insert("INSERT INTO passwd_pool (passwd_hash) VALUES (?)", hash)
+        NCSql.insert("INSERT INTO passwd_pool (passwd_hash) VALUES (?)", hash)
     }
     
     /**
@@ -97,7 +98,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def erasePasswordHash(hash: String): Unit = {
         ensureStarted()
     
-        NCPsql.delete("DELETE FROM passwd_pool WHERE passwd_hash = ?", hash)
+        NCSql.delete("DELETE FROM passwd_pool WHERE passwd_hash = ?", hash)
     }
 
     /**
@@ -110,7 +111,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getUserByEmail(email: String): Option[NCUserMdo] = {
         ensureStarted()
 
-        NCPsql.selectSingle[NCUserMdo](
+        NCSql.selectSingle[NCUserMdo](
             """
               |SELECT *
               |FROM nc_user
@@ -131,7 +132,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        NCPsql.markAsDeleted("nc_user", "id", usrId)
+        NCSql.markAsDeleted("nc_user", "id", usrId)
     }
 
     /**
@@ -143,7 +144,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
         
-        NCPsql.markAsDeleted("ds_instance", "id", dsId)
+        NCSql.markAsDeleted("ds_instance", "id", dsId)
     }
 
     /**
@@ -155,7 +156,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def eraseDataSource(dsId: Long): Unit = {
         ensureStarted()
 
-        NCPsql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)
+        NCSql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)
     }
 
     /**
@@ -177,7 +178,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Int = {
         ensureStarted()
 
-        NCPsql.update(
+        NCSql.update(
             s"""
                |UPDATE nc_user
                |SET
@@ -185,7 +186,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
                |    last_name = ?,
                |    avatar_url = ?,
                |    is_admin = ?,
-               |    last_modified_on = current_timestamp
+               |    last_modified_on = ?
                |WHERE
                |    id = ? AND
                |    deleted = FALSE
@@ -194,10 +195,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
             lastName,
             avatarUrl.orNull,
             isAdmin,
+            NCUtils.nowUtcTs(),
             usrId
         )
     }
-    
+
     /**
       * Updates data source.
       *
@@ -213,19 +215,20 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Int = {
         ensureStarted()
         
-        NCPsql.update(
+        NCSql.update(
             s"""
                |UPDATE ds_instance
                |SET
                |    name = ?,
                |    short_desc = ?,
-               |    last_modified_on = current_timestamp
+               |    last_modified_on = ?
                |WHERE
                |    id = ? AND
                |    deleted = FALSE
                 """.stripMargin,
             name,
             shortDesc,
+            NCUtils.nowUtcTs(),
             dsId
         )
     }
@@ -240,7 +243,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getUser(usrId: Long): Option[NCUserMdo] = {
         ensureStarted()
     
-        NCPsql.selectSingle[NCUserMdo](
+        NCSql.selectSingle[NCUserMdo](
             s"""
                |SELECT *
                |FROM nc_user
@@ -261,7 +264,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
         ensureStarted()
         
-        NCPsql.selectSingle[NCDataSourceMdo](
+        NCSql.selectSingle[NCDataSourceMdo](
             s"""
             |SELECT *
             |FROM ds_instance
@@ -282,7 +285,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getAllUsers: List[NCUserMdo] = {
         ensureStarted()
         
-        NCPsql.select[NCUserMdo](
+        NCSql.select[NCUserMdo](
             s"""
             |SELECT *
             |FROM nc_user
@@ -300,7 +303,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getAllDataSources: List[NCDataSourceMdo] = {
         ensureStarted()
         
-        NCPsql.select[NCDataSourceMdo](
+        NCSql.select[NCDataSourceMdo](
             s"""
             |SELECT *
             |FROM ds_instance
@@ -331,9 +334,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
         isAdmin: Boolean
     ): Long = {
         ensureStarted()
+
+        val now = NCUtils.nowUtcTs()
         
         // Insert user.
-        NCPsql.insertGetKey[Long](
+        NCSql.insertGetKey[Long](
             """
               | INSERT INTO nc_user(
               |    id,
@@ -343,9 +348,11 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |    passwd_salt,
               |    avatar_url,
               |    last_ds_id,
-              |    is_admin
+              |    is_admin,
+              |    created_on,
+              |    last_modified_on
               | )
-              | VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
             id,
             firstName,
@@ -354,7 +361,9 @@ object NCDbManager extends NCLifecycle("Database manager") {
             passwdSalt,
             avatarUrl.orNull,
             -1, // No data source yet.
-            isAdmin
+            isAdmin,
+            now,
+            now
         )
     }
 
@@ -383,7 +392,9 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Long = {
         ensureStarted()
 
-        NCPsql.insertGetKey[Long](
+        val now = NCUtils.nowUtcTs()
+
+        NCSql.insertGetKey[Long](
             """
               |INSERT INTO ds_instance(
               |     id,
@@ -393,8 +404,10 @@ object NCDbManager extends NCLifecycle("Database manager") {
               |     model_name,
               |     model_ver,
               |     model_cfg,
+              |     created_on,
+              |     last_modified_on,
               |     is_temporary
-              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
             id,
             name,
@@ -403,6 +416,8 @@ object NCDbManager extends NCLifecycle("Database manager") {
             mdlName,
             mdlVer,
             mdlCfg.orNull,
+            now,
+            now,
             isTemp
         )
     }
@@ -435,7 +450,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Unit = {
         ensureStarted()
         
-        NCPsql.insertSingle(
+        NCSql.insertSingle(
             """
               |INSERT INTO proc_log (
               |     user_id,
@@ -475,7 +490,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
         tstamp: Timestamp
     ): Unit = {
         ensureStarted()
-        NCPsql.insertSingle(
+        NCSql.insertSingle(
             """
             |UPDATE proc_log
             |SET
@@ -508,7 +523,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Unit = {
         ensureStarted()
         
-        NCPsql.insertSingle(
+        NCSql.insertSingle(
             """
               |UPDATE proc_log
               |SET
@@ -575,7 +590,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     ): Unit = {
         ensureStarted()
         
-        NCPsql.insertSingle(
+        NCSql.insertSingle(
             """
               |UPDATE proc_log
               |SET
@@ -631,7 +646,7 @@ object NCDbManager extends NCLifecycle("Database manager") {
     def getMaxColumnValue(table: String, col: String): Option[Long] = {
         ensureStarted()
 
-        NCPsql.selectSingle[Long](s"SELECT max($col) FROM $table")
+        NCSql.selectSingle[Long](s"SELECT max($col) FROM $table")
     }
 }
 

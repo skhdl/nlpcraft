@@ -33,7 +33,8 @@ package org.nlpcraft.server.mdo
 
 import java.sql.Timestamp
 
-import org.nlpcraft.server.db.postgres.NCPsql.Implicits.RsParser
+import org.nlpcraft.common.util.NCUtils
+import org.nlpcraft.server.db.utils.NCSql.Implicits.RsParser
 import org.nlpcraft.server.mdo.impl._
 
 /**
@@ -73,7 +74,9 @@ object NCUserMdo {
         require(lastName != null, "Last name cannot be null.")
         require(passwordSalt != null, "Password salt cannot be null.")
 
-        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, null, null)
+        val now = NCUtils.nowUtcTs()
+
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, now, now)
     }
 
     def apply(
@@ -92,6 +95,6 @@ object NCUserMdo {
         require(passwordSalt != null, "Password salt cannot be null.")
         require(createdOn != null, "Created date cannot be null.")
 
-        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, createdOn, null)
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, createdOn, createdOn)
     }
 }

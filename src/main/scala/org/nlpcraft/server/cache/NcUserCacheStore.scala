@@ -34,7 +34,7 @@ package org.nlpcraft.server.cache
 import org.apache.ignite.IgniteException
 import org.apache.ignite.lang.IgniteBiInClosure
 import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.db.utils.NCSql
 import org.nlpcraft.server.ignite.NCIgniteCacheStore
 import org.nlpcraft.server.mdo.NCUserMdo
 
@@ -48,7 +48,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     override protected def put(key: Either[Long, String], usr: NCUserMdo): Unit =
         if (key.isLeft)
             catching(wrapNCE) {
-                NCPsql.sql {
+                NCSql.sql {
                     val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
 
                     if (updated == 0)
@@ -67,7 +67,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     @throws[IgniteException]
     override protected def get(key: Either[Long, String]): NCUserMdo =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 if (key.isLeft)
                     NCDbManager.getUser(key.left.get)
                 else
@@ -79,7 +79,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     override protected def remove(key: Either[Long, String]): Unit =
         if (key.isLeft)
             catching(wrapNCE) {
-                NCPsql.sql {
+                NCSql.sql {
                     NCDbManager.deleteUser(key.left.get)
                 }
             }
@@ -87,7 +87,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     @throws[IgniteException]
     override def loadCache(clo: IgniteBiInClosure[Either[Long, String], NCUserMdo], args: AnyRef*): Unit =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 val items =
                     args.size match {
                         case 0 ⇒ NCDbManager.getAllUsers

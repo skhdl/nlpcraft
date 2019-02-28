@@ -34,7 +34,7 @@ package org.nlpcraft.server.cache
 import org.apache.ignite.IgniteException
 import org.apache.ignite.lang.IgniteBiInClosure
 import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.db.utils.NCSql
 import org.nlpcraft.server.ignite.NCIgniteCacheStore
 import org.nlpcraft.server.mdo.NCDataSourceMdo
 
@@ -47,7 +47,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     @throws[IgniteException]
     override protected def put(id: Long, ds: NCDataSourceMdo): Unit =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 val updated = NCDbManager.updateDataSource(ds.id, ds.name, ds.shortDesc)
 
                 if (updated == 0)
@@ -67,7 +67,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     @throws[IgniteException]
     override protected def get(id: Long): NCDataSourceMdo =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 NCDbManager.getDataSource(id)
             }.orNull
         }
@@ -75,7 +75,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     @throws[IgniteException]
     override protected def remove(id: Long): Unit =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 NCDbManager.getDataSource(id) match {
                     case Some(ds) ⇒
                         if (ds.isTemporary)
@@ -91,7 +91,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     @throws[IgniteException]
     override def loadCache(clo: IgniteBiInClosure[Long, NCDataSourceMdo], args: AnyRef*): Unit =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 val items =
                     args.size match {
                         case 0 ⇒ NCDbManager.getAllDataSources

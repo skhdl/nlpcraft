@@ -33,7 +33,8 @@ package org.nlpcraft.server.mdo
 
 import java.sql.Timestamp
 
-import org.nlpcraft.server.db.postgres.NCPsql.Implicits.RsParser
+import org.nlpcraft.common.util.NCUtils
+import org.nlpcraft.server.db.utils.NCSql.Implicits.RsParser
 import org.nlpcraft.server.mdo.impl._
 
 /**
@@ -75,6 +76,8 @@ object NCDataSourceMdo {
         require(modelName != null, "Model name cannot be null.")
         require(modelVersion != null, "Model version cannot be null.")
 
+        val now = NCUtils.nowUtcTs()
+
         NCDataSourceMdo(
             id,
             name,
@@ -84,8 +87,8 @@ object NCDataSourceMdo {
             modelVersion,
             modelConfig,
             isTemp,
-            null,
-            null
+            now,
+            now
         )
     }
 
@@ -117,7 +120,7 @@ object NCDataSourceMdo {
             modelConfig,
             isTemp,
             createdOn,
-            null
+            createdOn
         )
     }
 }

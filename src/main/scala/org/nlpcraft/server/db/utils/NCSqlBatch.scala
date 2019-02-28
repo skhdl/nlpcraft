@@ -29,12 +29,12 @@
  *        /_/
  */
 
-package org.nlpcraft.server.db.postgres
+package org.nlpcraft.server.db.utils
 
 /**
- * PostgreSQL batch.
+ * Database batch.
  */
-trait NCPsqlBatch {
+trait NCSqlBatch {
     /**
      * Adds to this batch.
      *

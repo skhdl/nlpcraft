@@ -33,7 +33,7 @@ package org.nlpcraft.server.mdo
 
 import java.sql.Timestamp
 
-import org.nlpcraft.server.db.postgres.NCPsql.Implicits.RsParser
+import org.nlpcraft.server.db.utils.NCSql.Implicits.RsParser
 import org.nlpcraft.server.mdo.impl._
 
 /**
