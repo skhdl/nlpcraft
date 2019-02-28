@@ -67,8 +67,6 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )
 
-    // Maximum size of the result body.
-    private final val MAX_RES_BODY_LENGTH = 1024 * 1024 // 1MB.
 
     /**
       * Processes 'ask' request from probe server.
@@ -226,7 +224,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             msg += "txt" → txt
             msg += "test" → test
             
-            if (resBody.isDefined && resBody.get.length > MAX_RES_BODY_LENGTH)
+            if (resBody.isDefined && resBody.get.length > config.resultMaxSize)
                 addOptional(msg, "error", Some("Result is too big. Model results must to be corrected."))
             else {
                 addOptional(msg, "error", errMsg)
