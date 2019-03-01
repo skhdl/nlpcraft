@@ -59,7 +59,7 @@
         <scala.logging.ver>3.9.0</scala.logging.ver>
         <scala.arm.ver>2.0</scala.arm.ver>
         <scala.xml.ver>1.0.6</scala.xml.ver>
-        <c3p0.ver>0.9.5.2</c3p0.ver>
+        <c3p0.ver>[0.9.5.3,)</c3p0.ver> <!-- Upgraded to due security vulnerability. -->
         <scalatest.ver>3.0.1</scalatest.ver>
         <akka.ver>2.4.17</akka.ver>
         <lift.json.ver>2.6.3</lift.json.ver>
