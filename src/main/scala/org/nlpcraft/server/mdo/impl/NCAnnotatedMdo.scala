@@ -37,7 +37,7 @@ import java.sql.ResultSet
 import com.thoughtworks.paranamer.{AnnotationParanamer, BytecodeReadingParanamer, CachingParanamer}
 import org.nlpcraft.common.ascii.{NCAsciiLike, NCAsciiTable}
 import org.nlpcraft.common.crypto.NCCipher
-import org.nlpcraft.server.db.utils.NCSql.Implicits.RsParser
+import org.nlpcraft.server.sql.NCSql.Implicits.RsParser
 import org.nlpcraft.server.json.{NCJson, NCJsonLike}
 import org.nlpcraft.common._
 

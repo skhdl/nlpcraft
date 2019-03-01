@@ -36,8 +36,7 @@ import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
@@ -63,7 +62,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
         dsSeq = NCSql.sqlNoTx {
             ignite.atomicSequence(
                 "dsSeq",
-                NCDbManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
+                NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
                 true
             )
         }

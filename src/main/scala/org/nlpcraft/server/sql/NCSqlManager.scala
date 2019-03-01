@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.server.db
+package org.nlpcraft.server.sql
 
 import java.sql.Timestamp
 import java.time.LocalDate
@@ -37,15 +37,14 @@ import java.time.LocalDate
 import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import org.nlpcraft.server.db.utils.NCSql
-import org.nlpcraft.server.db.utils.NCSql.Implicits._
+import NCSql.Implicits._
 import org.nlpcraft.server.mdo._
 
 /**
   * Provides basic CRUD and often used operations on RDBMS.
   * Note that all functions in this class expect outside `NCSql.sql()` block.
   */
-object NCDbManager extends NCLifecycle("Database manager") {
+object NCSqlManager extends NCLifecycle("Database manager") {
     /**
       * Starts manager.
       */

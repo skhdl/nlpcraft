@@ -36,8 +36,7 @@ import java.sql.Timestamp
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.server.apicodes.NCApiStatusCode.NCApiStatusCode
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.mdo.NCProbeMdo
 
 /**
@@ -58,7 +57,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         ensureStarted()
     
         NCSql.sql {
-            NCDbManager.updateCancelProcessingLog(
+            NCSqlManager.updateCancelProcessingLog(
                 srvReqId,
                 tstamp
             )
@@ -85,7 +84,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         ensureStarted()
     
         NCSql.sql {
-            NCDbManager.updateReadyProcessingLog(
+            NCSqlManager.updateReadyProcessingLog(
                 srvReqId,
                 errMsg.orNull,
                 resType.orNull,
@@ -109,7 +108,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         ensureStarted()
         
         NCSql.sql {
-            NCDbManager.updateProbeProcessingLog(
+            NCSqlManager.updateProbeProcessingLog(
                 srvReqId,
                 probe.probeToken,
                 probe.probeId,
@@ -163,7 +162,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         ensureStarted()
         
         NCSql.sql {
-            NCDbManager.newProcessingLog(
+            NCSqlManager.newProcessingLog(
                 usrId,
                 srvReqId,
                 txt,

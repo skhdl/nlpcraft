@@ -33,8 +33,7 @@ package org.nlpcraft.server.cache
 
 import org.apache.ignite.IgniteException
 import org.apache.ignite.lang.IgniteBiInClosure
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.ignite.NCIgniteCacheStore
 import org.nlpcraft.server.mdo.NCDataSourceMdo
 
@@ -48,10 +47,10 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     override protected def put(id: Long, ds: NCDataSourceMdo): Unit =
         catching(wrapNCE) {
             NCSql.sql {
-                val updated = NCDbManager.updateDataSource(ds.id, ds.name, ds.shortDesc)
+                val updated = NCSqlManager.updateDataSource(ds.id, ds.name, ds.shortDesc)
 
                 if (updated == 0)
-                    NCDbManager.addDataSource(
+                    NCSqlManager.addDataSource(
                         ds.id,
                         ds.name,
                         ds.shortDesc,
@@ -68,7 +67,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     override protected def get(id: Long): NCDataSourceMdo =
         catching(wrapNCE) {
             NCSql.sql {
-                NCDbManager.getDataSource(id)
+                NCSqlManager.getDataSource(id)
             }.orNull
         }
 
@@ -76,12 +75,12 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     override protected def remove(id: Long): Unit =
         catching(wrapNCE) {
             NCSql.sql {
-                NCDbManager.getDataSource(id) match {
+                NCSqlManager.getDataSource(id) match {
                     case Some(ds) ⇒
                         if (ds.isTemporary)
-                            NCDbManager.eraseDataSource(id)
+                            NCSqlManager.eraseDataSource(id)
                         else
-                            NCDbManager.deleteDataSource(id)
+                            NCSqlManager.deleteDataSource(id)
 
                     case None ⇒ // No-op.
                 }
@@ -94,8 +93,8 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
             NCSql.sql {
                 val items =
                     args.size match {
-                        case 0 ⇒ NCDbManager.getAllDataSources
-                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCDbManager.getDataSource)
+                        case 0 ⇒ NCSqlManager.getAllDataSources
+                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCSqlManager.getDataSource)
                     }
 
                 items.foreach(item ⇒ clo.apply(item.id, item))

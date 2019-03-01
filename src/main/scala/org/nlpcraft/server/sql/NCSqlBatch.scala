@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.server.db.utils
+package org.nlpcraft.server.sql
 
 /**
  * Database batch.

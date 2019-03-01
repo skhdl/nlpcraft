@@ -33,8 +33,7 @@ package org.nlpcraft.server.cache
 
 import org.apache.ignite.IgniteException
 import org.apache.ignite.lang.IgniteBiInClosure
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.ignite.NCIgniteCacheStore
 import org.nlpcraft.server.mdo.NCUserMdo
 
@@ -49,10 +48,10 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
         if (key.isLeft)
             catching(wrapNCE) {
                 NCSql.sql {
-                    val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
+                    val updated = NCSqlManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
 
                     if (updated == 0)
-                        NCDbManager.addUser(
+                        NCSqlManager.addUser(
                             usr.id,
                             usr.firstName,
                             usr.lastName,
@@ -69,9 +68,9 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
         catching(wrapNCE) {
             NCSql.sql {
                 if (key.isLeft)
-                    NCDbManager.getUser(key.left.get)
+                    NCSqlManager.getUser(key.left.get)
                 else
-                    NCDbManager.getUserByEmail(key.right.get)
+                    NCSqlManager.getUserByEmail(key.right.get)
             }.orNull
         }
 
@@ -80,7 +79,7 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
         if (key.isLeft)
             catching(wrapNCE) {
                 NCSql.sql {
-                    NCDbManager.deleteUser(key.left.get)
+                    NCSqlManager.deleteUser(key.left.get)
                 }
             }
 
@@ -90,8 +89,8 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
             NCSql.sql {
                 val items =
                     args.size match {
-                        case 0 ⇒ NCDbManager.getAllUsers
-                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCDbManager.getUser)
+                        case 0 ⇒ NCSqlManager.getAllUsers
+                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCSqlManager.getUser)
                     }
 
                 items.foreach(item ⇒ clo.apply(Left(item.id), item))

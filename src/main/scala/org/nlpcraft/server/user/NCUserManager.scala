@@ -39,8 +39,7 @@ import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.utils.NCSql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
@@ -108,7 +107,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         usersSeq = NCSql.sqlNoTx {
             ignite.atomicSequence(
                 "usersSeq",
-                NCDbManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
+                NCSqlManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
                 true
             )
         }
@@ -353,7 +352,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                 userCache(Right(U.normalizeEmail(email))) match {
                     case Some(usr) ⇒
                         NCSql.sql {
-                            if (!NCDbManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
+                            if (!NCSqlManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
                                 None
                             else {
                                 val newAcsTkn = tokenSigninCache.asScala.find(entry ⇒ entry.getValue.userId == usr.id) match {
@@ -495,7 +494,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCSql.sql {
                 // Add actual hash for the password.
                 // NOTE: we don't "stir up" password pool for password resets.
-                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
+                NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
             }
 
             // Notification.
@@ -616,11 +615,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
         NCSql.sql {
             // Add actual hash for the password.
-            NCDbManager.addPasswordHash(NCBlowfishHasher.hash(pswd, salt))
+            NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(pswd, salt))
 
             // "Stir up" password pool with each user.
             (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
-                NCDbManager.addPasswordHash(NCBlowfishHasher.hash(U.genGuid()))
+                NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(U.genGuid()))
             )
 
             event match {

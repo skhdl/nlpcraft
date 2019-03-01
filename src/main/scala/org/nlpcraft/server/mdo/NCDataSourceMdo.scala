@@ -34,7 +34,7 @@ package org.nlpcraft.server.mdo
 import java.sql.Timestamp
 
 import org.nlpcraft.common.util.NCUtils
-import org.nlpcraft.server.db.utils.NCSql.Implicits.RsParser
+import org.nlpcraft.server.sql.NCSql.Implicits.RsParser
 import org.nlpcraft.server.mdo.impl._
 
 /**
