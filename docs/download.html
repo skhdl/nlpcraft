@@ -38,5 +38,32 @@ layout: interior
     <span><i class="fas fa-fw fa-download"></i> {{ page.active_crumb }}</span>
 </h1>
 
-
+<div class="side-nav-container">
+    <div class="col-md-2 left-nav-column position-fixed">
+        <ul class="side-nav">
+            <li class="side-nav-title">Download as:</li>
+            <li><a href="#github">GitHub</a></li>
+            <li><a href="#zip">ZIP Archive</a></li>
+            <li><a href="#maven">Maven</a></li>
+        </ul>
+    </div>
+    <div class="col-md-10 right-nav-column">
+        <section id="github">
+            <span class="section-title">GitHub Repository</span>
+            <p>
+                If you want to contribute to the project or build it form the source
+                you need to get the full developer snapshot from GitHub:
+            </p>
+            <pre class="brush: ps">
+            $ git clone https://github.com/vic64/nlpcraft.git
+            </pre>
+        </section>
+        <section id="zip">
+            <span class="section-title">ZIP Archive</span>
+        </section>
+        <section id="maven">
+            <span class="section-title">Maven</span>
+        </section>
+    </div>
+</div>
 
