@@ -52,14 +52,11 @@ CREATE TABLE nc_user (
     last_ds_id BIGINT NULL,
     is_admin BOOLEAN NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR(64) NOT NULL,
-
-    deleted BOOLEAN NOT NULL DEFAULT false,
     created_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3),
-    deleted_on TIMESTAMP NULL,
     last_modified_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3)
 );
 
-CREATE INDEX nc_user_idx_1 ON nc_user(email);
+CREATE UNIQUE INDEX nc_user_idx_1 ON nc_user(email);
 CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
 
 --
@@ -82,11 +79,7 @@ CREATE TABLE ds_instance (
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
     model_cfg TEXT NULL,
-    is_temporary BOOLEAN NOT NULL,
-
-    deleted BOOLEAN NOT NULL DEFAULT false,
     created_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3),
-    deleted_on TIMESTAMP NULL,
     last_modified_on TIMESTAMP(3) NOT NULL DEFAULT current_timestamp(3)
 );
 

@@ -40,8 +40,4 @@ trait NCEntityMdo {
     // Corresponds to 'entity_base' in SQL schema.
     val createdOn: Timestamp
     val lastModifiedOn: Timestamp
-    
-    // NOTE:
-    // We don't carry on 'deleted' and 'deleted_on' fields as those should never
-    // end up on MDO level (they should only exist and matter on DB level).
 }

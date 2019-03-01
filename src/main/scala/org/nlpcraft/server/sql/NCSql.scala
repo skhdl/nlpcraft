@@ -596,63 +596,6 @@ object NCSql extends LazyLogging {
     def update(sql: String, params: Any*): Int = exec(sql, params: _*)
 
     /**
-     * Convenient method to mark a table row as deleted.
-     *
-     * @param tblName Table name.
-     * @param keyCol Primary key (or any key) column name.
-     * @param keyVal Key's value and type tuple.
-     */
-    @throws[NCE]
-    def markAsDeleted(tblName: String, keyCol: String, keyVal: Any): Int = {
-        val now = NCUtils.nowUtcTs()
-
-        val params = Seq(now, now, keyVal)
-
-        update(
-            s"""
-              | UPDATE $tblName
-              | SET
-              |     deleted = TRUE,
-              |     deleted_on = ?,
-              |     last_modified_on = ?
-              | WHERE
-              |     $keyCol = ? AND
-              |     deleted = FALSE
-            """.stripMargin.trim,
-            params: _*
-        )
-    }
-
-    /**
-     * Convenient method to mark a table row as deleted.
-     *
-     * @param tblName Table name.
-     * @param keys Sequence, where first element is column name, second is column's value and third is type.
-     */
-    @throws[NCE]
-    def markAsDeleted(tblName: String, keys: (String, Any)*): Int = {
-        val now = NCUtils.nowUtcTs()
-
-        val keysWhere = keys.map { case (col, _) ⇒ s"$col = ? AND" }.mkString(" ")
-
-        val params = Seq(now, now) ++ keys.map { case (_, v) ⇒ v }
-
-        update(
-            s"""
-               | UPDATE $tblName
-               | SET
-               |     deleted = TRUE,
-               |     deleted_on = ?,
-               |     last_modified_on = ?
-               | WHERE
-               |     $keysWhere
-               |     deleted = FALSE
-            """.stripMargin.trim,
-            params: _*
-        )
-    }
-
-    /**
      * Executes DDL statement and returns update count.
      *
      * @param sql DDL statement to execute.

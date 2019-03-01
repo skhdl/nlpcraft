@@ -50,17 +50,12 @@ CREATE TABLE nc_user (
     last_ds_id BIGINT NULL ,
     is_admin BOOL NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR(64) NOT NULL,
-
-    deleted BOOL NOT NULL DEFAULT false,
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    deleted_on TIMESTAMP NULL,
     last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
-CREATE INDEX nc_user_idx_1 ON nc_user(email);
+CREATE UNIQUE INDEX nc_user_idx_1 ON nc_user(email);
 CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
-
-CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
 
 --
 -- Pool of password hashes.
@@ -82,11 +77,7 @@ CREATE TABLE ds_instance (
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
     model_cfg TEXT NULL,
-    is_temporary BOOLEAN NOT NULL,
-
-    deleted BOOL NOT NULL DEFAULT false,
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    deleted_on TIMESTAMP NULL,
     last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 

@@ -114,16 +114,14 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             """
               |SELECT *
               |FROM nc_user
-              |WHERE
-              |    email = ? AND
-              |    deleted = FALSE
+              |WHERE email = ?
               """.stripMargin,
             email
         )
     }
     
     /**
-      * Marks user as `deleted` with given ID.
+      * Deletes user with given ID.
       *
       * @param usrId User ID.
       */
@@ -131,19 +129,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        NCSql.markAsDeleted("nc_user", "id", usrId)
-    }
-
-    /**
-      * Marks data source as `deleted` with given ID.
-      *
-      * @param dsId Data source ID.
-      */
-    @throws[NCE]
-    def deleteDataSource(dsId: Long): Unit = {
-        ensureStarted()
-        
-        NCSql.markAsDeleted("ds_instance", "id", dsId)
+        NCSql.delete("DELETE FROM nc_user WHERE id = ?", usrId)
     }
 
     /**
@@ -152,7 +138,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
       * @param dsId Data source ID.
       */
     @throws[NCE]
-    def eraseDataSource(dsId: Long): Unit = {
+    def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
 
         NCSql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)
@@ -186,9 +172,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
                |    avatar_url = ?,
                |    is_admin = ?,
                |    last_modified_on = ?
-               |WHERE
-               |    id = ? AND
-               |    deleted = FALSE
+               |WHERE id = ?
                 """.stripMargin,
             firstName,
             lastName,
@@ -221,9 +205,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
                |    name = ?,
                |    short_desc = ?,
                |    last_modified_on = ?
-               |WHERE
-               |    id = ? AND
-               |    deleted = FALSE
+               |WHERE id = ?
                 """.stripMargin,
             name,
             shortDesc,
@@ -246,9 +228,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             s"""
                |SELECT *
                |FROM nc_user
-               |WHERE
-               |    id = ? AND
-               |    deleted = FALSE
+               |WHERE id = ?
             """.stripMargin,
             usrId)
     }
@@ -267,9 +247,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             s"""
             |SELECT *
             |FROM ds_instance
-            |WHERE
-            |    id = ? AND
-            |    deleted = FALSE
+            |WHERE id = ?
             """.stripMargin,
             dsId
         )
@@ -284,13 +262,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     def getAllUsers: List[NCUserMdo] = {
         ensureStarted()
         
-        NCSql.select[NCUserMdo](
-            s"""
-            |SELECT *
-            |FROM nc_user
-            |WHERE deleted = FALSE
-            """.stripMargin
-        )
+        NCSql.select[NCUserMdo]("SELECT * FROM nc_user")
     }
     
     /**
@@ -302,13 +274,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     def getAllDataSources: List[NCDataSourceMdo] = {
         ensureStarted()
         
-        NCSql.select[NCDataSourceMdo](
-            s"""
-            |SELECT *
-            |FROM ds_instance
-            |WHERE deleted = FALSE
-            """.stripMargin
-        )
+        NCSql.select[NCDataSourceMdo]("SELECT *FROM ds_instance")
     }
 
     /**
@@ -376,7 +342,6 @@ object NCSqlManager extends NCLifecycle("Database manager") {
       * @param mdlName Model name.
       * @param mdlVer Model version.
       * @param mdlCfg Model config.
-      * @param isTemp Temporary flag.
       */
     @throws[NCE]
     def addDataSource(
@@ -386,8 +351,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         mdlId: String,
         mdlName: String,
         mdlVer: String,
-        mdlCfg: Option[String],
-        isTemp: Boolean
+        mdlCfg: Option[String]
     ): Long = {
         ensureStarted()
 
@@ -404,9 +368,8 @@ object NCSqlManager extends NCLifecycle("Database manager") {
               |     model_ver,
               |     model_cfg,
               |     created_on,
-              |     last_modified_on,
-              |     is_temporary
-              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              |     last_modified_on
+              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
             id,
             name,
@@ -416,8 +379,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             mdlVer,
             mdlCfg.orNull,
             now,
-            now,
-            isTemp
+            now
         )
     }
     

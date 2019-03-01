@@ -57,8 +57,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
                         ds.modelId,
                         ds.modelName,
                         ds.modelVersion,
-                        ds.modelConfig,
-                        ds.isTemporary
+                        ds.modelConfig
                     )
             }
         }
@@ -75,15 +74,7 @@ class NcDsCacheStore extends NCIgniteCacheStore[Long, NCDataSourceMdo] {
     override protected def remove(id: Long): Unit =
         catching(wrapNCE) {
             NCSql.sql {
-                NCSqlManager.getDataSource(id) match {
-                    case Some(ds) ⇒
-                        if (ds.isTemporary)
-                            NCSqlManager.eraseDataSource(id)
-                        else
-                            NCSqlManager.deleteDataSource(id)
-
-                    case None ⇒ // No-op.
-                }
+                NCSqlManager.deleteDataSource(id)
             }
         }
 

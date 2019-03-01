@@ -362,7 +362,7 @@ public class NCTestClientBuilder {
         private String acsTok;
         private long dsId;
         private String mdlId;
-        private boolean isTestDs = false;
+        private boolean isDsCreated = false;
         private HttpServer srv;
 
         private volatile boolean opened = false;
@@ -553,11 +553,11 @@ public class NCTestClientBuilder {
             
             if (dsId != null) {
                 this.dsId = dsId;
-                isTestDs = false;
+                isDsCreated = false;
             }
             else {
                 this.dsId = restCreateTestDs(mdlId);
-                isTestDs = true;
+                isDsCreated = true;
             }
     
             Optional<NCDsJson> dsOpt = restGetDataSources().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
@@ -645,7 +645,7 @@ public class NCTestClientBuilder {
             
             res.clear();
             
-            if (isTestDs) restDeleteTestDs();
+            if (isDsCreated) restDeleteTestDs();
 
             restRemoveEndpoint();
             
@@ -811,8 +811,7 @@ public class NCTestClientBuilder {
                         Pair.of("shortDesc", "Test data source"),
                         Pair.of("mdlId", mdlId),
                         Pair.of("mdlName", "Test model"),
-                        Pair.of("mdlVer", "Test version"),
-                        Pair.of("isTemp", "true")
+                        Pair.of("mdlVer", "Test version")
                     ),
                     "id",
                     Long.class

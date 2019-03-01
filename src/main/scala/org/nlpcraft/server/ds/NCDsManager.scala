@@ -129,7 +129,6 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     ds.modelName,
                     ds.modelVersion,
                     ds.modelConfig,
-                    ds.isTemporary,
                     ds.createdOn
                 )
 
@@ -149,9 +148,9 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
       */
     def addTempDataSource(mdlId: String): Long = {
         ensureStarted()
-    
+
         val newDsId = dsSeq.incrementAndGet()
-        
+
         catching(wrapIE) {
             dsCache +=
                 newDsId →
@@ -162,13 +161,13 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     s"$mdlId",
                     s"tmp",
                     s"${NCVersion.getCurrent.version}",
-                    None,
-                    true
+                    None
                 )
+
         }
-        
+
         // NOTE: no notification for temp data source.
-        
+
         newDsId
     }
 
@@ -206,8 +205,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     mdlId,
                     mdlName,
                     mdlVer,
-                    mdlCfg,
-                    false
+                    mdlCfg
                 )
         }
 
