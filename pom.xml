@@ -54,6 +54,7 @@
         <commons.validator.ver>1.6</commons.validator.ver>
         <jsoup.ver>1.8.3</jsoup.ver>
         <postgresql.ver>9.4.1212</postgresql.ver>
+        <mysql.ver>5.1.47</mysql.ver>
         <slf4j.ver>1.7.25</slf4j.ver>
         <scala.logging.ver>3.9.0</scala.logging.ver>
         <scala.arm.ver>2.0</scala.arm.ver>
@@ -261,6 +262,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.ver}</version>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>

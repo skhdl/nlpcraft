@@ -37,13 +37,14 @@ import java.net.{Inet4Address, InetAddress, NetworkInterface, ServerSocket, Sock
 import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
+import java.sql.Timestamp
 import java.text.{DecimalFormat, DecimalFormatSymbols}
 import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.concurrent.{ExecutorService, TimeUnit}
 import java.util.jar.JarFile
 import java.util.stream.Collectors
-import java.util.zip.{ZipInputStream, GZIPInputStream ⇒ GIS, GZIPOutputStream ⇒ GOS}
-import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar ⇒ C}
+import java.util.zip.{ZipInputStream, GZIPInputStream => GIS, GZIPOutputStream => GOS}
+import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar => C}
 
 import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
@@ -168,7 +169,12 @@ object NCUtils extends LazyLogging {
       * Gets now in UTC timezone in milliseconds representation.
       */
     def nowUtcMs(): Long = Instant.now().toEpochMilli
-    
+
+    /**
+      * Gets now in UTC timezone in SQL Timestamp representation.
+      */
+    def nowUtcTs(): Timestamp = new Timestamp(Instant.now().toEpochMilli)
+
     /**
       * Escapes given string for JSON according to RFC 4627 http://www.ietf.org/rfc/rfc4627.txt.
       *

@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.server.db.postgres
+package org.nlpcraft.server.sql
 
 import java.sql.Types._
 import java.sql.{Connection, PreparedStatement, ResultSet, SQLException, Timestamp}
@@ -38,6 +38,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.transactions.Transaction
 import org.nlpcraft.common._
+import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.tx.NCTxManager
 import resource._
@@ -46,20 +47,12 @@ import scala.collection._
 import scala.util.control.Exception._
 
 /**
- * Direct support for PostgreSQL.
+ * Direct support for database.
  */
-object NCPsql extends LazyLogging {
+object NCSql extends LazyLogging {
     // Internal log switch.
     private final val LOG_SQL_STATEMENTS = false
     
-    // Specific PostgreSQL exceptions.
-    case class NCPsqlConstraintViolation(err: String, cause: Throwable) extends
-        NCE(s"Integrity constraint violation: $err", cause)
-    case class NCPsqlCardinalityViolation(err: String, cause: Throwable) extends
-        NCE(s"Cardinality violation: $err", cause)
-    case class NCPsqlDataException(err: String, cause: Throwable) extends
-        NCE(s"Data exception: $err", cause)
-
     // Some built-in implicit parsers for simple values.
     object Implicits {
         /** A function that takes active result set and produces an object  by parsing one or multiple rows. */
@@ -78,7 +71,7 @@ object NCPsql extends LazyLogging {
 
     // Type safe and eager settings container.
     private object Config extends NCConfigurable {
-        final val prefix = "server.postgres"
+        final val prefix = "server.database"
         
         val url: String = getString(s"$prefix.jdbc.url")
         val driver: String = getString(s"$prefix.jdbc.driver")
@@ -128,26 +121,14 @@ object NCPsql extends LazyLogging {
     }
 
     /**
-     * Partial function that parses PostgreSQL error codes and rethrows appropriate exceptions.
+     * Wraps database error.
      *
      * @tparam R Type of the return value for the body.
      * @return Catcher.
      */
     @throws[NCE]
     private def psqlErrorCodes[R]: Catcher[R] = {
-        case e: SQLException ⇒
-            e.getSQLState match {
-                case null ⇒ throw new NCE(s"PostgreSQL error: ${e.getLocalizedMessage}", e)
-
-                // See 'http://www.postgres.org/docs/9.1/static/errcodes-appendix.html' for more details.
-                case st ⇒ st match {
-                    case err if err.startsWith("23") ⇒ throw NCPsqlConstraintViolation(err, e) // Class '23'.
-                    case err if err.startsWith("21") ⇒ throw NCPsqlCardinalityViolation(err, e) // Class '21'.
-                    case err if err.startsWith("22") ⇒ throw NCPsqlDataException(err, e) // Class '22'.
-
-                    case err ⇒ throw new NCE(s"PostgreSQL error: $err (see https://www.postgresql.org/docs/current/errcodes-appendix.html), ${e.getLocalizedMessage}", e)
-                }
-            }
+        case e: SQLException ⇒ throw new NCE(s"Database error: ${e.getLocalizedMessage}", e)
     }
 
     // Strips extra new lines, tabs a white spaces.
@@ -220,8 +201,8 @@ object NCPsql extends LazyLogging {
      * @param size Size of the batch.
      * @return Batch instance.
      */
-    def batch(sql: String, size: Int = 1000): NCPsqlBatch = {
-        new NCPsqlBatch {
+    def batch(sql: String, size: Int = 1000): NCSqlBatch = {
+        new NCSqlBatch {
             private var ps: PreparedStatement = _
 
             private var cnt = 0
@@ -619,23 +600,28 @@ object NCPsql extends LazyLogging {
      *
      * @param tblName Table name.
      * @param keyCol Primary key (or any key) column name.
-     * @param keyVals Key's value and type tuple.
+     * @param keyVal Key's value and type tuple.
      */
     @throws[NCE]
-    def markAsDeleted(tblName: String, keyCol: String, keyVals: Any): Int =
+    def markAsDeleted(tblName: String, keyCol: String, keyVal: Any): Int = {
+        val now = NCUtils.nowUtcTs()
+
+        val params = Seq(now, now, keyVal)
+
         update(
             s"""
               | UPDATE $tblName
               | SET
               |     deleted = TRUE,
-              |     deleted_on = current_timestamp,
-              |     last_modified_on = current_timestamp
+              |     deleted_on = ?,
+              |     last_modified_on = ?
               | WHERE
               |     $keyCol = ? AND
               |     deleted = FALSE
             """.stripMargin.trim,
-            keyVals
+            params: _*
         )
+    }
 
     /**
      * Convenient method to mark a table row as deleted.
@@ -645,19 +631,22 @@ object NCPsql extends LazyLogging {
      */
     @throws[NCE]
     def markAsDeleted(tblName: String, keys: (String, Any)*): Int = {
+        val now = NCUtils.nowUtcTs()
+
         val keysWhere = keys.map { case (col, _) ⇒ s"$col = ? AND" }.mkString(" ")
-        val params = keys.map { case (_, v) ⇒ v }
+
+        val params = Seq(now, now) ++ keys.map { case (_, v) ⇒ v }
 
         update(
             s"""
                | UPDATE $tblName
                | SET
-               |     deleted = true,
-               |     deleted_on = current_timestamp,
-               |     last_modified_on = current_timestamp
+               |     deleted = TRUE,
+               |     deleted_on = ?,
+               |     last_modified_on = ?
                | WHERE
                |     $keysWhere
-               |     deleted = false
+               |     deleted = FALSE
             """.stripMargin.trim,
             params: _*
         )

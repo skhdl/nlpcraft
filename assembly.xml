@@ -63,5 +63,13 @@
                 <include>*.xml</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/scala/org/nlpcraft/examples</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>probe.conf</include>
+            </includes>
+        </fileSet>
+
     </fileSets>
 </assembly>
