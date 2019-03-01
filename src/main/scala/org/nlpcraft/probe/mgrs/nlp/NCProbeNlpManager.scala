@@ -66,8 +66,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
     private final val EC = ExecutionContext.fromExecutor(
         Executors.newFixedThreadPool(8 * Runtime.getRuntime.availableProcessors())
     )
-
-
+    
     /**
       * Processes 'ask' request from probe server.
       *
