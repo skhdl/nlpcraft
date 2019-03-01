@@ -33,7 +33,8 @@ package org.nlpcraft.server.mdo
 
 import java.sql.Timestamp
 
-import org.nlpcraft.server.db.postgres.NCPsql.Implicits.RsParser
+import org.nlpcraft.common.util.NCUtils
+import org.nlpcraft.server.sql.NCSql.Implicits.RsParser
 import org.nlpcraft.server.mdo.impl._
 
 /**
@@ -48,8 +49,7 @@ case class NCDataSourceMdo(
     @NCMdoField(column = "model_name") modelName: String,
     @NCMdoField(column = "model_ver") modelVersion: String,
     @NCMdoField(column = "model_cfg") modelConfig: Option[String],
-    @NCMdoField(column = "is_temporary") isTemporary: Boolean,
-    
+
     // Base MDO.
     @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
     @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
@@ -66,14 +66,15 @@ object NCDataSourceMdo {
         modelId: String,
         modelName: String,
         modelVersion: String,
-        modelConfig: Option[String],
-        isTemp: Boolean
+        modelConfig: Option[String]
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
         require(shortDesc != null, "Short description cannot be null.")
         require(modelId != null, "Model ID cannot be null.")
         require(modelName != null, "Model name cannot be null.")
         require(modelVersion != null, "Model version cannot be null.")
+
+        val now = NCUtils.nowUtcTs()
 
         NCDataSourceMdo(
             id,
@@ -83,9 +84,8 @@ object NCDataSourceMdo {
             modelName,
             modelVersion,
             modelConfig,
-            isTemp,
-            null,
-            null
+            now,
+            now
         )
     }
 
@@ -97,7 +97,6 @@ object NCDataSourceMdo {
         modelName: String,
         modelVersion: String,
         modelConfig: Option[String],
-        isTemp: Boolean,
         createdOn: Timestamp
     ): NCDataSourceMdo = {
         require(name != null, "Name cannot be null.")
@@ -115,9 +114,8 @@ object NCDataSourceMdo {
             modelName,
             modelVersion,
             modelConfig,
-            isTemp,
             createdOn,
-            null
+            createdOn
         )
     }
 }

@@ -153,6 +153,7 @@ object NCProbe extends App with LazyLogging {
         val downLink: String = hocon.getString("probe.downLink") // probe-to-server data pipe (downlink).
         val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
         val modelProviders: List[String] = hocon.getStringList("probe.modelProviders").asScala.toList
+        val resultMaxSize: Int = hocon.getInt("probe.result.maxSize")
     
         /**
           * 
@@ -172,6 +173,9 @@ object NCProbe extends App with LazyLogging {
             
             if (modelProviders.distinct.size != modelProviders.size)
                 abortError("Configuration property 'probe.modelProviders' cannot have duplicates.")
+
+            if (resultMaxSize <= 0)
+                abortError("Configuration property 'probe.result.maxSize' must be positive.")
         }
     }
     

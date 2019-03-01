@@ -36,8 +36,7 @@ import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
@@ -60,10 +59,10 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        dsSeq = NCPsql.sqlNoTx {
+        dsSeq = NCSql.sqlNoTx {
             ignite.atomicSequence(
                 "dsSeq",
-                NCDbManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
+                NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
                 true
             )
         }
@@ -130,7 +129,6 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     ds.modelName,
                     ds.modelVersion,
                     ds.modelConfig,
-                    ds.isTemporary,
                     ds.createdOn
                 )
 
@@ -150,9 +148,9 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
       */
     def addTempDataSource(mdlId: String): Long = {
         ensureStarted()
-    
+
         val newDsId = dsSeq.incrementAndGet()
-        
+
         catching(wrapIE) {
             dsCache +=
                 newDsId →
@@ -163,13 +161,13 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     s"$mdlId",
                     s"tmp",
                     s"${NCVersion.getCurrent.version}",
-                    None,
-                    true
+                    None
                 )
+
         }
-        
+
         // NOTE: no notification for temp data source.
-        
+
         newDsId
     }
 
@@ -207,8 +205,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
                     mdlId,
                     mdlName,
                     mdlVer,
-                    mdlCfg,
-                    false
+                    mdlCfg
                 )
         }
 

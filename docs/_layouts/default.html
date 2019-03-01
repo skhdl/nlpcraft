@@ -54,6 +54,7 @@ layout: compress
     <script src="{{ '/ext/syntaxhighlighter/scripts/XRegExp.js' | relative_url }}" type="text/javascript"></script>
     <script src="{{ '/ext/syntaxhighlighter/scripts/shCore.js' | relative_url }}" type="text/javascript"></script>
     <script src="{{ '/ext/syntaxhighlighter/scripts/shBrushXml.js' | relative_url }}" type="text/javascript"></script>
+    <script src="{{ '/ext/syntaxhighlighter/scripts/shBrushPowerShell.js' | relative_url }}" type="text/javascript"></script>
     <script src="{{ '/ext/syntaxhighlighter/scripts/shBrushJava.js' | relative_url }}" type="text/javascript"></script>
     <script src="{{ '/ext/syntaxhighlighter/scripts/shBrushScala.js' | relative_url }}" type="text/javascript"></script>
     <script src="{{ '/ext/syntaxhighlighter/scripts/shBrushJScript.js' | relative_url }}" type="text/javascript"></script>
@@ -149,7 +150,6 @@ layout: compress
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'UA-48766736-2');
 </script>
 
@@ -157,6 +157,8 @@ layout: compress
 <script type="text/javascript">
     SyntaxHighlighter.defaults["auto-links"] = false;
     SyntaxHighlighter.defaults["tab-size"] = 2;
+
+    SyntaxHighlighter.all();
 </script>
 
 </body>
