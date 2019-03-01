@@ -33,8 +33,7 @@ package org.nlpcraft.server.cache
 
 import org.apache.ignite.IgniteException
 import org.apache.ignite.lang.IgniteBiInClosure
-import org.nlpcraft.server.db.NCDbManager
-import org.nlpcraft.server.db.postgres.NCPsql
+import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.ignite.NCIgniteCacheStore
 import org.nlpcraft.server.mdo.NCUserMdo
 
@@ -48,11 +47,11 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     override protected def put(key: Either[Long, String], usr: NCUserMdo): Unit =
         if (key.isLeft)
             catching(wrapNCE) {
-                NCPsql.sql {
-                    val updated = NCDbManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
+                NCSql.sql {
+                    val updated = NCSqlManager.updateUser(usr.id, usr.firstName, usr.lastName, usr.avatarUrl, usr.isAdmin)
 
                     if (updated == 0)
-                        NCDbManager.addUser(
+                        NCSqlManager.addUser(
                             usr.id,
                             usr.firstName,
                             usr.lastName,
@@ -67,11 +66,11 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     @throws[IgniteException]
     override protected def get(key: Either[Long, String]): NCUserMdo =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 if (key.isLeft)
-                    NCDbManager.getUser(key.left.get)
+                    NCSqlManager.getUser(key.left.get)
                 else
-                    NCDbManager.getUserByEmail(key.right.get)
+                    NCSqlManager.getUserByEmail(key.right.get)
             }.orNull
         }
 
@@ -79,19 +78,19 @@ class NcUserCacheStore extends NCIgniteCacheStore[Either[Long, String], NCUserMd
     override protected def remove(key: Either[Long, String]): Unit =
         if (key.isLeft)
             catching(wrapNCE) {
-                NCPsql.sql {
-                    NCDbManager.deleteUser(key.left.get)
+                NCSql.sql {
+                    NCSqlManager.deleteUser(key.left.get)
                 }
             }
 
     @throws[IgniteException]
     override def loadCache(clo: IgniteBiInClosure[Either[Long, String], NCUserMdo], args: AnyRef*): Unit =
         catching(wrapNCE) {
-            NCPsql.sql {
+            NCSql.sql {
                 val items =
                     args.size match {
-                        case 0 ⇒ NCDbManager.getAllUsers
-                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCDbManager.getUser)
+                        case 0 ⇒ NCSqlManager.getAllUsers
+                        case _ ⇒ args.map(_.asInstanceOf[Long]).flatMap(NCSqlManager.getUser)
                     }
 
                 items.foreach(item ⇒ clo.apply(Left(item.id), item))

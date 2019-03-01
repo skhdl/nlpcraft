@@ -31,11 +31,9 @@
 
 package org.nlpcraft.server.query
 
-import java.sql.Timestamp
-
 import org.apache.ignite.IgniteCache
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCLifecycle, _}
+import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
@@ -99,7 +97,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         
         val txt0 = txt.trim()
         
-        val rcvTstamp = new Timestamp(U.nowUtcMs())
+        val rcvTstamp = NCUtils.nowUtcTs()
         
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
@@ -188,7 +186,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
         
-        val now = new Timestamp(U.nowUtcMs())
+        val now = NCUtils.nowUtcTs()
     
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -235,7 +233,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def setResult(srvReqId: String, resType: String, resBody: String): Unit = {
         ensureStarted()
         
-        val now = new Timestamp(U.nowUtcMs())
+        val now = NCUtils.nowUtcTs()
         
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -301,7 +299,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
-        val now = new Timestamp(U.nowUtcMs())
+        val now = NCUtils.nowUtcTs()
 
         val userSrvReqIds =
             catching(wrapIE) {

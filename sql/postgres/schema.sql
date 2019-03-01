@@ -37,14 +37,30 @@
 -- NOTE: database 'nlpcraft' should be created and owned by 'nlpcraft' user.
 --
 
--- Base entity type.
-DROP TABLE IF EXISTS base;
-CREATE TABLE base (
+--
+-- User table.
+--
+DROP TABLE IF EXISTS nc_user CASCADE;
+CREATE TABLE nc_user (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(64) NOT NULL, -- Used as username during login.
+    avatar_url TEXT NULL, -- URL or encoding of avatar for this user, if any.
+    first_name VARCHAR(64) NOT NULL,
+    last_name VARCHAR(64) NOT NULL,
+    last_ds_id BIGINT NULL ,
+    is_admin BOOL NOT NULL, -- Whether or not created with admin token.
+    passwd_salt VARCHAR(64) NOT NULL,
+
     deleted BOOL NOT NULL DEFAULT false,
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    deleted_on TIMESTAMP,
+    deleted_on TIMESTAMP NULL,
     last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
+
+CREATE INDEX nc_user_idx_1 ON nc_user(email);
+CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
+
+CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
 
 --
 -- Pool of password hashes.
@@ -55,44 +71,23 @@ CREATE TABLE passwd_pool (
 );
 
 --
--- User table.
---
-DROP TABLE IF EXISTS nc_user CASCADE;
-CREATE TABLE nc_user (
-    -- Inherit columns from base entity.
-    LIKE base INCLUDING DEFAULTS,
-
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(64) NOT NULL, -- Used as username during login.
-    avatar_url TEXT, -- URL or encoding of avatar for this user, if any.
-    first_name VARCHAR(64) NOT NULL,
-    last_name VARCHAR(64) NOT NULL,
-    last_ds_id BIGINT,
-    is_admin BOOL NOT NULL, -- Whether or not created with admin token.
-    passwd_salt VARCHAR(64) NOT NULL
-);
-
-CREATE INDEX nc_user_idx_1 ON nc_user(email);
-CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
-
-CREATE UNIQUE INDEX nc_user_uk_1 ON nc_user(email) WHERE deleted = false;
-
---
 -- Instance of data source.
 --
 DROP TABLE IF EXISTS ds_instance CASCADE;
 CREATE TABLE ds_instance (
-    -- Inherit columns from base entity.
-    LIKE base INCLUDING DEFAULTS,
-
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL, -- User friendly (non-unique) name of the data source.
-    short_desc VARCHAR(128) NULL, -- Short, optional description additional to the name.
+    short_desc VARCHAR(128), -- Short, optional description additional to the name.
     model_id VARCHAR(32) NOT NULL,
     model_name VARCHAR(64) NOT NULL,
     model_ver VARCHAR(16) NOT NULL,
     model_cfg TEXT NULL,
-    is_temporary BOOLEAN NOT NULL
+    is_temporary BOOLEAN NOT NULL,
+
+    deleted BOOL NOT NULL DEFAULT false,
+    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    deleted_on TIMESTAMP NULL,
+    last_modified_on TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
 --
@@ -102,11 +97,11 @@ DROP TABLE IF EXISTS proc_log CASCADE;
 CREATE TABLE proc_log (
     -- Common part.
     srv_req_id VARCHAR(64) PRIMARY KEY,
-    txt VARCHAR(1024),
-    user_id BIGINT,
-    ds_id BIGINT,
-    model_id VARCHAR(64),
-    status VARCHAR(32),
+    txt VARCHAR(1024) NULL,
+    user_id BIGINT NULL,
+    ds_id BIGINT NULL,
+    model_id VARCHAR(64) NULL,
+    status VARCHAR(32) NULL,
     user_agent VARCHAR(512) NULL,
     rmt_address VARCHAR(256) NULL,
     -- Ask and result timestamps.
