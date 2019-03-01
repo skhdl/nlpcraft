@@ -100,7 +100,7 @@ public class TimeModel extends NCModelProviderAdapter {
         res.put("lon", lon);
         res.put("localTime", ZonedDateTime.now(ZoneId.of(tmz)).format(FMT));
     
-        return NCQueryResult.jsonTable(gson.toJson(res));
+        return NCQueryResult.json(gson.toJson(res));
     }
 
     /**

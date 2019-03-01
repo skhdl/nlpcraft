@@ -128,7 +128,7 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json/table} result. Here's the format of the result JavaScript snippet:
+     * Creates {@code json/table} result. Here's the format of the result JSON snippet:
      * <pre class="brush: js">
      * {
      *      "border": true, // Whether or not table has border.
