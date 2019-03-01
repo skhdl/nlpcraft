@@ -52,7 +52,7 @@ mkdir ${zipDir}/${tmpDir}
 
 rsync -avzq bin ${zipDir}/${tmpDir} --exclude '**/.DS_Store' --exclude bin/prepare.sh
 rsync -avzq openapi ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
-rsync -avzq db ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
+rsync -avzq sql ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq build ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 cp LICENSE ${zipDir}/${tmpDir}

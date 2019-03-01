@@ -63,7 +63,7 @@ import scala.compat.Platform.currentTime
 import scala.util.control.Exception.{catching, ignoring}
 
 /**
-  * NlpCraft server app.
+  * NLPCraft server app.
   */
 object NCServer extends App with NCIgniteInstance with LazyLogging {
     /**

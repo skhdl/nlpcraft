@@ -29,28 +29,8 @@
  *        /_/
  */
 
-.syntaxhighlighter {
-    width: 90% !important;
-    padding: 15px 0;
-    font-size: 100% !important;
-    border-radius: 2px !important;
-    overflow-y: hidden !important;
-    overflow-x: auto !important;
-
-    .toolbar {
-        display: none;
-    }
+.download-sigs > a {
+    border: 1px solid #bfe1ff;
+    padding: 1px 2px;
 }
 
-.syntaxhighlighter a,
-.syntaxhighlighter div,
-.syntaxhighlighter code,
-.syntaxhighlighter table,
-.syntaxhighlighter table td,
-.syntaxhighlighter table tr,
-.syntaxhighlighter table tbody,
-.syntaxhighlighter table thead,
-.syntaxhighlighter table caption,
-.syntaxhighlighter textarea {
-    vertical-align: bottom !important;
-}

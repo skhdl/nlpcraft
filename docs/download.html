@@ -44,25 +44,117 @@ layout: interior
             <li class="side-nav-title">Download as:</li>
             <li><a href="#github">GitHub</a></li>
             <li><a href="#zip">ZIP Archive</a></li>
-            <li><a href="#maven">Maven</a></li>
+            <li><a href="#maven">Maven/Grape/SBT</a></li>
         </ul>
     </div>
     <div class="col-md-10 right-nav-column">
+        <section id="prerequisites">
+            <span class="section-title">Prerequisites</span>
+            <p>
+                Here's the list of tools you will need to get started with NLPCraft:
+            </p>
+            <ul>
+                <li>
+                    <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java SE Runtime Environment</a>
+                    (JRE) or <a target=_new href="https://openjdk.java.net/">OpenJDK</a> ver. 8 or later installed.
+                </li>
+                <li>
+                    Latest versions of <a target=_ href="https://git-scm.com/downloads">Git</a> and
+                    <a target=_ href="https://maven.apache.org/install.html">Maven</a>.
+                </li>
+            </ul>
+        </section>
         <section id="github">
-            <span class="section-title">GitHub Repository</span>
+            <span class="section-title">GitHub</span>
             <p>
                 If you want to contribute to the project or build it form the source
-                you need to get the full developer snapshot from GitHub:
+                you need to get the full developer snapshot from <a target="github" href="https://github.com/vic64/nlpcraft">GitHub</a>:
             </p>
             <pre class="brush: ps">
             $ git clone https://github.com/vic64/nlpcraft.git
+            $ mvn clean package
             </pre>
+            <div class="bq info">
+                <p>
+                    <b>GitHub vs. ZIP vs. Maven</b>
+                </p>
+                <p>
+                    Use GitHub clone if you want to contribute to the project or build it from source.
+                    To build your own models and integrate into your own application it is recommended to
+                    download ZIP archive or add Maven/Grape/SBT dependency.
+                </p>
+            </div>
         </section>
         <section id="zip">
             <span class="section-title">ZIP Archive</span>
+            <p>
+                Download the desired version of NLPCraft release:
+            </p>
+            <table class="gradient-table">
+                <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Version</th>
+                    <th>Release Date</th>
+                    <th>Signatures</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for rel in site.data.releases %}
+                <tr>
+                    <td><i class="fa fa-fw fa-download"></i> <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip">nlpcraft-{{rel.version}}.zip</a></td>
+                    <td>{{rel.version}}</td>
+                    <td>{{rel.date}}</td>
+                    <td class="download-sigs">
+                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.md5">MD5</a>
+                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sha1">SHA1</a>
+                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sha256">SHA256</a>
+                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sig">PGP</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="bq warn">
+                <p>
+                    <b>NOTE:</b> <code>MD5</code> and <code>SHA1</code> signatures provided only for
+                    rare backward compatibility as they are not cryptographically strong and generally
+                    not recommended. In most cases you should only trust to <code>PGP</code> or <code>SHA256</code>
+                    signatures.
+                </p>
+            </div>
         </section>
         <section id="maven">
-            <span class="section-title">Maven</span>
+            <span class="section-title">Maven/Grape/SBT</span>
+            <p>
+                The easiest way to start using NLPCraft is to add Maven dependency (Grape, SBT, etc.) to your
+                project. NLPCraft project consists of a single module.
+            </p>
+            <b>Maven <sup>Java</sup></b>
+            <pre class="brush: xml">
+            <dependency>
+                <groupId>org.nlpcraft</groupId>
+                <artifactId>nlpcraft</artifactId>
+                <version>{{site.latest_version}}</version>
+            </dependency>
+            </pre>
+            <b>Grape <sup>Groovy</sup></b>
+            <pre class="brush: java">
+            @Grab ('org.nlpcraft:nlpcraft:0.1.0')
+            </pre>
+            <b>SBT <sup>Scala</sup></b>
+            <pre class="brush: scala">
+            libraryDependencies += "org.nlpcraft" % "nlpcraft" % "0.1.0"
+            </pre>
+            <div class="bq info">
+                <p>
+                    <b>Latest Version</b>
+                </p>
+                <p>
+                    <code>{{site.latest_version}}</code> is the latest version used by default. You can replace it
+                    with a desired version.
+                </p>
+            </div>
         </section>
     </div>
 </div>
