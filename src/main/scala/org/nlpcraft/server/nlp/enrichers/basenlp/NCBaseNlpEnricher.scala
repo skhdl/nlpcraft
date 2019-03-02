@@ -118,7 +118,7 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                 "direct" → true
             )
             
-            tok += note
+            tok.add(note)
             
             // Add new token to NLP sentence.
             ns += tok

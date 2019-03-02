@@ -37,18 +37,22 @@ import org.nlpcraft.common.nlp.pos._
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.language.implicitConversions
 
 /**
   * NLP token is a collection of NLP notes associated with that token.
   */
-case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceNote] with Serializable {
-    private var nlpNote: NCNlpSentenceNote = _
+case class NCNlpSentenceToken(
+    index: Int,
+    notes: mutable.HashMap[String, NCNlpSentenceNote] = mutable.HashMap.empty[String, NCNlpSentenceNote]
+) extends Serializable {
+    private var nlpNote: NCNlpSentenceNote = notes.values.find(_.isNlp).orNull
 
     /**
       * Simple word is a non synthetic word that's also not part of any domain-specific note type.
       */
     // TODO: review all usage places. How is it correlated with user tokens?
-    def isSimpleWord: Boolean = this.size == 1
+    def isSimpleWord: Boolean = notes.size == 1
 
     def words: Int = origText.split(" ").length
 
@@ -74,30 +78,24 @@ case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceN
       *
       * @param noteType Note type.
       */
-    def getNotes(noteType: String): mutable.Set[NCNlpSentenceNote] = filter(_.noteType == noteType)
+    def getNotes(noteType: String): Iterable[NCNlpSentenceNote] = notes.values.filter(_.noteType == noteType)
 
     /**
       * Clones note.
       */
-    def clone(index: Int): NCNlpSentenceToken = {
-        val t = NCNlpSentenceToken(index)
-
-        t ++= this
-
-        t
-    }
+    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes)
 
     /**
       * Removes note with given ID. No-op if ID wasn't found.
       *
       * @param id Note ID.
       */
-    def remove(id: String): Unit = retain(_.id != id)
+    def remove(id: String): Unit = notes -= id
 
     /**
       * Tests whether or not this token contains note with given ID.
       */
-    def contains(id: String): Boolean = exists(_.id == id)
+    def contains(id: String): Boolean = notes.contains(id)
 
     /**
       *
@@ -110,7 +108,8 @@ case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceN
         ns.size match {
             case 0 ⇒ None
             case 1 ⇒ Some(ns.head)
-            case _ ⇒ throw new AssertionError(s"Multiple notes found [type=$noteType, name=$noteName, token=$this]")
+            case _ ⇒ throw new AssertionError(
+                s"Multiple notes found [type=$noteType, name=$noteName, token=$notes]")
         }
     }
 
@@ -123,7 +122,8 @@ case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceN
     def getNote(noteType: String, noteName: String): NCNlpSentenceNote =
         getNoteOpt(noteType, noteName) match {
             case Some(n) ⇒ n
-            case None ⇒ throw new AssertionError(s"Note not found [type=$noteType, name=$noteName, token=$this]")
+            case None ⇒
+                throw new AssertionError(s"Note not found [type=$noteType, name=$noteName, token=$notes]")
         }
 
     /**
@@ -168,22 +168,22 @@ case class NCNlpSentenceToken(index: Int) extends mutable.HashSet[NCNlpSentenceN
         found
     }
 
-    override def +=(elem: NCNlpSentenceNote): NCNlpSentenceToken.this.type = {
+    /**
+      * Adds element.
+      *
+      * @param elem Element.
+      */
+    def add(elem: NCNlpSentenceNote): Unit = {
+        notes += elem.id → elem
+
         if (elem.isNlp)
             nlpNote = elem
-
-        super.+=(elem)
     }
 
-    override def add(elem: NCNlpSentenceNote): Boolean = {
-        val res = super.add(elem)
+    override def toString: String =
+        notes.values.toSeq.sortBy(t ⇒ (if (t.isNlp) 0 else 1, t.noteType)).mkString("NLP token [", "|", "]")
+}
 
-        if (res && elem.isNlp)
-            nlpNote = elem
-
-        res
-    }
-
-    override def toString(): String =
-        this.toSeq.sortBy(t ⇒ (if (t.isNlp) 0 else 1, t.noteType)).mkString("NLP token [", "|", "]")
+object NCNlpSentenceToken {
+    implicit def getNotes(x: NCNlpSentenceToken): Iterable[NCNlpSentenceNote] = x.notes.values
 }

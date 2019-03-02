@@ -534,7 +534,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
 
                                     val newTok = NCNlpSentenceToken(idx)
 
-                                    newTok += note
+                                    newTok.add(note)
 
                                     ns += newTok
 

@@ -158,7 +158,8 @@ object NCNlpAsciiLogger extends LazyLogging {
             }
             def mkBool(name: String): Boolean = getValue(name).asInstanceOf[Boolean]
             def mkString(name: String): String = getValue(name).toString
-            def mkSeqString(name: String): String = getValue(name).asInstanceOf[Seq[String]].mkString(",")
+            def mkJListString(name: String): String =
+                getValue(name).asInstanceOf[java.util.ArrayList[String]].asScala.mkString(",")
             def mkDate(name: String): String = format(getValue(name).asInstanceOf[Long])
         
             def getValueOpt(name: String): Option[java.io.Serializable] =
@@ -192,7 +193,7 @@ object NCNlpAsciiLogger extends LazyLogging {
                 case "nlp:date" ⇒
                     val from = mkDate("from")
                     val to = mkDate("to")
-                    val ps = mkSeqString("periods")
+                    val ps = mkJListString("periods")
                 
                     val r = s"$from:$to"
                 
