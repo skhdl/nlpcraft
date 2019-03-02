@@ -116,14 +116,14 @@ layout: interior
                 <tbody>
                 {% for rel in site.data.releases %}
                 <tr>
-                    <td><i class="fa fa-fw fa-download"></i> <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip">nlpcraft-{{rel.version}}.zip</a></td>
+                    <td><i class="fa fa-fw fa-download"></i> <a href="{{rel.zip_url}}">nlpcraft-{{rel.version}}.zip</a></td>
                     <td>{{rel.version}}</td>
                     <td>{{rel.date}}</td>
                     <td class="download-sigs">
-                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.md5">MD5</a>
-                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sha1">SHA1</a>
-                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sha256">SHA256</a>
-                        <a href="rels/nlpcraft-{{rel.version}}/nlpcraft-{{rel.version}}.zip.sig">PGP</a>
+                        <a href="{{rel.md5_url}}">MD5</a>
+                        <a href="{{rel.sha1_url}}">SHA1</a>
+                        <a href="{{rel.sha256_url}}">SHA256</a>
+                        <a href="{{rel.pgp_url}}">PGP</a>
                     </td>
                 </tr>
                 {% endfor %}
