@@ -641,7 +641,8 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
             val grouped: Map[H, Seq[NCNlpSentenceNote]] = g.groupBy(h ⇒ H(h("from").asInstanceOf[Long], h("to").asInstanceOf[Long]))
 
             // Groups ordered to keep node with maximum information (max periods count in date).
-            val hs: Iterable[Seq[NCNlpSentenceNote]] = grouped.map(_._2.sortBy(h ⇒ -h("periods").asInstanceOf[java.util.ArrayList[String]].asScala.length))
+            val hs: Iterable[Seq[NCNlpSentenceNote]] =
+                grouped.map(_._2.sortBy(h ⇒ -h("periods").asInstanceOf[java.util.List[String]].asScala.length))
 
             // First holder will be kept in group, others (tail) should be deleted.
             hs.map(_.tail).flatMap(_.map(_.id))
@@ -678,7 +679,8 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
 
     private def mkDateRange(n: NCNlpSentenceNote): NCDateRange = mkDateRange(n, n)
     private def getField(d: Long, field: Int): Int = mkCalendar(d).get(field)
-    private def equalHolder(h: NCNlpSentenceNote, ps: String*): Boolean = h("periods").asInstanceOf[java.util.ArrayList[String]].asScala.sorted == ps.sorted
+    private def equalHolder(h: NCNlpSentenceNote, ps: String*): Boolean =
+        h("periods").asInstanceOf[java.util.List[String]].asScala.sorted == ps.sorted
     private def equalHolders(hs: Seq[NCNlpSentenceNote], ps: String*): Boolean = hs.forall(equalHolder(_, ps: _*))
     private def getPrevious[T](s: T, seq: Seq[T]): T = seq(seq.indexOf(s) - 1)
 

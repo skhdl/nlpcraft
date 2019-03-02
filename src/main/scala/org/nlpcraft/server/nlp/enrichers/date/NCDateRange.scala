@@ -50,7 +50,7 @@ object NCDateRange {
       * @param periods
       * @return
       */
-    def apply(from: Long, to: Long, text: String, periods: Seq[String]) =
+    def apply(from: Long, to: Long, text: String, periods: java.util.List[String]) =
         new NCDateRange(from, to, text, periods)
     
     /**
@@ -59,7 +59,7 @@ object NCDateRange {
       * @param to
       * @return
       */
-    def apply(from: Long, to: Long) = new NCDateRange(from, to, "?", Seq.empty)
+    def apply(from: Long, to: Long) = new NCDateRange(from, to, "?", new java.util.ArrayList[String]())
     
     /**
       *
@@ -77,7 +77,7 @@ import org.nlpcraft.server.nlp.enrichers.date.NCDateRange._
 /**
   * Date range data holder.
   */
-class NCDateRange(val from: Long, val to: Long, val text: String, val periods: Seq[String]) {
+class NCDateRange(val from: Long, val to: Long, val text: String, val periods: java.util.List[String]) {
     private val hash = 31 * from.hashCode() + to.hashCode()
     
     /**

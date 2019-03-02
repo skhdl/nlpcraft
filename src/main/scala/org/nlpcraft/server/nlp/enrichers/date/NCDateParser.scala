@@ -32,6 +32,7 @@
 package org.nlpcraft.server.nlp.enrichers.date
 
 import java.util.{Locale, Calendar ⇒ C}
+import scala.collection.JavaConverters._
 
 /**
   * Date parser.
@@ -128,7 +129,7 @@ object NCDateParser {
 
                 val to = mkTo(res, inclTo)
 
-                NCDateRange(NCDateRange.MIN_VALUE, to, f, Seq(":") ++ res.periods)
+                NCDateRange(NCDateRange.MIN_VALUE, to, f, (Seq(":") ++ res.periods).asJava)
 
             // to d2
             case _ if f.endsWith(":") ⇒
@@ -139,7 +140,7 @@ object NCDateParser {
                 if (from > getTruncatedNow)
                     from = shift(from, getShiftPeriod(res.period), -1)
     
-                NCDateRange(from, NCDateRange.MAX_VALUE, f, res.periods :+ ":")
+                NCDateRange(from, NCDateRange.MAX_VALUE, f, (res.periods :+ ":").asJava)
 
             // between d1 and d2
             case 2 ⇒
@@ -157,9 +158,9 @@ object NCDateParser {
                 // Example: 11m:1m, d-1:1m (but current January already finished.)
                 def tryUsingWeights(): NCDateRange =
                     if (PERIODS_WEIGHT(res1.period) > PERIODS_WEIGHT(res2.period))
-                        NCDateRange(shift(d1, getShiftPeriod(res1.period), -1), d2, f, sumPeriods)
+                        NCDateRange(shift(d1, getShiftPeriod(res1.period), -1), d2, f, sumPeriods.asJava)
                     else
-                        NCDateRange(d1, shift(d2, getShiftPeriod(res2.period), 1), f, sumPeriods)
+                        NCDateRange(d1, shift(d2, getShiftPeriod(res2.period), 1), f, sumPeriods.asJava)
 
                 // Tries to resolve without guarantee.
 
@@ -177,18 +178,18 @@ object NCDateParser {
                     // 25th October should be processed as day of 2010, but not current year.
                     if (res1.samePeriods("m") && res2.samePeriods("my") ||
                         res1.samePeriods("dm") && res2.samePeriods("dmy"))
-                        NCDateRange(changeYear(d1, d2), d2, f, sumPeriods)
+                        NCDateRange(changeYear(d1, d2), d2, f, sumPeriods.asJava)
                     else
                         tryUsingWeights()
                 }
                 else if (d1 == d2)
                     tryUsingWeights()
                 else
-                    NCDateRange(d1, d2, f, sumPeriods)
+                    NCDateRange(d1, d2, f, sumPeriods.asJava)
             case _ ⇒
                 val res = calculatePart(f, base)
     
-                NCDateRange(res.from, res.to, f, res.periods)
+                NCDateRange(res.from, res.to, f, res.periods.asJava)
         }
     }
 

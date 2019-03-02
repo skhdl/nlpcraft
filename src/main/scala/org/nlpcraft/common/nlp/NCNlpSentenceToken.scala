@@ -83,7 +83,8 @@ case class NCNlpSentenceToken(
     /**
       * Clones note.
       */
-    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes)
+    def clone(index: Int): NCNlpSentenceToken =
+        NCNlpSentenceToken(index, mutable.HashMap[String, NCNlpSentenceNote](this.notes.toSeq:_*))
 
     /**
       * Removes note with given ID. No-op if ID wasn't found.
@@ -108,8 +109,10 @@ case class NCNlpSentenceToken(
         ns.size match {
             case 0 ⇒ None
             case 1 ⇒ Some(ns.head)
-            case _ ⇒ throw new AssertionError(
-                s"Multiple notes found [type=$noteType, name=$noteName, token=$notes]")
+            case _ ⇒
+                throw new AssertionError(
+                    s"Multiple notes found [type=$noteType, name=$noteName, token=$notes]"
+                )
         }
     }
 

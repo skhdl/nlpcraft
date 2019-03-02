@@ -159,7 +159,7 @@ object NCNlpAsciiLogger extends LazyLogging {
             def mkBool(name: String): Boolean = getValue(name).asInstanceOf[Boolean]
             def mkString(name: String): String = getValue(name).toString
             def mkJListString(name: String): String =
-                getValue(name).asInstanceOf[java.util.ArrayList[String]].asScala.mkString(",")
+                getValue(name).asInstanceOf[java.util.List[String]].asScala.mkString(",")
             def mkDate(name: String): String = format(getValue(name).asInstanceOf[Long])
         
             def getValueOpt(name: String): Option[java.io.Serializable] =
