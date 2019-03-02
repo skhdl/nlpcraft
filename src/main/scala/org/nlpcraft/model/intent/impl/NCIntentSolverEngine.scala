@@ -105,6 +105,10 @@ object NCIntentSolverEngine extends LazyLogging {
     
             res
         }
+    
+        override def toString: String = {
+            s"Weight (${weights(0)}, ${weights(1)}, ${weights(2)}, ${weights(3)}, ${weights(4)})"
+        }
     }
     
     /**
