@@ -91,6 +91,10 @@
             display: block;
             font-size: 150%;
         }
+
+        p, li, nav, div.bq {
+            width: 90%;
+        }
         
         dl {
             margin-top: 10px;
@@ -101,7 +105,6 @@
         }
 
         div.bq {
-            width: 90%;
 
             h4 {
                 margin: 0 0 10px 0 !important;
@@ -115,7 +118,6 @@
         margin-bottom: 35px;
 
         p, li {
-            width: 90% !important;
             letter-spacing: 0.02em;
         }
     }

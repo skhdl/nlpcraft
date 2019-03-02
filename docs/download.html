@@ -130,22 +130,34 @@ layout: interior
                 The easiest way to start using NLPCraft is to add Maven dependency (Grape, SBT, etc.) to your
                 project. NLPCraft project consists of a single module.
             </p>
-            <b>Maven <sup>Java</sup></b>
-            <pre class="brush: xml">
-            <dependency>
-                <groupId>org.nlpcraft</groupId>
-                <artifactId>nlpcraft</artifactId>
-                <version>{{site.latest_version}}</version>
-            </dependency>
-            </pre>
-            <b>Grape <sup>Groovy</sup></b>
-            <pre class="brush: java">
-            @Grab ('org.nlpcraft:nlpcraft:0.1.0')
-            </pre>
-            <b>SBT <sup>Scala</sup></b>
-            <pre class="brush: scala">
-            libraryDependencies += "org.nlpcraft" % "nlpcraft" % "0.1.0"
-            </pre>
+            <nav style="width: 90%">
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-maven" role="tabpanel">
+                    <pre class="brush: xml">
+                    <dependency>
+                        <groupId>org.nlpcraft</groupId>
+                        <artifactId>nlpcraft</artifactId>
+                        <version>{{site.latest_version}}</version>
+                    </dependency>
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-grape" role="tabpanel">
+                    <pre class="brush: java">
+                    @Grab ('org.nlpcraft:nlpcraft:0.1.0')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-sbt" role="tabpanel">
+                    <pre class="brush: scala">
+                    libraryDependencies += "org.nlpcraft" % "nlpcraft" % "0.1.0"
+                    </pre>
+                </div>
+            </div>
             <div class="bq info">
                 <p>
                     <b>Latest Version</b>
