@@ -123,9 +123,6 @@ class NCNlpSentenceTokenBuffer(val tokens: ArrayBuffer[NCNlpSentenceToken] = new
             distinct.
             sortBy(seq ⇒ (-seq.length, seq.head.index))
     }
-
-    override def clone(): NCNlpSentenceTokenBuffer =
-        new NCNlpSentenceTokenBuffer(new ArrayBuffer[NCNlpSentenceToken](tokens.size) ++ tokens.map(_.clone()))
 }
 
 object NCNlpSentenceTokenBuffer {

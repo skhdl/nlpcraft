@@ -43,6 +43,7 @@ class NCNlpSentence(
     val text: String,
     override val tokens: ArrayBuffer[NCNlpSentenceToken] = new ArrayBuffer[NCNlpSentenceToken](16)
 ) extends NCNlpSentenceTokenBuffer(tokens) with java.io.Serializable {
+    // Deep copy.
     override def clone(): NCNlpSentence = new NCNlpSentence(text, tokens.map(_.clone()))
 
     /**
