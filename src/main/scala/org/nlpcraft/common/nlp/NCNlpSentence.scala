@@ -41,7 +41,7 @@ import scala.language.implicitConversions
   */
 class NCNlpSentence(
     val text: String,
-    override val tokens: ArrayBuffer[NCNlpSentenceToken] = new ArrayBuffer[NCNlpSentenceToken](16)
+    override val tokens: ArrayBuffer[NCNlpSentenceToken] = new ArrayBuffer[NCNlpSentenceToken](32)
 ) extends NCNlpSentenceTokenBuffer(tokens) with java.io.Serializable {
     // Deep copy.
     override def clone(): NCNlpSentence = new NCNlpSentence(text, tokens.map(_.clone()))
@@ -53,7 +53,7 @@ class NCNlpSentence(
       *
       * @param noteType Note type.
       */
-    def getNotes(noteType: String): IndexedSeq[NCNlpSentenceNote] = this.flatMap(_.getNotes(noteType)).distinct.toIndexedSeq
+    def getNotes(noteType: String): Seq[NCNlpSentenceNote] = this.flatMap(_.getNotes(noteType)).distinct
     
     /**
       * Utility method that removes note with given ID from all tokens in this sentence.
@@ -62,15 +62,6 @@ class NCNlpSentence(
       * @param id Note ID.
       */
     def removeNote(id: String): Unit = this.foreach(_.remove(id))
-
-    /**
-      * Utility method that removes notes with given IDs from all tokens in this sentence.
-      * No-op if such note wasn't found.
-      *
-      * @param id Note ID.
-      */
-    def removeNotes(ids: Iterable[String]): Unit = this.foreach(_.remove(ids))
-
 }
 
 object NCNlpSentence {

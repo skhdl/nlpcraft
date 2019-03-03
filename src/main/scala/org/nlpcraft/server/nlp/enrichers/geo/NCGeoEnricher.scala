@@ -316,6 +316,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         // Also added tokens with very short GEO names (with length is 1)
         excls ++= ns.getNotes("nlp:geo").filter(note ⇒ getName(getKind(note), note).length == 1)
 
+        def removeNote(n: NCNlpSentenceNote):Unit =
+            ns.removeNote(n.id)
 
         // Check that city is inside country or region.
         // When true - remove larger location note and replace with
@@ -328,8 +330,8 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                     first.tokenIndexes ++ second.tokenIndexes, first.wordIndexes ++ second.wordIndexes
                 )
 
-                ns.removeNote(second.id)
-                ns.removeNote(first.id)
+                removeNote(second)
+                removeNote(first)
 
                 // GEO names matched with common words shouldn't be excluded if they specified by valid GEO parents.
                 excls -= first
@@ -376,7 +378,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         enlarge(false)
         enlarge(true)
 
-        ns.removeNotes(excls.map(_.id))
+        excls.foreach(e ⇒ removeNote(e))
 
         // Calculate a weight to rank locations.
         // ------------------------------------
@@ -453,7 +455,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
                     flatMap(hsByKind ⇒ Seq(hsByKind.head) ++ hsByKind.tail.filter(_.weight == hsByKind.head.weight)).
                     toSeq
 
-                ns.removeNotes(sorted.diff(remainHs).map(_.note.id))
+                sorted.diff(remainHs).foreach(p ⇒ removeNote(p.note))
             }
         }
     }
