@@ -33,7 +33,7 @@ package org.nlpcraft.server.nlp.enrichers.date
 
 import java.time.Instant
 import java.util
-import java.util.{Calendar => C}
+import java.util.{Calendar ⇒ C}
 
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
@@ -42,7 +42,7 @@ import org.nlpcraft.server.nlp.enrichers.date.NCDateConstants._
 
 import scala.collection.immutable.Iterable
 import scala.collection.mutable
-import scala.collection.mutable.{LinkedHashMap => LHM}
+import scala.collection.mutable.{LinkedHashMap ⇒ LHM}
 import scala.collection.JavaConverters._
 
 /**

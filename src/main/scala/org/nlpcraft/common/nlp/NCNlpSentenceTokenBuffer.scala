@@ -33,23 +33,22 @@ package org.nlpcraft.common.nlp
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{Seq, IndexedSeq ⇒ IdxSeq}
+import scala.language.implicitConversions
 
 /**
   *
-  * @param sz Initial buffer size.
+  * @param tokens Initial buffer.
   */
-class NCNlpSentenceTokenBuffer(sz: Int) extends ArrayBuffer[NCNlpSentenceToken](sz) {
-    def this() = this(16)
-    
+class NCNlpSentenceTokenBuffer(val tokens: ArrayBuffer[NCNlpSentenceToken] = new ArrayBuffer[NCNlpSentenceToken](16)) extends java.io.Serializable {
     /** Stringified stems. */
-    lazy val stems = map(_.stem).mkString(" ")
-    
+    lazy val stems: String = tokens.map(_.stem).mkString(" ")
+
     /** Stem-based hashcode. */
-    lazy val stemsHash = stems.hashCode()
-    
+    lazy val stemsHash: Int = stems.hashCode()
+
     type SSOT = IdxSeq[IdxSeq[Option[NCNlpSentenceToken]]]
     type SST = IdxSeq[IdxSeq[NCNlpSentenceToken]]
-    
+
     /**
       * Gets all sequential permutations of tokens in this NLP sentence.
       *
@@ -77,13 +76,13 @@ class NCNlpSentenceTokenBuffer(sz: Int) extends ArrayBuffer[NCNlpSentenceToken](
         maxLen: Int = Integer.MAX_VALUE,
         withQuoted: Boolean = false
     ): SST = {
-        val toks = filter(t ⇒ stopWords || (!stopWords && !t.isStopword))
-        
+        val toks = tokens.filter(t ⇒ stopWords || (!stopWords && !t.isStopword))
+
         val res = (for (n ← toks.length until 0 by -1 if n <= maxLen) yield toks.sliding(n)).flatten
-        
+
         if (withQuoted) res else res.filter(!_.exists(_.isQuoted))
     }
-    
+
     /**
       * Gets all sequential permutations of tokens in this NLP sentence.
       * This method is like a 'tokenMix', but with all combinations of stop-words (with and without)
@@ -109,29 +108,29 @@ class NCNlpSentenceTokenBuffer(sz: Int) extends ArrayBuffer[NCNlpSentenceToken](
                     (for (subSeq ← seq) yield subSeq :+ Some(t)) ++
                         (if (t.isStopword) for (subSeq ← seq) yield subSeq :+ None else Seq.empty)
                 }
-            
+
             var res: SSOT = IdxSeq.empty
-            
+
             for (t ← toks)
                 res = multiple(res, t)
-            
+
             res.map(_.flatten).filter(_.nonEmpty)
         }
-        
+
         tokenMix(stopWords = true, maxLen, withQuoted).
             flatMap(permutations).
             filter(_.nonEmpty).
             distinct.
             sortBy(seq ⇒ (-seq.length, seq.head.index))
     }
+
+    override def clone(): NCNlpSentenceTokenBuffer =
+        new NCNlpSentenceTokenBuffer(new ArrayBuffer[NCNlpSentenceToken](tokens.size) ++ tokens.clone())
 }
 
 object NCNlpSentenceTokenBuffer {
-    def apply(toks: Iterable[NCNlpSentenceToken]): NCNlpSentenceTokenBuffer = {
-        val buf = new NCNlpSentenceTokenBuffer(toks.size)
-        
-        buf.appendAll(toks)
-        
-        buf
-    }
+    implicit def toTokens(x: NCNlpSentenceTokenBuffer): ArrayBuffer[NCNlpSentenceToken] = x.tokens
+
+    def apply(toks: Iterable[NCNlpSentenceToken]): NCNlpSentenceTokenBuffer =
+        new NCNlpSentenceTokenBuffer(new ArrayBuffer[NCNlpSentenceToken](toks.size) ++ toks)
 }

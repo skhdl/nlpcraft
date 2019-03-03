@@ -32,17 +32,19 @@
 package org.nlpcraft.common.nlp
 
 import scala.collection._
+import scala.collection.mutable.ArrayBuffer
+import scala.language.implicitConversions
 
 /**
   * Parsed NLP sentence is a collection of tokens. Each token is a collection of notes and
   * each note is a collection of KV pairs.
   */
-class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with Serializable {
+class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with java.io.Serializable {
     override def clone(): NCNlpSentence = {
         val t = new NCNlpSentence(text)
         
-        t ++= this.map(t ⇒ t.clone(t.index))
-        
+        t ++= super.clone()
+
         t
     }
     
@@ -53,7 +55,7 @@ class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with Seri
       *
       * @param noteType Note type.
       */
-    def getNotes(noteType: String): IndexedSeq[NCNlpSentenceNote] = flatMap(_.getNotes(noteType)).distinct.toIndexedSeq
+    def getNotes(noteType: String): IndexedSeq[NCNlpSentenceNote] = this.flatMap(_.getNotes(noteType)).distinct.toIndexedSeq
     
     /**
       * Utility method that removes note with given ID from all tokens in this sentence.
@@ -61,5 +63,9 @@ class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with Seri
       *
       * @param id Note ID.
       */
-    def removeNote(id: String): Unit = foreach(_.remove(id))
+    def removeNote(id: String): Unit = this.foreach(_.remove(id))
+}
+
+object NCNlpSentence {
+    implicit def toTokens(x: NCNlpSentence): ArrayBuffer[NCNlpSentenceToken] = x.tokens
 }

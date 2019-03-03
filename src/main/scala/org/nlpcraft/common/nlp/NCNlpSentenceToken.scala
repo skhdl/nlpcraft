@@ -45,7 +45,7 @@ import scala.language.implicitConversions
 case class NCNlpSentenceToken(
     index: Int,
     notes: mutable.HashMap[String, NCNlpSentenceNote] = mutable.HashMap.empty[String, NCNlpSentenceNote]
-) extends Serializable {
+) extends java.io.Serializable {
     private var nlpNote: NCNlpSentenceNote = notes.values.find(_.isNlp).orNull
 
     /**
@@ -83,8 +83,9 @@ case class NCNlpSentenceToken(
     /**
       * Clones note.
       */
-    def clone(index: Int): NCNlpSentenceToken =
-        NCNlpSentenceToken(index, mutable.HashMap[String, NCNlpSentenceNote](this.notes.toSeq:_*))
+    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes.clone())
+
+    override def clone(): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes.clone())
 
     /**
       * Removes note with given ID. No-op if ID wasn't found.

@@ -36,8 +36,8 @@ import java.util.concurrent.Executors
 import java.util.function.Predicate
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
+import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceToken}
 import org.nlpcraft.model._
 import org.nlpcraft.model.impl.NCMetadataImpl
 import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
@@ -266,7 +266,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         NCCoordinatesEnricher.enrich(mdl, nlpSen)
         NCSuspiciousNounsEnricher.enrich(mdl, nlpSen)
 
-        var senSeq =
+        var senSeq: Seq[NCNlpSentence] =
             NCPostEnrichCollapser.collapse(mdl, nlpSen)
             .flatMap(sen ⇒ {
                 NCPostEnricher.postEnrich(mdl, sen)
@@ -315,7 +315,11 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         conv.ack()
 
         val unitedSen =
-            new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq)
+            new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq.map(p ⇒ {
+                val seq: Seq[NCNlpSentenceToken]  = p
+
+                seq
+            }))
 
         // Create model query context.
         val qryCtx: NCQueryContext = new NCQueryContext {

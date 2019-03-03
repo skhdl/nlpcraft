@@ -49,7 +49,7 @@ import scala.language.implicitConversions
 class NCNlpSentenceNote(
     val id: String,
     val values: mutable.HashMap[String, JSerializable] = mutable.HashMap.empty[String, JSerializable]
-) extends Serializable with NCAsciiLike {
+) extends java.io.Serializable with NCAsciiLike {
     import NCNlpSentenceNote._
 
     // These properties should be cloned as they are auto-set when new clone
@@ -106,6 +106,9 @@ class NCNlpSentenceNote(
             noteType,
             this.filter(p ⇒ !SKIP_CLONE.contains(p._1)).toSeq ++ params:_*
         )
+
+
+    override def clone(): NCNlpSentenceNote = new NCNlpSentenceNote(id, values.clone())
 
     /**
       *
