@@ -648,7 +648,7 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
             hs.map(_.tail).flatMap(_.map(_.id))
         })
 
-        ids.foreach(ns.removeNote)
+        ns.removeNotes(ids)
     }
 
     private def mkCalendar(d: Long) = {

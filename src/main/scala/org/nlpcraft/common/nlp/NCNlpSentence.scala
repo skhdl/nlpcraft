@@ -62,6 +62,15 @@ class NCNlpSentence(
       * @param id Note ID.
       */
     def removeNote(id: String): Unit = this.foreach(_.remove(id))
+
+    /**
+      * Utility method that removes notes with given IDs from all tokens in this sentence.
+      * No-op if such note wasn't found.
+      *
+      * @param id Note ID.
+      */
+    def removeNotes(ids: Iterable[String]): Unit = this.foreach(_.remove(ids))
+
 }
 
 object NCNlpSentence {
