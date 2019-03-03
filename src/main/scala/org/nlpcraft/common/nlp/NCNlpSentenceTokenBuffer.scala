@@ -125,7 +125,7 @@ class NCNlpSentenceTokenBuffer(val tokens: ArrayBuffer[NCNlpSentenceToken] = new
     }
 
     override def clone(): NCNlpSentenceTokenBuffer =
-        new NCNlpSentenceTokenBuffer(new ArrayBuffer[NCNlpSentenceToken](tokens.size) ++ tokens.clone())
+        new NCNlpSentenceTokenBuffer(new ArrayBuffer[NCNlpSentenceToken](tokens.size) ++ tokens.map(_.clone()))
 }
 
 object NCNlpSentenceTokenBuffer {

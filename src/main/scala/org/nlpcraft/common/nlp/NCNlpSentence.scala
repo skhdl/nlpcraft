@@ -39,15 +39,12 @@ import scala.language.implicitConversions
   * Parsed NLP sentence is a collection of tokens. Each token is a collection of notes and
   * each note is a collection of KV pairs.
   */
-class NCNlpSentence(val text: String) extends NCNlpSentenceTokenBuffer with java.io.Serializable {
-    override def clone(): NCNlpSentence = {
-        val t = new NCNlpSentence(text)
-        
-        t ++= super.clone()
+class NCNlpSentence(
+    val text: String,
+    override val tokens: ArrayBuffer[NCNlpSentenceToken] = new ArrayBuffer[NCNlpSentenceToken](16)
+) extends NCNlpSentenceTokenBuffer(tokens) with java.io.Serializable {
+    override def clone(): NCNlpSentence = new NCNlpSentence(text, tokens.map(_.clone()))
 
-        t
-    }
-    
     /**
       * Utility method that gets set of notes for given note type collected from
       * tokens in this sentence. Notes are sorted in the same order they appear

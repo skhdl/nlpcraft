@@ -83,9 +83,9 @@ case class NCNlpSentenceToken(
     /**
       * Clones note.
       */
-    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes.clone())
+    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, notes.clone())
 
-    override def clone(): NCNlpSentenceToken = NCNlpSentenceToken(index, this.notes.clone())
+    override def clone(): NCNlpSentenceToken = clone(index)
 
     /**
       * Removes note with given ID. No-op if ID wasn't found.

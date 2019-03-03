@@ -107,9 +107,6 @@ class NCNlpSentenceNote(
             this.filter(p ⇒ !SKIP_CLONE.contains(p._1)).toSeq ++ params:_*
         )
 
-
-    override def clone(): NCNlpSentenceNote = new NCNlpSentenceNote(id, values.clone())
-
     /**
       *
       * @return
