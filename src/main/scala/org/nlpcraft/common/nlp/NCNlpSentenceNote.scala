@@ -48,24 +48,9 @@ import scala.language.implicitConversions
   */
 class NCNlpSentenceNote(
     val id: String,
-    val values: mutable.HashMap[String, JSerializable] = mutable.HashMap.empty[String, JSerializable]
+    val values: mutable.HashMap[String, JSerializable] = mutable.HashMap[String, JSerializable]()
 ) extends java.io.Serializable with NCAsciiLike {
     import NCNlpSentenceNote._
-
-    // These properties should be cloned as they are auto-set when new clone
-    // is created.
-    private final val SKIP_CLONE = Set(
-        "unid",
-        "minIndex",
-        "maxIndex",
-        "wordIndexes",
-        "wordLength",
-        "tokMinIndex",
-        "tokMaxIndex",
-        "tokWordIndexes",
-        "contiguous",
-        "sparsity"
-    )
 
     private val hash: Int = id.hashCode()
 
@@ -81,7 +66,7 @@ class NCNlpSentenceNote(
     lazy val isContiguous: Boolean = this("contiguous").asInstanceOf[Boolean]
     lazy val isDirect: Boolean = this("direct").asInstanceOf[Boolean]
     lazy val isUser: Boolean = !noteType.startsWith("nlp:")
-    lazy val isSystem: Boolean = noteType.startsWith("nlp:")
+    lazy val isSystem: Boolean = !isUser
     lazy val isNlp: Boolean = noteType == "nlp:nlp"
 
     // Typed getter.
@@ -129,6 +114,21 @@ class NCNlpSentenceNote(
 }
 
 object NCNlpSentenceNote {
+    // These properties should be cloned as they are auto-set when new clone
+    // is created.
+    private val SKIP_CLONE: Set[String] = Set(
+        "unid",
+        "minIndex",
+        "maxIndex",
+        "wordIndexes",
+        "wordLength",
+        "tokMinIndex",
+        "tokMaxIndex",
+        "tokWordIndexes",
+        "contiguous",
+        "sparsity"
+    )
+
     implicit def getValues(x: NCNlpSentenceNote): mutable.HashMap[String, JSerializable] = x.values
 
     /**

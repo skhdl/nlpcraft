@@ -31,8 +31,10 @@
 
 package org.nlpcraft.common.nlp
 
-import java.util.{List ⇒ JList}
+import java.util
+import java.util.{List => JList}
 
+import org.apache.commons.lang3.SerializationUtils
 import org.nlpcraft.common.nlp.pos._
 
 import scala.collection.JavaConverters._
@@ -44,9 +46,9 @@ import scala.language.implicitConversions
   */
 case class NCNlpSentenceToken(
     index: Int,
-    notes: mutable.HashMap[String, NCNlpSentenceNote] = mutable.HashMap.empty[String, NCNlpSentenceNote]
+    notes: java.util.HashMap[String, NCNlpSentenceNote] = new java.util.HashMap[String, NCNlpSentenceNote]()
 ) extends java.io.Serializable {
-    private var nlpNote: NCNlpSentenceNote = notes.values.find(_.isNlp).orNull
+    private var nlpNote: NCNlpSentenceNote = notes.asScala.values.find(_.isNlp).orNull
 
     /**
       * Simple word is a non synthetic word that's also not part of any domain-specific note type.
@@ -78,12 +80,12 @@ case class NCNlpSentenceToken(
       *
       * @param noteType Note type.
       */
-    def getNotes(noteType: String): Iterable[NCNlpSentenceNote] = notes.values.filter(_.noteType == noteType)
+    def getNotes(noteType: String): Iterable[NCNlpSentenceNote] = notes.asScala.values.filter(_.noteType == noteType)
 
     /**
       * Clones note.
       */
-    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, notes.clone())
+    def clone(index: Int): NCNlpSentenceToken = NCNlpSentenceToken(index, notes.clone().asInstanceOf[java.util.HashMap[String, NCNlpSentenceNote]])
 
     override def clone(): NCNlpSentenceToken = clone(index)
 
@@ -92,12 +94,12 @@ case class NCNlpSentenceToken(
       *
       * @param id Note ID.
       */
-    def remove(id: String): Unit = notes -= id
+    def remove(id: String): Unit = notes.asScala -= id
 
     /**
       * Tests whether or not this token contains note with given ID.
       */
-    def contains(id: String): Boolean = notes.contains(id)
+    def contains(id: String): Boolean = notes.asScala.contains(id)
 
     /**
       *
@@ -178,16 +180,16 @@ case class NCNlpSentenceToken(
       * @param elem Element.
       */
     def add(elem: NCNlpSentenceNote): Unit = {
-        notes += elem.id → elem
+        notes.asScala += elem.id → elem
 
         if (elem.isNlp)
             nlpNote = elem
     }
 
     override def toString: String =
-        notes.values.toSeq.sortBy(t ⇒ (if (t.isNlp) 0 else 1, t.noteType)).mkString("NLP token [", "|", "]")
+        notes.asScala.values.toSeq.sortBy(t ⇒ (if (t.isNlp) 0 else 1, t.noteType)).mkString("NLP token [", "|", "]")
 }
 
 object NCNlpSentenceToken {
-    implicit def getNotes(x: NCNlpSentenceToken): Iterable[NCNlpSentenceNote] = x.notes.values
+    implicit def getNotes(x: NCNlpSentenceToken): Iterable[NCNlpSentenceNote] = x.notes.asScala.values
 }
