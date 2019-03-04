@@ -500,19 +500,6 @@ object NCSql extends LazyLogging {
     }
 
     /**
-      * Tests given table exists or not
-      *
-      * @param table Table name.
-      */
-    @throws[NCE]
-    def isTableExists(table: String): Boolean =
-        try
-            selectSingle[Boolean](s"SELECT true FROM $table LIMIT 1").getOrElse(true)
-        catch {
-            case _: NCE ⇒ false
-        }
-
-    /**
      * Executes given SQL query and returns a single row from result set parsed to an object. If
      * there are more than one object a 'SQLException' will be thrown.
      *

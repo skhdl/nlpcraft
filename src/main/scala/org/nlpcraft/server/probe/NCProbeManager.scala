@@ -569,7 +569,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         probeId = hsMsg.data[String]("PROBE_ID"),
                         probeGuid = probeGuid,
                         probeApiVersion = probeApiVer,
-                        probeApiDate = probeApiDate,
+                        probeApiDate = java.sql.Date.valueOf(probeApiDate),
                         osVersion = hsMsg.data[String]("PROBE_OS_VER"),
                         osName = hsMsg.data[String]("PROBE_OS_NAME"),
                         osArch = hsMsg.data[String]("PROBE_OS_ARCH"),

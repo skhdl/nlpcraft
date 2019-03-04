@@ -38,6 +38,9 @@ import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
+import org.nlpcraft.server.tx.NCTxManager.wrapIE
+
+import scala.util.control.Exception.catching
 
 /**
   * Data sources manager.
@@ -51,12 +54,14 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        dsSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "dsSeq",
-                NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
-                true
-            )
+        catching(wrapIE) {
+            dsSeq = NCSql.sqlNoTx {
+                ignite.atomicSequence(
+                    "dsSeq",
+                    NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
+                    true
+                )
+            }
         }
 
         super.start()

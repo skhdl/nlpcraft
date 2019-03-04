@@ -103,20 +103,22 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        usersSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "usersSeq",
-                NCSqlManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
-                true
-            )
-        }
+        catching(wrapIE) {
+            usersSeq = NCSql.sqlNoTx {
+                ignite.atomicSequence(
+                    "usersSeq",
+                    NCSqlManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
+                    true
+                )
+            }
 
-        pswdSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "pswdSeq",
-                NCSqlManager.getMaxColumnValue("passwd_pool", "id").getOrElse(0),
-                true
-            )
+            pswdSeq = NCSql.sqlNoTx {
+                ignite.atomicSequence(
+                    "pswdSeq",
+                    NCSqlManager.getMaxColumnValue("passwd_pool", "id").getOrElse(0),
+                    true
+                )
+            }
         }
 
 
@@ -342,14 +344,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def signin(email: String, passwd: String): Option[String] = {
         ensureStarted()
 
-        val userOpt =
-            NCSql.sql {
-                NCSqlManager.getUserByEmail(email)
-            }
 
         catching(wrapIE) {
             NCTxManager.startTx {
-                userOpt match {
+                NCSql.sql {
+                    NCSqlManager.getUserByEmail(email)
+                } match {
                     case Some(usr) ⇒
                         NCSql.sql {
                             if (!NCSqlManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
@@ -604,8 +604,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             normEmail,
             firstName,
             lastName,
-            salt,
             avatarUrl,
+            salt,
             isAdmin
         )
 
@@ -636,7 +636,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                             logger.error(s"Token cache not found for: $acsToken")
 
                             None
-
                     }
 
                 case None ⇒

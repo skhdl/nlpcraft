@@ -32,19 +32,22 @@
 package org.nlpcraft.server.sql
 
 import java.sql.Timestamp
-import java.time.LocalDate
 
 import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import NCSql.Implicits._
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
+import org.nlpcraft.server.sql.NCSql.Implicits._
+
+import scala.collection.JavaConverters._
+import scala.util.control.Exception.catching
 
 /**
   * Provides basic CRUD and often used operations on RDBMS.
   * Note that all functions in this class expect outside `NCSql.sql()` block.
   */
-object NCSqlManager extends NCLifecycle("Database manager") {
+object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstance {
     private final val DB_TABLES = Seq("nc_user", "passwd_pool", "ds_instance", "proc_log")
 
     /**
@@ -286,22 +289,24 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     /**
       * Adds new user with given parameters.
       *
+      * @param id User's ID.
+      * @param email User's normalized email.
       * @param firstName User's first name.
       * @param lastName User's last name.
-      * @param email User's normalized email.
-      * @param passwdSalt Optional salt for password Blowfish hashing.
       * @param avatarUrl User's avatar URL.
+      * @param passwdSalt Optional salt for password Blowfish hashing.
       * @param isAdmin Whether or not the user is admin.
+      *
       * @return Newly added user ID.
       */
     @throws[NCE]
     def addUser(
         id: Long,
+        email: String,
         firstName: String,
         lastName: String,
-        email: String,
-        passwdSalt: String,
         avatarUrl: Option[String],
+        passwdSalt: String,
         isAdmin: Boolean
     ): Long = {
         ensureStarted()
@@ -508,7 +513,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             QRY_READY.toString,
             errMsg,
             resType,
-            resBody,
+            if (resBody == null) null else NCUtils.compress(resBody),
             tstamp,
             srvReqId
         )
@@ -544,7 +549,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         probeId: String,
         probeGuid: String,
         probeApiVersion: String,
-        probeApiDate: LocalDate,
+        probeApiDate: java.sql.Date,
         osVersion: String,
         osName: String,
         osArch: String,
@@ -628,7 +633,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     private def readAndExecute(sqlPath: String): Unit =
         NCUtils.
             readResource(sqlPath, "UTF-8").
-            mkString(" ").
+            mkString("\n").
             split(";").
             map(_.trim).
             filter(!_.isEmpty).
@@ -646,8 +651,15 @@ object NCSqlManager extends NCLifecycle("Database manager") {
                 case _: NCE ⇒ // No-op.
             }
 
+        val sqlTabs =
+            catching(wrapIE) {
+                ignite.cacheNames().asScala.
+                    map(_.toLowerCase).
+                    flatMap(p ⇒ if (p.startsWith("sql_")) Some(p.drop(4)) else None)
+            }.toSet
+
         NCSql.sql {
-            if (DB_TABLES.exists(t ⇒ !NCSql.isTableExists(t))) {
+            if (DB_TABLES.exists(t ⇒ !sqlTabs.contains(t))) {
                 try {
                     safeClear()
 

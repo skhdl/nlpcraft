@@ -51,7 +51,7 @@ CREATE TABLE proc_log (
     cancel_tstamp TIMESTAMP NULL, -- Cancel timestamp.
     -- Result parts.
     res_type VARCHAR NULL,
-    res_body_gzip BINARY NULL, -- GZIP-ed result body.
+    res_body_gzip VARCHAR NULL, -- GZIP-ed result body.
     error VARCHAR NULL,
     -- Probe information for this request.
     probe_token VARCHAR NULL,

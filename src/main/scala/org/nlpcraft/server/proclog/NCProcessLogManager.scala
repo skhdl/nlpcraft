@@ -34,13 +34,13 @@ package org.nlpcraft.server.proclog
 import java.sql.Timestamp
 
 import org.apache.ignite.IgniteAtomicSequence
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode.NCApiStatusCode
-import org.nlpcraft.server.ds.NCDsManager.{dsSeq, ignite}
 import org.nlpcraft.server.ignite.NCIgniteInstance
-import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 import org.nlpcraft.server.mdo.NCProbeMdo
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
+
+import scala.util.control.Exception.catching
 
 /**
   * Process log manager.
@@ -53,12 +53,14 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        logSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "dsSeq",
-                NCSqlManager.getMaxColumnValue("proc_log", "id").getOrElse(0),
-                true
-            )
+        catching(wrapIE) {
+            logSeq = NCSql.sqlNoTx {
+                ignite.atomicSequence(
+                    "dsSeq",
+                    NCSqlManager.getMaxColumnValue("proc_log", "id").getOrElse(0),
+                    true
+                )
+            }
         }
 
         super.start()
