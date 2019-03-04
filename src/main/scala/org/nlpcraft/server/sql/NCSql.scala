@@ -38,7 +38,6 @@ import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.transactions.Transaction
 import org.nlpcraft.common._
-import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.tx.NCTxManager
 import resource._
@@ -75,8 +74,8 @@ object NCSql extends LazyLogging {
         
         val url: String = getString(s"$prefix.jdbc.url")
         val driver: String = getString(s"$prefix.jdbc.driver")
-        val username: String = getString(s"$prefix.jdbc.username")
-        val passwd: String = getString(s"$prefix.jdbc.password")
+        val username: Option[String] = getStringOpt(s"$prefix.jdbc.username")
+        val passwd: Option[String] = getStringOpt(s"$prefix.jdbc.password")
         val maxStmt: Int = getInt(s"$prefix.c3p0.maxStatements")
         val initPoolSize: Int = getInt(s"$prefix.c3p0.pool.initSize")
         val minPoolSize: Int = getInt(s"$prefix.c3p0.pool.minSize")
@@ -104,8 +103,16 @@ object NCSql extends LazyLogging {
         // JDBC settings.
         ds.setDriverClass(Config.driver)
         ds.setJdbcUrl(Config.url)
-        ds.setUser(Config.username)
-        ds.setPassword(Config.passwd)
+
+        Config.username match {
+            case Some(username) ⇒ ds.setUser(username)
+            case None ⇒ // No-op.
+        }
+
+        Config.passwd match {
+            case Some(passwd) ⇒ ds.setPassword(passwd)
+            case None ⇒ // No-op.
+        }
 
         // c3p0 settings.
         ds.setMaxStatements(Config.maxStmt)
@@ -275,18 +282,13 @@ object NCSql extends LazyLogging {
      *
      * @param sql SQL statement to prepare.
      * @param params Set of tuples with JDBC types (legacy only) or individual values for the parameters to set.
-     * @param autoGenKey Column name for auto-generated key. Only specify for
-     *      'insert' statements returning auto-generated key.
      * @return JDBC prepared statement.
      */
     @throws[SQLException]
-    private def prepare(sql: String, params: Seq[Any], autoGenKey: Option[String] = None): PreparedStatement = {
+    private def prepare(sql: String, params: Seq[Any]): PreparedStatement = {
         val c = connection()
         
-        val ps = autoGenKey match {
-            case None ⇒ c.prepareStatement(sql)
-            case Some(k) ⇒ c.prepareStatement(sql, Array(k))
-        }
+        val ps = c.prepareStatement(sql)
 
         prepareParams(ps, params: _*)
 
@@ -498,6 +500,19 @@ object NCSql extends LazyLogging {
     }
 
     /**
+      * Tests given table exists or not
+      *
+      * @param table Table name.
+      */
+    @throws[NCE]
+    def isTableExists(table: String): Boolean =
+        try
+            selectSingle[Boolean](s"SELECT true FROM $table LIMIT 1").getOrElse(true)
+        catch {
+            case _: NCE ⇒ false
+        }
+
+    /**
      * Executes given SQL query and returns a single row from result set parsed to an object. If
      * there are more than one object a 'SQLException' will be thrown.
      *
@@ -514,35 +529,6 @@ object NCSql extends LazyLogging {
                 case Nil ⇒ None
                 case List(r) ⇒ Some(r)
                 case _ ⇒ throw new SQLException("Single value expected.")
-            }
-        }
-    }
-
-    /**
-     * Executes SQL insert statement and returns single auto-generated key from column 'id'.
-     *
-     * @param sql SQL insert statement to execute.
-     * @param params Set of tuples with JDBC types (legacy only) or individual values for the parameters to set.
-     * @param p Implicit result set parser.
-     * @tparam K Type of the key to return.
-     * @return Auto-generated key.
-     */
-    @throws[NCE]
-    def insertGetKey[K](sql: String, params: Any*)(implicit p: RsParser[K]): K = {
-        def noKeyFound = new SQLException("No auto-generated key found.")
-
-        catching(psqlErrorCodes) {
-            managed { prepare(sql, params, Some("id")) } acquireAndGet { ps ⇒
-                ps.executeUpdate match {
-                    case 0 ⇒ throw noKeyFound
-                    case 1 ⇒ managed(ps.getGeneratedKeys) acquireAndGet { rs ⇒
-                        if (rs.next)
-                            p(rs)
-                        else
-                            throw noKeyFound
-                    }
-                    case _ ⇒ throw new SQLException("Multiple auto-generated keys found.")
-                }
             }
         }
     }
@@ -603,9 +589,7 @@ object NCSql extends LazyLogging {
      * @return Update count.
      */
     @throws[NCE]
-    def ddl(sql: String, params: Any*): Int =
-        // We have 'ddl' method for aesthetics only.
-        exec(sql, params: _*)
+    def ddl(sql: String, params: Any*): Int = exec(sql, params: _*)
 
     /**
      * Executes SQL delete statement and returns update count.

@@ -91,7 +91,15 @@ trait NCConfigurable extends LazyLogging {
         
         hocon.getString(name)
     }
-    
+
+    /**
+      * Gets optional configuration property.
+      *
+      * @param name Full configuration property path (name).
+      */
+    protected def getStringOpt(name: String): Option[String] =
+        if (!hocon.hasPath(name)) None else Some(hocon.getString(name))
+
     /**
       * Gets mandatory configuration property.
       *

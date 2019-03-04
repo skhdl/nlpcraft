@@ -75,6 +75,8 @@ object NCIgniteRunner extends LazyLogging {
                     Ignition.start(U.getStream("ignite.xml"))
             }
 
+        ignite.cluster().active(true)
+
         try
             body
         finally

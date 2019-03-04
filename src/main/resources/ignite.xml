@@ -166,34 +166,24 @@
         <property name="expiryPolicyFactory" ref="fiveMinsPolicy"/>
     </bean>
 
-    <bean name="user-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="user-cache"/>
-        <property name="cacheMode" value="REPLICATED"/>
-        <property name="readThrough" value="true"/>
-        <property name="writeThrough" value="true"/>
-        <property name="atomicityMode" value="TRANSACTIONAL"/>
-        <property name="cacheStoreFactory">
-            <bean class="javax.cache.configuration.FactoryBuilder.ClassFactory">
-                <constructor-arg value="org.nlpcraft.server.cache.NcUserCacheStore"/>
-            </bean>
-        </property>
-    </bean>
-
-    <bean name="ds-cache" class="org.apache.ignite.configuration.CacheConfiguration">
-        <property name="name" value="ds-cache"/>
-        <property name="cacheMode" value="REPLICATED"/>
-        <property name="readThrough" value="true"/>
-        <property name="writeThrough" value="true"/>
-        <property name="atomicityMode" value="TRANSACTIONAL"/>
-        <property name="cacheStoreFactory">
-            <bean class="javax.cache.configuration.FactoryBuilder.ClassFactory">
-                <constructor-arg value="org.nlpcraft.server.cache.NcDsCacheStore"/>
-            </bean>
-        </property>
-    </bean>
-
     <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <property name="igniteInstanceName" value="nlpcraft"/>
+
+        <property name="sqlSchemas">
+            <list>
+                <value>nlpcraft</value>
+            </list>
+        </property>
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="persistenceEnabled" value="true"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
 
         <!-- Note that 'shutdownHook' option doesn't work when Ignite is used with log4j2 for some reasons. -->
         <property name="gridLogger">
@@ -233,8 +223,6 @@
                 <ref bean="user-id-signin-cache"/>
                 <ref bean="qry-state-cache"/>
                 <ref bean="sentence-cache"/>
-                <ref bean="user-cache"/>
-                <ref bean="ds-cache"/>
             </list>
         </property>
     </bean>
