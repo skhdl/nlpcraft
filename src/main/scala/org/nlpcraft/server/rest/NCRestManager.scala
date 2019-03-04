@@ -261,15 +261,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         acsTok: String,
                         txt: String,
                         dsId: Option[Long],
-                        mdlId: Option[String],
-                        isTest: Option[Boolean]
+                        mdlId: Option[String]
                     )
                     case class Res(
                         status: String,
                         srvReqId: String
                     )
 
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
     
                     entity(as[Req]) { req ⇒
@@ -296,7 +295,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                             userId,
                                             req.txt,
                                             tmpDsId.getOrElse(req.dsId.get),
-                                            req.isTest.getOrElse(false),
                                             userAgent,
                                             remoteAddr.toOption match {
                                                 case Some(a) ⇒ Some(a.getHostAddress)

@@ -164,7 +164,6 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
       * @param dsId
       * @param mdlId
       * @param status
-      * @param test
       * @param usrAgent
       * @param rmtAddr
       * @param rcvTstamp
@@ -177,7 +176,6 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
         dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
-        test: Boolean,
         usrAgent: String,
         rmtAddr: String,
         rcvTstamp: Timestamp
@@ -193,7 +191,6 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
                 dsId,
                 mdlId,
                 status,
-                test,
                 usrAgent,
                 rmtAddr,
                 rcvTstamp

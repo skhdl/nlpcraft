@@ -71,8 +71,6 @@ CREATE TABLE proc_log (
     probe_java_vendor VARCHAR NULL,
     probe_host_name VARCHAR NULL,
     probe_host_addr VARCHAR NULL,
-    probe_mac_addr VARCHAR NULL,
-    -- Whether or not this is a test run.
-    is_test BOOL NOT NULL DEFAULT FALSE
+    probe_mac_addr VARCHAR NULL
 ) WITH "template=replicated, backups=1, atomicity=transactional";
 

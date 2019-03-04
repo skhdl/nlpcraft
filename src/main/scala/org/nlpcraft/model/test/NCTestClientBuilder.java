@@ -932,8 +932,7 @@ public class NCTestClientBuilder {
                     "ask",
                     Pair.of("acsTok", acsTok),
                     Pair.of("txt", txt),
-                    Pair.of("dsId", dsId),
-                    Pair.of("isTest", true)
+                    Pair.of("dsId", dsId)
                 ),
                 "srvReqId",
                 String.class

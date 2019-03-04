@@ -403,7 +403,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       * @param txt Original text.
       * @param dsId Data source ID.
       * @param mdlId Data source model ID.
-      * @param test Test flag.
       * @param usrAgent User agent string.
       * @param rmtAddr Remote user address.
       * @param rcvTstamp Receive timestamp.
@@ -417,7 +416,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
-        test: Boolean,
         usrAgent: String,
         rmtAddr: String,
         rcvTstamp: Timestamp
@@ -434,12 +432,11 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
               |     ds_id,
               |     model_id,
               |     status,
-              |     is_test,
               |     user_agent,
               |     rmt_address,
               |     recv_tstamp
               | )
-              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
             id,
             usrId,
@@ -448,7 +445,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             dsId,
             mdlId,
             status.toString,
-            test,
             usrAgent,
             rmtAddr,
             rcvTstamp

@@ -79,7 +79,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @param usrId
       * @param txt
       * @param dsId
-      * @param isTest
       * @param usrAgent
       * @param rmtAddr
       * @return
@@ -89,7 +88,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         usrId: Long,
         txt: String,
         dsId: Long,
-        isTest: Boolean,
         usrAgent: Option[String],
         rmtAddr: Option[String]
     ): String = {
@@ -115,7 +113,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             // Enlist for tracking.
             cache += srvReqId → NCQueryStateMdo(
                 srvReqId,
-                isTest,
                 dsId = dsId,
                 modelId = ds.modelId,
                 userId = usrId,
@@ -137,7 +134,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             dsId,
             ds.modelId,
             QRY_ENLISTED,
-            isTest,
             usrAgent.orNull,
             rmtAddr.orNull,
             rcvTstamp
@@ -150,8 +146,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 "modelId" → ds.modelId,
                 "txt" → txt0,
                 "userAgent" → usrAgent,
-                "rmtAddr" → rmtAddr,
-                "isTest" → isTest
+                "rmtAddr" → rmtAddr
             )
     
             // Enrich the user input and send it to the probe.
@@ -162,8 +157,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 txt0,
                 NCNlpEnricherManager.enrich(txt0),
                 usrAgent,
-                rmtAddr,
-                isTest
+                rmtAddr
             )
         }
         

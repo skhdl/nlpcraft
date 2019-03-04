@@ -724,7 +724,6 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       * @param nlpSen
       * @param usrAgent
       * @param rmtAddr
-      * @param isTest
       */
     @throws[NCE]
     def askProbe(
@@ -734,8 +733,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         txt: String,
         nlpSen: NCNlpSentence,
         usrAgent: Option[String],
-        rmtAddr: Option[String],
-        isTest: Boolean): Unit = {
+        rmtAddr: Option[String]
+    ) : Unit = {
         ensureStarted()
         
         val senMeta =
@@ -766,8 +765,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         "dsModelId" → ds.modelId,
                         "dsName" → ds.name,
                         "dsDesc" → ds.shortDesc,
-                        "dsModelCfg" → ds.modelConfig.orNull,
-                        "test" → isTest
+                        "dsModelCfg" → ds.modelConfig.orNull
                     )
                 )
 
