@@ -4,7 +4,7 @@
 
 ### Overview
 [NLPCraft](https://nlpcraft.org/) is an open source library for adding Natural Language Interface to any applications.
-It allows you build Natural Language Interface to any 
+It allows you to build Natural Language Interface for any 
 public or private data sources like databases, REST services, IoT devices, 
 voice assistants, and chatbots:
 
