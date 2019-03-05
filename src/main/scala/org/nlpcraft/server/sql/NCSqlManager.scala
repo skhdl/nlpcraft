@@ -56,7 +56,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     override def start(): NCLifecycle = {
         ensureStopped()
 
-
         prepareSchema()
 
         super.start()
@@ -652,11 +651,21 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
                     flatMap(p ⇒ if (p.startsWith("sql_")) Some(p.drop(4)) else None)
             }.toSet
 
+        val dbInitParam = "NLPCRAFT_DB_INITIALIZE"
+
+        var initFlag = U.isSysEnvTrue(dbInitParam)
+
+        if (initFlag)
+            logger.info(s"Schema initialized because '$dbInitParam' set as 'TRUE'.")
+        else {
+            initFlag = DB_TABLES.exists(t ⇒ !sqlTabs.contains(t))
+
+            if (initFlag)
+                logger.info(s"Some tables are not initialized well: ${DB_TABLES.mkString(", ")}")
+        }
+
         NCSql.sql {
-            if (
-                U.isSysEnvTrue("NLPCRAFT_DB_CREATE") ||
-                DB_TABLES.exists(t ⇒ !sqlTabs.contains(t))
-            )
+            if (initFlag)
                 try {
                     safeClear()
 

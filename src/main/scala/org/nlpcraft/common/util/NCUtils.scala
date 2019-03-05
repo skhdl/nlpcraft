@@ -50,9 +50,12 @@ import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.IOUtils
+import org.apache.ignite.{Ignite, IgniteAtomicSequence}
 import org.hashids.Hashids
 import org.nlpcraft.common._
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
+import org.nlpcraft.server.proclog.NCProcessLogManager.ignite
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 import resource._
 
 import scala.collection.JavaConverters._
@@ -1531,4 +1534,21 @@ object NCUtils extends LazyLogging {
 
         res.getOrElse(InetAddress.getLocalHost)
     }
+
+    /**
+      * Makes sequence.
+      *
+      * @param ignite Ignite instance.
+      * @param name Sequence name.
+      * @param tbName Table name.
+      * @param colName Column name.
+      */
+    def mkSeq(ignite: Ignite, name:String, tbName: String, colName: String): IgniteAtomicSequence =
+        NCSql.sqlNoTx {
+            ignite.atomicSequence(
+                "dsSeq",
+                NCSqlManager.getMaxColumnValue("proc_log", "id").getOrElse(0),
+                true
+            )
+        }
 }

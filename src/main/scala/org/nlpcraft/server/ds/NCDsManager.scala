@@ -32,13 +32,12 @@
 package org.nlpcraft.server.ds
 
 import org.apache.ignite.IgniteAtomicSequence
-import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.common.version.NCVersion
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
-import org.nlpcraft.server.tx.NCTxManager.wrapIE
 
 import scala.util.control.Exception.catching
 
@@ -56,11 +55,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
 
         catching(wrapIE) {
             dsSeq = NCSql.sqlNoTx {
-                ignite.atomicSequence(
-                    "dsSeq",
-                    NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
-                    true
-                )
+                U.mkSeq(ignite, "dsSeq", "ds_instance", "id")
             }
         }
 

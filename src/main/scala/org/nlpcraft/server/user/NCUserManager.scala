@@ -103,24 +103,17 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        catching(wrapIE) {
-            usersSeq = NCSql.sqlNoTx {
-                ignite.atomicSequence(
-                    "usersSeq",
-                    NCSqlManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
-                    true
-                )
-            }
+            catching(wrapIE) {
+                NCSql.sqlNoTx {
+                    usersSeq = NCSql.sqlNoTx {
+                        U.mkSeq(ignite, "usersSeq", "nc_user", "id")
+                    }
 
-            pswdSeq = NCSql.sqlNoTx {
-                ignite.atomicSequence(
-                    "pswdSeq",
-                    NCSqlManager.getMaxColumnValue("passwd_pool", "id").getOrElse(0),
-                    true
-                )
+                    pswdSeq = NCSql.sqlNoTx {
+                        U.mkSeq(ignite, "pswdSeq", "passwd_pool", "id")
+                    }
+                }
             }
-        }
-
 
         catching(wrapIE) {
             tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")

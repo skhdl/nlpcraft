@@ -55,11 +55,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
     override def start(): NCLifecycle = {
         catching(wrapIE) {
             logSeq = NCSql.sqlNoTx {
-                ignite.atomicSequence(
-                    "dsSeq",
-                    NCSqlManager.getMaxColumnValue("proc_log", "id").getOrElse(0),
-                    true
-                )
+                U.mkSeq(ignite, "logSeq", "proc_log", "id")
             }
         }
 
