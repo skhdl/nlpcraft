@@ -55,7 +55,7 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
     override def start(): NCLifecycle = {
         catching(wrapIE) {
             logSeq = NCSql.sqlNoTx {
-                U.mkSeq(ignite, "logSeq", "proc_log", "id")
+                NCSql.mkSeq(ignite, "logSeq", "proc_log", "id")
             }
         }
 

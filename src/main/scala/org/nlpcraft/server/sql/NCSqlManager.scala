@@ -656,7 +656,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         var initFlag = U.isSysEnvTrue(dbInitParam)
 
         if (initFlag)
-            logger.info(s"Schema initialization flag '$dbInitParam' set as 'TRUE'.")
+            logger.info(s"Schema initialization flag '$dbInitParam' set.")
         else {
             // Ignite cache names can be `sql_nc_user` or `sql_nlpcraft_nc_user` if schema used.
             initFlag = DB_TABLES.exists(t ⇒ !sqlTabs.exists(st ⇒ st == t || st.endsWith(s"_$t")))

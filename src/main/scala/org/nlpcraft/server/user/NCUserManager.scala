@@ -106,11 +106,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             catching(wrapIE) {
                 NCSql.sqlNoTx {
                     usersSeq = NCSql.sqlNoTx {
-                        U.mkSeq(ignite, "usersSeq", "nc_user", "id")
+                        NCSql.mkSeq(ignite, "usersSeq", "nc_user", "id")
                     }
 
                     pswdSeq = NCSql.sqlNoTx {
-                        U.mkSeq(ignite, "pswdSeq", "passwd_pool", "id")
+                        NCSql.mkSeq(ignite, "pswdSeq", "passwd_pool", "id")
                     }
                 }
             }

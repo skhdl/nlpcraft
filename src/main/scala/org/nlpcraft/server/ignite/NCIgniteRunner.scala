@@ -70,13 +70,13 @@ object NCIgniteRunner extends LazyLogging {
                     else {
                         val cfgFile = "ignite.xml"
 
-                        // 2. Tries to find config in the same folder with jar.
+                        // 2. Tries to find config in the same folder with JAR.
                         val cfg = new File(cfgFile)
 
                         if (cfg.exists() && cfg.isFile)
                             Ignition.start(cfg.getAbsolutePath)
                         else {
-                            // 3. Tries to start with config from jar.
+                            // 3. Tries to start with config from JAR.
                             val stream = U.getStream(cfgFile)
 
                             if (stream == null)

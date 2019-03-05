@@ -36,6 +36,7 @@ import java.sql.{Connection, PreparedStatement, ResultSet, SQLException, Timesta
 
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.ignite.{Ignite, IgniteAtomicSequence}
 import org.apache.ignite.transactions.Transaction
 import org.nlpcraft.common._
 import org.nlpcraft.server.NCConfigurable
@@ -606,5 +607,23 @@ object NCSql extends LazyLogging {
             for (ps ← managed { prepare(sql, params) } ; rs ← managed { ps.executeQuery() } )
                 while (rs.next)
                     callback(p(rs))
+        }
+    
+    
+    /**
+      * Makes sequence.
+      *
+      * @param ignite Ignite instance.
+      * @param name Sequence name.
+      * @param tblName Table name.
+      * @param colName Column name.
+      */
+    def mkSeq(ignite: Ignite, name:String, tblName: String, colName: String): IgniteAtomicSequence =
+        NCSql.sqlNoTx {
+            ignite.atomicSequence(
+                name,
+                NCSqlManager.getMaxColumnValue(tblName, colName).getOrElse(0),
+                true
+            )
         }
 }
