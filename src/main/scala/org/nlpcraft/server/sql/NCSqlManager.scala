@@ -33,7 +33,6 @@ package org.nlpcraft.server.sql
 
 import java.sql.Timestamp
 
-import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ignite.NCIgniteInstance
@@ -187,7 +186,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             lastName,
             avatarUrl.orNull,
             isAdmin,
-            NCUtils.nowUtcTs(),
+            U.nowUtcTs(),
             usrId
         )
     }
@@ -218,7 +217,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
                 """.stripMargin,
             name,
             shortDesc,
-            NCUtils.nowUtcTs(),
+            U.nowUtcTs(),
             dsId
         )
     }
@@ -311,7 +310,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     ): Long = {
         ensureStarted()
 
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
 
         // Insert user.
         NCSql.insert(
@@ -366,7 +365,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     ): Long = {
         ensureStarted()
 
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
 
         NCSql.insert(
             """
@@ -509,7 +508,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             QRY_READY.toString,
             errMsg,
             resType,
-            if (resBody == null) null else NCUtils.compress(resBody),
+            if (resBody == null) null else U.compress(resBody),
             tstamp,
             srvReqId
         )
@@ -627,8 +626,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       */
     @throws[NCE]
     private def executeScript(sqlPath: String): Unit =
-        NCUtils.
-            readResource(sqlPath, "UTF-8").
+        U.readResource(sqlPath, "UTF-8").
             mkString("\n").
             split(";").
             map(_.trim).
@@ -655,7 +653,10 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             }.toSet
 
         NCSql.sql {
-            if (DB_TABLES.exists(t ⇒ !sqlTabs.contains(t)))
+            if (
+                U.isSysEnvTrue("NLPCRAFT_DB_CREATE") ||
+                DB_TABLES.exists(t ⇒ !sqlTabs.contains(t))
+            )
                 try {
                     safeClear()
 
