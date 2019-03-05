@@ -656,13 +656,10 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         var initFlag = U.isSysEnvTrue(dbInitParam)
 
         if (initFlag)
-            logger.info(s"Schema initialization flag '$dbInitParam' set.")
+            logger.info(s"Database schema initialization flag found: -D$dbInitParam=true")
         else {
             // Ignite cache names can be `sql_nc_user` or `sql_nlpcraft_nc_user` if schema used.
             initFlag = DB_TABLES.exists(t ⇒ !sqlTabs.exists(st ⇒ st == t || st.endsWith(s"_$t")))
-
-            if (initFlag)
-                logger.info(s"Schema is not initialized: ${DB_TABLES.mkString(", ")}")
         }
 
         NCSql.sql {
@@ -672,7 +669,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
 
                     executeScript("sql/create_schema.sql")
 
-                    logger.info("Schema initialized.")
+                    logger.info("Database schema initialized.")
                 }
                 catch {
                     case e: NCE ⇒
