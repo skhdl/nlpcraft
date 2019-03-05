@@ -54,9 +54,7 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
         ensureStopped()
 
         catching(wrapIE) {
-            dsSeq = NCSql.sqlNoTx {
-                NCSql.mkSeq(ignite, "dsSeq", "ds_instance", "id")
-            }
+            dsSeq = NCSql.mkSeq(ignite, "dsSeq", "ds_instance", "id")
         }
 
         super.start()
