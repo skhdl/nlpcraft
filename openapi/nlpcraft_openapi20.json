@@ -314,11 +314,6 @@
                                 "type": "string",
                                 "description": "Model ID. Temporary data source for given model ID will be created and deleted. Cannot be used together with `dsId` parameter.",
                                 "maxLength": 32
-                            },
-
-                            "isTest": {
-                                "type": "boolean",
-                                "description": "Optional flag on whether request was sent for test reasons or not."
                             }
                         }
                     }

@@ -16,7 +16,7 @@
 --   the functionality of the Software. Any license notice or attribution
 --   required by the License must also include this Commons Clause License
 --   Condition notice.
---
+
 --   Software:    NLPCraft
 --   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
 --   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
@@ -26,12 +26,9 @@
 --     /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
 --    / /|  / / /_/ / /___/ /  / /_/ / __/ /_
 --   /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
---          /_/
 --
 
-USE nlpcraft;
-
-DROP TABLE IF EXISTS proc_log CASCADE;
-DROP TABLE IF EXISTS ds_instance CASCADE;
-DROP TABLE IF EXISTS nc_user CASCADE;
-DROP TABLE IF EXISTS passwd_pool CASCADE;
+DROP TABLE IF EXISTS nc_user;
+DROP TABLE IF EXISTS passwd_pool;
+DROP TABLE IF EXISTS ds_instance;
+DROP TABLE IF EXISTS proc_log;

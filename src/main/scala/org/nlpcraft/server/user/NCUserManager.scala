@@ -34,17 +34,16 @@ package org.nlpcraft.server.user
 import java.util.{Timer, TimerTask}
 
 import org.apache.commons.validator.routines.EmailValidator
-import org.apache.ignite.cache.CachePeekMode
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCUserMdo
 import org.nlpcraft.server.notification.NCNotificationManager
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 import org.nlpcraft.server.tx.NCTxManager
 
 import scala.collection.JavaConverters._
@@ -58,11 +57,11 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     private final val EMAIL_VALIDATOR = EmailValidator.getInstance()
 
     // Caches.
-    @volatile private var userCache: IgniteCache[Either[Long, String], NCUserMdo] = _
     @volatile private var tokenSigninCache: IgniteCache[String, SigninSession] = _
     @volatile private var idSigninCache: IgniteCache[Long, String] = _
 
     @volatile private var usersSeq: IgniteAtomicSequence = _
+    @volatile private var pswdSeq: IgniteAtomicSequence = _
 
     // Access token timeout scanner.
     @volatile private var scanner: Timer = _
@@ -104,24 +103,24 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        usersSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "usersSeq",
-                NCSqlManager.getMaxColumnValue("nc_user", "id").getOrElse(0),
-                true
-            )
-        }
+            catching(wrapIE) {
+                NCSql.sqlNoTx {
+                    usersSeq = NCSql.sqlNoTx {
+                        NCSql.mkSeq(ignite, "usersSeq", "nc_user", "id")
+                    }
+
+                    pswdSeq = NCSql.sqlNoTx {
+                        NCSql.mkSeq(ignite, "pswdSeq", "passwd_pool", "id")
+                    }
+                }
+            }
 
         catching(wrapIE) {
-            userCache = ignite.cache[Either[Long, String], NCUserMdo]("user-cache")
             tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")
             idSigninCache = ignite.cache[Long, String]("user-id-signin-cache")
 
-            require(userCache != null)
             require(tokenSigninCache != null)
             require(idSigninCache != null)
-
-            userCache.localLoadCache(null)
         }
 
         scanner = new Timer("timeout-scanner")
@@ -171,37 +170,30 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         logger.info(s"Access tokens will be scanned for timeout every ${Config.timeoutScannerFreqMins} min.")
         logger.info(s"Access tokens inactive for ${Config.accessTokenExpireTimeoutMins} min will be invalidated.")
 
-        catching(wrapIE) {
-            if (userCache.localEntries(CachePeekMode.ALL).asScala.isEmpty)
-                try
-                    addDefaultUser()
+        NCSql.sql {
+            if (!NCSql.exists("nc_user"))
+                try {
+                    val email = "admin@admin.com"
+                    val pswd = "admin"
+
+                    addUser0(
+                        email,
+                        pswd,
+                        "Hermann",
+                        "Minkowski",
+                        avatarUrl = None,
+                        isAdmin = true
+                    )
+
+                    logger.info(s"Default admin user ($email/$pswd) created.")
+
+                }
                 catch {
-                    case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}")
+                    case e: NCE ⇒ logger.error(s"Failed to add default admin user: ${e.getLocalizedMessage}", e)
                 }
         }
 
         super.start()
-    }
-
-    /**
-      * Adds default user.
-      */
-    @throws[NCE]
-    private def addDefaultUser(): Unit = {
-        val email = "admin@admin.com"
-        val pswd = "admin"
-
-        addUser0(
-            email,
-            pswd,
-            "Hermann",
-            "Minkowski",
-            avatarUrl = None,
-            isAdmin = true,
-            event = None
-        )
-
-        logger.info(s"Default admin user ($email/$pswd) created.")
     }
 
     /**
@@ -211,9 +203,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def getAllUsers: Seq[NCUserMdo] = {
         ensureStarted()
 
-        catching(wrapIE) {
-            // Users can be duplicated by their keys (ID and email)
-            userCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue).distinct
+        NCSql.sql {
+            NCSqlManager.getAllUsers
         }
     }
 
@@ -228,7 +219,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         
         tokenSigninCache = null
         idSigninCache = null
-        userCache = null
 
         super.stop()
     }
@@ -310,8 +300,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def getUser(usrId: Long): Option[NCUserMdo] = {
         ensureStarted()
 
-        catching(wrapIE) {
-            userCache(Left(usrId))
+        NCSql.sql {
+            NCSqlManager.getUser(usrId)
         }
     }
 
@@ -347,9 +337,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def signin(email: String, passwd: String): Option[String] = {
         ensureStarted()
 
+
         catching(wrapIE) {
             NCTxManager.startTx {
-                userCache(Right(U.normalizeEmail(email))) match {
+                NCSql.sql {
+                    NCSqlManager.getUserByEmail(email)
+                } match {
                     case Some(usr) ⇒
                         NCSql.sql {
                             if (!NCSqlManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
@@ -417,26 +410,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     ): Unit = {
         ensureStarted()
 
-        val idKey = Left(usrId)
-
-        catching(wrapIE) {
-            NCTxManager.startTx {
-                val usr = userCache(idKey).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
-
-                val mdo = NCUserMdo(
-                    usr.id,
-                    usr.email,
+        NCSql.sql {
+            val n =
+                NCSqlManager.updateUser(
+                    usrId,
                     firstName,
                     lastName,
                     avatarUrl,
-                    usr.passwordSalt,
-                    isAdmin,
-                    usr.createdOn
+                    isAdmin
                 )
 
-                userCache += idKey → mdo
-                userCache += Right(usr.email) → mdo
-            }
+            if (n == 0)
+                throw new NCE(s"Unknown user ID: $usrId")
         }
 
         // Notification.
@@ -457,24 +442,22 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def deleteUser(usrId: Long): Unit = {
         ensureStarted()
 
-        val idKey = Left(usrId)
+        val usr =
+            NCSql.sql {
+                val usr = NCSqlManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
-        catching(wrapIE) {
-            NCTxManager.startTx {
-                val usr = userCache(idKey).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
+                NCSqlManager.deleteUser(usr.id)
 
-                userCache -= idKey
-                userCache -= Right(usr.email)
-
-                // Notification.
-                NCNotificationManager.addEvent("NC_USER_DELETE",
-                    "userId" → usrId,
-                    "firstName" → usr.firstName,
-                    "lastName" → usr.lastName,
-                    "email" → usr.email
-                )
+                usr
             }
-        }
+
+        // Notification.
+        NCNotificationManager.addEvent("NC_USER_DELETE",
+            "userId" → usrId,
+            "firstName" → usr.firstName,
+            "lastName" → usr.lastName,
+            "email" → usr.email
+        )
     }
 
     /**
@@ -486,22 +469,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     def resetPassword(usrId: Long, newPasswd: String): Unit = {
         ensureStarted()
 
-        catching(wrapIE) {
-            val usr = userCache(Left(usrId)).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
+        NCSql.sql {
+            val usr = NCSqlManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
             val salt = NCBlowfishHasher.hash(usr.email)
 
-            NCSql.sql {
-                // Add actual hash for the password.
-                // NOTE: we don't "stir up" password pool for password resets.
-                NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(newPasswd, salt))
-            }
-
-            // Notification.
-            NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
-                "userId" → usrId
-            )
+            // Add actual hash for the password.
+            // NOTE: we don't "stir up" password pool for password resets.
+            NCSqlManager.addPasswordHash(pswdSeq.incrementAndGet(), NCBlowfishHasher.hash(newPasswd, salt))
         }
+
+
+        // Notification.
+        NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
+            "userId" → usrId
+        )
     }
 
     /**
@@ -525,7 +507,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     ): Long = {
         ensureStarted()
 
-        val id = addUser0(email, pswd, firstName, lastName, avatarUrl, isAdmin, Some("NC_USER_ADD"))
+        val id =
+            NCSql.sql {
+                addUser0(email, pswd, firstName, lastName, avatarUrl, isAdmin)
+            }
+
+        NCNotificationManager.addEvent(
+            "NC_USER_ADD",
+            "userId" → id,
+            "firstName" → firstName,
+            "lastName" → lastName,
+            "email" → email
+        )
 
         logger.info(s"User $email created.")
 
@@ -552,7 +545,18 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     ): Long = {
         ensureStarted()
 
-        val id = addUser0(email, pswd, firstName, lastName, avatarUrl, true, Some("NC_SIGNUP"))
+        val id =
+            NCSql.sql {
+                addUser0(email, pswd, firstName, lastName, avatarUrl, true)
+            }
+
+        NCNotificationManager.addEvent(
+            "NC_SIGNUP",
+            "userId" → id,
+            "firstName" → firstName,
+            "lastName" → lastName,
+            "email" → email
+        )
 
         logger.info(s"User $email signup ok.")
 
@@ -567,8 +571,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
       * @param lastName
       * @param avatarUrl
       * @param isAdmin
-      * @param event
-      * @return
       */
     @throws[NCE]
     def addUser0(
@@ -577,66 +579,38 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         firstName: String,
         lastName: String,
         avatarUrl: Option[String],
-        isAdmin: Boolean,
-        event: Option[String]
+        isAdmin: Boolean
     ): Long = {
         val normEmail = U.normalizeEmail(email)
 
         if (!EMAIL_VALIDATOR.isValid(normEmail))
             throw new NCE(s"New user email is invalid: $normEmail")
 
-        val emailKey = Right(normEmail)
+        if (NCSqlManager.getUserByEmail(normEmail).isDefined)
+            throw new NCE(s"User with this email already exists: $normEmail")
 
-        val (newUsrId, salt) =
-            catching(wrapIE) {
-                NCTxManager.startTx {
-                    if (userCache.containsKey(emailKey))
-                        throw new NCE(s"User with this email already exists: $normEmail")
+        val newUsrId = usersSeq.incrementAndGet()
+        val salt = NCBlowfishHasher.hash(normEmail)
 
-                    val newUsrId = usersSeq.incrementAndGet()
-                    val salt = NCBlowfishHasher.hash(normEmail)
+        NCSqlManager.addUser(
+            newUsrId,
+            normEmail,
+            firstName,
+            lastName,
+            avatarUrl,
+            salt,
+            isAdmin
+        )
 
-                    val mdo = NCUserMdo(
-                        newUsrId,
-                        normEmail,
-                        firstName,
-                        lastName,
-                        avatarUrl,
-                        salt,
-                        isAdmin
-                    )
+        // Add actual hash for the password.
+        NCSqlManager.addPasswordHash(pswdSeq.incrementAndGet(), NCBlowfishHasher.hash(pswd, salt))
 
-                    userCache += Left(newUsrId) → mdo
-                    userCache += emailKey → mdo
+        // "Stir up" password pool with each user.
+        (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
+            NCSqlManager.addPasswordHash(pswdSeq.incrementAndGet(), NCBlowfishHasher.hash(U.genGuid()))
+        )
 
-                    (newUsrId, salt)
-                }
-            }
-
-        NCSql.sql {
-            // Add actual hash for the password.
-            NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(pswd, salt))
-
-            // "Stir up" password pool with each user.
-            (0 to Math.round((Math.random() * Config.pwdPoolBlowup) + Config.pwdPoolBlowup).toInt).foreach(_ ⇒
-                NCSqlManager.addPasswordHash(NCBlowfishHasher.hash(U.genGuid()))
-            )
-
-            event match {
-                case Some(e) ⇒
-                    // Notification.
-                    NCNotificationManager.addEvent(
-                        e,
-                        "userId" → newUsrId,
-                        "firstName" → firstName,
-                        "lastName" → lastName,
-                        "email" → normEmail
-                    )
-                case None ⇒ // No-op.
-            }
-
-            newUsrId
-        }
+        newUsrId
     }
 
     /**
@@ -655,7 +629,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                             logger.error(s"Token cache not found for: $acsToken")
 
                             None
-
                     }
 
                 case None ⇒

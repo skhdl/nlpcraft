@@ -33,7 +33,6 @@ package org.nlpcraft.server.query
 
 import org.apache.ignite.IgniteCache
 import org.nlpcraft.common.{NCLifecycle, _}
-import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
@@ -79,7 +78,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @param usrId
       * @param txt
       * @param dsId
-      * @param isTest
       * @param usrAgent
       * @param rmtAddr
       * @return
@@ -89,7 +87,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         usrId: Long,
         txt: String,
         dsId: Long,
-        isTest: Boolean,
         usrAgent: Option[String],
         rmtAddr: Option[String]
     ): String = {
@@ -97,7 +94,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         
         val txt0 = txt.trim()
         
-        val rcvTstamp = NCUtils.nowUtcTs()
+        val rcvTstamp = U.nowUtcTs()
         
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
@@ -115,7 +112,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             // Enlist for tracking.
             cache += srvReqId → NCQueryStateMdo(
                 srvReqId,
-                isTest,
                 dsId = dsId,
                 modelId = ds.modelId,
                 userId = usrId,
@@ -137,7 +133,6 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             dsId,
             ds.modelId,
             QRY_ENLISTED,
-            isTest,
             usrAgent.orNull,
             rmtAddr.orNull,
             rcvTstamp
@@ -150,8 +145,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 "modelId" → ds.modelId,
                 "txt" → txt0,
                 "userAgent" → usrAgent,
-                "rmtAddr" → rmtAddr,
-                "isTest" → isTest
+                "rmtAddr" → rmtAddr
             )
     
             // Enrich the user input and send it to the probe.
@@ -162,8 +156,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 txt0,
                 NCNlpEnricherManager.enrich(txt0),
                 usrAgent,
-                rmtAddr,
-                isTest
+                rmtAddr
             )
         }
         
@@ -186,7 +179,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def setError(srvReqId: String, errMsg: String): Unit = {
         ensureStarted()
         
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
     
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -233,7 +226,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def setResult(srvReqId: String, resType: String, resBody: String): Unit = {
         ensureStarted()
         
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
         
         val found = catching(wrapIE) {
             cache(srvReqId) match {
@@ -299,7 +292,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def cancel(srvReqIds: Set[String]): Unit = {
         ensureStarted()
 
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
 
         val userSrvReqIds =
             catching(wrapIE) {

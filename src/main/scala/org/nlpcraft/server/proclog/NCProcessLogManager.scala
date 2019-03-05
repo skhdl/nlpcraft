@@ -33,16 +33,35 @@ package org.nlpcraft.server.proclog
 
 import java.sql.Timestamp
 
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.apache.ignite.IgniteAtomicSequence
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode.NCApiStatusCode
-import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCProbeMdo
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
+
+import scala.util.control.Exception.catching
 
 /**
   * Process log manager.
   */
-object NCProcessLogManager extends NCLifecycle("Process log manager") {
+object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgniteInstance {
+    @volatile private var logSeq: IgniteAtomicSequence = _
+
+
+    /**
+      * Starts this component.
+      */
+    override def start(): NCLifecycle = {
+        catching(wrapIE) {
+            logSeq = NCSql.sqlNoTx {
+                NCSql.mkSeq(ignite, "logSeq", "proc_log", "id")
+            }
+        }
+
+        super.start()
+    }
+
     /**
       * 
       * @param srvReqId
@@ -141,7 +160,6 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
       * @param dsId
       * @param mdlId
       * @param status
-      * @param test
       * @param usrAgent
       * @param rmtAddr
       * @param rcvTstamp
@@ -154,7 +172,6 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
-        test: Boolean,
         usrAgent: String,
         rmtAddr: String,
         rcvTstamp: Timestamp
@@ -163,13 +180,13 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") {
         
         NCSql.sql {
             NCSqlManager.newProcessingLog(
+                logSeq.incrementAndGet(),
                 usrId,
                 srvReqId,
                 txt,
                 dsId,
                 mdlId,
                 status,
-                test,
                 usrAgent,
                 rmtAddr,
                 rcvTstamp

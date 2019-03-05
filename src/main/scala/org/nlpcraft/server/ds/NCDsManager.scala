@@ -31,26 +31,20 @@
 
 package org.nlpcraft.server.ds
 
-import org.apache.ignite.cache.CachePeekMode
-import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import org.apache.ignite.IgniteAtomicSequence
 import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.server.sql.{NCSqlManager, NCSql}
-import org.nlpcraft.server.ignite.NCIgniteHelpers._
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.notification.NCNotificationManager
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 
-import scala.collection.JavaConverters._
 import scala.util.control.Exception.catching
 
 /**
   * Data sources manager.
   */
-object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInstance{
-    // Caches.
-    @volatile private var dsCache: IgniteCache[Long, NCDataSourceMdo] = _
+object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInstance {
     @volatile private var dsSeq: IgniteAtomicSequence = _
 
     /**
@@ -59,20 +53,10 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        dsSeq = NCSql.sqlNoTx {
-            ignite.atomicSequence(
-                "dsSeq",
-                NCSqlManager.getMaxColumnValue("ds_instance", "id").getOrElse(0),
-                true
-            )
-        }
-
         catching(wrapIE) {
-            dsCache = ignite.cache[Long, NCDataSourceMdo]("ds-cache")
-
-            require(dsCache != null)
-
-            dsCache.localLoadCache(null)
+            dsSeq = NCSql.sqlNoTx {
+                NCSql.mkSeq(ignite, "dsSeq", "ds_instance", "id")
+            }
         }
 
         super.start()
@@ -82,8 +66,6 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
       * Stops this manager.
       */
     override def stop(): Unit = {
-        dsCache = null
-
         super.stop()
     }
 
@@ -96,8 +78,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
         ensureStarted()
 
-        catching(wrapIE) {
-            dsCache(dsId)
+        NCSql.sql {
+            NCSqlManager.getDataSource(dsId)
         }
     }
 
@@ -116,29 +98,25 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     ): Unit = {
         ensureStarted()
 
-        catching(wrapIE) {
-            val ds = dsCache(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
+        val ds =
+            NCSql.sql {
+                val ds = NCSqlManager.getDataSource(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
 
-            dsCache +=
-                dsId →
-                NCDataSourceMdo(
+                NCSqlManager.updateDataSource(
                     ds.id,
                     name,
-                    shortDesc,
-                    ds.modelId,
-                    ds.modelName,
-                    ds.modelVersion,
-                    ds.modelConfig,
-                    ds.createdOn
+                    shortDesc
                 )
 
-            // Notification.
-            NCNotificationManager.addEvent("NC_DS_UPDATE",
-                "dsId" → dsId,
-                "name" → ds.name,
-                "desc" → ds.shortDesc
-            )
+            ds
         }
+
+        // Notification.
+        NCNotificationManager.addEvent("NC_DS_UPDATE",
+            "dsId" → dsId,
+            "name" → ds.name,
+            "desc" → ds.shortDesc
+        )
     }
     
     /**
@@ -151,19 +129,16 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
 
         val newDsId = dsSeq.incrementAndGet()
 
-        catching(wrapIE) {
-            dsCache +=
-                newDsId →
-                NCDataSourceMdo(
-                    newDsId,
-                    "auto-delete-temp-ds",
-                    s"tmp",
-                    s"$mdlId",
-                    s"tmp",
-                    s"${NCVersion.getCurrent.version}",
-                    None
-                )
-
+        NCSql.sql {
+            NCSqlManager.addDataSource(
+                newDsId,
+                s"tmp",
+                "auto-delete-temp-ds",
+                mdlId,
+                s"tmp",
+                s"${NCVersion.getCurrent.version}",
+                None
+            )
         }
 
         // NOTE: no notification for temp data source.
@@ -195,18 +170,16 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
 
         val newDsId = dsSeq.incrementAndGet()
 
-        catching(wrapIE) {
-            dsCache +=
-                newDsId →
-                NCDataSourceMdo(
-                    newDsId,
-                    name,
-                    desc,
-                    mdlId,
-                    mdlName,
-                    mdlVer,
-                    mdlCfg
-                )
+        NCSql.sql {
+            NCSqlManager.addDataSource(
+                newDsId,
+                name,
+                desc,
+                mdlId,
+                mdlName,
+                mdlVer,
+                mdlCfg
+            )
         }
 
         // Notification.
@@ -232,22 +205,25 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     def deleteDataSource(dsId: Long): Unit = {
         ensureStarted()
 
-        catching(wrapIE) {
-            val ds = dsCache(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
+        val ds =
+            NCSql.sql {
+                val ds = NCSqlManager.getDataSource(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
 
-            dsCache -= dsId
+                NCSqlManager.deleteDataSource(dsId)
 
-            // Notification.
-            NCNotificationManager.addEvent("NC_DS_DELETE",
-                "dsId" → dsId,
-                "name" → ds.name,
-                "desc" → ds.shortDesc,
-                "modelId" → ds.modelId,
-                "modelName" → ds.modelName,
-                "mdlVer" → ds.modelVersion,
-                "mdlCfg" → ds.modelConfig
-            )
-        }
+                ds
+            }
+
+        // Notification.
+        NCNotificationManager.addEvent("NC_DS_DELETE",
+            "dsId" → dsId,
+            "name" → ds.name,
+            "desc" → ds.shortDesc,
+            "modelId" → ds.modelId,
+            "modelName" → ds.modelName,
+            "mdlVer" → ds.modelVersion,
+            "mdlCfg" → ds.modelConfig
+        )
     }
 
     /**
@@ -257,8 +233,8 @@ object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInsta
     def getAllDataSources: Seq[NCDataSourceMdo] = {
         ensureStarted()
 
-        catching(wrapIE) {
-            dsCache.localEntries(CachePeekMode.ALL).asScala.toSeq.map(_.getValue)
+        NCSql.sql {
+            NCSqlManager.getAllDataSources
         }
     }
 }

@@ -80,7 +80,6 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
       * @param dsName Data source name.
       * @param dsDesc Data source description.
       * @param dsModelCfg Data source model config.
-      * @param test Test flag.
       */
     @throws[NCE]
     def ask(
@@ -93,8 +92,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         dsModelId: String,
         dsName: String,
         dsDesc: String,
-        dsModelCfg: String,
-        test: Boolean
+        dsModelCfg: String
     ): Unit = {
         ensureStarted()
 
@@ -109,8 +107,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 dsModelId,
                 dsName,
                 dsDesc,
-                dsModelCfg,
-                test
+                dsModelCfg
             )
         catch {
             case e: Throwable ⇒
@@ -152,7 +149,6 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
       * @param dsName Data source name.
       * @param dsDesc Data source description.
       * @param dsModelCfg Data source model config.
-      * @param test Test flag.
       */
     @throws[NCE]
     private def ask0(
@@ -165,8 +161,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         dsModelId: String,
         dsName: String,
         dsDesc: String,
-        dsModelCfg: String,
-        test: Boolean
+        dsModelCfg: String
     ): Unit = {
         logger.info(s"Sentence received: ${nlpSen.text}")
     
@@ -221,8 +216,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             msg += "dsId" → dsId
             msg += "dsModelId" → dsModelId
             msg += "txt" → txt
-            msg += "test" → test
-            
+
             if (resBody.isDefined && resBody.get.length > config.resultMaxSize)
                 addOptional(msg, "error", Some("Result is too big. Model results must to be corrected."))
             else {

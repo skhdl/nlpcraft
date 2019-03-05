@@ -32,25 +32,31 @@
 package org.nlpcraft.server.sql
 
 import java.sql.Timestamp
-import java.time.LocalDate
 
-import org.nlpcraft.common.util.NCUtils
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import NCSql.Implicits._
+import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
+import org.nlpcraft.server.sql.NCSql.Implicits._
+
+import scala.collection.JavaConverters._
+import scala.util.control.Exception.catching
 
 /**
   * Provides basic CRUD and often used operations on RDBMS.
   * Note that all functions in this class expect outside `NCSql.sql()` block.
   */
-object NCSqlManager extends NCLifecycle("Database manager") {
+object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstance {
+    private final val DB_TABLES = Seq("nc_user", "passwd_pool", "ds_instance", "proc_log")
+
     /**
       * Starts manager.
       */
     @throws[NCE]
     override def start(): NCLifecycle = {
         ensureStopped()
+
+        prepareSchema()
 
         super.start()
     }
@@ -72,22 +78,23 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def isKnownPasswordHash(hash: String): Boolean = {
         ensureStarted()
-    
+
         NCSql.exists("passwd_pool WHERE passwd_hash = ?", hash)
     }
-    
+
     /**
       * Inserts password hash into anonymous password pool.
       *
+      * @param id Id.
       * @param hash Password hash to insert into anonymous password pool.
       */
     @throws[NCE]
-    def addPasswordHash(hash: String): Unit = {
+    def addPasswordHash(id: Long, hash: String): Unit = {
         ensureStarted()
-    
-        NCSql.insert("INSERT INTO passwd_pool (passwd_hash) VALUES (?)", hash)
+
+        NCSql.insert("INSERT INTO passwd_pool (id, passwd_hash) VALUES (?, ?)", id, hash)
     }
-    
+
     /**
       * Removes password hash from anonymous password pool.
       *
@@ -96,7 +103,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def erasePasswordHash(hash: String): Unit = {
         ensureStarted()
-    
+
         NCSql.delete("DELETE FROM passwd_pool WHERE passwd_hash = ?", hash)
     }
 
@@ -119,7 +126,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             email
         )
     }
-    
+
     /**
       * Deletes user with given ID.
       *
@@ -178,7 +185,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             lastName,
             avatarUrl.orNull,
             isAdmin,
-            NCUtils.nowUtcTs(),
+            U.nowUtcTs(),
             usrId
         )
     }
@@ -197,7 +204,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         shortDesc: String
     ): Int = {
         ensureStarted()
-        
+
         NCSql.update(
             s"""
                |UPDATE ds_instance
@@ -209,7 +216,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
                 """.stripMargin,
             name,
             shortDesc,
-            NCUtils.nowUtcTs(),
+            U.nowUtcTs(),
             dsId
         )
     }
@@ -223,7 +230,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def getUser(usrId: Long): Option[NCUserMdo] = {
         ensureStarted()
-    
+
         NCSql.selectSingle[NCUserMdo](
             s"""
                |SELECT *
@@ -232,7 +239,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             """.stripMargin,
             usrId)
     }
-    
+
     /**
       * Gets data source for given ID.
       *
@@ -242,7 +249,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
         ensureStarted()
-        
+
         NCSql.selectSingle[NCDataSourceMdo](
             s"""
             |SELECT *
@@ -261,10 +268,10 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def getAllUsers: List[NCUserMdo] = {
         ensureStarted()
-        
+
         NCSql.select[NCUserMdo]("SELECT * FROM nc_user")
     }
-    
+
     /**
       * Gets all data sources.
       *
@@ -273,37 +280,39 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     @throws[NCE]
     def getAllDataSources: List[NCDataSourceMdo] = {
         ensureStarted()
-        
+
         NCSql.select[NCDataSourceMdo]("SELECT *FROM ds_instance")
     }
 
     /**
       * Adds new user with given parameters.
       *
+      * @param id User's ID.
+      * @param email User's normalized email.
       * @param firstName User's first name.
       * @param lastName User's last name.
-      * @param email User's normalized email.
-      * @param passwdSalt Optional salt for password Blowfish hashing.
       * @param avatarUrl User's avatar URL.
+      * @param passwdSalt Optional salt for password Blowfish hashing.
       * @param isAdmin Whether or not the user is admin.
+      *
       * @return Newly added user ID.
       */
     @throws[NCE]
     def addUser(
         id: Long,
+        email: String,
         firstName: String,
         lastName: String,
-        email: String,
-        passwdSalt: String,
         avatarUrl: Option[String],
+        passwdSalt: String,
         isAdmin: Boolean
     ): Long = {
         ensureStarted()
 
-        val now = NCUtils.nowUtcTs()
-        
+        val now = U.nowUtcTs()
+
         // Insert user.
-        NCSql.insertGetKey[Long](
+        NCSql.insert(
             """
               | INSERT INTO nc_user(
               |    id,
@@ -355,9 +364,9 @@ object NCSqlManager extends NCLifecycle("Database manager") {
     ): Long = {
         ensureStarted()
 
-        val now = NCUtils.nowUtcTs()
+        val now = U.nowUtcTs()
 
-        NCSql.insertGetKey[Long](
+        NCSql.insert(
             """
               |INSERT INTO ds_instance(
               |     id,
@@ -382,66 +391,66 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             now
         )
     }
-    
+
     /**
       * Adds processing log.
       *
+      * @param id Id.
       * @param usrId User Id.
       * @param srvReqId Server request ID.
       * @param txt Original text.
       * @param dsId Data source ID.
       * @param mdlId Data source model ID.
-      * @param test Test flag.
       * @param usrAgent User agent string.
       * @param rmtAddr Remote user address.
       * @param rcvTstamp Receive timestamp.
       */
     @throws[NCE]
     def newProcessingLog(
+        id: Long,
         usrId: Long,
         srvReqId: String,
         txt: String,
         dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
-        test: Boolean,
         usrAgent: String,
         rmtAddr: String,
         rcvTstamp: Timestamp
     ): Unit = {
         ensureStarted()
-        
+
         NCSql.insertSingle(
             """
               |INSERT INTO proc_log (
+              |     id,
               |     user_id,
               |     srv_req_id,
               |     txt,
               |     ds_id,
               |     model_id,
               |     status,
-              |     is_test,
               |     user_agent,
               |     rmt_address,
               |     recv_tstamp
               | )
               | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
+            id,
             usrId,
             srvReqId,
             txt,
             dsId,
             mdlId,
             status.toString,
-            test,
             usrAgent,
             rmtAddr,
             rcvTstamp
         )
     }
-    
+
     /**
-      * 
+      *
       * @param srvReqId
       * @param tstamp
       */
@@ -464,7 +473,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             srvReqId
         )
     }
-    
+
     /**
       * Updates processing log.
       *
@@ -483,7 +492,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         tstamp: Timestamp
     ): Unit = {
         ensureStarted()
-        
+
         NCSql.insertSingle(
             """
               |UPDATE proc_log
@@ -498,12 +507,12 @@ object NCSqlManager extends NCLifecycle("Database manager") {
             QRY_READY.toString,
             errMsg,
             resType,
-            resBody,
+            if (resBody == null) null else U.compress(resBody),
             tstamp,
             srvReqId
         )
     }
-    
+
     /**
       * Updates processing log.
       *
@@ -534,7 +543,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         probeId: String,
         probeGuid: String,
         probeApiVersion: String,
-        probeApiDate: LocalDate,
+        probeApiDate: java.sql.Date,
         osVersion: String,
         osName: String,
         osArch: String,
@@ -550,7 +559,7 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         macAddr: String
     ): Unit = {
         ensureStarted()
-        
+
         NCSql.insertSingle(
             """
               |UPDATE proc_log
@@ -608,6 +617,69 @@ object NCSqlManager extends NCLifecycle("Database manager") {
         ensureStarted()
 
         NCSql.selectSingle[Long](s"SELECT max($col) FROM $table")
+    }
+
+    /**
+      *
+      * @param sqlPath
+      */
+    @throws[NCE]
+    private def executeScript(sqlPath: String): Unit =
+        U.readResource(sqlPath, "UTF-8").
+            map(_.trim).
+            filter(p ⇒ !p.startsWith("--")).
+            mkString("\n").
+            split(";").
+            map(_.trim).
+            filter(!_.isEmpty).
+            foreach(p ⇒ NCSql.ddl(p))
+
+    /**
+      *
+      */
+    @throws[NCE]
+    def prepareSchema(): Unit = {
+        def safeClear(): Unit =
+            try
+                executeScript("sql/drop_schema.sql")
+            catch {
+                case _: NCE ⇒ // No-op.
+            }
+
+        val sqlTabs =
+            catching(wrapIE) {
+                ignite.cacheNames().asScala.
+                    map(_.toLowerCase).
+                    flatMap(p ⇒ if (p.startsWith("sql_")) Some(p.drop(4)) else None)
+            }.toSet
+
+        val dbInitParam = "NLPCRAFT_DB_INITIALIZE"
+
+        var initFlag = U.isSysEnvTrue(dbInitParam)
+
+        if (initFlag)
+            logger.info(s"Database schema initialization flag found: -D$dbInitParam=true")
+        else {
+            // Ignite cache names can be `sql_nc_user` or `sql_nlpcraft_nc_user` if schema used.
+            initFlag = DB_TABLES.exists(t ⇒ !sqlTabs.exists(st ⇒ st == t || st.endsWith(s"_$t")))
+        }
+
+        NCSql.sql {
+            if (initFlag)
+                try {
+                    safeClear()
+
+                    executeScript("sql/create_schema.sql")
+
+                    logger.info("Database schema initialized.")
+                }
+                catch {
+                    case e: NCE ⇒
+                        safeClear()
+
+                        throw e
+                }
+        }
     }
 }
 

@@ -75,8 +75,7 @@ object NCCommandManager extends NCProbeLifecycle("Commands manager") {
                         dsModelId = msg.data[String]("dsModelId"),
                         dsName = msg.data[String]("dsName"),
                         dsDesc = msg.data[String]("dsDesc"),
-                        dsModelCfg = msg.dataOpt[String]("dsModelCfg").orNull,
-                        test = msg.data[Boolean]("test")
+                        dsModelCfg = msg.dataOpt[String]("dsModelCfg").orNull
                     )
 
                 case _ ⇒
