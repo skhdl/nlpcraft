@@ -626,6 +626,8 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     @throws[NCE]
     private def executeScript(sqlPath: String): Unit =
         U.readResource(sqlPath, "UTF-8").
+            map(_.trim).
+            filter(p ⇒ !p.startsWith("--")).
             mkString("\n").
             split(";").
             map(_.trim).
