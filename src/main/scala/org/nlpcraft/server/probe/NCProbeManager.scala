@@ -804,7 +804,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
             "dsId" → dsId
         )
     
-        // Ping all probes.
+        // Send to all probes.
         probes.synchronized { probes.values }.map(_.probeKey).foreach(sendToProbe(_, msg))
     
         // Notification.
