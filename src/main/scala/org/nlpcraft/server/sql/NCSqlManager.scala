@@ -626,7 +626,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       * @param sqlPath
       */
     @throws[NCE]
-    private def readAndExecute(sqlPath: String): Unit =
+    private def executeScript(sqlPath: String): Unit =
         NCUtils.
             readResource(sqlPath, "UTF-8").
             mkString("\n").
@@ -642,7 +642,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     def prepareSchema(): Unit = {
         def safeClear(): Unit =
             try
-                readAndExecute("sql/drop_schema.sql")
+                executeScript("sql/drop_schema.sql")
             catch {
                 case _: NCE ⇒ // No-op.
             }
@@ -655,11 +655,11 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             }.toSet
 
         NCSql.sql {
-            if (DB_TABLES.exists(t ⇒ !sqlTabs.contains(t))) {
+            if (DB_TABLES.exists(t ⇒ !sqlTabs.contains(t)))
                 try {
                     safeClear()
 
-                    readAndExecute("sql/create_schema.sql")
+                    executeScript("sql/create_schema.sql")
 
                     logger.info("Initial schema created.")
                 }
@@ -669,7 +669,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
 
                         throw e
                 }
-            }
         }
     }
 }

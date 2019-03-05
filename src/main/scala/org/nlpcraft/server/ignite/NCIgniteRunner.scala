@@ -35,6 +35,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.ignite.{IgniteException, Ignition}
 import org.nlpcraft.common._
 import java.io.File
+
 import scala.sys.SystemProperties
 
 /**
@@ -48,7 +49,7 @@ object NCIgniteRunner extends LazyLogging {
       *               class path `ignite.xml` file.
       * @param body Function to execute on running Ignite node.
       */
-    @throws[IgniteException]
+    @throws[NCE]
     def runWith(cfgPath: String, body: ⇒ Unit) {
         val sysProps = new SystemProperties
 
@@ -59,27 +60,43 @@ object NCIgniteRunner extends LazyLogging {
         sysProps.put("IGNITE_UPDATE_NOTIFIER", "false")
         sysProps.put("java.net.preferIPv4Stack", "true")
 
-        // Start Ignite node.
         val ignite =
-            if (cfgPath != null)
-                // 1. Higher priority. It is defined.
-                Ignition.start(cfgPath)
-            else {
-                // 2. Tries to find config in the same folder with jar.
-                val cfg = new File("ignite.xml")
+            try {
+                // Start Ignite node.
+                val ignite =
+                    if (cfgPath != null)
+                        // 1. Higher priority. It is defined.
+                        Ignition.start(cfgPath)
+                    else {
+                        val cfgFile = "ignite.xml"
 
-                if (cfg.exists() && cfg.isFile)
-                    Ignition.start(cfg.getAbsolutePath)
-                else
-                    // 3. Tries to start with config from jar.
-                    Ignition.start(U.getStream("ignite.xml"))
+                        // 2. Tries to find config in the same folder with jar.
+                        val cfg = new File(cfgFile)
+
+                        if (cfg.exists() && cfg.isFile)
+                            Ignition.start(cfg.getAbsolutePath)
+                        else {
+                            // 3. Tries to start with config from jar.
+                            val stream = U.getStream(cfgFile)
+
+                            if (stream == null)
+                                throw new NCE(s"Resource not found: $cfgFile")
+
+                            Ignition.start(stream)
+                        }
+                    }
+
+                ignite.cluster().active(true)
+
+                ignite
+            }
+            catch {
+                case e: IgniteException ⇒ throw new NCE(s"Ignite error: ${e.getMessage}", e)
             }
 
-        ignite.cluster().active(true)
-
-        try
-            body
-        finally
-            Ignition.stop(ignite.name(), true)
+            try
+                body
+            finally
+                Ignition.stop(ignite.name(), true)
     }
 }

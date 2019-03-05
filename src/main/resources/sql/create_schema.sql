@@ -10,7 +10,7 @@ CREATE TABLE nc_user (
     passwd_salt VARCHAR NOT NULL,
     created_on TIMESTAMP NOT NULL,
     last_modified_on TIMESTAMP NOT NULL
-) WITH "template=replicated, backups=1, atomicity=transactional";
+) WITH "template=replicated, atomicity=transactional";
 
 CREATE INDEX nc_user_idx_1 ON nc_user(email);
 CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS passwd_pool;
 CREATE TABLE passwd_pool (
     id LONG PRIMARY KEY,
     passwd_hash VARCHAR NOT NULL
-) WITH "template=replicated, backups=1, atomicity=transactional";
+) WITH "template=replicated, atomicity=transactional";
 
 DROP TABLE IF EXISTS ds_instance;
 CREATE TABLE ds_instance (
@@ -32,7 +32,7 @@ CREATE TABLE ds_instance (
     model_cfg VARCHAR NULL,
     created_on TIMESTAMP NOT NULL,
     last_modified_on TIMESTAMP NOT NULL
-) WITH "template=replicated, backups=1, atomicity=transactional";
+) WITH "template=replicated, atomicity=transactional";
 
 DROP TABLE IF EXISTS proc_log;
 CREATE TABLE proc_log (
@@ -72,5 +72,5 @@ CREATE TABLE proc_log (
     probe_host_name VARCHAR NULL,
     probe_host_addr VARCHAR NULL,
     probe_mac_addr VARCHAR NULL
-) WITH "template=replicated, backups=1, atomicity=transactional";
+) WITH "template=replicated, atomicity=transactional";
 
