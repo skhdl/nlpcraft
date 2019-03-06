@@ -81,7 +81,8 @@
     color: $color-slack;
     margin-bottom: 30px;
 
-    & > i.fa {
-        margin-left: -7px;
+    & > i.fas {
+        //margin-left: -7px;
+        text-align: left;
     }
 }

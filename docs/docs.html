@@ -38,8 +38,8 @@ layout: interior
     <span><i class="fas fa-fw fa-book"></i> {{ page.active_crumb }}</span>
 </h1>
 
-<div class="side-nav-container">
-    <div class="col-md-2 left-nav-column position-fixed">
+<div class="docs-container">
+    <div class="col-md-2 left-docs-column">
         <ul class="side-nav">
             <li class="side-nav-title">Introduction</li>
             <li><a href="#overview">Overview</a></li>
@@ -48,16 +48,57 @@ layout: interior
             <li class="side-nav-title">Developer Guide</li>
         </ul>
     </div>
-    <div class="col-md-10 right-nav-column">
+    <div class="col-md-8 center-docs-column">
         <section id="overview">
-            <span class="section-title">Overview</span>
+            <span class="docs-section-title">Overview</span>
+            <p>
+                Welcome to NLPCraft. Let's start with the obvious... what is NLPCraft?
+            </p>
+            <p>
+                NLPCraft is an <a href="/legal.html">open source</a> library for building advance natural language interface
+                to any public or private data sources like databases, REST services, IoT devices, voice assistants,
+                chatbots, etc. Think Alexa, Siri or Google Now for your own data sources.
+            </p>
+            <p>
+                It's important to note that NLPCraft is a pure software library and doesn't require any specific hardware.
+                It also doesn't deal with voice-to-text conversion as we consider this problem solved outside
+                of this project - NLPCraft simply accepts textual input irregardless of where it came from.
+            </p>
+            <p>
+                How does it work in a nutshell?
+            </p>
+            <p>
+                When using NLPCraft you will be dealing with three main components:
+            </p>
+            <ul>
+                <li>Data model</li>
+                <li>Data probe</li>
+                <li>Server</li>
+            </ul>
+
+
+            <!--Once you defined your model you will need to deploy it into a data probe - an application that you need to run. As you’ll learn later a data probe is a secure application that employs end-to-end encryption and router ingress-only connectivity. Its purpose is to deploy and manage user data models. Each data probe can host multiple models, and you can have multiple data probes. Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and are typically deployed in DMZ or close to your private data sources. Note that DataLingvo can be deployed on-premise in which case no outbound connectivity is required at all.-->
+
+            <!--Once your model is defined and deployed into a data probe, your users can start using standard web interface or REST-integrated custom applications. Either way users can now ask natural language questions and get results back - while developers can perform human linguistic curation, data model development and training among many other administrative and data science tasks.-->
         </section>
-        <section id="installation">
-            <span class="section-title">Installation</span>
+        <section id="data-model">
+            <span class="docs-section-sub-title">Data Model</span>
         </section>
-        <section id="getting_started">
-            <span class="section-title">Getting Started</span>
+        <section id="data-probe">
+            <span class="docs-section-sub-title">Data Probe</span>
         </section>
+        <section id="server">
+            <span class="docs-section-sub-title">Server</span>
+        </section>
+    </div>
+    <div class="col-md-2 right-docs-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">On This Page:</li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#data-model">Data Model</a></li>
+            <li><a href="#data-probe">Data Probe</a></li>
+            <li><a href="#server">Server</a></li>
+        </ul>
     </div>
 </div>
 
