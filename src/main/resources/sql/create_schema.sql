@@ -28,7 +28,7 @@
 --   /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
 --          /_/
 
--- DROP TABLE IF EXISTS nc_user;
+DROP TABLE IF EXISTS nc_user;
 CREATE TABLE nc_user (
     id LONG PRIMARY KEY,
     email VARCHAR NOT NULL, -- Used as username during login.
