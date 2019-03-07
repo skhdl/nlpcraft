@@ -115,7 +115,7 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
             map(p ⇒ p._2.sortBy(p ⇒
                 (
                     // System notes don't have such flags.
-                    if (p.isUser) (if (p.isDirect) 0 else 1) else 0,
+                    if (p.isUser) if (p.isDirect) 0 else 1 else 0,
                     if (p.isUser) p.sparsity else 0
                 )
             )).

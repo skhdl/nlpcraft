@@ -102,7 +102,7 @@ case class NCNlpSentenceToken(
     /**
       * Removes notes with given IDs. No-op if ID wasn't found.
       *
-      * @param id Note ID.
+      * @param ids Note IDs.
       */
     def remove(ids: Iterable[String]): Unit = notes --= ids
 

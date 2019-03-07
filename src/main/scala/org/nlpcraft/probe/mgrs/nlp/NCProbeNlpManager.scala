@@ -310,7 +310,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
 
         val unitedSen =
             new NCSentenceImpl(mdl, new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq.map(p ⇒ {
-                val seq: Seq[NCNlpSentenceToken]  = p
+                val seq: Seq[NCNlpSentenceToken] = p
 
                 seq
             }))
