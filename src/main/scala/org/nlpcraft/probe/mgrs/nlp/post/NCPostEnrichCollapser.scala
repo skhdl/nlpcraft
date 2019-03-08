@@ -124,6 +124,8 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
 
         delCombs = delCombs.filter(p ⇒ !redundant.contains(p))
 
+        redundant.map(_.id).foreach(ns.removeNote)
+
         if (delCombs.nonEmpty) {
             val deleted = mutable.ArrayBuffer.empty[Seq[NCNlpSentenceNote]]
 
@@ -131,17 +133,16 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
                 (1 to delCombs.size).
                     flatMap(delCombs.combinations).
                     sortBy(_.size).
-                    flatMap(delComb ⇒ {
-                        val delCombExtra = delComb ++ redundant
+                    flatMap(delComb ⇒
                         // Already processed with less subset of same deleted tokens.
-                        if (!deleted.exists(_.forall(delCombExtra.contains))) {
+                        if (!deleted.exists(_.forall(delComb.contains))) {
                             val nsClone = ns.clone()
 
-                            delCombExtra.map(_.id).foreach(nsClone.removeNote)
+                            delComb.map(_.id).foreach(nsClone.removeNote)
 
                             // Has overlapped notes for some tokens.
                             if (!nsClone.exists(_.count(!_.isNlp) > 1)) {
-                                deleted += delCombExtra
+                                deleted += delComb
 
                                 collapse(nsClone, userNotesTypes)
 
@@ -152,7 +153,7 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
                         }
                         else
                             None
-                    })
+                    )
 
             // Removes sentences which have only one difference - 'direct' flag of their user tokens.
             // `Direct` sentences have higher priority.
@@ -168,7 +169,7 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
 
                 def get(seq:Seq[NCNlpSentenceNote], keys2Skip: String*): Seq[HMap[String, JSerializable]] =
                     seq.map(p ⇒ {
-                        val m = p.clone()
+                        val m: mutable.HashMap[String, JSerializable] = p.clone()
 
                         // We have to delete some keys to have possibility to compare sentences.
                         m.remove("unid")
