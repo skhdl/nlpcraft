@@ -31,20 +31,18 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.mdllib.intent.*;
-import org.nlpcraft.mdllib.tools.builder.*;
-import org.nlpcraft.mdllib.tools.impl.*;
-import java.util.*;
-import java.util.function.Function;
-import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.common.nlp.NCNlpSentence;
 import org.nlpcraft.model.builder.NCElementBuilder;
 import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.builder.NCModelDescriptorBuilder;
 import org.nlpcraft.model.impl.NCMetadataImpl;
+import org.nlpcraft.model.intent.NCIntentSolver;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * <b>Main interface</b> for user-defined semantic data model.

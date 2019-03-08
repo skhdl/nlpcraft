@@ -29,26 +29,14 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib;
+package org.nlpcraft.model;
 
-/**
-  *
-  */
-public interface NCNlpWord {
-    String getNormText();
-    int getStartCharIndex();
-    int getEndCharIndex();
-    String getOrigText();
-    int getWordLength();
-    int[] getWordIndexes();
-    String getPos();
-    String getPosDescription();
-    String getLemma();
-    String getStem();
-    boolean isStopword();
-    boolean isBracketed();
-    boolean isDirect();
-    boolean isQuoted();
-    boolean isSynthetic();
-    boolean isKnownWord();
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+public interface NCNlpElementData {
+    String getId();
+    Map<String, Serializable> gteProperties();
+    List<NCNlpWord> getWords();
 }

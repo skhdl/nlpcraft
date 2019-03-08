@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.mdllib;
+package org.nlpcraft.model;
 
 import java.util.List;
 
