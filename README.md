@@ -1,26 +1,25 @@
-<pre>
-    _   ____      ______           ______ 
-   / | / / /___  / ____/________ _/ __/ /_
-  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
- / /|  / / /_/ / /___/ /  / /_/ / __/ /_  
-/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/  
-       /_/   
-</pre>
+<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
+<br>
+<img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
 ### Overview
-`nlpcraft` project allows to built advanced natural language
-interface to any device, data source or a service. 
+[NLPCraft](https://nlpcraft.org/) is an open source library for adding Natural Language Interface to any applications.
+It allows you to build Natural Language Interface for any 
+public or private data sources like databases, REST services, IoT devices, 
+voice assistants, and chatbots:
 
-### Prerequisites
-Here's what you will need to get started with `nlpcraft`:
- - [Java SE Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (JRE) ver. 8 or later installed.
- - Latest [Git](https://git-scm.com/downloads) and [Maven](https://maven.apache.org/install.html).
- 
-### Clone This Project
-Clone this project to a local folder:
-```shell
-$ mkdir nlpcraft
-$ cd nlpcraft
-$ git clone https://github.com/vic64/nlpcraft.git
-```
+ * Download and Maven/Grape/SBT [instructions](https://nlpcraft.org/download.html)
+ * [Documentation](http://nlpcraft.org/docs.html), [Javadoc](http://nlpcraft.org/apis/latest/index.html), and [REST APIs](https://nlpcraft.docs.apiary.io/)
+ * [Example](https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples) data models
+ * Licensed under [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) with [Commons Clause](https://commonsclause.com/).
+
+For any questions, feedback or suggestions:
+
+ * Send us a note at [support@nlpcraft.org](mailto:support@nlpcraft.org)
+ * Post a question at [Stack Overflow](https://stackoverflow.com/questions/ask) using <code>nlpcraft</code> tag
+ * If you have a bug or an idea open new issue here on [GitHub](https://github.com/vic64/nlpcraft/issues).
+
+### Copyright
+Copyright (C) 2013-2019 [DataLingvo Inc.](https://www.datalingvo.com) All Rights Reserved.
+
 

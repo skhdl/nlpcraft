@@ -1,7 +1,11 @@
 **/*.iml
 .idea
-modules/global/target
-modules/mdllib/target
-modules/probe/target
-modules/server/target
-modules/examples/target
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+target
+out
+build
+zips
+

@@ -1,0 +1,226 @@
+---
+active_crumb: Download
+layout: interior
+---
+
+<!--
+   “Commons Clause” License, https://commonsclause.com/
+
+   The Software is provided to you by the Licensor under the License,
+   as defined below, subject to the following condition.
+
+   Without limiting other conditions in the License, the grant of rights
+   under the License will not include, and the License does not grant to
+   you, the right to Sell the Software.
+
+   For purposes of the foregoing, “Sell” means practicing any or all of
+   the rights granted to you under the License to provide to third parties,
+   for a fee or other consideration (including without limitation fees for
+   hosting or consulting/support services related to the Software), a
+   product or service whose value derives, entirely or substantially, from
+   the functionality of the Software. Any license notice or attribution
+   required by the License must also include this Commons Clause License
+   Condition notice.
+
+   Software:    NLPCraft
+   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+
+       _   ____      ______           ______
+      / | / / /___  / ____/________ _/ __/ /_
+     /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+    / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+   /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+          /_/
+-->
+
+<h1 class="page-title">
+    <span><i class="fas fa-fw fa-download"></i> {{ page.active_crumb }}</span>
+</h1>
+
+<div class="three-cols-container">
+    <div class="col-md-2 first-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">Download As</li>
+            <li><a href="#github">GitHub</a></li>
+            <li><a href="#zip">ZIP Archive</a></li>
+            <li><a href="#maven">Maven/Grape/SBT</a></li>
+        </ul>
+    </div>
+    <div class="col-md-8 second-column">
+        <section id="prerequisites">
+            <span class="section-title">Support</span>
+            <p>
+                Here's the list of tools you will need to get started with NLPCraft:
+            </p>
+            <ul>
+                <li>
+                    <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java SE Runtime Environment</a>
+                    (JRE) or <a target=_new href="https://openjdk.java.net/">OpenJDK</a> ver. 8 or later installed.
+                </li>
+                <li>
+                    Latest versions of <a target=_ href="https://git-scm.com/downloads">Git</a> and
+                    <a target=_ href="https://maven.apache.org/install.html">Maven</a>.
+                </li>
+            </ul>
+            <p>
+                For any questions, feedback or suggestions:
+            </p>
+            <ul>
+                <li>
+                    Send us a note at <i class="far fa-envelope"></i>&nbsp;<a href="mailto:support@nlpcraft.org">support@nlpcraft.org</a>
+                </li>
+                <li>
+                    Post a question at <i class="fab fa-stack-overflow"></i>&nbsp;<a href="https://stackoverflow.com/questions/ask">Stack Overflow</a> using <code>nlpcraft</code> tag
+                </li>
+                <li>
+                    If you have a bug or an idea open new issue on <i class="fab fa-github"></i>&nbsp;<a href="https://github.com/vic64/nlpcraft/issues">GitHub</a>.
+                </li>
+            </ul>
+            <p>
+                By downloading NLPCraft you are agreeing to <a href="/legal.html">license, terms <span class="amp">&amp;</span> conditions.</a>
+            </p>
+        </section>
+        <section id="github">
+            <span class="section-sub-title">GitHub</span>
+            <p>
+                If you want to contribute to the project or build it form the source
+                you need to get the full developer snapshot from <a target="github" href="https://github.com/vic64/nlpcraft">GitHub</a>:
+            </p>
+            <pre class="brush: ps">
+            $ git clone https://github.com/vic64/nlpcraft.git
+            $ mvn clean package
+            </pre>
+            <div class="bq info">
+                <p>
+                    <b>GitHub vs. ZIP vs. Maven</b>
+                </p>
+                <p>
+                    Use GitHub clone if you want to contribute to the project or build it from source.
+                    To build your own models and integrate into your own application it is recommended to
+                    download ZIP archive or add Maven/Grape/SBT dependency.
+                </p>
+            </div>
+        </section>
+        <section id="zip">
+            <span class="section-sub-title">ZIP Archive</span>
+            <p>
+                Download the desired version of NLPCraft release:
+            </p>
+            <table class="gradient-table">
+                <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Version</th>
+                    <th>Release Date</th>
+                    <th>Signatures</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for rel in site.data.releases %}
+                <tr>
+                    <td><i class="fa fa-fw fa-download"></i> <a href="{{rel.zip_url}}">nlpcraft-{{rel.version}}.zip</a></td>
+                    <td>{{rel.version}}</td>
+                    <td>{{rel.date}}</td>
+                    <td class="download-sigs">
+                        <a href="{{rel.md5_url}}">MD5</a>
+                        <a href="{{rel.sha1_url}}">SHA1</a>
+                        <a href="{{rel.sha256_url}}">SHA256</a>
+                        <a href="{{rel.pgp_url}}">PGP</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="bq warn">
+                <p>
+                    <b>NOTE:</b> <code>MD5</code> and <code>SHA1</code> signatures provided only for
+                    rare backward compatibility as they are not cryptographically strong and generally
+                    not recommended. In most cases you should only trust to <code>PGP</code> or <code>SHA256</code>
+                    signatures.
+                </p>
+            </div>
+        </section>
+        <section id="maven">
+            <span class="section-sub-title">Maven/Grape/SBT</span>
+            <p>
+                The easiest way to start using NLPCraft is to add Maven dependency (Grape, SBT, etc.) to your
+                project. NLPCraft project consists of a single module.
+            </p>
+            <nav style="width: 90%">
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-maven" role="tabpanel">
+                    <pre class="brush: xml">
+                    <dependency>
+                        <groupId>org.nlpcraft</groupId>
+                        <artifactId>nlpcraft</artifactId>
+                        <version>{{site.latest_version}}</version>
+                    </dependency>
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-grape" role="tabpanel">
+                    <pre class="brush: java">
+                    @Grab ('org.nlpcraft:nlpcraft:0.1.0')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-sbt" role="tabpanel">
+                    <pre class="brush: scala">
+                    libraryDependencies += "org.nlpcraft" % "nlpcraft" % "0.1.0"
+                    </pre>
+                </div>
+            </div>
+            <div class="bq info">
+                <p>
+                    <b>Latest Version</b>
+                </p>
+                <p>
+                    <code>{{site.latest_version}}</code> is the latest version used by default. You can replace it
+                    with a desired version.
+                </p>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-2 third-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">Quick Links</li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+                    target="github"
+                    href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/java.png"><a
+                    target="javadoc"
+                    href="/apis/latest/index.html">Javadoc</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+                    href="https://nlpcraft.docs.apiary.io"
+                    target="apiary">REST API</a>
+            </li>
+            <li class="side-nav-title">Support</li>
+            <li>
+                <nobr>
+                    <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+                </nobr>
+            </li>
+        </ul>
+    </div>
+</div>
+
