@@ -68,7 +68,6 @@
         <apache.http.client.ver>4.5.3</apache.http.client.ver>
         <javax.websocket.ver>1.1</javax.websocket.ver>
         <paranamer.ver>2.8</paranamer.ver>
-        <stanford.corenlp.ver>3.9.2</stanford.corenlp.ver>
         <zeroturnaround.ver>1.12</zeroturnaround.ver>
         <extjwnl.ver>2.0.0</extjwnl.ver>
         <extjwnl.data.wn31.ver>1.2</extjwnl.data.wn31.ver>
@@ -81,7 +80,7 @@
         <apache.math.ver>3.6.1</apache.math.ver>
         <apache.common.lang.ver>3.7</apache.common.lang.ver>
         <apache.httpcomponents.ver>4.5.4</apache.httpcomponents.ver>
-        <apache.opennlp.ver>1.9.0</apache.opennlp.ver>
+        <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
@@ -91,7 +90,7 @@
         <akka.stream.2.11.ver>2.5.19</akka.stream.2.11.ver>
         <akka.http.spray.json.2.11.ver>10.1.7</akka.http.spray.json.2.11.ver>
 
-        <junit.ver>5.3.1</junit.ver>
+        <junit.ver>5.4.0</junit.ver>
 
         <!-- Force specific encoding on text resources. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

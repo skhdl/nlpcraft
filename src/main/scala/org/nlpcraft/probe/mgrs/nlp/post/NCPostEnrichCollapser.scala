@@ -445,10 +445,7 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
                 case _ ⇒ content.forall(_.isDirect)
             }
 
-        val nlpNote = NCNlpSentenceNote(
-            idxs,
-            wordIdxs,
-            "nlp:nlp",
+        var params = Seq(
             "index" → idx,
             "pos" → NCPennTreebank.SYNTH_POS,
             "posDesc" → NCPennTreebank.SYNTH_POS_DESC,
@@ -464,6 +461,16 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
             "bracketed" → false,
             "direct" → direct
         )
+
+        // Second contour (after NCDictionaryEnricher)
+        if (toks.head.getNlpNote.contains("dict"))
+            params ++= Seq(
+                "dict" → (if (toks.size == 1) toks.head.getNlpNote.data[Boolean]("dict") else false),
+                "english" → toks.forall(_.getNlpNote.data[Boolean]("english")),
+                "swear" → toks.exists(_.getNlpNote.data[Boolean]("swear"))
+            )
+
+        val nlpNote = NCNlpSentenceNote(idxs, wordIdxs, "nlp:nlp", params:_*)
 
         t.add(nlpNote)
         

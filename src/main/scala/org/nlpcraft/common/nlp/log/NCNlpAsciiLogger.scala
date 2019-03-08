@@ -62,6 +62,7 @@ object NCNlpAsciiLogger extends LazyLogging {
         "nlp:nlp" → Seq(
             "index",
             "origText",
+            "lemma",
             "pos",
             "quoted",
             "stopWord",

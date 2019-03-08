@@ -101,9 +101,37 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
 
                 require(spans.length == poses.length)
 
-                val lemmas = lemmatizer.lemmatize(words, poses)
+                var lemmas = lemmatizer.lemmatize(words, poses).toSeq
 
                 require(spans.length == lemmas.length)
+
+                // Hack.
+                // For some reasons lemmatizer dictionary (en-lemmatizer.dict) marks some words with non-existent POS 'NNN'
+                // Valid POS list: https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+                // Example of dictionary records:
+                // ...
+                // time	JJ	time
+                // time	NNN	time
+                // ...
+                // time-ball NN	time-ball
+                // ...
+                val suspIdxs: Seq[Int] =
+                    lemmas.
+                        zip(poses).
+                        zipWithIndex.flatMap {
+                            // "0" is flag that lemma cannot be obtained for some reasons.
+                            case ((lemma, pos), i) ⇒ if (lemma == "O" && pos == "NN") Some(i) else None
+                        }
+
+                if (suspIdxs.nonEmpty) {
+                    val fixes: Map[Int, String] =
+                        lemmatizer.
+                            lemmatize(suspIdxs.map(i ⇒ words(i)).toArray, suspIdxs.map(_ ⇒ "NNN").toArray).
+                            zipWithIndex.
+                            flatMap { case (lemma, i) ⇒ if (lemma != "0") Some(suspIdxs(i) → lemma) else None }.toMap
+
+                    lemmas = lemmas.zipWithIndex.map { case (lemma, idx) ⇒ fixes.getOrElse(idx, lemma) }
+                }
 
                 (spans, words, poses, lemmas)
             }
