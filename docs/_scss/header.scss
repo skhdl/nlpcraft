@@ -30,6 +30,7 @@
  */
 
 #top-header {
+    display: flex;
     background-image: linear-gradient(141deg, #6980fa 0%, #2cb5e8 51%, #4298fc 75%);
 
     .nav-item > .nav-link {
