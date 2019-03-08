@@ -29,10 +29,7 @@
  *        /_/
  */
 
-.left-docs-column {
-    padding-left: 0;
-    min-width: 210px;
-
+.first-column {
     ul.side-nav {
         list-style: none;
         margin: 0 0 20px 0;
@@ -60,7 +57,7 @@
             text-align: left;
 
             a {
-                color: #aaa;
+                color: #999;
                 text-align: left;
                 width: 100%;
                 padding-right: 20px;
@@ -77,26 +74,41 @@
     }
 }
 
-.center-docs-column {
-    padding-left: 0;
-    padding-bottom: 20px;
-    margin-right: 25px;
-
+.second-column {
     section {
-        .docs-section-title {
+        .section-title {
             color: $color-slack2;
             font-weight: 500;
             margin-top: 0;
-            display: block;
+            border-bottom: 1px solid #dfdfdf;
+            display: inline-block;
+            margin-bottom: 20px;
             font-size: 150%;
         }
 
-        .docs-section-sub-title {
+        .section-sub-title {
             color: $color-slack2;
             font-weight: 500;
             margin-top: 0;
             display: block;
             font-size: 110%;
+        }
+
+        figure {
+            margin: 15px 0;
+
+            img {
+                display: block;
+                border: 1px solid #dfdfdf;
+                border-radius: 4px;
+                padding: 30px;
+            }
+
+            figcaption {
+                font-size: 80%;
+                text-align: right;
+                margin-top: 5px;
+            }
         }
 
         dl {
@@ -126,15 +138,12 @@
     }
 }
 
-.right-docs-column {
-    padding-left: 0;
-    min-width: 210px;
-
+.third-column {
     ul.side-nav {
         list-style: none;
         margin: 0 0 20px 0;
         padding: 0 0 0 10px;
-        border-left: 3px solid $color-travis-passing;
+        border-left: 1px solid #dfdfdf;
 
         li.side-nav-title {
             margin-top: 5px;
@@ -158,7 +167,7 @@
             text-align: left;
 
             a {
-                color: #aaa;
+                color: #999;
                 text-align: left;
                 width: 100%;
                 padding-right: 20px;
@@ -175,7 +184,23 @@
     }
 }
 
-.docs-container {
+ul.side-nav {
+    & img.quick-link-img {
+        height: 16px;
+        vertical-align: text-top;
+    }
+}
+
+li.side-nav-title:after {
+    font-size: 75%;
+    content: "\f105";
+    padding-left: 5px;
+    font-family: "Font Awesome\ 5 Free", serif;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.three-cols-container {
     margin: 12px 0 72px 0;
     display: flex;
 }

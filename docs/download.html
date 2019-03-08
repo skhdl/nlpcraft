@@ -38,18 +38,18 @@ layout: interior
     <span><i class="fas fa-fw fa-download"></i> {{ page.active_crumb }}</span>
 </h1>
 
-<div class="side-nav-container">
-    <div class="col-md-2 left-nav-column position-fixed">
+<div class="three-cols-container">
+    <div class="col-md-2 first-column">
         <ul class="side-nav">
-            <li class="side-nav-title">Download As:</li>
+            <li class="side-nav-title">Download As</li>
             <li><a href="#github">GitHub</a></li>
             <li><a href="#zip">ZIP Archive</a></li>
             <li><a href="#maven">Maven/Grape/SBT</a></li>
         </ul>
     </div>
-    <div class="col-md-10 right-nav-column">
+    <div class="col-md-8 second-column">
         <section id="prerequisites">
-            <span class="section-title">Prerequisites</span>
+            <span class="section-title">Support</span>
             <p>
                 Here's the list of tools you will need to get started with NLPCraft:
             </p>
@@ -82,7 +82,7 @@ layout: interior
             </p>
         </section>
         <section id="github">
-            <span class="section-title">GitHub</span>
+            <span class="section-sub-title">GitHub</span>
             <p>
                 If you want to contribute to the project or build it form the source
                 you need to get the full developer snapshot from <a target="github" href="https://github.com/vic64/nlpcraft">GitHub</a>:
@@ -103,7 +103,7 @@ layout: interior
             </div>
         </section>
         <section id="zip">
-            <span class="section-title">ZIP Archive</span>
+            <span class="section-sub-title">ZIP Archive</span>
             <p>
                 Download the desired version of NLPCraft release:
             </p>
@@ -142,7 +142,7 @@ layout: interior
             </div>
         </section>
         <section id="maven">
-            <span class="section-title">Maven/Grape/SBT</span>
+            <span class="section-sub-title">Maven/Grape/SBT</span>
             <p>
                 The easiest way to start using NLPCraft is to add Maven dependency (Grape, SBT, etc.) to your
                 project. NLPCraft project consists of a single module.
@@ -185,6 +185,42 @@ layout: interior
                 </p>
             </div>
         </section>
+    </div>
+    <div class="col-md-2 third-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">Quick Links</li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+                    target="github"
+                    href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/java.png"><a
+                    target="javadoc"
+                    href="/apis/latest/index.html">Javadoc</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+                    href="https://nlpcraft.docs.apiary.io"
+                    target="apiary">REST API</a>
+            </li>
+            <li class="side-nav-title">Support</li>
+            <li>
+                <nobr>
+                    <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+                </nobr>
+            </li>
+        </ul>
     </div>
 </div>
 

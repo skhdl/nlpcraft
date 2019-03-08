@@ -482,7 +482,7 @@
                     <doctitle>
                         <![CDATA[
                             <img style="margin-bottom: 10px" src="http://nlpcraft.org/images/nlpcraft_logo_darkblue.png" height="54px"><br>
-                            API Specification ${project.version}
+                            Data Model API ${project.version}
                         ]]>
                     </doctitle>
                     <windowtitle>NLPCraft ${project.version}</windowtitle>

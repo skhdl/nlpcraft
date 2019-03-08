@@ -38,19 +38,19 @@ layout: interior
     <span><i class="fas fa-fw fa-book"></i> {{ page.active_crumb }}</span>
 </h1>
 
-<div class="docs-container">
-    <div class="col-md-2 left-docs-column">
+<div class="three-cols-container">
+    <div class="col-md-2 first-column">
         <ul class="side-nav">
             <li class="side-nav-title">Introduction</li>
             <li><a href="#overview">Overview</a></li>
-            <li><a href="#installation">Installation</a></li>
-            <li><a href="#getting_started">Getting Started</a></li>
+            <li><a href="/installation.html">Installation</a></li>
+            <li><a href="/getting-started.html">Getting Started</a></li>
             <li class="side-nav-title">Developer Guide</li>
         </ul>
     </div>
-    <div class="col-md-8 center-docs-column">
+    <div class="col-md-8 second-column">
         <section id="overview">
-            <span class="docs-section-title">Overview</span>
+            <span class="section-title">Overview</span>
             <p>
                 Welcome to NLPCraft. Let's start with the obvious... what is NLPCraft?
             </p>
@@ -71,33 +71,64 @@ layout: interior
                 When using NLPCraft you will be dealing with three main components:
             </p>
             <ul>
-                <li>Data model</li>
-                <li>Data probe</li>
-                <li>Server</li>
+                <li><a href="#data-model">Data model</a></li>
+                <li><a href="#data-probe">Data probe</a></li>
+                <li><a href="#server">REST Server</a></li>
             </ul>
-
-
-            <!--Once you defined your model you will need to deploy it into a data probe - an application that you need to run. As you’ll learn later a data probe is a secure application that employs end-to-end encryption and router ingress-only connectivity. Its purpose is to deploy and manage user data models. Each data probe can host multiple models, and you can have multiple data probes. Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and are typically deployed in DMZ or close to your private data sources. Note that DataLingvo can be deployed on-premise in which case no outbound connectivity is required at all.-->
-
-            <!--Once your model is defined and deployed into a data probe, your users can start using standard web interface or REST-integrated custom applications. Either way users can now ask natural language questions and get results back - while developers can perform human linguistic curation, data model development and training among many other administrative and data science tasks.-->
+            <figure>
+                <img  class="img-fluid" src="/images/homepage-fig1.1.png">
+                <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
+            </figure>
         </section>
         <section id="data-model">
-            <span class="docs-section-sub-title">Data Model</span>
+            <span class="section-sub-title">Data Model</span>
         </section>
         <section id="data-probe">
-            <span class="docs-section-sub-title">Data Probe</span>
+            <span class="section-sub-title">Data Probe</span>
         </section>
         <section id="server">
-            <span class="docs-section-sub-title">Server</span>
+            <span class="section-sub-title">REST Server</span>
         </section>
     </div>
-    <div class="col-md-2 right-docs-column">
+    <div class="col-md-2 third-column">
         <ul class="side-nav">
-            <li class="side-nav-title">On This Page:</li>
+            <li class="side-nav-title">On This Page</li>
             <li><a href="#overview">Overview</a></li>
             <li><a href="#data-model">Data Model</a></li>
             <li><a href="#data-probe">Data Probe</a></li>
-            <li><a href="#server">Server</a></li>
+            <li><a href="#server">REST Server</a></li>
+            <li class="side-nav-title">Quick Links</li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+                    target="github"
+                    href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/java.png"><a
+                    target="javadoc"
+                    href="/apis/latest/index.html">Javadoc</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+                    href="https://nlpcraft.docs.apiary.io"
+                    target="apiary">REST API</a>
+            </li>
+            <li class="side-nav-title">Support</li>
+            <li>
+                <nobr>
+                    <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+                </nobr>
+            </li>
         </ul>
     </div>
 </div>
