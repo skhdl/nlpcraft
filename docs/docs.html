@@ -76,12 +76,33 @@ layout: interior
                 <li><a href="#server">REST Server</a></li>
             </ul>
             <figure>
-                <img  class="img-fluid" src="/images/homepage-fig1.1.png">
+                <img class="img-fluid" src="/images/homepage-fig1.1.png">
                 <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
             </figure>
         </section>
         <section id="data-model">
             <span class="section-sub-title">Data Model</span>
+            <p>
+                Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> Java interface that
+                can be developed in any JVM programming language like Java, Scala, or Groovy. Data model
+                defines how to interpret user input, how to query or control a particular data source, and
+                finally how to format the result back to the user.
+            </p>
+            <p>
+                Typically, declarative portion of the model will be stored in a separate JSON or YAML file
+                for simpler modifications. There are no practical limitation on how complex or simple a model
+                can be, or what other tools it can use. Most data models will also use intent-based matching
+                provided by NLPCraft out-of-the-box.
+            </p>
+            <p>
+                Here's an example of the absolutely minimal data model that simply returns the same answer back
+                on any user input:
+            </p>
+            <pre class="brush: java">
+            NCModelBuilder.newModel("id", "description", "1.0")
+                .setQueryFunction(ctx -> NCQueryResult.text("Hello World!")) 
+                .build()
+            </pre>
         </section>
         <section id="data-probe">
             <span class="section-sub-title">Data Probe</span>

@@ -32,9 +32,7 @@
 package org.nlpcraft.examples.helloworld;
 
 import org.nlpcraft.common.NCException;
-import org.nlpcraft.model.NCModelProvider;
-import org.nlpcraft.model.NCModelProviderAdapter;
-import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.*;
 import org.nlpcraft.model.builder.NCModelBuilder;
 
 /**
