@@ -327,8 +327,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     @throws[NCE]
     def signin(email: String, passwd: String): Option[String] = {
         ensureStarted()
-
-
+        
         catching(wrapIE) {
             NCTxManager.startTx {
                 NCSql.sql {
@@ -340,14 +339,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                 None
                             else {
                                 val newAcsTkn = tokenSigninCache.asScala.find(entry ⇒ entry.getValue.userId == usr.id) match {
-                                    case Some(entry) ⇒
-                                        logger.info(s"User already signed in - reusing access token [" +
-                                            s"email=${usr.email}, " +
-                                            s"firstName=${usr.firstName}, " +
-                                            s"lastName=${usr.lastName}" +
-                                            s"]")
-
-                                        entry.getValue.acsToken // Already signed in.
+                                    case Some(entry) ⇒ entry.getValue.acsToken // Already signed in.
                                     case None ⇒
                                         val acsTkn = U.gen8ByteId()
                                         val now = U.nowUtcMs()
