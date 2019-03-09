@@ -47,47 +47,50 @@
         <scala.plugin.ver>3.3.1</scala.plugin.ver>
         <log4j.ver>2.11.2</log4j.ver>
         <scala.ver>${scala.base}.12</scala.ver>
-        <scala.config.ver>1.3.1</scala.config.ver>
-        <commons.codec.ver>1.10</commons.codec.ver>
-        <commons.io.ver>2.5</commons.io.ver>
-        <commons-lang3.ver>3.5</commons-lang3.ver>
+        <scala.config.ver>1.3.3</scala.config.ver>
+        <commons.codec.ver>1.12</commons.codec.ver>
+        <commons.io.ver>2.6</commons.io.ver>
+        <commons-lang3.ver>3.8.1</commons-lang3.ver>
         <commons.validator.ver>1.6</commons.validator.ver>
-        <jsoup.ver>1.8.3</jsoup.ver>
-        <slf4j.ver>1.7.25</slf4j.ver>
+        <jsoup.ver>1.11.3</jsoup.ver>
+        <slf4j.ver>1.7.26</slf4j.ver>
         <scala.logging.ver>3.9.0</scala.logging.ver>
         <scala.arm.ver>2.0</scala.arm.ver>
-        <scala.xml.ver>1.0.6</scala.xml.ver>
+        <scala.xml.ver>1.1.1</scala.xml.ver>
         <c3p0.ver>[0.9.5.3,)</c3p0.ver> <!-- Upgraded to due security vulnerability. -->
-        <scalatest.ver>3.0.1</scalatest.ver>
-        <akka.ver>2.4.17</akka.ver>
+        <scalatest.ver>3.0.6</scalatest.ver>
+        <akka.ver>2.5.21</akka.ver>
         <lift.json.ver>2.6.3</lift.json.ver>
-        <scalaj.ver>2.3.0</scalaj.ver>
+        <scalaj.ver>2.4.1</scalaj.ver>
         <spray.ver>1.3.5</spray.ver>
         <tika.ver>1.20</tika.ver>
         <hashid.ver>1.0.3</hashid.ver>
-        <apache.http.client.ver>4.5.3</apache.http.client.ver>
+        <apache.http.client.ver>4.5.7</apache.http.client.ver>
         <javax.websocket.ver>1.1</javax.websocket.ver>
         <paranamer.ver>2.8</paranamer.ver>
         <zeroturnaround.ver>1.12</zeroturnaround.ver>
-        <extjwnl.ver>2.0.0</extjwnl.ver>
+        <extjwnl.ver>2.0.1</extjwnl.ver>
         <extjwnl.data.wn31.ver>1.2</extjwnl.data.wn31.ver>
-        <maven.jar.plugin.ver>3.0.0</maven.jar.plugin.ver>
+        <maven.jar.plugin.ver>3.1.1</maven.jar.plugin.ver>
         <maven.compiler.plugin.ver>3.8.0</maven.compiler.plugin.ver>
         <maven.enforcer.plugin.ver>1.4.1</maven.enforcer.plugin.ver>
-        <maven.surefire.plugin.ver>2.19.1</maven.surefire.plugin.ver>
+        <maven.surefire.plugin.ver>2.22.1</maven.surefire.plugin.ver>
         <stringmetric.ver>0.27.4</stringmetric.ver>
         <gson.ver>2.8.5</gson.ver>
         <apache.math.ver>3.6.1</apache.math.ver>
-        <apache.common.lang.ver>3.7</apache.common.lang.ver>
-        <apache.httpcomponents.ver>4.5.4</apache.httpcomponents.ver>
+        <apache.common.lang.ver>3.8.1</apache.common.lang.ver>
+        <apache.httpcomponents.ver>4.5.7</apache.httpcomponents.ver>
         <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
-        <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
+        <maven.javadoc.plugin.ver>3.1.0</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
-        <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
+        <maven.clean.plugin.ver>3.1.0</maven.clean.plugin.ver>
+        <maven.source.plugin.ver>3.0.1</maven.source.plugin.ver>
+        <maven.gpg.plugin.ver>1.6</maven.gpg.plugin.ver>
+        <maven.nexus.staging.plugin.ver>1.6.8</maven.nexus.staging.plugin.ver>
 
-        <akka.http.2.11.ver>10.1.5</akka.http.2.11.ver>
-        <akka.stream.2.11.ver>2.5.19</akka.stream.2.11.ver>
+        <akka.http.2.11.ver>10.1.7</akka.http.2.11.ver>
+        <akka.stream.2.11.ver>2.5.21</akka.stream.2.11.ver>
         <akka.http.spray.json.2.11.ver>10.1.7</akka.http.spray.json.2.11.ver>
 
         <junit.ver>5.4.0</junit.ver>
@@ -116,6 +119,17 @@
             <comments>A safer business-friendly OSS license</comments>
         </license>
     </licenses>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -312,7 +326,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>${maven.clean.plugin.version}</version>
+                <version>${maven.clean.plugin.ver}</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -563,6 +577,44 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.ver}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.plugin.ver}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${maven.nexus.staging.plugin.ver}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
         </plugins>
     </build>
