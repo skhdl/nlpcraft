@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * Parsing bean.
  */
-public class NCElementElement {
+public class NCElementItem {
     private String id;
     private String group;
     private String parentId;
@@ -45,7 +45,7 @@ public class NCElementElement {
     private String[] excludedSynonyms = new String[0];
     private String[] synonyms = new String[0];
     @SuppressWarnings("unchecked") private Map<String, Object> metadata = Collections.EMPTY_MAP;
-    private NCValueElement[] values = new NCValueElement[0];
+    private NCValueItem[] values = new NCValueItem[0];
 
     /**
      *
@@ -67,7 +67,7 @@ public class NCElementElement {
      *
      * @return
      */
-    public NCValueElement[] getValues() {
+    public NCValueItem[] getValues() {
         return values;
     }
 
@@ -75,7 +75,7 @@ public class NCElementElement {
      *
      * @param values
      */
-    public void setValues(NCValueElement[] values) {
+    public void setValues(NCValueItem[] values) {
         this.values = values;
     }
 

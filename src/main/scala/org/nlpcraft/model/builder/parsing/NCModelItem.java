@@ -38,7 +38,7 @@ import static org.nlpcraft.model.NCModel.*;
 /**
  * Parsing bean.
  */
-public class NCModelElement {
+public class NCModelItem {
     private String id;
     private String name;
     private String version;
@@ -74,8 +74,8 @@ public class NCModelElement {
     private int maxTotalSynonyms = DFLT_MAX_TOTAL_SYNONYMS;
     private boolean isPermutateSynonyms = DFLT_IS_PERMUTATE_SYNONYMS;
     @SuppressWarnings("unchecked") private Map<String, Object> usrMetadata = null;
-    private NCMacroElement[] macros = null;
-    private NCElementElement[] elements = null;
+    private NCMacroItem[] macros = null;
+    private NCElementItem[] elements = null;
     private String[] additionalStopwords = null;
     private String[] excludedStopwords = null;
     private String[] suspiciousWords = null;
@@ -165,7 +165,7 @@ public class NCModelElement {
      *
      * @return
      */
-    public NCMacroElement[] getMacros() {
+    public NCMacroItem[] getMacros() {
         return macros;
     }
 
@@ -173,7 +173,7 @@ public class NCModelElement {
      *
      * @param macros
      */
-    public void setMacros(NCMacroElement[] macros) {
+    public void setMacros(NCMacroItem[] macros) {
         this.macros = macros;
     }
 
@@ -181,7 +181,7 @@ public class NCModelElement {
      *
      * @return
      */
-    public NCElementElement[] getElements() {
+    public NCElementItem[] getElements() {
         return elements;
     }
 
@@ -189,7 +189,7 @@ public class NCModelElement {
      *
      * @param elements
      */
-    public void setElements(NCElementElement[] elements) {
+    public void setElements(NCElementItem[] elements) {
         this.elements = elements;
     }
 

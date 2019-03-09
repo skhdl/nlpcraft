@@ -34,23 +34,39 @@ package org.nlpcraft.model.builder.parsing;
 /**
  * Parsing bean.
  */
-public class NCValueElement {
+public class NCMacroItem {
     private String name;
-    private String[] synonyms = new String[0];
-    
+    private String macro;
+
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
-    
+
+    /**
+     *
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-    
-    public String[] getSynonyms() {
-        return synonyms;
+
+    /**
+     *
+     * @return
+     */
+    public String getMacro() {
+        return macro;
     }
-    
-    public void setSynonyms(String[] synonyms) {
-        this.synonyms = synonyms;
+
+    /**
+     *
+     * @param macro
+     */
+    public void setMacro(String macro) {
+        this.macro = macro;
     }
 }

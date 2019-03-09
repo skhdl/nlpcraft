@@ -51,9 +51,12 @@ import java.util.stream.*;
  * <ul>
  *     <li>{@link #newJsonModel(InputStream)}</li>
  *     <li>{@link #newJsonModel(String)}</li>
+ *     <li>{@link #newYamlModel(InputStream)}</li>
+ *     <li>{@link #newYamlModel(String)}</li>
  *     <li>{@link #newModel(String, String, String)}</li>
  *     <li>{@link #newModel()}</li>
  *     <li>{@link #newJsonStringModel(String)}</li>
+ *     <li>{@link #newYamlStringModel(String)}</li>
  * </ul>
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
  * method to get properly constructed {@link NCModel} instance. Note that at the minimum the
@@ -245,7 +248,7 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
 
-        bldr.ingestJsonModel(readFileJson(filePath, NCModelElement.class));
+        bldr.ingestJsonModel(readFileJson(filePath, NCModelItem.class));
 
         return bldr;
     }
@@ -263,7 +266,7 @@ public class NCModelBuilder {
         
         NCModelBuilder bldr = new NCModelBuilder();
         
-        bldr.ingestJsonModel(readFileYaml(filePath, NCModelElement.class));
+        bldr.ingestJsonModel(readFileYaml(filePath, NCModelItem.class));
         
         return bldr;
     }
@@ -281,7 +284,7 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
         
-        bldr.ingestJsonModel(readFileJson(in, NCModelElement.class));
+        bldr.ingestJsonModel(readFileJson(in, NCModelItem.class));
         
         return bldr;
     }
@@ -299,7 +302,7 @@ public class NCModelBuilder {
         
         NCModelBuilder bldr = new NCModelBuilder();
         
-        bldr.ingestJsonModel(readFileYaml(in, NCModelElement.class));
+        bldr.ingestJsonModel(readFileYaml(in, NCModelItem.class));
         
         return bldr;
     }
@@ -317,7 +320,7 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
 
-        bldr.ingestJsonModel(readStringJson(jsonStr, NCModelElement.class));
+        bldr.ingestJsonModel(readStringJson(jsonStr, NCModelItem.class));
 
         return bldr;
     }
@@ -335,7 +338,7 @@ public class NCModelBuilder {
         
         NCModelBuilder bldr = new NCModelBuilder();
         
-        bldr.ingestJsonModel(readStringYaml(yamlStr, NCModelElement.class));
+        bldr.ingestJsonModel(readStringYaml(yamlStr, NCModelItem.class));
         
         return bldr;
     }
@@ -428,7 +431,7 @@ public class NCModelBuilder {
      *
      * @throws NCBuilderException Thrown in case of any errors.
      */
-    private void ingestJsonModel(NCModelElement js) throws NCBuilderException {
+    private void ingestJsonModel(NCModelItem js) throws NCBuilderException {
         impl.setDescriptor(
             NCModelDescriptorBuilder.newDescriptor(
                 js.getId(),
@@ -482,7 +485,7 @@ public class NCModelBuilder {
             addExamples(js.getExamples());
 
         if (js.getMacros() != null)
-            for (NCMacroElement m : js.getMacros())
+            for (NCMacroItem m : js.getMacros())
                 addMacro(m.getName(), m.getMacro());
 
         if (js.getUserMetadata() != null)
@@ -490,7 +493,7 @@ public class NCModelBuilder {
                 addUserMetadata(entry.getKey(), (Serializable)entry.getValue());
 
         if (js.getElements() != null)
-            for (NCElementElement e : js.getElements()) {
+            for (NCElementItem e : js.getElements()) {
                 NCMetadata elmMeta = new NCMetadataImpl();
         
                 if (e.getMetadata() != null)

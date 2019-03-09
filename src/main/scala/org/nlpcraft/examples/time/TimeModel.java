@@ -104,7 +104,7 @@ public class TimeModel extends NCModelProviderAdapter {
             return NCQueryResult.yaml(new ObjectMapper(new YAMLFactory()).writeValueAsString(res));
         }
         catch (JsonProcessingException e) {
-            throw new RuntimeException("Conversation error.", e);
+            throw new RuntimeException("YAML conversion error.", e);
         }
     }
 
