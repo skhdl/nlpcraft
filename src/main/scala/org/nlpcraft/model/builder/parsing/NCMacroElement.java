@@ -29,12 +29,12 @@
  *        /_/
  */
 
-package org.nlpcraft.model.builder.json;
+package org.nlpcraft.model.builder.parsing;
 
 /**
- * JSON parsing bean.
+ * Parsing bean.
  */
-public class NCMacroJson {
+public class NCMacroElement {
     private String name;
     private String macro;
 

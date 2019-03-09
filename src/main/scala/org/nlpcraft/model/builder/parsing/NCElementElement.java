@@ -29,15 +29,15 @@
  *        /_/
  */
 
-package org.nlpcraft.model.builder.json;
+package org.nlpcraft.model.builder.parsing;
 
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * JSON parsing bean.
+ * Parsing bean.
  */
-public class NCElementJson {
+public class NCElementElement {
     private String id;
     private String group;
     private String parentId;
@@ -45,7 +45,7 @@ public class NCElementJson {
     private String[] excludedSynonyms = new String[0];
     private String[] synonyms = new String[0];
     @SuppressWarnings("unchecked") private Map<String, Object> metadata = Collections.EMPTY_MAP;
-    private NCValueJson[] values = new NCValueJson[0];
+    private NCValueElement[] values = new NCValueElement[0];
 
     /**
      *
@@ -67,7 +67,7 @@ public class NCElementJson {
      *
      * @return
      */
-    public NCValueJson[] getValues() {
+    public NCValueElement[] getValues() {
         return values;
     }
 
@@ -75,7 +75,7 @@ public class NCElementJson {
      *
      * @param values
      */
-    public void setValues(NCValueJson[] values) {
+    public void setValues(NCValueElement[] values) {
         this.values = values;
     }
 

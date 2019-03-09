@@ -29,46 +29,28 @@
  *        /_/
  */
 
-{
-    "id": "nlpcraft.time.ex",
-    "name": "Time Example Model",
-    "version": "1.0",
-    "description": "Global time example model.",
-    "vendorName": "NLPCraft",
-    "vendorUrl": "https://www.nlpcraft.org",
-    "vendorContact": "Support",
-    "vendorEmail": "info@nlpcraft.org",
-    "docsUrl": "https://www.nlpcraft.org",
-    "maxGeoTokens": 1,
-    "examples": [
-        "What time is it now in New York City?",
-        "What's the time in Moscow?",
-        "Show me time of the day in London.",
-        "Give me San Francisco's current date and time.",
-        "What's the local time?"
-    ],
-    "macros": [
-        {
-            "name": "<OF>",
-            "macro": "{of|for|per}"
-        },
-        {
-            "name": "<CUR>",
-            "macro": "{current|present|now|local}"
-        },
-        {
-            "name": "<TIME>",
-            "macro": "{time <OF> day|day time|date|time|moment|datetime|hour|o'clock|clock|date time|date and time|time and date}"
-        }
-     ],
-    "elements": [
-        {
-            "id": "x:time",
-            "description": "Date and/or time token indicator.",
-            "synonyms": [
-                "{<CUR>|*} <TIME>",
-                "what <TIME> {is it now|now|is it|*}"
-            ]
-        }
-    ]
+package org.nlpcraft.model.builder.parsing;
+
+/**
+ * Parsing bean.
+ */
+public class NCValueElement {
+    private String name;
+    private String[] synonyms = new String[0];
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String[] getSynonyms() {
+        return synonyms;
+    }
+    
+    public void setSynonyms(String[] synonyms) {
+        this.synonyms = synonyms;
+    }
 }

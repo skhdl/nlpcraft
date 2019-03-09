@@ -31,7 +31,9 @@
 
 package org.nlpcraft.examples.time;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.lang3.text.WordUtils;
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
@@ -79,10 +81,8 @@ public class TimeModel extends NCModelProviderAdapter {
     // Geo manager.
     static private final GeoManager geoMrg = new GeoManager();
     
-    static private final Gson gson = new Gson();
-
     /**
-     * Gets JSON query result.
+     * Gets YAML query result.
      *
      * @param city Detected city.
      * @param cntry Detected country.
@@ -90,7 +90,7 @@ public class TimeModel extends NCModelProviderAdapter {
      * @param lat City latitude.
      * @param lon City longitude.
      */
-    private static NCQueryResult mkResult(String city, String cntry, String tmz, double lat, double lon) {
+    private static NCQueryResult mkResult(String city, String cntry, String tmz, double lat, double lon)  {
         Map<String, Object> res = new HashMap<>();
         
         res.put("city", WordUtils.capitalize(city));
@@ -100,7 +100,12 @@ public class TimeModel extends NCModelProviderAdapter {
         res.put("lon", lon);
         res.put("localTime", ZonedDateTime.now(ZoneId.of(tmz)).format(FMT));
     
-        return NCQueryResult.json(gson.toJson(res));
+        try {
+            return NCQueryResult.yaml(new ObjectMapper(new YAMLFactory()).writeValueAsString(res));
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException("Conversation error.", e);
+        }
     }
 
     /**
@@ -199,9 +204,9 @@ public class TimeModel extends NCModelProviderAdapter {
         // Initialize adapter.
         setup(
             NCModelBuilder.
-                newJsonModel(TimeModel.class.
+                newYamlModel(TimeModel.class.
                     getClassLoader().
-                    getResourceAsStream("org/nlpcraft/examples/time/time_model.json")
+                    getResourceAsStream("org/nlpcraft/examples/time/time_model.yaml")
                 ).setQueryFunction(solver::solve).build()
         );
     }
