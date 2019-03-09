@@ -83,10 +83,12 @@ layout: interior
         <section id="data-model">
             <span class="section-sub-title">Data Model</span>
             <p>
-                Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> Java interface that
-                can be developed in any JVM programming language like Java, Scala, or Groovy. Data model
-                defines how to interpret user input, how to query or control a particular data source, and
-                finally how to format the result back to the user.
+                NLPCraft employs model-as-a-code approach where data model is simply an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> Java interface that
+                can be developed using any JVM programming language like Java, Scala, or Groovy.
+                Data model implementation defines how to interpret user input, how to query or control a particular data source, and
+                finally how to format the result back to the user. Model-as-a-code
+                natively supports any software life cycle tools and frameworks in Java eco-system.
+
             </p>
             <p>
                 Typically, declarative portion of the model will be stored in a separate JSON or YAML file
@@ -96,19 +98,40 @@ layout: interior
             </p>
             <p>
                 Here's an example of the absolutely minimal data model that simply returns the same answer back
-                on any user input:
+                for any user input:
             </p>
             <pre class="brush: java">
             NCModelBuilder.newModel("id", "description", "1.0")
                 .setQueryFunction(ctx -> NCQueryResult.text("Hello World!")) 
                 .build()
             </pre>
+            <p>
+                To use data model it has to be deployed into data probe.
+            </p>
         </section>
         <section id="data-probe">
             <span class="section-sub-title">Data Probe</span>
+            <p>
+                Data probe is an application designed to securely deploy and manage data models.
+                Each probe can deploy and manage multiple models and many probes can be connected to REST server.
+                They main purpose
+                of the data probe is to separate data model hosting from managing REST calls from the clients.
+                While you would typically have just one REST server, you may have multiple data probes deployed
+                in different geo-locations and configured differently.
+            </p>
+            <p>
+                Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and are
+                typically deployed in DMZ or close to your target data sources: on-premise, in the cloud, etc. Data
+                probe uses strong 256-bit encryption and ingress only connectivity for communicating with REST server.
+            </p>
         </section>
         <section id="server">
             <span class="section-sub-title">REST Server</span>
+            <p>
+                REST server provides URL endpoint for user applications to securely query data sources using NLI via
+                data models deployed in data probes. Its main purpose is to accept REST calls from user applications,
+                manage connected data probes, and route user requests to and from an appropriate data probe.
+            </p>
         </section>
     </div>
     <div class="col-md-2 third-column">

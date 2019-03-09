@@ -1,0 +1,238 @@
+---
+active_crumb: Docs
+layout: interior
+---
+
+<!--
+   “Commons Clause” License, https://commonsclause.com/
+
+   The Software is provided to you by the Licensor under the License,
+   as defined below, subject to the following condition.
+
+   Without limiting other conditions in the License, the grant of rights
+   under the License will not include, and the License does not grant to
+   you, the right to Sell the Software.
+
+   For purposes of the foregoing, “Sell” means practicing any or all of
+   the rights granted to you under the License to provide to third parties,
+   for a fee or other consideration (including without limitation fees for
+   hosting or consulting/support services related to the Software), a
+   product or service whose value derives, entirely or substantially, from
+   the functionality of the Software. Any license notice or attribution
+   required by the License must also include this Commons Clause License
+   Condition notice.
+
+   Software:    NLPCraft
+   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+
+       _   ____      ______           ______
+      / | / / /___  / ____/________ _/ __/ /_
+     /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+    / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+   /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+          /_/
+-->
+
+<h1 class="page-title">
+    <span><i class="fas fa-fw fa-book"></i> {{ page.active_crumb }}</span>
+</h1>
+
+<div class="three-cols-container">
+    <div class="col-md-2 first-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">Introduction</li>
+            <li><a href="/docs.html">Overview</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="/getting-started.html">Getting Started</a></li>
+            <li class="side-nav-title">Developer Guide</li>
+        </ul>
+    </div>
+    <div class="col-md-8 second-column">
+        <section id="installation">
+            <span class="section-title">Installation</span>
+            <p>
+                NLPCraft requires <b>no special installation</b> operations. If you downloaded ZIP archive - simply unzip it.
+                If you cloned GitHub repository use <code>mvn clean package</code> command to build the artifacts.
+            </p>
+            <p>
+                In the following sections we'll cover how to verify that your installation is valid, how to run
+                data probe and REST server, as well as several odd bits and pieces.
+            </p>
+        </section>
+        <section id="verify-sigs">
+            <span class="section-title">Verify MD5/SHA1/SHA256/PGP</span>
+            <p>
+                If you obtained ZIP archive of NLPCraft project from places other than this website we highly
+                recommend to verify the integrity and authenticity of that archive by comparing cryptographic
+                signatures.
+            </p>
+            <div class="bq warn">
+                <p>
+                    <b>NOTE:</b> <code>MD5</code> and <code>SHA1</code> signatures provided only for
+                    rare backward compatibility as they are not cryptographically strong and generally
+                    not recommended. In most cases you should only trust to <code>PGP</code> or <code>SHA256</code>
+                    signatures.
+                </p>
+            </div>
+            <p>
+                Following instructions assume Mac OS/Linux environment but the verification steps are
+                similar for Windows. Note that you can also verify signatures online at
+                <a target=_ href="https://md5file.com/calculator">File Hash Online Calculator</a> or
+                <a target=_ href="http://onlinemd5.com/">Online MD5</a>.
+            </p>
+            <span class="section-sub-title">Mac OS</span>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-macos-md5" role="tab" aria-controls="nav-home" aria-selected="true">MD5</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-macos-sha1" role="tab" aria-controls="nav-home" aria-selected="true">SHA1</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-macos-sha256" role="tab" aria-controls="nav-home" aria-selected="true">SHA256</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-macos-pgp" role="tab" aria-controls="nav-home" aria-selected="true">PGP</a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-macos-md5" role="tabpanel">
+                    <pre class="brush: ps">
+                        # Run these two commands and compare generated hashes:
+                        $ openssl dgst -md5 nlpcraft-{{site.latest_version}}.zip
+                        $ cat nlpcraft-{{site.latest_version}}.zip.md5
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-macos-sha256" role="tabpanel">
+                    <pre class="brush: ps">
+                        # Run these two commands and compare generated hashes:
+                        $ openssl dgst -sha256 nlpcraft-{{site.latest_version}}.zip
+                        $ cat nlpcraft-{{site.latest_version}}.zip.sha256
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-macos-sha1" role="tabpanel">
+                    <pre class="brush: ps">
+                        # Run these two commands and compare generated hashes:
+                        $ openssl dgst -sha1 nlpcraft-{{site.latest_version}}.zip
+                        $ cat nlpcraft-{{site.latest_version}}.zip.sha1
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-macos-pgp" role="tabpanel">
+                    <pre class="brush: ps">
+                        # NOTE: make sure to have GPGTools (gpgtools.org) installed.
+                        $ gpg --verify nlpcraft-{{site.latest_version}}.zip.sig nlpcraft-{{site.latest_version}}.zip
+                    </pre>
+                </div>
+            </div>
+            <span class="section-sub-title">Linux</span>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-linux-md5" role="tab" aria-controls="nav-home" aria-selected="true">MD5</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-linux-sha1" role="tab" aria-controls="nav-home" aria-selected="true">SHA1</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-linux-sha256" role="tab" aria-controls="nav-home" aria-selected="true">SHA256</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-linux-pgp" role="tab" aria-controls="nav-home" aria-selected="true">PGP</a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-linux-md5" role="tabpanel">
+                    <pre class="brush: ps">
+                        $ md5sum --check nlpcraft-{{site.latest_version}}.zip.md5
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-linux-sha256" role="tabpanel">
+                    <pre class="brush: ps">
+                        $ sha256sum --check nlpcraft-{{site.latest_version}}.zip.sha256
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-linux-sha1" role="tabpanel">
+                    <pre class="brush: ps">
+                        $ sha1sum --check nlpcraft-{{site.latest_version}}.zip.sha1
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-linux-pgp" role="tabpanel">
+                    <pre class="brush: ps">
+                        $ gpg --verify nlpcraft-{{site.latest_version}}.zip.sig nlpcraft-{{site.latest_version}}.zip
+                    </pre>
+                </div>
+            </div>
+        </section>
+        <section id="tools">
+            <span class="section-title">Java/Git/Maven</span>
+            <p>
+                NLPCraft required JDK 8 or older (as well as Git 2+ and Maven 3.5+ tools):
+            </p>
+            <ul>
+                <li>
+                    <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java SE Runtime Environment</a>
+                    (JRE) or <a target=_new href="https://openjdk.java.net/">OpenJDK</a> ver. 8 or later.
+                </li>
+                <li>
+                    Latest versions of <a target=_ href="https://git-scm.com/downloads">Git</a> and
+                    <a target=_ href="https://maven.apache.org/install.html">Maven</a>.
+                </li>
+            </ul>
+            <p>
+                Verify that you have correct versions:
+            </p>
+            <pre class="brush: ps">
+                $ java -version
+                $ git --version
+                $ mvn --version
+            </pre>
+        </section>
+        <section id="ignite">
+            <span class="section-title">Apache Ignite <span class="amp">&amp;</span> Java 11</span>
+            <p>
+                NLPCraft uses <a href="https://ignite.apache.org/">Apache Ignite</a> project as its
+                underlying distributed storage and cluster computing framework. If running with Apache Ignite 2.7 or
+                earlier on Java 9/10/11 you need to follow these
+                <a href="https://apacheignite.readme.io/docs/getting-started#section-running-ignite-with-java-9-10-11">instructions.</a>
+            </p>
+            <div class="bq info">
+                <p>
+                    <b>NOTE:</b> It is NOT recommended to change the version of Apache Ignite inside NLPCraft project.
+                </p>
+            </div>
+
+        </section>
+    </div>
+    <div class="col-md-2 third-column">
+        <ul class="side-nav">
+            <li class="side-nav-title">On This Page</li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#verify-sigs">Verify Signatures</a></li>
+            <li><a href="#tools">Java/Git/Maven</a></li>
+            <li><a href="#ignite">Apache Ignite <span class="amp">&amp;</span> Java 11</a></li>
+            <li class="side-nav-title">Quick Links</li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+                target="github"
+                href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/java.png"><a
+                target="javadoc"
+                href="/apis/latest/index.html">Javadoc</a>
+            </li>
+            <li>
+                <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+                href="https://nlpcraft.docs.apiary.io"
+                target="apiary">REST API</a>
+            </li>
+            <li class="side-nav-title">Support</li>
+            <li>
+                <nobr>
+                    <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+                </nobr>
+            </li>
+            <li>
+                <nobr>
+                    <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+                </nobr>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+

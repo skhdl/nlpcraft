@@ -41,10 +41,12 @@ layout: interior
 <div class="three-cols-container">
     <div class="col-md-2 first-column">
         <ul class="side-nav">
-            <li class="side-nav-title">Download As</li>
+            <li class="side-nav-title">Download</li>
             <li><a href="#github">GitHub</a></li>
             <li><a href="#zip">ZIP Archive</a></li>
             <li><a href="#maven">Maven/Grape/SBT</a></li>
+            <li class="side-nav-title">Install</li>
+            <li><a href="/installation.html">Instructions</a></li>
         </ul>
     </div>
     <div class="col-md-8 second-column">
@@ -147,14 +149,14 @@ layout: interior
                 The easiest way to start using NLPCraft is to add Maven dependency (Grape, SBT, etc.) to your
                 project. NLPCraft project consists of a single module.
             </p>
-            <nav style="width: 90%">
+            <nav>
                 <div class="nav nav-tabs" role="tablist">
                     <a class="nav-item nav-link active" data-toggle="tab" href="#nav-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
                     <a class="nav-item nav-link" data-toggle="tab" href="#nav-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
                     <a class="nav-item nav-link" data-toggle="tab" href="#nav-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
                 </div>
             </nav>
-            <div class="tab-content" id="nav-tabContent">
+            <div class="tab-content">
                 <div class="tab-pane fade show active" id="nav-maven" role="tabpanel">
                     <pre class="brush: xml">
                     <dependency>
