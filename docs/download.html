@@ -89,7 +89,7 @@ layout: interior
                 If you want to contribute to the project or build it form the source
                 you need to get the full developer snapshot from <a target="github" href="https://github.com/vic64/nlpcraft">GitHub</a>:
             </p>
-            <pre class="brush: ps">
+            <pre class="brush: plain">
             $ git clone https://github.com/vic64/nlpcraft.git
             $ mvn clean package
             </pre>
@@ -168,12 +168,12 @@ layout: interior
                 </div>
                 <div class="tab-pane fade" id="nav-grape" role="tabpanel">
                     <pre class="brush: java">
-                    @Grab ('org.nlpcraft:nlpcraft:0.1.0')
+                    @Grab ('org.nlpcraft:nlpcraft:{{site.latest_version}}')
                     </pre>
                 </div>
                 <div class="tab-pane fade" id="nav-sbt" role="tabpanel">
                     <pre class="brush: scala">
-                    libraryDependencies += "org.nlpcraft" % "nlpcraft" % "0.1.0"
+                    libraryDependencies += "org.nlpcraft" % "nlpcraft" % "{{site.latest_version}}"
                     </pre>
                 </div>
             </div>

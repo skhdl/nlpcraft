@@ -45,7 +45,7 @@
             <directory>${project.build.directory}</directory>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>${project.name}-${project.version}-all-dependencies.jar</include>
+                <include>${project.name}-${project.version}-all-deps.jar</include>
             </includes>
         </fileSet>
         <fileSet>

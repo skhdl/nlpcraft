@@ -92,28 +92,28 @@ layout: interior
             </nav>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="nav-macos-md5" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         # Run these two commands and compare generated hashes:
                         $ openssl dgst -md5 nlpcraft-{{site.latest_version}}.zip
                         $ cat nlpcraft-{{site.latest_version}}.zip.md5
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-macos-sha256" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         # Run these two commands and compare generated hashes:
                         $ openssl dgst -sha256 nlpcraft-{{site.latest_version}}.zip
                         $ cat nlpcraft-{{site.latest_version}}.zip.sha256
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-macos-sha1" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         # Run these two commands and compare generated hashes:
                         $ openssl dgst -sha1 nlpcraft-{{site.latest_version}}.zip
                         $ cat nlpcraft-{{site.latest_version}}.zip.sha1
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-macos-pgp" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         # NOTE: make sure to have GPGTools (gpgtools.org) installed.
                         $ gpg --verify nlpcraft-{{site.latest_version}}.zip.sig nlpcraft-{{site.latest_version}}.zip
                     </pre>
@@ -130,22 +130,22 @@ layout: interior
             </nav>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="nav-linux-md5" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         $ md5sum --check nlpcraft-{{site.latest_version}}.zip.md5
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-linux-sha256" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         $ sha256sum --check nlpcraft-{{site.latest_version}}.zip.sha256
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-linux-sha1" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         $ sha1sum --check nlpcraft-{{site.latest_version}}.zip.sha1
                     </pre>
                 </div>
                 <div class="tab-pane fade show" id="nav-linux-pgp" role="tabpanel">
-                    <pre class="brush: ps">
+                    <pre class="brush: plain">
                         $ gpg --verify nlpcraft-{{site.latest_version}}.zip.sig nlpcraft-{{site.latest_version}}.zip
                     </pre>
                 </div>
@@ -169,26 +169,133 @@ layout: interior
             <p>
                 Verify that you have correct versions:
             </p>
-            <pre class="brush: ps">
+            <pre class="brush: plain">
                 $ java -version
                 $ git --version
                 $ mvn --version
             </pre>
         </section>
         <section id="ignite">
-            <span class="section-title">Apache Ignite <span class="amp">&amp;</span> Java 11</span>
+            <span class="section-title">Apache Ignite</span>
             <p>
-                NLPCraft uses <a href="https://ignite.apache.org/">Apache Ignite</a> project as its
+                NLPCraft uses <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> project as its
                 underlying distributed storage and cluster computing framework. If running with Apache Ignite 2.7 or
                 earlier on Java 9/10/11 you need to follow these
                 <a href="https://apacheignite.readme.io/docs/getting-started#section-running-ignite-with-java-9-10-11">instructions.</a>
+                For Java 8 no additional parameters are required.
             </p>
             <div class="bq info">
                 <p>
                     <b>NOTE:</b> It is NOT recommended to change the version of Apache Ignite inside NLPCraft project.
                 </p>
             </div>
-
+        </section>
+        <section id="probe_server">
+            <span class="section-title">Data Probe <span class="amp">&amp;</span> Server</span>
+            <p>
+                For this section we assume that NLPCraft was downloaded as a ZIP archive and unzipped in the
+                current directory:
+            </p>
+            <pre style="border: 1px solid #dedede; border-radius: 4px; padding: 25px 30px 0 30px;">
+├── LICENSE
+├── bin
+├── build
+│   └── nlpcraft-{{site.latest_version}}
+│       ├── application.conf
+│       ├── ignite.xml
+│       ├── log4j2.xml
+│       ├── probe.conf
+│       └── <b>nlpcraft-{{site.latest_version}}-all-deps.jar</b>
+├── javadoc
+├── openapi
+└── src
+            </pre>
+            <p>
+                NLPCraft ZIP archive comes with a single executable JAR file that includes all necessary dependencies (file
+                <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> above). This JAR files
+                includes binaries for data probe. data model APIs and REST server. All necessary configuration
+                files are also located in the same directory.
+            </p>
+            <b>Data Probe</b>
+            <p>
+                Data probe can be stared from either the command line or IDE such as Eclipse or IntelliJ IDEA:
+            </p>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-probe-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-probe-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-probe-cmd" role="tabpanel">
+                    <pre class="brush: plain">
+                        $ cd build/nlpcraft-{{site.latest_version}}
+                        $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -probe
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-probe-ide" role="tabpanel">
+                    <p style="padding-top: 10px">
+                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>
+                        and pass <code>-probe</code> and optional <code>-config=probe.conf</code> parameters.
+                    </p>
+                </div>
+            </div>
+            <p>
+                Note that <code>-probe</code> parameter is mandatory to indicate that you are starting a data probe.
+                Data probe will automatically look for <code>probe.conf</code> configuration file in the same directory
+                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                file has different name or in different location use <code>-config=path</code> parameter
+                where <code>path</code> is an absolute path to the data probe configuration file:
+            </p>
+            <pre class="brush: plain">
+                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -probe -config=/home/probe.conf
+            </pre>
+            <b>REST Server</b>
+            <p>
+                Just like data probe a REST server can be stared from either the command line or
+                IDE such as Eclipse or IntelliJ IDEA:
+            </p>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-srv-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-srv-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-srv-cmd" role="tabpanel">
+                    <pre class="brush: plain">
+                        $ cd build/nlpcraft-{{site.latest_version}}
+                        $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server
+                    </pre>
+                </div>
+                <div class="tab-pane fade show" id="nav-srv-ide" role="tabpanel">
+                    <p style="padding-top: 10px">
+                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>
+                        and pass <code>-server</code> and optional <code>-config=path</code> and
+                        <code>-igniteConfig=path</code> parameters.
+                    </p>
+                </div>
+            </div>
+            <p>
+                Just like for data probe the <code>-server</code> parameter is mandatory to indicate that you are starting the REST server.
+                Server will automatically look for <code>application.conf</code> configuration file in the same directory
+                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                file has different name or in different location use <code>-config=path</code> parameter
+                where <code>path</code> is an absolute path to the server configuration file:
+            </p>
+            <pre class="brush: plain">
+                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server -config=/home/application.conf
+            </pre>
+            <p>
+                NLPCraft uses <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> and it requires
+                its own configuration file. Server will automatically look for <code>ignite.xml</code>
+                configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
+                If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter
+                where <code>path</code> is an absolute path to the Ignite configuration file:
+            </p>
+            <pre class="brush: plain">
+                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server -igniteConfig=/home/ignite.xml
+            </pre>
         </section>
     </div>
     <div class="col-md-2 third-column">
@@ -197,7 +304,8 @@ layout: interior
             <li><a href="#installation">Installation</a></li>
             <li><a href="#verify-sigs">Verify Signatures</a></li>
             <li><a href="#tools">Java/Git/Maven</a></li>
-            <li><a href="#ignite">Apache Ignite <span class="amp">&amp;</span> Java 11</a></li>
+            <li><a href="#ignite">Apache Ignite</a></li>
+            <li><a href="#probe_server">Data Probe <span class="amp">&amp;</span> Server</a></li>
             <li class="side-nav-title">Quick Links</li>
             <li>
                 <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
