@@ -43,7 +43,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>${project.name}-${project.version}-all-deps.jar</include>
             </includes>
@@ -57,7 +57,7 @@
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>*.conf</include>
                 <include>*.xml</include>
@@ -65,7 +65,7 @@
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/scala/org/nlpcraft/examples</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>probe.conf</include>
             </includes>

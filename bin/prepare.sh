@@ -49,13 +49,19 @@ rm -R ${zipDir} 2> /dev/null
 
 mkdir ${zipDir}
 mkdir ${zipDir}/${tmpDir}
+mkdir ${zipDir}/${tmpDir}/build
 
 rsync -avzq bin ${zipDir}/${tmpDir} --exclude '**/.DS_Store' --exclude bin/prepare.sh
 rsync -avzq openapi ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
-rsync -avzq build ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
-cp LICENSE ${zipDir}/${tmpDir}
 
+cp LICENSE ${zipDir}/${tmpDir}
+cp src/main/resources/application.conf ${zipDir}/${tmpDir}/build
+cp src/main/resources/ignite.xml ${zipDir}/${tmpDir}/build
+cp src/main/resources/log4j2.xml ${zipDir}/${tmpDir}/build
+cp src/main/scala/org/nlpcraft/examples/probe.conf ${zipDir}/${tmpDir}/build
+
+cp target/*all-deps.jar ${zipDir}/${tmpDir}/build
 rsync -avzq target/apidocs/** ${zipDir}/${tmpDir}/javadoc --exclude '**/.DS_Store'
 
 cd ${zipDir}

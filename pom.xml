@@ -84,7 +84,6 @@
         <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
-        <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
 
         <akka.http.2.11.ver>10.1.5</akka.http.2.11.ver>
@@ -551,27 +550,6 @@
                                     <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                             </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.plugin.ver}</version>
-                <executions>
-                    <execution>
-                        <id>dir</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <attach>false</attach>
-                            <outputDirectory>build</outputDirectory>
-                            <descriptors>
-                                <descriptor>assembly.xml</descriptor>
-                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
