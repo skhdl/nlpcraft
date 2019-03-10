@@ -77,6 +77,7 @@
         <maven.surefire.plugin.ver>2.22.1</maven.surefire.plugin.ver>
         <stringmetric.ver>0.27.4</stringmetric.ver>
         <gson.ver>2.8.5</gson.ver>
+        <jackson.ver>2.9.8</jackson.ver>
         <apache.math.ver>3.6.1</apache.math.ver>
         <apache.common.lang.ver>3.8.1</apache.common.lang.ver>
         <apache.httpcomponents.ver>4.5.7</apache.httpcomponents.ver>
@@ -300,6 +301,16 @@
             <version>${akka.http.spray.json.2.11.ver}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.ver}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.ver}</version>
@@ -313,6 +324,7 @@
                 <includes>
                     <include>**/*.txt</include>
                     <include>**/*.json</include>
+                    <include>**/*.yaml</include>
                 </includes>
             </resource>
             <resource>
@@ -449,7 +461,7 @@
                         ]]>
                     </top>
                     <subpackages>org.nlpcraft.model</subpackages>
-                    <excludePackageNames>org.nlpcraft.model.impl:org.nlpcraft.model.builder.json:org.nlpcraft.model.builder.impl</excludePackageNames>
+                    <excludePackageNames>org.nlpcraft.model.impl:org.nlpcraft.model.builder.parsing:org.nlpcraft.model.builder.impl</excludePackageNames>
                     <groups>
                         <group>
                             <title>Data Model APIs</title>
@@ -553,27 +565,6 @@
                                     <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                             </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.plugin.ver}</version>
-                <executions>
-                    <execution>
-                        <id>dir</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <attach>false</attach>
-                            <outputDirectory>build</outputDirectory>
-                            <descriptors>
-                                <descriptor>assembly.xml</descriptor>
-                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>

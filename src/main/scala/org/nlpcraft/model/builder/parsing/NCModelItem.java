@@ -29,16 +29,16 @@
  *        /_/
  */
 
-package org.nlpcraft.model.builder.json;
+package org.nlpcraft.model.builder.parsing;
 
 import java.util.Map;
 
 import static org.nlpcraft.model.NCModel.*;
 
 /**
- * JSON parsing bean.
+ * Parsing bean.
  */
-public class NCModelJson {
+public class NCModelItem {
     private String id;
     private String name;
     private String version;
@@ -74,8 +74,8 @@ public class NCModelJson {
     private int maxTotalSynonyms = DFLT_MAX_TOTAL_SYNONYMS;
     private boolean isPermutateSynonyms = DFLT_IS_PERMUTATE_SYNONYMS;
     @SuppressWarnings("unchecked") private Map<String, Object> usrMetadata = null;
-    private NCMacroJson[] macros = null;
-    private NCElementJson[] elements = null;
+    private NCMacroItem[] macros = null;
+    private NCElementItem[] elements = null;
     private String[] additionalStopwords = null;
     private String[] excludedStopwords = null;
     private String[] suspiciousWords = null;
@@ -165,7 +165,7 @@ public class NCModelJson {
      *
      * @return
      */
-    public NCMacroJson[] getMacros() {
+    public NCMacroItem[] getMacros() {
         return macros;
     }
 
@@ -173,7 +173,7 @@ public class NCModelJson {
      *
      * @param macros
      */
-    public void setMacros(NCMacroJson[] macros) {
+    public void setMacros(NCMacroItem[] macros) {
         this.macros = macros;
     }
 
@@ -181,7 +181,7 @@ public class NCModelJson {
      *
      * @return
      */
-    public NCElementJson[] getElements() {
+    public NCElementItem[] getElements() {
         return elements;
     }
 
@@ -189,7 +189,7 @@ public class NCModelJson {
      *
      * @param elements
      */
-    public void setElements(NCElementJson[] elements) {
+    public void setElements(NCElementItem[] elements) {
         this.elements = elements;
     }
 

@@ -29,14 +29,14 @@
  *        /_/
  */
 
-package org.nlpcraft.model.builder.json;
+package org.nlpcraft.model.builder.parsing;
 
 /**
- * JSON parsing bean.
+ * Parsing bean.
  */
-public class NCMacroJson {
+public class NCValueItem {
     private String name;
-    private String macro;
+    private String[] synonyms = new String[0];
 
     /**
      *
@@ -58,15 +58,15 @@ public class NCMacroJson {
      *
      * @return
      */
-    public String getMacro() {
-        return macro;
+    public String[] getSynonyms() {
+        return synonyms;
     }
 
     /**
-     *
-     * @param macro
+     * 
+     * @param synonyms
      */
-    public void setMacro(String macro) {
-        this.macro = macro;
+    public void setSynonyms(String[] synonyms) {
+        this.synonyms = synonyms;
     }
 }

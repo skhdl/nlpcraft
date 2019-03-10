@@ -31,10 +31,12 @@
 
 package org.nlpcraft.model.builder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.gson.*;
 import org.nlpcraft.model.*;
 import org.nlpcraft.model.builder.impl.*;
-import org.nlpcraft.model.builder.json.*;
+import org.nlpcraft.model.builder.parsing.*;
 import org.nlpcraft.model.impl.*;
 import java.io.*;
 import java.net.*;
@@ -49,9 +51,12 @@ import java.util.stream.*;
  * <ul>
  *     <li>{@link #newJsonModel(InputStream)}</li>
  *     <li>{@link #newJsonModel(String)}</li>
+ *     <li>{@link #newYamlModel(InputStream)}</li>
+ *     <li>{@link #newYamlModel(String)}</li>
  *     <li>{@link #newModel(String, String, String)}</li>
  *     <li>{@link #newModel()}</li>
  *     <li>{@link #newJsonStringModel(String)}</li>
+ *     <li>{@link #newYamlStringModel(String)}</li>
  * </ul>
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
  * method to get properly constructed {@link NCModel} instance. Note that at the minimum the
@@ -75,7 +80,7 @@ public class NCModelBuilder {
      * @return Initialized object.
      * @throws NCBuilderException In case of any errors loading JSON.
      */
-    static private <T> T readFile(String filePath, Class<T> claxx) throws NCBuilderException {
+    static private <T> T readFileJson(String filePath, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new FileReader(filePath))) {
             return gson.fromJson(reader, claxx);
         }
@@ -83,7 +88,27 @@ public class NCModelBuilder {
             throw new NCBuilderException("Failed to load JSON from: " + filePath, e);
         }
     }
-
+    
+    /**
+     * Reads YAML file and creates YAML representation object of given type.
+     *
+     * @param filePath File path.
+     * @param claxx YAML representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading YAML.
+     */
+    static private <T> T readFileYaml(String filePath, Class<T> claxx) throws NCBuilderException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    
+        try {
+            return mapper.readValue(new File(filePath), claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load YAML from: " + filePath, e);
+        }
+    }
+    
     /**
      * Reads JSON file and creates JSON representation object of given type.
      *
@@ -93,12 +118,32 @@ public class NCModelBuilder {
      * @return Initialized object.
      * @throws NCBuilderException In case of any errors loading JSON.
      */
-    static private <T> T readFile(InputStream in, Class<T> claxx) throws NCBuilderException {
+    static private <T> T readFileJson(InputStream in, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new InputStreamReader(in))) {
             return gson.fromJson(reader, claxx);
         }
         catch (Exception e) {
             throw new NCBuilderException("Failed to load JSON from stream.", e);
+        }
+    }
+    
+    /**
+     * Reads YAML file and creates YAML representation object of given type.
+     *
+     * @param in Input stream.
+     * @param claxx YAML representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading YAML.
+     */
+    static private <T> T readFileYaml(InputStream in, Class<T> claxx) throws NCBuilderException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    
+        try {
+            return mapper.readValue(in, claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load YAML from stream.", e);
         }
     }
 
@@ -111,12 +156,32 @@ public class NCModelBuilder {
      * @return Initialized object.
      * @throws NCBuilderException In case of any errors loading JSON.
      */
-    static private <T> T readString(String jsonStr, Class<T> claxx) throws NCBuilderException {
+    static private <T> T readStringJson(String jsonStr, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new StringReader(jsonStr))) {
             return gson.fromJson(reader, claxx);
         }
         catch (Exception e) {
             throw new NCBuilderException("Failed to load JSON from string.", e);
+        }
+    }
+    
+    /**
+     * Reads YAML string and creates YAML representation object of given type.
+     *
+     * @param yamlStr YAML string to read from.
+     * @param claxx YAML representation class.
+     * @param <T> Object type.
+     * @return Initialized object.
+     * @throws NCBuilderException In case of any errors loading YAML.
+     */
+    static private <T> T readStringYaml(String yamlStr, Class<T> claxx) throws NCBuilderException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    
+        try {
+            return mapper.readValue(yamlStr, claxx);
+        }
+        catch (Exception e) {
+            throw new NCBuilderException("Failed to load YAML from string.", e);
         }
     }
 
@@ -183,8 +248,26 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
 
-        bldr.ingestJsonModel(readFile(filePath, NCModelJson.class));
+        bldr.ingestJsonModel(readFileJson(filePath, NCModelItem.class));
 
+        return bldr;
+    }
+    
+    /**
+     * Creates new model builder and loads model definition from YAML file.
+     *
+     * @param filePath YAML file path to load from.
+     * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
+     */
+    public static NCModelBuilder newYamlModel(String filePath) throws NCBuilderException {
+        if (filePath == null)
+            throw new IllegalArgumentException("YAML file path cannot be null.");
+        
+        NCModelBuilder bldr = new NCModelBuilder();
+        
+        bldr.ingestJsonModel(readFileYaml(filePath, NCModelItem.class));
+        
         return bldr;
     }
     
@@ -201,7 +284,25 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
         
-        bldr.ingestJsonModel(readFile(in, NCModelJson.class));
+        bldr.ingestJsonModel(readFileJson(in, NCModelItem.class));
+        
+        return bldr;
+    }
+    
+    /**
+     * Creates new model builder and loads YAML model definition from input stream.
+     *
+     * @param in Input stream to load YAML model from.
+     * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
+     */
+    public static NCModelBuilder newYamlModel(InputStream in) throws NCBuilderException {
+        if (in == null)
+            throw new IllegalArgumentException("YAML input stream cannot be null (wrong YAML file path?).");
+        
+        NCModelBuilder bldr = new NCModelBuilder();
+        
+        bldr.ingestJsonModel(readFileYaml(in, NCModelItem.class));
         
         return bldr;
     }
@@ -219,8 +320,26 @@ public class NCModelBuilder {
 
         NCModelBuilder bldr = new NCModelBuilder();
 
-        bldr.ingestJsonModel(readString(jsonStr, NCModelJson.class));
+        bldr.ingestJsonModel(readStringJson(jsonStr, NCModelItem.class));
 
+        return bldr;
+    }
+    
+    /**
+     * Creates new model builder and loads YAML model definition from given YAML string.
+     *
+     * @param yamlStr YAML string to load model from.
+     * @return New model builder.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
+     */
+    public static NCModelBuilder newYamlStringModel(String yamlStr) throws NCBuilderException {
+        if (yamlStr == null)
+            throw new IllegalArgumentException("YAML input string cannot be null.");
+        
+        NCModelBuilder bldr = new NCModelBuilder();
+        
+        bldr.ingestJsonModel(readStringYaml(yamlStr, NCModelItem.class));
+        
         return bldr;
     }
 
@@ -312,7 +431,7 @@ public class NCModelBuilder {
      *
      * @throws NCBuilderException Thrown in case of any errors.
      */
-    private void ingestJsonModel(NCModelJson js) throws NCBuilderException {
+    private void ingestJsonModel(NCModelItem js) throws NCBuilderException {
         impl.setDescriptor(
             NCModelDescriptorBuilder.newDescriptor(
                 js.getId(),
@@ -366,7 +485,7 @@ public class NCModelBuilder {
             addExamples(js.getExamples());
 
         if (js.getMacros() != null)
-            for (NCMacroJson m : js.getMacros())
+            for (NCMacroItem m : js.getMacros())
                 addMacro(m.getName(), m.getMacro());
 
         if (js.getUserMetadata() != null)
@@ -374,7 +493,7 @@ public class NCModelBuilder {
                 addUserMetadata(entry.getKey(), (Serializable)entry.getValue());
 
         if (js.getElements() != null)
-            for (NCElementJson e : js.getElements()) {
+            for (NCElementItem e : js.getElements()) {
                 NCMetadata elmMeta = new NCMetadataImpl();
         
                 if (e.getMetadata() != null)

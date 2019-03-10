@@ -522,6 +522,8 @@ public class NCTestClientBuilder {
                     case "html/raw":
                     case "html":
                         return Jsoup.parseBodyFragment(body).outerHtml();
+                        
+                    case "yaml": return body;
     
                     default:
                         return body;

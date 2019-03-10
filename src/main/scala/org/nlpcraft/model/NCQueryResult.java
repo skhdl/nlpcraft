@@ -64,6 +64,10 @@ import java.util.stream.Collectors;
  *         <td>{@link #json(String)}</td>
  *     </tr>
  *     <tr>
+ *         <td><code>yaml</code></td>
+ *         <td>{@link #yaml(String)}</td>
+ *     </tr>
+ *     <tr>
  *         <td><code>json/multipart</code></td>
  *         <td>{@link #jsonMultipart(NCQueryResult...)}</td>
  *     </tr>
@@ -125,6 +129,16 @@ public class NCQueryResult implements Serializable {
      */
     public static NCQueryResult json(String json) {
         return new NCQueryResult(json, "json");
+    }
+    
+    /**
+     * Creates {@code yaml} result.
+     *
+     * @param yaml Any YAML string to be rendered on the client.
+     * @return Newly created query result.
+     */
+    public static NCQueryResult yaml(String yaml) {
+        return new NCQueryResult(yaml, "yaml");
     }
     
     /**
@@ -229,6 +243,7 @@ public class NCQueryResult implements Serializable {
         
         if (!typeLc.equals("html") &&
             !typeLc.equals("json") &&
+            !typeLc.equals("yaml") &&
             !typeLc.equals("text") &&
             !typeLc.equals("json/google/map") &&
             !typeLc.equals("json/multipart") &&

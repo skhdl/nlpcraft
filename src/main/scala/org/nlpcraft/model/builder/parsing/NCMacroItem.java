@@ -29,46 +29,44 @@
  *        /_/
  */
 
-{
-    "id": "nlpcraft.time.ex",
-    "name": "Time Example Model",
-    "version": "1.0",
-    "description": "Global time example model.",
-    "vendorName": "NLPCraft",
-    "vendorUrl": "https://www.nlpcraft.org",
-    "vendorContact": "Support",
-    "vendorEmail": "info@nlpcraft.org",
-    "docsUrl": "https://www.nlpcraft.org",
-    "maxGeoTokens": 1,
-    "examples": [
-        "What time is it now in New York City?",
-        "What's the time in Moscow?",
-        "Show me time of the day in London.",
-        "Give me San Francisco's current date and time.",
-        "What's the local time?"
-    ],
-    "macros": [
-        {
-            "name": "<OF>",
-            "macro": "{of|for|per}"
-        },
-        {
-            "name": "<CUR>",
-            "macro": "{current|present|now|local}"
-        },
-        {
-            "name": "<TIME>",
-            "macro": "{time <OF> day|day time|date|time|moment|datetime|hour|o'clock|clock|date time|date and time|time and date}"
-        }
-     ],
-    "elements": [
-        {
-            "id": "x:time",
-            "description": "Date and/or time token indicator.",
-            "synonyms": [
-                "{<CUR>|*} <TIME>",
-                "what <TIME> {is it now|now|is it|*}"
-            ]
-        }
-    ]
+package org.nlpcraft.model.builder.parsing;
+
+/**
+ * Parsing bean.
+ */
+public class NCMacroItem {
+    private String name;
+    private String macro;
+
+    /**
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getMacro() {
+        return macro;
+    }
+
+    /**
+     *
+     * @param macro
+     */
+    public void setMacro(String macro) {
+        this.macro = macro;
+    }
 }
