@@ -212,8 +212,8 @@ layout: interior
             </pre>
             <p>
                 NLPCraft ZIP archive comes with a single executable JAR file that includes all necessary dependencies (file
-                <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> above). This JAR files
-                includes binaries for data probe. data model APIs and REST server. All necessary configuration
+                <code>build/nlpcraft-{{site.latest_version}}/<b>nlpcraft-{{site.latest_version}}-all-deps.jar</b></code> above).
+                This JAR file includes binaries for data probe, data model APIs and the REST server. All default configuration
                 files are also located in the same directory.
             </p>
             <b>Data Probe</b>
@@ -235,21 +235,27 @@ layout: interior
                 </div>
                 <div class="tab-pane fade show" id="nav-probe-ide" role="tabpanel">
                     <p style="padding-top: 10px">
-                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>
-                        and pass <code>-probe</code> and optional <code>-config=probe.conf</code> parameters.
+                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
                     </p>
                 </div>
             </div>
-            <p>
-                Note that <code>-probe</code> parameter is mandatory to indicate that you are starting a data probe.
-                Data probe will automatically look for <code>probe.conf</code> configuration file in the same directory
-                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
-                file has different name or in different location use <code>-config=path</code> parameter
-                where <code>path</code> is an absolute path to the data probe configuration file:
-            </p>
-            <pre class="brush: plain">
-                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -probe -config=/home/probe.conf
-            </pre>
+            Parameters:
+            <dl>
+                <dt>
+                    <code>-probe</code>
+                </dt>
+                <dd>
+                    Mandatory parameter to indicate that you are starting a data probe.
+                </dd>
+                <dt><code>-config=path</code></dt>
+                <dd>
+                    Optional parameter to provide probe configuration file path.
+                    Data probe will automatically look for <code>probe.conf</code> configuration file in the same directory
+                    as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                    file has different name or in different location use <code>-config=path</code> parameter
+                    where <code>path</code> is an absolute path to the data probe configuration file
+                </dd>
+            </dl>
             <b>REST Server</b>
             <p>
                 Just like data probe a REST server can be stared from either the command line or
@@ -270,32 +276,35 @@ layout: interior
                 </div>
                 <div class="tab-pane fade show" id="nav-srv-ide" role="tabpanel">
                     <p style="padding-top: 10px">
-                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>
-                        and pass <code>-server</code> and optional <code>-config=path</code> and
-                        <code>-igniteConfig=path</code> parameters.
+                        Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
                     </p>
                 </div>
             </div>
-            <p>
-                Just like for data probe the <code>-server</code> parameter is mandatory to indicate that you are starting the REST server.
-                Server will automatically look for <code>application.conf</code> configuration file in the same directory
-                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
-                file has different name or in different location use <code>-config=path</code> parameter
-                where <code>path</code> is an absolute path to the server configuration file:
-            </p>
-            <pre class="brush: plain">
-                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server -config=/home/application.conf
-            </pre>
-            <p>
-                NLPCraft uses <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> and it requires
-                its own configuration file. Server will automatically look for <code>ignite.xml</code>
-                configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
-                If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter
-                where <code>path</code> is an absolute path to the Ignite configuration file:
-            </p>
-            <pre class="brush: plain">
-                $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server -igniteConfig=/home/ignite.xml
-            </pre>
+            Parameters:
+            <dl>
+                <dt>
+                    <code>-server</code>
+                </dt>
+                <dd>
+                    Mandatory parameter to indicate that you are starting the REST server.
+                </dd>
+                <dt><code>-config=path</code></dt>
+                <dd>
+                    Optional parameter to provide server configuration file path.
+                    Server will automatically look for <code>application.conf</code> configuration file in the same directory
+                    as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                    file has different name or in different location use <code>-config=path</code> parameter
+                    where <code>path</code> is an absolute path to the server configuration file.
+                </dd>
+                <dt><code>-igniteConfig=path</code></dt>
+                <dd>
+                    Optional parameter to provide <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> configuration file path.
+                    Server will automatically look for <code>ignite.xml</code>
+                    configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
+                    If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter
+                    where <code>path</code> is an absolute path to the Ignite configuration file.
+                </dd>
+            </dl>
         </section>
     </div>
     <div class="col-md-2 third-column">
