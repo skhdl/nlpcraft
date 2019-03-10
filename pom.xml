@@ -82,7 +82,7 @@
         <apache.common.lang.ver>3.8.1</apache.common.lang.ver>
         <apache.httpcomponents.ver>4.5.7</apache.httpcomponents.ver>
         <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
-        <maven.javadoc.plugin.ver>3.1.0</maven.javadoc.plugin.ver>
+        <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
         <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
         <maven.clean.plugin.ver>3.1.0</maven.clean.plugin.ver>
