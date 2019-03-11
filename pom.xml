@@ -101,11 +101,25 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <name>NLPCraft</name>
     <artifactId>nlpcraft</artifactId>
     <groupId>org.nlpcraft</groupId>
     <version>0.1.0</version>
     <url>https://www.nlpcraft.org</url>
     <description>An API to convert natural language into actions.</description>
+
+    <developers>
+        <developer>
+            <id>aradzinski</id>
+            <name>Aaron Radzinski</name>
+            <email>aradzinski@datalingvo.com</email>
+            <organization>datalingvo</organization>
+            <organizationUrl>http://datalingvo.com</organizationUrl>
+            <roles>
+                <role>architect</role>
+            </roles>
+        </developer>
+    </developers>
 
     <licenses>
         <license>
@@ -132,6 +146,11 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <scm>
+        <url>https://github.com/vic64/nlpcraft.git</url>
+        <connection>scm:git:git://github.com/vic64/nlpcraft.git</connection>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -592,6 +611,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>${maven.gpg.plugin.ver}</version>
+                <configuration>
+                    <passphrase>${gpg.passphrase}</passphrase>
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -601,17 +623,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${maven.nexus.staging.plugin.ver}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
     </build>
