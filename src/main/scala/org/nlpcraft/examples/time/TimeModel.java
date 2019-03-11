@@ -34,7 +34,7 @@ package org.nlpcraft.examples.time;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.examples.misc.geo.cities.CitiesDataProvider;
 import org.nlpcraft.examples.misc.geo.cities.City;

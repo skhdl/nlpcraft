@@ -52,6 +52,7 @@
         <commons.io.ver>2.6</commons.io.ver>
         <commons-lang3.ver>3.8.1</commons-lang3.ver>
         <commons.validator.ver>1.6</commons.validator.ver>
+        <apache.commons.text.ver>1.6</apache.commons.text.ver>
         <jsoup.ver>1.11.3</jsoup.ver>
         <slf4j.ver>1.7.26</slf4j.ver>
         <scala.logging.ver>3.9.0</scala.logging.ver>
@@ -143,6 +144,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${apache.commons.text.ver}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
