@@ -104,7 +104,7 @@
     <name>NLPCraft</name>
     <artifactId>nlpcraft</artifactId>
     <groupId>org.nlpcraft</groupId>
-    <version>0.1.0</version>
+    <version>0.1.0-SNAPSHOT</version>
     <url>https://www.nlpcraft.org</url>
     <description>An API to convert natural language into actions.</description>
 
@@ -150,6 +150,7 @@
     <scm>
         <url>https://github.com/vic64/nlpcraft.git</url>
         <connection>scm:git:git://github.com/vic64/nlpcraft.git</connection>
+        <developerConnection>scm:git:git@github.com:vic64/nlpcraft.git</developerConnection>
     </scm>
 
     <dependencyManagement>
