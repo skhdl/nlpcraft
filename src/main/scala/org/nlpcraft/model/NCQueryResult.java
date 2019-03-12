@@ -56,10 +56,6 @@ import java.util.stream.Collectors;
  *         <td>{@link #html(String)}</td>
  *     </tr>
  *     <tr>
- *         <td><code>html/raw</code></td>
- *         <td>{@link #htmlRaw(String)}</td>
- *     </tr>
- *     <tr>
  *         <td><code>json</code></td>
  *         <td>{@link #json(String)}</td>
  *     </tr>
@@ -70,14 +66,6 @@ import java.util.stream.Collectors;
  *     <tr>
  *         <td><code>json/multipart</code></td>
  *         <td>{@link #jsonMultipart(NCQueryResult...)}</td>
- *     </tr>
- *     <tr>
- *         <td><code>json/table</code></td>
- *         <td>{@link #jsonTable(String)}</td>
- *     </tr>
- *     <tr>
- *         <td><code>json/google/map</code></td>
- *         <td>{@link #jsonGmap(String)}</td>
  *     </tr>
  * </table>
  * Note that all of these types have specific meaning <b>only</b> for REST applications that interpret them
@@ -102,23 +90,11 @@ public class NCQueryResult implements Serializable {
     /**
      * Creates {@code html} result.
      *
-     * @param html Minimal markup HTML. Unlike {@link #htmlRaw(String)} this assumes only minimal
-     *      HTML text formatting markup: {@code <i> <b> <u> <a> <br> <strong> <em> <mark> <small> <del> <ins> <sub> <sup>}.
+     * @param html HTML markup.
      * @return Newly created query result.
      */
     public static NCQueryResult html(String html) {
         return new NCQueryResult(html, "html");
-    }
-    
-    /**
-     * Creates {@code html/raw} result. Result with any arbitrary HTML code snippet. For obvious security reasons
-     * models that return this type of result should be verified and trusted.
-     *
-     * @param html Any raw HTML code snippet.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult htmlRaw(String html) {
-        return new NCQueryResult(html, "html/raw");
     }
     
     /**
@@ -139,62 +115,6 @@ public class NCQueryResult implements Serializable {
      */
     public static NCQueryResult yaml(String yaml) {
         return new NCQueryResult(yaml, "yaml");
-    }
-    
-    /**
-     * Creates {@code json/table} result. Here's the format of the result JSON snippet:
-     * <pre class="brush: js">
-     * {
-     *      "border": true, // Whether or not table has border.
-     *      "title": "Title:", // Optional title for the table.
-     *      "background": "#2f4963", // Background color.
-     *      "borderColor": "#607d8b", // Border color if border is enabled.
-     *      "columns": [ // Array of columns.
-     *          {
-     *              "header": "Header", // Any arbitrary HTML snippet (including inline CSS styling).
-     *              "type": "String" // Type of the column (current ignored).
-     *          }
-     *      ],
-     *      "rows": [ // Array of rows.
-     *          ["one"], // Any arbitrary HTML snippet (including inline CSS styling).
-     *          ["two"] // Any arbitrary HTML snippet (including inline CSS styling).
-     *      ]
-     * }
-     * </pre>
-     *
-     * @param json JSON table specification.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult jsonTable(String json) {
-        return new NCQueryResult(json, "json/table");
-    }
-    
-    /**
-     * Creates {@code json/google/map} result. This allows for simplified usage of static
-     * <a href="https://developers.google.com/maps/documentation/static-maps/intro">Google Map API</a>:
-     * <pre class="brush: js">
-     * {
-     *      "cssStyle": { // CSS style for enclosing image for static Google Map.
-     *          "width": "600px",
-     *          "height": "300px"
-     *      },
-     *      "gmap": { // URL parameters according to https://developers.google.com/maps/documentation/static-maps/intro
-     *          "center": "20.000,30.000",
-     *          "zoom": 4,
-     *          "scale": 2,
-     *          "size": "600x300",
-     *          "maptype": "terrain",
-     *          "markers": "color:red|20.000,30.000"
-     *      }
-     * }
-     * </pre>
-     *
-     * @param gmapJsonCfg JSON string representing CSS styling and URL parameters and their values according to
-     *      <a href="https://developers.google.com/maps/documentation/static-maps/intro">https://developers.google.com/maps/documentation/static-maps/intro</a>.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult jsonGmap(String gmapJsonCfg) {
-        return new NCQueryResult(gmapJsonCfg, "json/google/map");
     }
     
     /**
@@ -245,10 +165,7 @@ public class NCQueryResult implements Serializable {
             !typeLc.equals("json") &&
             !typeLc.equals("yaml") &&
             !typeLc.equals("text") &&
-            !typeLc.equals("json/google/map") &&
-            !typeLc.equals("json/multipart") &&
-            !typeLc.equals("json/table") &&
-            !typeLc.equals("html/raw"))
+            !typeLc.equals("json/multipart"))
             throw new IllegalArgumentException("Invalid result type: " + type);
         else
             return typeLc;
