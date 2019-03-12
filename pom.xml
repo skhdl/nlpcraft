@@ -85,11 +85,8 @@
         <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
-        <maven.assembly.plugin.ver>3.1.1</maven.assembly.plugin.ver>
-        <maven.clean.plugin.ver>3.1.0</maven.clean.plugin.ver>
         <maven.source.plugin.ver>3.0.1</maven.source.plugin.ver>
         <maven.gpg.plugin.ver>1.6</maven.gpg.plugin.ver>
-        <maven.nexus.staging.plugin.ver>1.6.8</maven.nexus.staging.plugin.ver>
 
         <akka.http.2.11.ver>10.1.7</akka.http.2.11.ver>
         <akka.stream.2.11.ver>2.5.21</akka.stream.2.11.ver>
@@ -363,26 +360,6 @@
 
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>${maven.clean.plugin.ver}</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${project.basedir}/build</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>auto-clean</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala.plugin.ver}</version>
@@ -574,7 +551,7 @@
                         </goals>
                         <configuration>
                             <outputFile>
-                                ${project.build.directory}/${artifactId}-${project.version}-all-deps.jar
+                                ${project.build.directory}/${project.artifactId}-${project.version}-all-deps.jar
                             </outputFile>
                             <transformers>
                                 <!--reference.conf - akka configuration file.-->
