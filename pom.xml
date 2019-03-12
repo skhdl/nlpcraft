@@ -35,6 +35,59 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>NLPCraft</name>
+    <artifactId>nlpcraft</artifactId>
+    <groupId>org.nlpcraft</groupId>
+    <version>0.1.0-SNAPSHOT</version>
+    <url>https://www.nlpcraft.org</url>
+    <description>An API to convert natural language into actions.</description>
+
+    <developers>
+        <developer>
+            <id>aradzinski</id>
+            <name>Aaron Radzinski</name>
+            <email>aradzinski@datalingvo.com</email>
+            <organization>datalingvo</organization>
+            <organizationUrl>http://datalingvo.com</organizationUrl>
+            <roles>
+                <role>architect</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+        <license>
+            <name>The Commons Clause</name>
+            <url>https://commonsclause.com/</url>
+            <distribution>repo</distribution>
+            <comments>A safer business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/vic64/nlpcraft.git</url>
+        <connection>scm:git:ssh://git@github.com/vic64/nlpcraft.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/vic64/nlpcraft.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <!-- Major Scala version. -->
         <scala.base>2.11</scala.base>
@@ -94,59 +147,6 @@
         <!-- Force specific encoding on text resources. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <name>NLPCraft</name>
-    <artifactId>nlpcraft</artifactId>
-    <groupId>org.nlpcraft</groupId>
-    <version>0.1.0-SNAPSHOT</version>
-    <url>https://www.nlpcraft.org</url>
-    <description>An API to convert natural language into actions.</description>
-
-    <developers>
-        <developer>
-            <id>aradzinski</id>
-            <name>Aaron Radzinski</name>
-            <email>aradzinski@datalingvo.com</email>
-            <organization>datalingvo</organization>
-            <organizationUrl>http://datalingvo.com</organizationUrl>
-            <roles>
-                <role>architect</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-        <license>
-            <name>The Commons Clause</name>
-            <url>https://commonsclause.com/</url>
-            <distribution>repo</distribution>
-            <comments>A safer business-friendly OSS license</comments>
-        </license>
-    </licenses>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <scm>
-        <url>https://github.com/vic64/nlpcraft.git</url>
-        <connection>scm:git:ssh://git@github.com/vic64/nlpcraft.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/vic64/nlpcraft.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
 
     <dependencyManagement>
         <dependencies>
