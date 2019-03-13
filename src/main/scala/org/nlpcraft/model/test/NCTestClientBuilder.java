@@ -494,10 +494,7 @@ public class NCTestClientBuilder {
         private String mkPrettyString(String type, String body) {
             try {
                 switch (type) {
-                    case "json":
-                    case "json/google/map":
-                    case "json/table":
-                        return gson.toJson(jp.parse(body));
+                    case "json": return gson.toJson(jp.parse(body));
     
                     case "json/multipart": {
                         List<NCMultipartJson> parts = gson.fromJson(body, TYPE_MPARTS);
@@ -519,11 +516,11 @@ public class NCTestClientBuilder {
                         return buf.toString();
                     }
     
-                    case "html/raw":
-                    case "html":
-                        return Jsoup.parseBodyFragment(body).outerHtml();
-                        
+                    case "html": return Jsoup.parseBodyFragment(body).outerHtml();
+    
+                    case "text":
                     case "yaml": return body;
+                    
     
                     default:
                         return body;
