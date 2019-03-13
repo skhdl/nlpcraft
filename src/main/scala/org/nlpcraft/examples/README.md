@@ -1,4 +1,4 @@
-<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
+<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="40px">
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
