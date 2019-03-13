@@ -2,12 +2,15 @@
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
-### Alarm Example
-This example provides a simple "alarm clock" interface where you can ask to set the timer for a 
-specific duration from now expressed in hours, minutes and/or seconds. You can say 
-`ping me in 3 minutes`, `buzz me in an hour and 15 minutes`, or `set my alarm for 30 secs`. 
-When the timers is up it will simply print out "BEEP BEEP BEEP" in the probe console.
+### Echo Example
+This is a Scala example.
 
+For any user input this example model returns JSON representation of the query 
+context corresponding to that input. This is a simple demonstration of the 
+JSON output and of most of the NLPCraft-provided data that a user defined model 
+can operate on. This example can be useful during the development to see what 
+object properties are available.
+  
 See [Getting Started](http://nlpcraft.org/getting_started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:
