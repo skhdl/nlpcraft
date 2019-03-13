@@ -68,8 +68,7 @@ import static org.nlpcraft.model.utils.NCTokenUtils.getGeoCountry;
  * Time example model provider.
  * <p>
  * This example answers the questions about current time, either local or at some city.
- * It provides HTML response with time and timezone information as well as Google map
- * of the location (default or provided by the user).
+ * It provides YAML response with time and timezone information.
  */
 public class TimeModel extends NCModelProviderAdapter {
     // Medium data formatter.

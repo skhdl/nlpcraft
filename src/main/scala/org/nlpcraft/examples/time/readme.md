@@ -2,9 +2,9 @@
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
-### HelloWorld Example
-This trivial example simply responds with 'Hello World!' on any user input.
-This is the simplest and shortest user model that can be defined.
+### Time Example
+This example data model answers the questions about current time, either local to the caller or at some city.
+It provides YAML response with time and timezone information and uses YAML model definition.
   
 See [Getting Started](http://nlpcraft.org/getting_started.html) guide for more instructions on how to run these examples.
 
