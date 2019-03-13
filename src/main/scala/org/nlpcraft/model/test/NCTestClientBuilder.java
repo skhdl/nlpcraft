@@ -34,7 +34,6 @@ package org.nlpcraft.model.test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -323,7 +322,6 @@ public class NCTestClientBuilder {
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        private final JsonParser jp = new JsonParser();
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
