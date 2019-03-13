@@ -31,37 +31,20 @@
 
 package org.nlpcraft.examples.weather;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.examples.misc.apixu.ApixuPeriodException;
-import org.nlpcraft.examples.misc.apixu.ApixuWeatherService;
-import org.nlpcraft.examples.misc.apixu.beans.Current;
-import org.nlpcraft.examples.misc.apixu.beans.CurrentResponse;
-import org.nlpcraft.examples.misc.apixu.beans.Location;
-import org.nlpcraft.examples.misc.apixu.beans.RangeResponse;
-import org.nlpcraft.examples.misc.geo.keycdn.GeoManager;
-import org.nlpcraft.examples.misc.geo.keycdn.beans.GeoDataBean;
-import org.nlpcraft.model.NCModelProviderAdapter;
-import org.nlpcraft.model.NCQueryResult;
-import org.nlpcraft.model.NCRejection;
-import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.builder.NCModelBuilder;
-import org.nlpcraft.model.intent.NCIntentSolver;
-import org.nlpcraft.model.intent.NCIntentSolver.AND;
-import org.nlpcraft.model.intent.NCIntentSolver.CONV_INTENT;
-import org.nlpcraft.model.intent.NCIntentSolver.INTENT;
-import org.nlpcraft.model.intent.NCIntentSolver.TERM;
-import org.nlpcraft.model.intent.NCIntentSolverContext;
-import org.nlpcraft.model.utils.NCTokenUtils;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Supplier;
+import com.google.gson.*;
+import org.apache.commons.lang3.tuple.*;
+import org.nlpcraft.examples.misc.apixu.*;
+import org.nlpcraft.examples.misc.apixu.beans.*;
+import org.nlpcraft.examples.misc.geo.keycdn.*;
+import org.nlpcraft.examples.misc.geo.keycdn.beans.*;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.intent.NCIntentSolver.*;
+import org.nlpcraft.model.utils.*;
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
 
 import static org.nlpcraft.model.utils.NCTokenUtils.*;
 
@@ -85,6 +68,8 @@ public class WeatherModel extends NCModelProviderAdapter {
 
     // Geo manager.
     private final GeoManager geoMrg = new GeoManager();
+    
+    private static final Gson gson = new Gson();
     
     // Maximum free words left before rejection.
     private static final int MAX_FREE_WORDS = 4;
@@ -115,7 +100,7 @@ public class WeatherModel extends NCModelProviderAdapter {
         if (loc == null)
             throw new NCRejection("Weather service doesn't recognize this location.");
     
-        return NCQueryResult.json(new WeatherResultWrapper<>(intentId, res));
+        return NCQueryResult.json(gson.toJson(new WeatherResultWrapper<>(intentId, res)));
     }
 
     /**
@@ -134,7 +119,7 @@ public class WeatherModel extends NCModelProviderAdapter {
         if (cur == null)
             throw new NCRejection("Weather service doesn't support this location.");
         
-        return NCQueryResult.json(new WeatherResultWrapper<>(intentId, res));
+        return NCQueryResult.json(gson.toJson(new WeatherResultWrapper<>(intentId, res)));
     }
 
     /**
