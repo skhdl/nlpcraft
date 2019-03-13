@@ -16,7 +16,7 @@ Here's an example of the files for `time` example:
 │   └── time_model.yaml
 </pre>
 
-See [Getting Started](http://nlpcraft.org/getting_started.html) guide for more instructions on how to run these examples.
+See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:
 

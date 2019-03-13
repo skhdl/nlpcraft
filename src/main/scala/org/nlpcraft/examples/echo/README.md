@@ -11,7 +11,7 @@ JSON output and of most of the NLPCraft-provided data that a user defined model
 can operate on. This example can be useful during the development to see what 
 object properties are available.
   
-See [Getting Started](http://nlpcraft.org/getting_started.html) guide for more instructions on how to run these examples.
+See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:
 

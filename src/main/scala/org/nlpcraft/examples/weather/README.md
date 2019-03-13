@@ -7,7 +7,7 @@ This example demonstrates relatively complete NLI-based weather service with JSO
 intent matching logic. It uses https://www.apixu.com REST service for the actual
 weather information.
   
-See [Getting Started](http://nlpcraft.org/getting_started.html) guide for more instructions on how to run these examples.
+See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:
 
