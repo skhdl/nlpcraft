@@ -31,12 +31,8 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.common.util.NCUtils;
-import org.nlpcraft.model.intent.NCIntentSolver;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import org.nlpcraft.model.intent.*;
+import java.io.*;
 
 /**
  * Model query result returned from {@link NCModel#query(NCQueryContext)} method. Query result consists of the
@@ -62,10 +58,6 @@ import java.util.stream.Collectors;
  *     <tr>
  *         <td><code>yaml</code></td>
  *         <td>{@link #yaml(String)}</td>
- *     </tr>
- *     <tr>
- *         <td><code>json/multipart</code></td>
- *         <td>{@link #jsonMultipart(NCQueryResult...)}</td>
  *     </tr>
  * </table>
  * Note that all of these types have specific meaning <b>only</b> for REST applications that interpret them
@@ -118,27 +110,6 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json/multipart} result. Multipart result is a list (container) of other results. Note
-     * that nesting or recursion of results are not supported.
-     *
-     * @param parts Other results making up this multipart result.
-     * @return Newly created query result.
-     */
-    public static NCQueryResult jsonMultipart(NCQueryResult... parts) {
-        return new NCQueryResult(
-            "[" +
-                Arrays.stream(parts).map(part ->
-                    "{" +
-                        "\"resType\": \"" + part.getType() + "\", " +
-                        "\"resBody\": \"" + NCUtils.escapeJson(part.getBody()) + "\"" +
-                        "}")
-                    .collect(Collectors.joining(",")) +
-            "]",
-            "json/multipart"
-        );
-    }
-    
-    /**
      * Creates new result with given body and type.
      *
      * @param body Result body.
@@ -164,8 +135,7 @@ public class NCQueryResult implements Serializable {
         if (!typeLc.equals("html") &&
             !typeLc.equals("json") &&
             !typeLc.equals("yaml") &&
-            !typeLc.equals("text") &&
-            !typeLc.equals("json/multipart"))
+            !typeLc.equals("text"))
             throw new IllegalArgumentException("Invalid result type: " + type);
         else
             return typeLc;
