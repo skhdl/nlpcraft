@@ -480,7 +480,7 @@ public class NCTestClientBuilder {
                     case "html": return Jsoup.parseBodyFragment(body).outerHtml();
                     case "text":
                     case "yaml":
-                    case "json": // JSON already configured for for pretty printing.
+                    case "json": // JSON already configured for pretty printing.
                         return body;
     
                     default: return body;
