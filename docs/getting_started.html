@@ -179,41 +179,69 @@ layout: interior
             <span class="section-title">Using REST API</span>
             <p>
                 There are countless way to issue REST calls - for our examples we'll use <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility.
-                NLPCraft comes with a convenient wrapper <code>bin/nccurl.sh</code> script that shortens
-                command line of the standard <code>cURL</code>. We recommend adding <code>bin/nccurl.sh</code> to your <code>$PATH</code>.
+                NLPCraft comes with a convenient wrapper script <code>bin/nccurl.sh</code> that shortens
+                command line of the standard <code>cURL</code>. We recommend adding <code>bin/nccurl.sh</code> to
+                your <code>$PATH</code> environment variable.
             </p>
+            <div class="bq info">
+                We'll go over the full REST API
+                <a href="https://nlpcraft.docs.apiary.io" target="apiary">functionality</a> as well as the
+                detailed explanation of data model and data sources later in <a href="/dev_guide.html">Developer Guide</a>.
+            </div>
             <p>
-                Note also that we'll use <a target=_ href="https://www.python.org/downloads/">python</a> to format
-                JSON responses from the server. Make sure you have python installed.
+                Note also that we'll use python to format
+                cURL JSON responses from the server. Make sure you have python <a target=_ href="https://www.python.org/downloads/">installed</a>.
             </p>
-            <span class="section-sub-title"><b><code>/user/signin</code></b></span>
+            <span class="section-sub-title"><b><code>user/signin</code></b></span>
             <p>
-                First, we need to sign in and obtain access token for further operations. When REST server starts for the first
-                time it creates a default user with email <code>admin@admin.com</code> and <code>admin</code> password. We'll
-                use these credentials for sing in:
+                First, we need to sign in and obtain access token for further operations. When REST server starts
+                for the first time it creates a default user with email <code>admin@admin.com</code> and
+                <code>admin</code> password. We'll use these credentials for sing in:
             </p>
-            <pre class="brush: js">
-                $ nccurl.sh user/signin
-                > '{"email": "admin@admin.com", "passwd": "admin"}' |
-                > python -m json.tool
+            <pre class="brush: js; highlight: [2, 3, 4, 5]">
+                $ nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
                 {
                     "acsTok": "KMGWMQJ44",
                     "status": "API_OK"
                 }
             </pre>
             <p>
-                Note access token <b>KMGWMQJ44</b> which we'll use in subsequent operations.
+                Note access token <b>KMGWMQJ44</b> which we'll use in subsequent operations. Keep in mind that you
+                will obviously  have different access tokens and IDs when you are performing these steps yourself.
             </p>
-            <span class="section-sub-title"><b><code>/ask</code></b></span>
+            <span class="section-sub-title"><b><code>ds/add</code></b></span>
             <p>
-                We'll use <code>nlpcraft.weather.ex </code> data model (from <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>).
-                We are going to ask - <b>what is the current forecast for Chicago?</b>:
+                In NLPCraft data models define a class of models, while data sources define a particular
+                instance of that model (i.e. a data model can have multiple data sources with different configurations).
+                In this example, we are going to be asking questions about the weather forecast and we'll
+                use <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>
+                for that. Lets add a new data source for the model from this example:
             </p>
-            <pre class="brush: js">
-                $ ./nccurl.sh ask '{
-                > "acsTok": "KMGWMQJ44",
-                > "txt": "what is the current forecast for Chicago?",
-                > "mdlId": "nlpcraft.weather.ex"}' | python -m json.tool
+            <pre class="brush: js; highlight: [2, 3, 4, 5]">
+                ./nccurl.sh ds/add '{"acsTok": "KMGWMQJ44", "name": "weather", "shortDesc": "example", "mdlId": "nlpcraft.weather.ex", "mdlName": "Weather Example Model", "mdlVer": "1.0"}' | python -m json.tool
+                {
+                    "id": 8003,
+                    "status": "API_OK"
+                }
+            </pre>
+            <p>
+                Note the new data source ID <code>8003</code>. As before, the actual value will be different
+                when you are performing these steps yourself.
+            </p>
+            <div class="bq info">
+                Note that adding new data source is done only once. User doesn't have to do it on each sign in.
+            </div>
+
+            <span class="section-sub-title"><b><code>/ask</code></b> <span class="amp">&amp;</span> <b><code>/check</code></b></span>
+            <p>
+                Now that we have the data source added we can go ahead and start asking natural language questions against
+                this data source:
+            </p>
+            <p>
+                <b>Q1: What is the current forecast for Chicago?</b>
+            </p>
+            <pre class="brush: js highlight: [2, 3, 4, 5]">
+                $ ./nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "what is the current forecast for Chicago?", "dsId": 8003}' | python -m json.tool
                 {
                     "srvReqId": "gJ0OJ0qXp",
                     "status": "API_OK"

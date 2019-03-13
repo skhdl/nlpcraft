@@ -33,8 +33,8 @@
 # Quick shortcut script for localhost testing with curl (w/o excessive command line).
 #
 # Usage:
-# - 1st parameter is REST URL unique suffix (i.e. user/signin)
-# - 2nd parameter is JSON payload
+# - 1st parameter is REST URL unique suffix (i.e. user/signin) w/o leading '/'
+# - 2nd parameter is JSON payload string
 #
 # Example usage:
 #   $./nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}'
@@ -44,4 +44,4 @@
 # For pretty JSON output pipe curl to 'python -m json.tool':
 #   $./nccurl.sh check '{"acsTok": "OgJanjDzk"}' | python -m json.tool
 
-curl -d "$2" -H 'Content-Type: application/json' http://localhost:8081/api/v1/$1
+curl -s -d"$2" -H 'Content-Type: application/json' http://localhost:8081/api/v1/$1
