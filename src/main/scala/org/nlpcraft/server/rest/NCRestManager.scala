@@ -387,7 +387,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             ).filter(_._2 != null).asJava
                     )
 
-                    // We have to use GSON (not spray) here to serialize indistinct `resBody` field.
+                    // We have to use GSON (not spray) here to serialize `resBody` field.
                     val js = GSON.toJson(Map("status" → API_OK.toString, "states" → states.asJava).asJava)
 
                     complete(HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, js)))

@@ -1538,6 +1538,7 @@ object NCUtils extends LazyLogging {
 
     /**
       * Creates map from JSON string.
+      *
       * @param js JSON string.
       */
     @throws[NCE]
@@ -1545,6 +1546,6 @@ object NCUtils extends LazyLogging {
         try
             GSON.fromJson(js, TYPE_MAP)
         catch {
-            case e: Exception ⇒ throw new NCE(s"Error when JSON extraction: $js", e)
+            case e: Exception ⇒ throw new NCE(s"Failed to convert JSON string to map: $js", e)
         }
 }

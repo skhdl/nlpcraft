@@ -79,7 +79,7 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult text(String txt) {
-        checkNull("txt", txt);
+        checkBodyNull(txt);
         
         return new NCQueryResult(txt, "text");
     }
@@ -91,7 +91,7 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult html(String html) {
-        checkNull("html", html);
+        checkBodyNull(html);
         
         return new NCQueryResult(html, "html");
     }
@@ -103,14 +103,14 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult json(String json) {
-        checkNull("json", json);
+        checkBodyNull(json);
         
         // Validation.
         try {
             NCUtils.js2Map(json);
         }
         catch (NCException e) {
-            throw new IllegalArgumentException("Invalid json value: " + json);
+            throw new IllegalArgumentException("Invalid JSON value: " + json, e);
         }
         
         return new NCQueryResult(json, "json");
@@ -123,7 +123,7 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult yaml(String yaml) {
-        checkNull("yaml", yaml);
+        checkBodyNull(yaml);
         
         return new NCQueryResult(yaml, "yaml");
     }
@@ -163,13 +163,12 @@ public class NCQueryResult implements Serializable {
     
     /**
      *
-     * @param name
      * @param val
      * @return
      */
-    private static void checkNull(String name, String val) {
+    private static void checkBodyNull(String val) {
         if (val == null)
-            throw new IllegalArgumentException("Invalid null value: " + name);
+            throw new IllegalArgumentException("Query result body cannot be 'null'.");
     }
     
     /**
