@@ -34,7 +34,6 @@ package org.nlpcraft.model.test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -204,30 +203,6 @@ public class NCTestClientBuilder {
     /**
      * JSON helper class.
      */
-    static class NCMultipartJson {
-        @SerializedName("resType") private String resType;
-        @SerializedName("resBody") private String resBody;
-    
-        public String getResType() {
-            return resType;
-        }
-    
-        public void setResType(String resType) {
-            this.resType = resType;
-        }
-    
-        public String getResBody() {
-            return resBody;
-        }
-    
-        public void setResBody(String resBody) {
-            this.resBody = resBody;
-        }
-    }
-    
-    /**
-     * JSON helper class.
-     */
     static class NCDsJson {
         @SerializedName("id") private long dsId;
         @SerializedName("mdlId") private String mdlId;
@@ -257,7 +232,7 @@ public class NCTestClientBuilder {
         @SerializedName("usrId") private long userId;
         @SerializedName("dsId") private long dsId;
         @SerializedName("resType") private String resType;
-        @SerializedName("resBody") private String resBody;
+        @SerializedName("resBody") private Object resBody;
         @SerializedName("status") private String status;
         @SerializedName("error") private String error;
         @SerializedName("createTstamp") private long createTstamp;
@@ -302,7 +277,8 @@ public class NCTestClientBuilder {
         public void setResultType(String resType) {
             this.resType = resType;
         }
-        public String getResultBody() {
+        
+        public Object getResultBody() {
             return resBody;
         }
 
@@ -344,10 +320,8 @@ public class NCTestClientBuilder {
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
         private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
-        private final Type TYPE_MPARTS = new TypeToken<ArrayList<NCMultipartJson>>() {}.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        private final JsonParser jp = new JsonParser();
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
@@ -452,6 +426,15 @@ public class NCTestClientBuilder {
 
                 if (js != null) {
                     assert js.status.equals("QRY_READY");
+                    
+                    String body = null;
+                    
+                    if (js.getResultBody() != null) {
+                        body =
+                            js.getResultType() != null && js.getResultType().equals("json") ?
+                                gson.toJson(js.getResultBody()) :
+                                (String)js.getResultBody();
+                    }
     
                     NCTestResult res =
                         mkResult(
@@ -459,7 +442,7 @@ public class NCTestClientBuilder {
                             dsId,
                             mdlId,
                             js.getResultType(),
-                            js.getResultBody(),
+                            body,
                             js.getError(),
                             js.getUpdateTstamp() - js.getCreateTstamp()
                         );
@@ -494,36 +477,13 @@ public class NCTestClientBuilder {
         private String mkPrettyString(String type, String body) {
             try {
                 switch (type) {
-                    case "json": return gson.toJson(jp.parse(body));
-    
-                    case "json/multipart": {
-                        List<NCMultipartJson> parts = gson.fromJson(body, TYPE_MPARTS);
-        
-                        StringBuilder buf = new StringBuilder();
-                        
-                        int num = 1;
-        
-                        for (NCMultipartJson part : parts) {
-                            buf.append(num++).
-                                append(". Part type: `").
-                                append(part.getResType()).
-                                append("`\n").
-                                append("Part body:\n").
-                                append(mkPrettyString(part.getResType(), part.getResBody())).
-                                append("\n");
-                        }
-        
-                        return buf.toString();
-                    }
-    
                     case "html": return Jsoup.parseBodyFragment(body).outerHtml();
-    
                     case "text":
-                    case "yaml": return body;
-                    
-    
-                    default:
+                    case "yaml":
+                    case "json": // JSON already configured for pretty printing.
                         return body;
+    
+                    default: return body;
                 }
             }
             catch (Exception e) {
@@ -979,7 +939,7 @@ public class NCTestClientBuilder {
             assert (resType != null && resBody != null) ^ errMsg != null;
             
             return new NCTestResult() {
-                private Optional<String> convert(String s) {
+                private<T> Optional<String> convert(String s) {
                     return s == null ? Optional.empty() : Optional.of(s);
                 }
                 

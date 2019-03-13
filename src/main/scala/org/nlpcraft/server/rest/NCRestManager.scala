@@ -39,8 +39,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
+import com.google.gson.Gson
 import org.apache.commons.validator.routines.UrlValidator
-import org.nlpcraft.common.{NCException, NCLifecycle}
+import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
@@ -49,10 +50,13 @@ import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.probe.NCProbeManager
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.user.NCUserManager
-import org.nlpcraft.common._
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.ContentTypes
 
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
@@ -66,6 +70,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
     
     // Current REST API version (simple increment number), not a semver based.
     private final val API_VER = 1
+
+    private final val GSON = new Gson()
 
     private val API = "api" / s"v$API_VER"
 
@@ -254,723 +260,710 @@ object NCRestManager extends NCLifecycle("REST manager") {
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        val routes: Route = {
-            post {
-                /**/path(API / "ask") {
-                    case class Req(
-                        acsTok: String,
-                        txt: String,
-                        dsId: Option[Long],
-                        mdlId: Option[String]
-                    )
-                    case class Res(
-                        status: String,
-                        srvReqId: String
-                    )
+        val routes: Route = post {
+            /**/path(API / "ask") {
+                case class Req(
+                    acsTok: String,
+                    txt: String,
+                    dsId: Option[Long],
+                    mdlId: Option[String]
+                )
+                case class Res(
+                    status: String,
+                    srvReqId: String
+                )
 
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("txt", req.txt, 1024)
-                        checkLengthOpt("mdlId", req.mdlId, 32)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
 
-                        if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
-                            throw XorFields("dsId", "mdlId")
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("txt", req.txt, 1024)
+                    checkLengthOpt("mdlId", req.mdlId, 32)
 
-                        val userId = authenticate(req.acsTok).id
+                    if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
+                        throw XorFields("dsId", "mdlId")
 
-                        optionalHeaderValueByName("User-Agent") { userAgent ⇒
-                            extractClientIP { remoteAddr ⇒
-                                val tmpDsId =
-                                    req.mdlId match {
-                                        case Some(mdlId) ⇒ Some(NCDsManager.addTempDataSource(mdlId))
-                                        case None ⇒ None
-                                    }
+                    val userId = authenticate(req.acsTok).id
 
-                                try {
-                                    val newSrvReqId =
-                                        NCQueryManager.ask(
-                                            userId,
-                                            req.txt,
-                                            tmpDsId.getOrElse(req.dsId.get),
-                                            userAgent,
-                                            remoteAddr.toOption match {
-                                                case Some(a) ⇒ Some(a.getHostAddress)
-                                                case None ⇒ None
-                                            }
-                                        )
-
-                                    complete {
-                                        Res(API_OK, newSrvReqId)
-                                    }
+                    optionalHeaderValueByName("User-Agent") { userAgent ⇒
+                        extractClientIP { remoteAddr ⇒
+                            val tmpDsId =
+                                req.mdlId match {
+                                    case Some(mdlId) ⇒ Some(NCDsManager.addTempDataSource(mdlId))
+                                    case None ⇒ None
                                 }
-                                finally {
-                                    tmpDsId match {
-                                        case Some(id) ⇒ NCDsManager.deleteDataSource(id)
-                                        case None ⇒ // No-op.
-                                    }
+
+                            try {
+                                val newSrvReqId =
+                                    NCQueryManager.ask(
+                                        userId,
+                                        req.txt,
+                                        tmpDsId.getOrElse(req.dsId.get),
+                                        userAgent,
+                                        remoteAddr.toOption match {
+                                            case Some(a) ⇒ Some(a.getHostAddress)
+                                            case None ⇒ None
+                                        }
+                                    )
+
+                                complete {
+                                    Res(API_OK, newSrvReqId)
+                                }
+                            }
+                            finally {
+                                tmpDsId match {
+                                    case Some(id) ⇒ NCDsManager.deleteDataSource(id)
+                                    case None ⇒ // No-op.
                                 }
                             }
                         }
                     }
-                } ~
-                /**/path(API / "cancel") {
-                    case class Req(
-                        acsTok: String,
-                        srvReqIds: Set[String]
+                }
+            } ~
+            /**/path(API / "cancel") {
+                case class Req(
+                    acsTok: String,
+                    srvReqIds: Set[String]
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    val initiatorUsr = authenticate(req.acsTok)
+
+                    if (
+                        !initiatorUsr.isAdmin &&
+                        NCQueryManager.get(req.srvReqIds).exists(_.userId != initiatorUsr.id)
                     )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                        throw AdminRequired(initiatorUsr.email)
 
-                        val initiatorUsr = authenticate(req.acsTok)
+                    NCQueryManager.cancel(req.srvReqIds)
 
-                        if (
-                            !initiatorUsr.isAdmin &&
-                            NCQueryManager.get(req.srvReqIds).exists(_.userId != initiatorUsr.id)
-                        )
-                            throw AdminRequired(initiatorUsr.email)
-
-                        NCQueryManager.cancel(req.srvReqIds)
-        
-                        complete {
-                            Res(API_OK)
-                        }
+                    complete {
+                        Res(API_OK)
                     }
-                } ~
-                /**/path(API / "check") {
-                    case class Req(
-                        acsTok: String
-                    )
-                    case class QueryState(
-                        srvReqId: String,
-                        usrId: Long,
-                        dsId: Long,
-                        mdlId: String,
-                        probeId: Option[String],
-                        status: String,
-                        resType: Option[String],
-                        resBody: Option[String],
-                        error: Option[String],
-                        createTstamp: Long,
-                        updateTstamp: Long
-                    )
-                    case class Res(
-                        status: String,
-                        states: Seq[QueryState]
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                }
+            } ~
+            /**/path(API / "check") {
+                case class Req(
+                    acsTok: String
+                )
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
 
-                        val userId = authenticate(req.acsTok).id
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
 
-                        val states =
-                            NCQueryManager.check(userId).map(p ⇒
-                                QueryState(
-                                    p.srvReqId,
-                                    p.userId,
-                                    p.dsId,
-                                    p.modelId,
-                                    p.probeId,
-                                    p.status,
-                                    p.resultType,
-                                    p.resultBody,
-                                    p.error,
-                                    p.createTstamp.getTime,
-                                    p.updateTstamp.getTime
-                                )
-                        )
-                        
-                        complete {
-                            Res(API_OK, states)
-                        }
-                    }
-                } ~
+                    val userId = authenticate(req.acsTok).id
+
+                    val states =
+                        NCQueryManager.check(userId).map(p ⇒
+                            Map(
+                                "srvReqId" → p.srvReqId,
+                                "usrId" → p.userId,
+                                "dsId" → p.dsId,
+                                "mdlId" → p.modelId,
+                                "probeId" → p.probeId.orNull,
+                                "status" → p.status,
+                                "resType" → p.resultType.orNull,
+                                "resBody" → (
+                                    if (p.resultBody.isDefined &&
+                                        p.resultType.isDefined &&
+                                        p.resultType.get == "json"
+                                    )
+                                        U.js2Map(p.resultBody.get)
+                                    else
+                                        p.resultBody.orNull
+                                ),
+                                "error" → p.error.orNull,
+                                "createTstamp" → p.createTstamp.getTime,
+                                "updateTstamp" → p.updateTstamp.getTime
+                            ).filter(_._2 != null).asJava
+                    )
+
+                    // We have to use GSON (not spray) here to serialize `resBody` field.
+                    val js = GSON.toJson(Map("status" → API_OK.toString, "states" → states.asJava).asJava)
+
+                    complete(HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, js)))
+                }
+            } ~
                 /**/path(API / "clear" / "conversation") {
-                    case class Req(
-                        acsTok: String,
-                        dsId: Long
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                case class Req(
+                    acsTok: String,
+                    dsId: Long
+                )
+                case class Res(
+                    status: String
+                )
 
-                        val userId = authenticate(req.acsTok).id
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
-                        NCProbeManager.clearConversation(userId, req.dsId)
-        
-                        complete {
-                            Res(API_OK)
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    val userId = authenticate(req.acsTok).id
+
+                    NCProbeManager.clearConversation(userId, req.dsId)
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "add") {
+                case class Req(
+                    // Caller.
+                    acsTok: String,
+
+                    // New user.
+                    email: String,
+                    passwd: String,
+                    firstName: String,
+                    lastName: String,
+                    avatarUrl: Option[String],
+                    isAdmin: Boolean
+                )
+                case class Res(
+                    status: String,
+                    id: Long
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("email", req.email, 64)
+                    checkLength("passwd", req.passwd, 64)
+                    checkLength("firstName", req.firstName, 64)
+                    checkLength("lastName", req.lastName, 64)
+                    checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    val id = NCUserManager.addUser(
+                        req.email,
+                        req.passwd,
+                        req.firstName,
+                        req.lastName,
+                        req.avatarUrl,
+                        req.isAdmin
+                    )
+
+                    complete {
+                        Res(API_OK, id)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "passwd" / "reset") {
+                case class Req(
+                    // Caller.
+                    acsTok: String,
+                    userId: Option[Long],
+                    newPasswd: String
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("newPasswd", req.newPasswd, 64)
+
+                    val initiatorUsr = authenticate(req.acsTok)
+                    val usrId = getUserId(initiatorUsr, req.userId)
+
+                    NCUserManager.resetPassword(
+                        usrId,
+                        req.newPasswd
+                    )
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "delete") {
+                case class Req(
+                    acsTok: String,
+                    id: Option[Long]
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    val initiatorUsr = authenticate(req.acsTok)
+                    val usrId = getUserId(initiatorUsr, req.id)
+
+                    NCUserManager.deleteUser(usrId)
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "update") {
+                case class Req(
+                    // Caller.
+                    acsTok: String,
+
+                    // Update user.
+                    id: Option[Long],
+                    firstName: String,
+                    lastName: String,
+                    avatarUrl: Option[String],
+                    isAdmin: Boolean
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("firstName", req.firstName, 64)
+                    checkLength("lastName", req.lastName, 64)
+                    checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+
+                    val initiatorUsr = authenticate(req.acsTok)
+                    val usrId = getUserId(initiatorUsr, req.id)
+
+                    NCUserManager.updateUser(
+                        usrId,
+                        req.firstName,
+                        req.lastName,
+                        req.avatarUrl,
+                        req.isAdmin
+                    )
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "signup") {
+                case class Req(
+                    email: String,
+                    passwd: String,
+                    firstName: String,
+                    lastName: String,
+                    avatarUrl: Option[String]
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                // NOTE: no authentication requires on signup.
+
+                entity(as[Req]) { req ⇒
+                    checkLength("email", req.email, 64)
+                    checkLength("passwd", req.passwd, 64)
+                    checkLength("firstName", req.firstName, 64)
+                    checkLength("lastName", req.lastName, 64)
+                    checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+
+                    NCUserManager.signup(
+                        req.email,
+                        req.passwd,
+                        req.firstName,
+                        req.lastName,
+                        req.avatarUrl
+                    )
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "signout") {
+                case class Req(
+                    acsTok: String
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    authenticate(req.acsTok)
+
+                    NCUserManager.signout(req.acsTok)
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "signin") {
+                case class Req(
+                    email: String,
+                    passwd: String
+                )
+                case class Res(
+                    status: String,
+                    acsTok: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                // NOTE: no authentication requires on signin.
+
+                entity(as[Req]) { req ⇒
+                    checkLength("email", req.email, 64)
+                    checkLength("passwd", req.passwd, 64)
+
+                    NCUserManager.signin(
+                        req.email,
+                        req.passwd
+                    ) match {
+                        case None ⇒ throw SignInFailure(req.email) // Email is unknown (user hasn't signed up).
+                        case Some(acsTkn) ⇒ complete {
+                            Res(API_OK, acsTkn)
                         }
                     }
-                } ~
-                /**/path(API / "user" / "add") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-                        
-                        // New user.
-                        email: String,
-                        passwd: String,
-                        firstName: String,
-                        lastName: String,
-                        avatarUrl: Option[String],
-                        isAdmin: Boolean
-                    )
-                    case class Res(
-                        status: String,
-                        id: Long
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("email", req.email, 64)
-                        checkLength("passwd", req.passwd, 64)
-                        checkLength("firstName", req.firstName, 64)
-                        checkLength("lastName", req.lastName, 64)
-                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+                }
+            } ~
+            /**/path(API / "user" / "all") {
+                case class Req(
+                    // Caller.
+                    acsTok: String
+                )
+                case class ResUser(
+                    id: Long,
+                    email: String,
+                    firstName: String,
+                    lastName: String,
+                    avatarUrl: Option[String],
+                    lastDsId: Long,
+                    isAdmin: Boolean
+                )
+                case class Res(
+                    status: String,
+                    users: Seq[ResUser]
+                )
 
-                        authenticateAsAdmin(req.acsTok)
-                        
-                        val id = NCUserManager.addUser(
-                            req.email,
-                            req.passwd,
-                            req.firstName,
-                            req.lastName,
-                            req.avatarUrl,
-                            req.isAdmin
-                        )
-                        
-                        complete {
-                            Res(API_OK, id)
-                        }
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat7(ResUser)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    val usrLst = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
+                        mdo.id,
+                        mdo.email,
+                        mdo.firstName,
+                        mdo.lastName,
+                        mdo.avatarUrl,
+                        mdo.lastDsId,
+                        mdo.isAdmin
+                    ))
+
+                    complete {
+                        Res(API_OK, usrLst)
                     }
-                } ~
-                /**/path(API / "user" / "passwd" / "reset") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-                        userId: Option[Long],
-                        newPasswd: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("newPasswd", req.newPasswd, 64)
+                }
+            } ~
+            /**/path(API / "user" / "endpoint" / "register") {
+                case class Req(
+                    acsTok: String,
+                    endpoint: String
+                )
+                case class Res(
+                    status: String
+                )
 
-                        val initiatorUsr = authenticate(req.acsTok)
-                        val usrId = getUserId(initiatorUsr, req.userId)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
-                        NCUserManager.resetPassword(
-                            usrId,
-                            req.newPasswd
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("endpoint", req.endpoint, 2083)
+
+                    if (!urlVal.isValid(req.endpoint))
+                        throw InvalidField(req.endpoint)
+
+                    val usrId = authenticate(req.acsTok).id
+
+                    NCUserManager.registerEndpoint(usrId, req.endpoint)
+
+                    complete {
+                        Res(API_OK)
                     }
-                } ~
-                /**/path(API / "user" / "delete") {
-                    case class Req(
-                        acsTok: String,
-                        id: Option[Long]
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                }
+            } ~
+            /**/path(API / "user" / "endpoint" / "remove") {
+                case class Req(
+                    acsTok: String
+                )
+                case class Res(
+                    status: String
+                )
 
-                        val initiatorUsr = authenticate(req.acsTok)
-                        val usrId = getUserId(initiatorUsr, req.id)
-    
-                        NCUserManager.deleteUser(usrId)
-    
-                        complete {
-                            Res(API_OK)
-                        }
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    val usrId = authenticate(req.acsTok).id
+
+                    NCUserManager.removeEndpoint(usrId)
+
+                    complete {
+                        Res(API_OK)
                     }
-                } ~
-                /**/path(API / "user" / "update") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-        
-                        // Update user.
-                        id: Option[Long],
-                        firstName: String,
-                        lastName: String,
-                        avatarUrl: Option[String],
-                        isAdmin: Boolean
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("firstName", req.firstName, 64)
-                        checkLength("lastName", req.lastName, 64)
-                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+                }
+            } ~
+            /**/path(API / "ds" / "add") {
+                case class Req(
+                    // Caller.
+                    acsTok: String,
 
-                        val initiatorUsr = authenticate(req.acsTok)
-                        val usrId = getUserId(initiatorUsr, req.id)
+                    // Data source.
+                    name: String,
+                    shortDesc: String,
+                    mdlId: String,
+                    mdlName: String,
+                    mdlVer: String,
+                    mdlCfg: Option[String]
+                )
+                case class Res(
+                    status: String,
+                    id: Long
+                )
 
-                        NCUserManager.updateUser(
-                            usrId,
-                            req.firstName,
-                            req.lastName,
-                            req.avatarUrl,
-                            req.isAdmin
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("name", req.name, 128)
+                    checkLength("shortDesc", req.shortDesc, 128)
+                    checkLength("mdlId", req.mdlId, 32)
+                    checkLength("mdlName", req.mdlName, 64)
+                    checkLength("mdlVer", req.mdlVer, 16)
+                    checkLengthOpt("mdlCfg", req.mdlCfg, 512000)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    val id = NCDsManager.addDataSource(
+                        req.name,
+                        req.shortDesc,
+                        req.mdlId,
+                        req.mdlName,
+                        req.mdlVer,
+                        req.mdlCfg
+                    )
+
+                    complete {
+                        Res(API_OK, id)
                     }
-                } ~
-                /**/path(API / "user" / "signup") {
-                    case class Req(
-                        email: String,
-                        passwd: String,
-                        firstName: String,
-                        lastName: String,
-                        avatarUrl: Option[String]
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-                    
-                    // NOTE: no authentication requires on signup.
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("email", req.email, 64)
-                        checkLength("passwd", req.passwd, 64)
-                        checkLength("firstName", req.firstName, 64)
-                        checkLength("lastName", req.lastName, 64)
-                        checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
+                }
+            } ~
+            /**/path(API / "ds" / "update") {
+                case class Req(
+                    // Caller.
+                    acsTok: String,
 
-                        NCUserManager.signup(
-                            req.email,
-                            req.passwd,
-                            req.firstName,
-                            req.lastName,
-                            req.avatarUrl
-                        )
-    
-                        complete {
-                            Res(API_OK)
-                        }
+                    // Update data source.
+                    id: Long,
+                    name: String,
+                    shortDesc: String
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    authenticateAsAdmin(req.acsTok)
+
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("name", req.name, 128)
+                    checkLength("shortDesc", req.shortDesc, 128)
+
+                    NCDsManager.updateDataSource(
+                        req.id,
+                        req.name,
+                        req.shortDesc
+                    )
+
+                    complete {
+                        Res(API_OK)
                     }
-                } ~
-                /**/path(API / "user" / "signout") {
-                    case class Req(
-                        acsTok: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                }
+            } ~
+            /**/path(API / "ds" / "all") {
+                case class Req(
+                    // Caller.
+                    acsTok: String
+                )
+                case class ResDs(
+                    id: Long,
+                    name: String,
+                    shortDesc: String,
+                    mdlId: String,
+                    mdlName: String,
+                    mdlVer: String,
+                    mdlCfg: Option[String]
+                )
+                case class Res(
+                    status: String,
+                    dataSources: Seq[ResDs]
+                )
 
-                        authenticate(req.acsTok)
-    
-                        NCUserManager.signout(req.acsTok)
-                        
-                        complete {
-                            Res(API_OK)
-                        }
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val usrFmt: RootJsonFormat[ResDs] = jsonFormat7(ResDs)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
+                        mdo.id,
+                        mdo.name,
+                        mdo.shortDesc,
+                        mdo.modelId,
+                        mdo.modelName,
+                        mdo.modelVersion,
+                        mdo.modelConfig
+                    ))
+
+                    complete {
+                        Res(API_OK, dsLst)
                     }
-                } ~
-                /**/path(API / "user" / "signin") {
-                    case class Req(
-                        email: String,
-                        passwd: String
-                    )
-                    case class Res(
-                        status: String,
-                        acsTok: String
-                    )
+                }
+            } ~
+            /**/path(API / "ds" / "delete") {
+                case class Req(
+                    acsTok: String,
+                    id: Long
+                )
+                case class Res(
+                    status: String
+                )
 
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    // NOTE: no authentication requires on signin.
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("email", req.email, 64)
-                        checkLength("passwd", req.passwd, 64)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
-                        NCUserManager.signin(
-                            req.email,
-                            req.passwd
-                        ) match {
-                            case None ⇒ throw SignInFailure(req.email) // Email is unknown (user hasn't signed up).
-                            case Some(acsTkn) ⇒ complete {
-                                Res(API_OK, acsTkn)
-                            }
-                        }
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    NCDsManager.deleteDataSource(req.id)
+
+                    complete {
+                        Res(API_OK)
                     }
-                } ~
-                /**/path(API / "user" / "all") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String
-                    )
-                    case class ResUser(
-                        id: Long,
-                        email: String,
-                        firstName: String,
-                        lastName: String,
-                        avatarUrl: Option[String],
-                        lastDsId: Long,
-                        isAdmin: Boolean
-                    )
-                    case class Res(
-                        status: String,
-                        users: Seq[ResUser]
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat7(ResUser)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
+                }
+            } ~
+            /**/path(API / "probe" / "all") {
+                case class Req(
+                    acsTok: String
+                )
+                case class Model(
+                    id: String,
+                    name: String,
+                    version: String
+                )
+                case class Probe(
+                    probeToken: String,
+                    probeId: String,
+                    probeGuid: String,
+                    probeApiVersion: String,
+                    probeApiDate: String,
+                    osVersion: String,
+                    osName: String,
+                    osArch: String,
+                    startTstamp: Long,
+                    tmzId: String,
+                    tmzAbbr: String,
+                    tmzName: String,
+                    userName: String,
+                    javaVersion: String,
+                    javaVendor: String,
+                    hostName: String,
+                    hostAddr: String,
+                    macAddr: String,
+                    models: Set[Model]
+                )
+                case class Res(
+                    status: String,
+                    probes: Seq[Probe]
+                )
 
-                        authenticateAsAdmin(req.acsTok)
-        
-                        val usrLst = NCUserManager.getAllUsers.map(mdo ⇒ ResUser(
-                            mdo.id,
-                            mdo.email,
-                            mdo.firstName,
-                            mdo.lastName,
-                            mdo.avatarUrl,
-                            mdo.lastDsId,
-                            mdo.isAdmin
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val mdlFmt: RootJsonFormat[Model] = jsonFormat3(Model)
+                implicit val probFmt: RootJsonFormat[Probe] = jsonFormat19(Probe)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    authenticateAsAdmin(req.acsTok)
+
+                    val probeLst = NCProbeManager.getAllProbes.map(mdo ⇒ Probe(
+                        mdo.probeToken,
+                        mdo.probeId,
+                        mdo.probeGuid,
+                        mdo.probeApiVersion,
+                        mdo.probeApiDate.toString,
+                        mdo.osVersion,
+                        mdo.osName,
+                        mdo.osArch,
+                        mdo.startTstamp.getTime,
+                        mdo.tmzId,
+                        mdo.tmzAbbr,
+                        mdo.tmzName,
+                        mdo.userName,
+                        mdo.javaVersion,
+                        mdo.javaVendor,
+                        mdo.hostName,
+                        mdo.hostAddr,
+                        mdo.macAddr,
+                        mdo.models.map(m ⇒ Model(
+                            m.id,
+                            m.name,
+                            m.version
                         ))
-        
-                        complete {
-                            Res(API_OK, usrLst)
-                        }
-                    }
-                } ~
-                /**/path(API / "user" / "endpoint" / "register") {
-                    case class Req(
-                        acsTok: String,
-                        endpoint: String
-                    )
-                    case class Res(
-                        status: String
-                    )
+                    ))
 
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("endpoint", req.endpoint, 2083)
-
-                        if (!urlVal.isValid(req.endpoint))
-                            throw InvalidField(req.endpoint)
-
-                        val usrId = authenticate(req.acsTok).id
-
-                        NCUserManager.registerEndpoint(usrId, req.endpoint)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/path(API / "user" / "endpoint" / "remove") {
-                    case class Req(
-                        acsTok: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        val usrId = authenticate(req.acsTok).id
-
-                        NCUserManager.removeEndpoint(usrId)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/path(API / "ds" / "add") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-        
-                        // Data source.
-                        name: String,
-                        shortDesc: String,
-                        mdlId: String,
-                        mdlName: String,
-                        mdlVer: String,
-                        mdlCfg: Option[String]
-                    )
-                    case class Res(
-                        status: String,
-                        id: Long
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("name", req.name, 128)
-                        checkLength("shortDesc", req.shortDesc, 128)
-                        checkLength("mdlId", req.mdlId, 32)
-                        checkLength("mdlName", req.mdlName, 64)
-                        checkLength("mdlVer", req.mdlVer, 16)
-                        checkLengthOpt("mdlCfg", req.mdlCfg, 512000)
-
-                        authenticateAsAdmin(req.acsTok)
-        
-                        val id = NCDsManager.addDataSource(
-                            req.name,
-                            req.shortDesc,
-                            req.mdlId,
-                            req.mdlName,
-                            req.mdlVer,
-                            req.mdlCfg
-                        )
-        
-                        complete {
-                            Res(API_OK, id)
-                        }
-                    }
-                } ~
-                /**/path(API / "ds" / "update") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-        
-                        // Update data source.
-                        id: Long,
-                        name: String,
-                        shortDesc: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.acsTok)
-
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("name", req.name, 128)
-                        checkLength("shortDesc", req.shortDesc, 128)
-        
-                        NCDsManager.updateDataSource(
-                            req.id,
-                            req.name,
-                            req.shortDesc
-                        )
-        
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/path(API / "ds" / "all") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String
-                    )
-                    case class ResDs(
-                        id: Long,
-                        name: String,
-                        shortDesc: String,
-                        mdlId: String,
-                        mdlName: String,
-                        mdlVer: String,
-                        mdlCfg: Option[String]
-                    )
-                    case class Res(
-                        status: String,
-                        dataSources: Seq[ResDs]
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[ResDs] = jsonFormat7(ResDs)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        authenticateAsAdmin(req.acsTok)
-        
-                        val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
-                            mdo.id,
-                            mdo.name,
-                            mdo.shortDesc,
-                            mdo.modelId,
-                            mdo.modelName,
-                            mdo.modelVersion,
-                            mdo.modelConfig
-                        ))
-        
-                        complete {
-                            Res(API_OK, dsLst)
-                        }
-                    }
-                } ~
-                /**/path(API / "ds" / "delete") {
-                    case class Req(
-                        acsTok: String,
-                        id: Long
-                    )
-                    case class Res(
-                        status: String
-                    )
-    
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-    
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        authenticateAsAdmin(req.acsTok)
-        
-                        NCDsManager.deleteDataSource(req.id)
-        
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/path(API / "probe" / "all") {
-                    case class Req(
-                        acsTok: String
-                    )
-                    case class Model(
-                        id: String,
-                        name: String,
-                        version: String
-                    )
-                    case class Probe(
-                        probeToken: String,
-                        probeId: String,
-                        probeGuid: String,
-                        probeApiVersion: String,
-                        probeApiDate: String,
-                        osVersion: String,
-                        osName: String,
-                        osArch: String,
-                        startTstamp: Long,
-                        tmzId: String,
-                        tmzAbbr: String,
-                        tmzName: String,
-                        userName: String,
-                        javaVersion: String,
-                        javaVendor: String,
-                        hostName: String,
-                        hostAddr: String,
-                        macAddr: String,
-                        models: Set[Model]
-                    )
-                    case class Res(
-                        status: String,
-                        probes: Seq[Probe]
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val mdlFmt: RootJsonFormat[Model] = jsonFormat3(Model)
-                    implicit val probFmt: RootJsonFormat[Probe] = jsonFormat19(Probe)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        authenticateAsAdmin(req.acsTok)
-    
-                        val probeLst = NCProbeManager.getAllProbes.map(mdo ⇒ Probe(
-                            mdo.probeToken,
-                            mdo.probeId,
-                            mdo.probeGuid,
-                            mdo.probeApiVersion,
-                            mdo.probeApiDate.toString,
-                            mdo.osVersion,
-                            mdo.osName,
-                            mdo.osArch,
-                            mdo.startTstamp.getTime,
-                            mdo.tmzId,
-                            mdo.tmzAbbr,
-                            mdo.tmzName,
-                            mdo.userName,
-                            mdo.javaVersion,
-                            mdo.javaVendor,
-                            mdo.hostName,
-                            mdo.hostAddr,
-                            mdo.macAddr,
-                            mdo.models.map(m ⇒ Model(
-                                m.id,
-                                m.name,
-                                m.version
-                            ))
-                        ))
-    
-                        complete {
-                            Res(API_OK, probeLst)
-                        }
+                    complete {
+                        Res(API_OK, probeLst)
                     }
                 }
             }

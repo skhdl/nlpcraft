@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class WeatherTest {
     private static final Gson GSON = new Gson();
-    private static final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
+    private static final Type TYPE_MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
     
     private NCTestClient client;
     
@@ -77,7 +77,7 @@ public class WeatherTest {
         
         assert res.getResult().isPresent();
     
-        Map<String, Object> map = GSON.fromJson(res.getResult().get(), MAP_RESP);
+        Map<String, Object> map = GSON.fromJson(res.getResult().get(), TYPE_MAP_RESP);
     
         if (shouldBeSame)
             assertEquals(intentId, map.get("intentId"));

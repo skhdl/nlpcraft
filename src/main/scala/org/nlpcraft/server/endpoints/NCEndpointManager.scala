@@ -95,7 +95,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         probeId: String,
         status: String,
         resType: String,
-        resBody: String,
+        resBody: Object,
         error: String,
         createTstamp: Long,
         updateTstamp: Long
@@ -128,41 +128,46 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             U.mkThread("endpoint-sender-thread") {
                 thread ⇒ {
                     while (!thread.isInterrupted) {
-                        mux.synchronized {
-                            val t = sleepTime
+                        try {
+                            mux.synchronized {
+                                val t = sleepTime
 
-                            if (t > 0)
-                                mux.wait(t)
+                                if (t > 0)
+                                    mux.wait(t)
 
-                            sleepTime = Long.MaxValue
+                                sleepTime = Long.MaxValue
+                            }
+
+                            val t = U.nowUtcMs()
+
+                            val query: SqlQuery[String, NCEndpointCacheValue] =
+                                new SqlQuery(
+                                    classOf[NCEndpointCacheValue],
+                                    "SELECT * FROM NCEndpointCacheValue WHERE sendTime <= ?"
+                                )
+
+                            query.setArgs(List(t).map(_.asInstanceOf[java.lang.Object]): _*)
+
+                            val readyData =
+                                catching(wrapIE) {
+                                    cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
+                                }
+
+                            logger.trace(s"Records for sending: ${readyData.size}")
+
+                            readyData.
+                                groupBy(_._2.getUserId).
+                                foreach { case (usrId, data) ⇒
+                                    val values = data.values.toSeq
+
+                                    require(values.nonEmpty)
+
+                                    send(usrId, values.head.getEndpoint, values)
+                                }
                         }
-
-                        val t = U.nowUtcMs()
-
-                        val query: SqlQuery[String, NCEndpointCacheValue] =
-                            new SqlQuery(
-                                classOf[NCEndpointCacheValue],
-                                "SELECT * FROM NCEndpointCacheValue WHERE sendTime <= ?"
-                            )
-
-                        query.setArgs(List(t).map(_.asInstanceOf[java.lang.Object]): _*)
-
-                        val readyData =
-                            catching(wrapIE) {
-                                cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
-                            }
-
-                        logger.trace(s"Records for sending: ${readyData.size}")
-
-                        readyData.
-                            groupBy(_._2.getUserId).
-                            foreach { case (usrId, data) ⇒
-                                val values = data.values.toSeq
-
-                                require(values.nonEmpty)
-
-                                send(usrId, values.head.getEndpoint, values)
-                            }
+                        catch {
+                            case e: Throwable ⇒ logger.error("Notifications sending error.", e)
+                        }
                     }
                 }
             }
@@ -257,23 +262,29 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
       * @param values Cached values.
       */
     private def send(usrId: Long, ep: String, values: Seq[NCEndpointCacheValue]): Unit = {
-        val seq = values.map(p ⇒ {
+        val map = values.map(p ⇒ {
             val s = p.getState
 
-            QueryStateJs(
-                s.srvReqId,
-                s.userId,
-                s.dsId,
-                s.modelId,
-                s.probeId.orNull,
-                s.status,
-                s.resultType.orNull,
-                s.resultBody.orNull,
-                s.error.orNull,
-                s.createTstamp.getTime,
-                s.updateTstamp.getTime
-            )
-        })
+            val v =
+                QueryStateJs(
+                    s.srvReqId,
+                    s.userId,
+                    s.dsId,
+                    s.modelId,
+                    s.probeId.orNull,
+                    s.status,
+                    s.resultType.orNull,
+                    if (s.resultBody.isDefined && s.resultType.isDefined && s.resultType.get == "json")
+                        U.js2Map(s.resultBody.get)
+                    else
+                        s.resultBody.orNull,
+                    s.error.orNull,
+                    s.createTstamp.getTime,
+                    s.updateTstamp.getTime
+                )
+
+            s.srvReqId → v
+        }).toMap
 
         U.asFuture(
         _ ⇒ {
@@ -281,7 +292,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
             try {
                 post.setHeader("Content-Type", "application/json")
-                post.setEntity(new StringEntity(GSON.toJson(seq.asJava), "UTF-8"))
+                post.setEntity(new StringEntity(GSON.toJson(map.values.asJava), "UTF-8"))
 
                 httpCli.execute(
                     post,
@@ -343,15 +354,15 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                 )
         },
         (_: Unit) ⇒ {
-            val set = seq.map(_.srvReqId).toSet
-
             catching(wrapIE) {
                 NCTxManager.startTx {
-                    cache --= set
+                    cache --= map.keySet
                 }
             }
 
-            logger.trace(s"Endpoint notifications sent [userId=$usrId, endpoint=$ep, srvReqIds=$set]")
+            logger.trace(
+                s"Endpoint notifications sent [userId=$usrId, endpoint=$ep, srvReqIds=${map.keySet.mkString(", ")}]"
+            )
         })
     }
 

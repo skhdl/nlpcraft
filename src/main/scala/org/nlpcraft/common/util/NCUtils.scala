@@ -43,9 +43,11 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.concurrent.{ExecutorService, TimeUnit}
 import java.util.jar.JarFile
 import java.util.stream.Collectors
-import java.util.zip.{ZipInputStream, GZIPInputStream => GIS, GZIPOutputStream => GOS}
-import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar => C}
+import java.util.zip.{ZipInputStream, GZIPInputStream ⇒ GIS, GZIPOutputStream ⇒ GOS}
+import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar ⇒ C}
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.typesafe.scalalogging.{LazyLogging, Logger}
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
@@ -76,6 +78,8 @@ object NCUtils extends LazyLogging {
     private final val DEC_FMT2 = mkDecimalFormat("#0.00")
 
     private final lazy val DEC_FMT_SYMS = new DecimalFormatSymbols(Locale.US)
+    private final lazy val GSON = new Gson()
+    private final lazy val TYPE_MAP = new TypeToken[java.util.HashMap[String, AnyRef]]() {}.getType
 
     private def mkDecimalFormat(ptrn: String) = {
         val df = new DecimalFormat(ptrn, DEC_FMT_SYMS)
@@ -1531,4 +1535,17 @@ object NCUtils extends LazyLogging {
 
         res.getOrElse(InetAddress.getLocalHost)
     }
+
+    /**
+      * Creates map from JSON string.
+      *
+      * @param js JSON string.
+      */
+    @throws[NCE]
+    def js2Map(js: String): java.util.Map[String, AnyRef] =
+        try
+            GSON.fromJson(js, TYPE_MAP)
+        catch {
+            case e: Exception ⇒ throw new NCE(s"Failed to convert JSON string to map: $js", e)
+        }
 }
