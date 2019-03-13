@@ -52,7 +52,7 @@ import org.nlpcraft.server.tx.NCTxManager
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.control.Exception.catching
+import scala.util.control.Exception.{catching, ignoring}
 
 /**
   * Query result notification endpoints manager.
@@ -64,6 +64,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         val maxQueueSize: Int = getInt(s"$prefix.queue.maxSize")
         val maxQueueUserSize: Int = getInt(s"$prefix.queue.maxPerUserSize")
         val maxQueueCheckPeriodMs: Long = getLong(s"$prefix.queue.checkPeriodMins") * 60 * 1000
+        val lifeTimeMs: Long = getLong(s"$prefix.lifetimeMins") * 60 * 1000
         val delaysMs: Seq[Long] = getLongList(s"$prefix.delaysSecs").toSeq.map(p ⇒ p * 1000)
         val delaysCnt: Int = delaysMs.size
 
@@ -74,6 +75,8 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                 abortError(s"Configuration parameter '$prefix.queue.maxPerUserSize' must > 0: $maxQueueUserSize")
             if (maxQueueCheckPeriodMs <= 0)
                 abortError(s"Configuration parameter '$prefix.queue.checkPeriodMins' must > 0: $maxQueueCheckPeriodMs")
+            if (lifeTimeMs <= 0)
+                abortError(s"Configuration parameter '$prefix.lifetimeMins' must > 0: $lifeTimeMs")
             if (delaysMs.isEmpty)
                 abortError(s"Configuration parameter '$prefix.delaysSecs' cannot be empty.")
             delaysMs.foreach(delayMs ⇒
@@ -317,7 +320,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             case e: Exception ⇒
                 val t = U.nowUtcMs()
 
-                val sendAgain =
+                val m =
                     values.flatMap(v ⇒
                         if (NCQueryManager.contains(v.getSrvReqId)) {
                             val i = v.getAttempts
@@ -334,13 +337,28 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                             None
                     ).toMap
 
-                if (sendAgain.nonEmpty) {
-                    val sleepTime = sendAgain.map(_._2.getSendTime).min - U.nowUtcMs()
+                if (m.nonEmpty) {
+                    val min = t - Config.lifeTimeMs
 
-                    mux.synchronized {
-                        this.sleepTime = sleepTime
+                    val delIds = m.filter(_._2.getCreatedOn < min).keys
 
-                        mux.notifyAll()
+                    if (delIds.nonEmpty)
+                        ignoring(classOf[Throwable]) {
+                            NCTxManager.startTx {
+                                cache --= delIds.toSet
+                            }
+                        }
+
+                    val sendAgain = m -- delIds
+
+                    if (sendAgain.nonEmpty) {
+                        val sleepTime = sendAgain.map(_._2.getSendTime).min - U.nowUtcMs()
+
+                        mux.synchronized {
+                            this.sleepTime = sleepTime
+
+                            mux.notifyAll()
+                        }
                     }
                 }
 
@@ -348,7 +366,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                     s"Error sending notification " +
                         s"[userId=$usrId" +
                         s", endpoint=$ep" +
-                        s", sendAgain=${sendAgain.size}" +
+                        s", sendAgain=${m.size}" +
                         s", error=${e.getLocalizedMessage}" +
                         s"]"
                 )
