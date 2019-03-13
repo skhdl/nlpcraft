@@ -72,7 +72,7 @@ public interface NCTestResult {
      * @see #isFailed()
      * @see #isSuccessful()
      */
-    Optional<String> getResult();
+    Optional<Object> getResult();
     
     /**
      * Gets optional execution result type.

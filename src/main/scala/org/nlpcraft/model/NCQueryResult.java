@@ -31,6 +31,7 @@
 
 package org.nlpcraft.model;
 
+import com.google.gson.Gson;
 import org.nlpcraft.common.util.NCUtils;
 import org.nlpcraft.model.intent.NCIntentSolver;
 
@@ -57,7 +58,7 @@ import java.util.stream.Collectors;
  *     </tr>
  *     <tr>
  *         <td><code>json</code></td>
- *         <td>{@link #json(String)}</td>
+ *         <td>{@link #json(Object)}</td>
  *     </tr>
  *     <tr>
  *         <td><code>yaml</code></td>
@@ -76,6 +77,8 @@ public class NCQueryResult implements Serializable {
     private String body;
     private String type;
     private NCVariant var;
+    
+    private transient static final Gson GSON = new Gson();
     
     /**
      * Creates {@code text} result.
@@ -103,8 +106,8 @@ public class NCQueryResult implements Serializable {
      * @param json Any JSON string to be rendered on the client.
      * @return Newly created query result.
      */
-    public static NCQueryResult json(String json) {
-        return new NCQueryResult(json, "json");
+    public static NCQueryResult json(Object json) {
+        return new NCQueryResult(GSON.toJson(json), "json");
     }
     
     /**

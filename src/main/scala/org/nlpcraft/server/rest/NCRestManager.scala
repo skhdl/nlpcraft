@@ -39,8 +39,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
+import com.google.gson.Gson
 import org.apache.commons.validator.routines.UrlValidator
-import org.nlpcraft.common.{NCException, NCLifecycle}
+import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
@@ -49,9 +50,9 @@ import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.probe.NCProbeManager
 import org.nlpcraft.server.query.NCQueryManager
 import org.nlpcraft.server.user.NCUserManager
-import org.nlpcraft.common._
 import spray.json.DefaultJsonProtocol._
 import spray.json.RootJsonFormat
+import scala.collection.JavaConverters._
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -66,6 +67,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
     
     // Current REST API version (simple increment number), not a semver based.
     private final val API_VER = 1
+
+    private final val GSON = new Gson()
 
     private val API = "api" / s"v$API_VER"
 
@@ -350,52 +353,42 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     case class Req(
                         acsTok: String
                     )
-                    case class QueryState(
-                        srvReqId: String,
-                        usrId: Long,
-                        dsId: Long,
-                        mdlId: String,
-                        probeId: Option[String],
-                        status: String,
-                        resType: Option[String],
-                        resBody: Option[String],
-                        error: Option[String],
-                        createTstamp: Long,
-                        updateTstamp: Long
-                    )
-                    case class Res(
-                        status: String,
-                        states: Seq[QueryState]
-                    )
-    
+
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[QueryState] = jsonFormat11(QueryState)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-    
+
                     entity(as[Req]) { req ⇒
                         checkLength("acsTok", req.acsTok, 256)
 
                         val userId = authenticate(req.acsTok).id
 
+                        // GSON doesn't work with method nested test case classes.
                         val states =
                             NCQueryManager.check(userId).map(p ⇒
-                                QueryState(
-                                    p.srvReqId,
-                                    p.userId,
-                                    p.dsId,
-                                    p.modelId,
-                                    p.probeId,
-                                    p.status,
-                                    p.resultType,
-                                    p.resultBody,
-                                    p.error,
-                                    p.createTstamp.getTime,
-                                    p.updateTstamp.getTime
-                                )
+                                Map(
+                                    "srvReqId" → p.srvReqId,
+                                    "usrId" → p.userId,
+                                    "dsId" → p.dsId,
+                                    "mdlId" → p.modelId,
+                                    "probeId" → p.probeId.orNull,
+                                    "status" → p.status,
+                                    "resType" → p.resultType.orNull,
+                                    "resBody" → (
+                                        if (p.resultBody.isDefined &&
+                                            p.resultType.isDefined &&
+                                            p.resultType.get == "json"
+                                        )
+                                            U.js2Map(p.resultBody.get)
+                                        else
+                                            p.resultBody.orNull
+                                    ),
+                                    "error" → p.error.orNull,
+                                    "createTstamp" → p.createTstamp.getTime,
+                                    "updateTstamp" → p.updateTstamp.getTime
+                                ).asJava
                         )
-                        
+
                         complete {
-                            Res(API_OK, states)
+                            GSON.toJson(Map("status" → API_OK.toString, "states" → states.asJava).asJava)
                         }
                     }
                 } ~

@@ -31,8 +31,6 @@
 
 package org.nlpcraft.examples.weather;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,8 +40,6 @@ import org.nlpcraft.model.test.NCTestClientBuilder;
 import org.nlpcraft.model.test.NCTestResult;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,9 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  */
 public class WeatherTest {
-    private static final Gson GSON = new Gson();
-    private static final Type MAP_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
-    
     private NCTestClient client;
     
     @BeforeEach
@@ -77,7 +70,7 @@ public class WeatherTest {
         
         assert res.getResult().isPresent();
     
-        Map<String, Object> map = GSON.fromJson(res.getResult().get(), MAP_RESP);
+        Map<String, Object> map = (Map<String, Object>)res.getResult().get();
     
         if (shouldBeSame)
             assertEquals(intentId, map.get("intentId"));

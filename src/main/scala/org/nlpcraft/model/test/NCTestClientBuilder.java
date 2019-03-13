@@ -34,7 +34,6 @@ package org.nlpcraft.model.test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -257,7 +256,7 @@ public class NCTestClientBuilder {
         @SerializedName("usrId") private long userId;
         @SerializedName("dsId") private long dsId;
         @SerializedName("resType") private String resType;
-        @SerializedName("resBody") private String resBody;
+        @SerializedName("resBody") private Object resBody;
         @SerializedName("status") private String status;
         @SerializedName("error") private String error;
         @SerializedName("createTstamp") private long createTstamp;
@@ -302,7 +301,7 @@ public class NCTestClientBuilder {
         public void setResultType(String resType) {
             this.resType = resType;
         }
-        public String getResultBody() {
+        public Object getResultBody() {
             return resBody;
         }
 
@@ -347,7 +346,6 @@ public class NCTestClientBuilder {
         private final Type TYPE_MPARTS = new TypeToken<ArrayList<NCMultipartJson>>() {}.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        private final JsonParser jp = new JsonParser();
         private final Object mux = new Object();
         private final ConcurrentHashMap<String, NCRequestStateJson> res = new ConcurrentHashMap<>();
         
@@ -491,13 +489,16 @@ public class NCTestClientBuilder {
          * @param body
          * @return
          */
-        private String mkPrettyString(String type, String body) {
+        private String mkPrettyString(String type, Object body) {
+            assert type != null;
+            assert body != null;
+            
             try {
                 switch (type) {
-                    case "json": return gson.toJson(jp.parse(body));
+                    case "json": return gson.toJson(body, TYPE_RESP);
     
                     case "json/multipart": {
-                        List<NCMultipartJson> parts = gson.fromJson(body, TYPE_MPARTS);
+                        List<NCMultipartJson> parts = gson.fromJson((String)body, TYPE_MPARTS);
         
                         StringBuilder buf = new StringBuilder();
                         
@@ -516,14 +517,14 @@ public class NCTestClientBuilder {
                         return buf.toString();
                     }
     
-                    case "html": return Jsoup.parseBodyFragment(body).outerHtml();
+                    case "html": return Jsoup.parseBodyFragment((String)body).outerHtml();
     
                     case "text":
-                    case "yaml": return body;
+                    case "yaml": return (String)body;
                     
     
                     default:
-                        return body;
+                        return body.toString();
                 }
             }
             catch (Exception e) {
@@ -531,7 +532,7 @@ public class NCTestClientBuilder {
                     "Error during result decoding [type={}, body={}, error={}]", type, body, e.getLocalizedMessage()
                 );
                 
-                return body;
+                return body.toString();
             }
         }
 
@@ -970,7 +971,7 @@ public class NCTestClientBuilder {
             long dsId,
             String mdlId,
             String resType,
-            String resBody,
+            Object resBody,
             String errMsg,
             long time
         ) {
@@ -979,7 +980,7 @@ public class NCTestClientBuilder {
             assert (resType != null && resBody != null) ^ errMsg != null;
             
             return new NCTestResult() {
-                private Optional<String> convert(String s) {
+                private <T> Optional<T> convert(T s) {
                     return s == null ? Optional.empty() : Optional.of(s);
                 }
                 
@@ -1004,7 +1005,7 @@ public class NCTestClientBuilder {
                 }
                 
                 @Override
-                public Optional<String> getResult() {
+                public Optional<Object> getResult() {
                     return convert(resBody);
                 }
                 
