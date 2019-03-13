@@ -436,7 +436,6 @@ public class NCTestClientBuilder {
                             js.getResultType() != null && js.getResultType().equals("json") ?
                                 gson.toJson(js.getResultBody()) :
                                 (String)js.getResultBody();
-                                
                     }
     
                     NCTestResult res =
@@ -455,7 +454,7 @@ public class NCTestClientBuilder {
                             "Question `{}` answered successfully with '{}' result:\n{}",
                             txt,
                             res.getResultType().get(),
-                            mkPrettyString(res.getResultType().get(), res.getResult().get().toString())
+                            mkPrettyString(res.getResultType().get(), res.getResult().get())
                         );
                     else
                         log.info(
@@ -480,13 +479,13 @@ public class NCTestClientBuilder {
         private String mkPrettyString(String type, String body) {
             try {
                 switch (type) {
-                    case "json": return gson.toJson(jp.parse(body));
                     case "html": return Jsoup.parseBodyFragment(body).outerHtml();
                     case "text":
-                    case "yaml": return body;
-    
-                    default:
+                    case "yaml":
+                    case "json": // JSON already configured for for pretty printing.
                         return body;
+    
+                    default: return body;
                 }
             }
             catch (Exception e) {
@@ -942,7 +941,7 @@ public class NCTestClientBuilder {
             assert (resType != null && resBody != null) ^ errMsg != null;
             
             return new NCTestResult() {
-                private<T> Optional<T> convert(T s) {
+                private<T> Optional<String> convert(String s) {
                     return s == null ? Optional.empty() : Optional.of(s);
                 }
                 
