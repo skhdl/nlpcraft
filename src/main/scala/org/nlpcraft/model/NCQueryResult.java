@@ -107,7 +107,10 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult json(Object json) {
-        return new NCQueryResult(GSON.toJson(json), "json");
+        return new NCQueryResult(
+            json instanceof String ? (String)json : GSON.toJson(json),
+            "json"
+        );
     }
     
     /**

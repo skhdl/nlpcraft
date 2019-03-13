@@ -33,8 +33,8 @@ package org.nlpcraft.examples.echo
 
 import java.util.Optional
 
-import org.nlpcraft.common._
 import org.nlpcraft.model._
+import org.nlpcraft.common._
 import org.nlpcraft.model.builder.NCModelBuilder
 
 import scala.collection.JavaConverters._
@@ -213,11 +213,13 @@ class EchoModel extends NCModelProviderAdapter {
             .setQueryFunction((ctx: NCQueryContext) ⇒ {
                 // Hand-rolled JSON for simplicity...
                 NCQueryResult.json(
-                    Map(
-                        "srvReqId" → mkJsonVal(ctx.getServerRequestId),
-                        "dataSource" → mkDataSourceJson(ctx),
-                        "sentence" → mkSentenceJson(ctx)
-                    ).asJava
+                    s"""
+                       |{
+                       |    "srvReqId": ${mkJsonVal(ctx.getServerRequestId)},
+                       |    "dataSource": ${mkDataSourceJson(ctx)},
+                       |    "sentence": ${mkSentenceJson(ctx)}
+                       |}
+                     """.stripMargin
                 )
             })
             .build()

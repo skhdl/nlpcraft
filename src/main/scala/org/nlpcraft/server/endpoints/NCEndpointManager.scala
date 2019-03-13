@@ -128,41 +128,46 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             U.mkThread("endpoint-sender-thread") {
                 thread ⇒ {
                     while (!thread.isInterrupted) {
-                        mux.synchronized {
-                            val t = sleepTime
+                        try {
+                            mux.synchronized {
+                                val t = sleepTime
 
-                            if (t > 0)
-                                mux.wait(t)
+                                if (t > 0)
+                                    mux.wait(t)
 
-                            sleepTime = Long.MaxValue
+                                sleepTime = Long.MaxValue
+                            }
+
+                            val t = U.nowUtcMs()
+
+                            val query: SqlQuery[String, NCEndpointCacheValue] =
+                                new SqlQuery(
+                                    classOf[NCEndpointCacheValue],
+                                    "SELECT * FROM NCEndpointCacheValue WHERE sendTime <= ?"
+                                )
+
+                            query.setArgs(List(t).map(_.asInstanceOf[java.lang.Object]): _*)
+
+                            val readyData =
+                                catching(wrapIE) {
+                                    cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
+                                }
+
+                            logger.trace(s"Records for sending: ${readyData.size}")
+
+                            readyData.
+                                groupBy(_._2.getUserId).
+                                foreach { case (usrId, data) ⇒
+                                    val values = data.values.toSeq
+
+                                    require(values.nonEmpty)
+
+                                    send(usrId, values.head.getEndpoint, values)
+                                }
                         }
-
-                        val t = U.nowUtcMs()
-
-                        val query: SqlQuery[String, NCEndpointCacheValue] =
-                            new SqlQuery(
-                                classOf[NCEndpointCacheValue],
-                                "SELECT * FROM NCEndpointCacheValue WHERE sendTime <= ?"
-                            )
-
-                        query.setArgs(List(t).map(_.asInstanceOf[java.lang.Object]): _*)
-
-                        val readyData =
-                            catching(wrapIE) {
-                                cache.query(query).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
-                            }
-
-                        logger.trace(s"Records for sending: ${readyData.size}")
-
-                        readyData.
-                            groupBy(_._2.getUserId).
-                            foreach { case (usrId, data) ⇒
-                                val values = data.values.toSeq
-
-                                require(values.nonEmpty)
-
-                                send(usrId, values.head.getEndpoint, values)
-                            }
+                        catch {
+                            case e: Throwable ⇒ logger.error("Notifications sending error.", e)
+                        }
                     }
                 }
             }
