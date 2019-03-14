@@ -769,7 +769,12 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     )
                 )
                 
-                logger.info(s"Sentence sent to '${holder.probeKey.probeId}' probe: $txt")
+                logger.info(s"Sentence sent to probe [" +
+                    s"txt=$txt, " +
+                    s"dsName=${ds.name}, " +
+                    s"mdlId=${ds.modelId}, " +
+                    s"probeId=${holder.probeKey.probeId}" +
+                    s"]")
 
                 NCProcessLogManager.updateProbe(
                     srvReqId,
