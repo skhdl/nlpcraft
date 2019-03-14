@@ -164,25 +164,29 @@ layout: documentation
     <section id="querying">
         <span class="section-title">Using REST API</span>
         <p>
-            There are countless way to issue REST calls - for our examples we'll use <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility.
+            There are many way to issue and test REST calls - but for our examples we'll use standard
+            <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility.
             NLPCraft comes with a convenient wrapper script <code>bin/nccurl.sh</code> that shortens
             command line of the standard <code>cURL</code>. We recommend adding <code>bin/nccurl.sh</code> to
             your <code>$PATH</code> environment variable.
         </p>
         <div class="bq info">
-            We'll go over the full REST API
-            <a href="https://nlpcraft.docs.apiary.io" target="apiary">functionality</a> as well as the
-            detailed explanation of data model and data sources later in <a href="/dev_guide.html">Developer Guide</a>.
+            <p>
+                We'll go over the full REST API
+                <a href="https://nlpcraft.docs.apiary.io" target="apiary">functionality</a> as well as the
+                detailed explanation of data model and data sources later in <a href="/basic-concepts.html">Developer Guide</a>.
+            </p>
         </div>
         <p>
-            Note also that we'll use python to format
+            Note also that we'll be using python to pretty format
             cURL JSON responses from the server. Make sure you have python <a target=_ href="https://www.python.org/downloads/">installed</a>.
         </p>
-        <span class="section-sub-title"><b><code>user/signin</code></b></span>
+        <span class="section-sub-title"><b><code>/user/signin</code></b></span>
         <p>
-            First, we need to sign in and obtain access token for further operations. When REST server starts
+            First, we need to sign in and obtain <em>access token</em> for further operations. We'll use <code>user/signin</code>
+            REST call for that. When REST server starts
             for the first time it creates a default user with email <code>admin@admin.com</code> and
-            <code>admin</code> password. We'll use these credentials for sing in:
+            <code>admin</code> password. We'll use these default credentials for sing in:
         </p>
         <pre class="brush: js; highlight: [2, 3, 4, 5]">
             $ nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
@@ -192,19 +196,20 @@ layout: documentation
             }
         </pre>
         <p>
-            Note access token <b>KMGWMQJ44</b> which we'll use in subsequent operations. Keep in mind that you
-            will obviously  have different access tokens and IDs when you are performing these steps yourself.
+            Note the returned access token <code>KMGWMQJ44</code> which we'll use in subsequent operations. Keep in mind that you
+            will get different access tokens and IDs when you are performing these steps by yourself.
         </p>
-        <span class="section-sub-title"><b><code>ds/add</code></b></span>
+        <span class="section-sub-title"><b><code>/ds/add</code></b></span>
         <p>
             In NLPCraft data models define a class of models, while data sources define a particular
-            instance of that model (i.e. a data model can have multiple data sources with different configurations).
-            In this example, we are going to be asking questions about the weather forecast and we'll
-            use <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>
-            for that. Lets add a new data source for the model from this example:
+            instance of that model (i.e. a data model can have multiple data sources each with different configurations).
+            We'll be using
+            <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>
+            to ask questions about weather forecast. Lets add a new data source for the model from this example using
+            <code>ds/add</code> REST call:
         </p>
         <pre class="brush: js; highlight: [2, 3, 4, 5]">
-            ./nccurl.sh ds/add '{"acsTok": "KMGWMQJ44", "name": "weather", "shortDesc": "example", "mdlId": "nlpcraft.weather.ex", "mdlName": "Weather Example Model", "mdlVer": "1.0"}' | python -m json.tool
+            nccurl.sh ds/add '{"acsTok": "KMGWMQJ44", "name": "weather", "shortDesc": "example", "mdlId": "nlpcraft.weather.ex", "mdlName": "Weather Example Model", "mdlVer": "1.0"}' | python -m json.tool
             {
                 "id": 8003,
                 "status": "API_OK"
@@ -215,35 +220,197 @@ layout: documentation
             when you are performing these steps yourself.
         </p>
         <div class="bq info">
-            Note that adding new data source is done only once. User doesn't have to do it on each sign in.
+            <p>
+                Note that adding new data source is done only once. User doesn't have to do it on each sign in.
+            </p>
         </div>
 
-        <span class="section-sub-title"><b><code>/ask</code></b> <span class="amp">&amp;</span> <b><code>/check</code></b></span>
+        <span class="section-sub-title"><b><code>/ask</code></b>, <b><code>/check</code></b> <span class="amp">&amp;</span> <b><code>/cancel</code></b></span>
         <p>
-            Now that we have the data source added we can go ahead and start asking natural language questions against
-            this data source:
+            Now that we have signed in (access token <code>KMGWMQJ44</code>) and added a new data source (ID <code>8003</code>) we can go ahead and start asking natural language questions against
+            this data source. We'll be using three REST calls to accomplish that: <code>/ask</code> to submit the request,
+            <code>/check</code> to check the status and get the result, and <code>/cancel</code> to clear the result
+            from server once we obtained it. 
         </p>
         <p>
-            <b>Q1: What is the current forecast for Chicago?</b>
+            Note that <code>/ask</code> request returns server request ID (<code>srvReqId</code> JSON field). We'll
+            use this ID in <code>/cancel</code> call.
+        </p>
+        <p>
+            <b>Q: What is the current forecast for Chicago?</b>
         </p>
         <pre class="brush: js highlight: [2, 3, 4, 5]">
-            $ ./nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "what is the current forecast for Chicago?", "dsId": 8003}' | python -m json.tool
+            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "What is the current forecast for Chicago?", "dsId": 8003}' | python -m json.tool
             {
                 "srvReqId": "gJ0OJ0qXp",
                 "status": "API_OK"
             }
         </pre>
         <p>
-            Note the returned server request ID <b>gJ0OJ0qXp</b> which we'll use in the next step to get our answer.
+            And we get a full 5-day forecast for Chicago by calling <code>/check</code>:
         </p>
-        <span class="section-sub-title"><b><code>/check</code></b></span>
+        <pre class="brush: js highlight: [8, 36, , 37, 42]">
+            $ nccurl.sh check '{"acsTok": "KMGWMQJ44"}' | python -m json.tool
+            {
+                "states": [
+                    {
+                        "createTstamp": 1552527883277,
+                        "dsId": 12001,
+                        "mdlId": "nlpcraft.weather.ex",
+                        "resBody": {
+                            "intentId": "fcast|date?|city?",
+                            "result": {
+                                "forecast": {
+                                    "forecastday": [
+                                        {
+                                            "astro": {
+                                                "moonrise": "11:05 AM",
+                                                "moonset": "01:01 AM",
+                                                "sunrise": "07:06 AM",
+                                                "sunset": "06:55 PM"
+                                            },
+                                        }
+                                    ]
+                                },
+                                ...
+                                "location": {
+                                    "lat": "41.85",
+                                    "localtime": "2019-03-13 20:44",
+                                    "localtime_epoch": "1552527885",
+                                    "lon": "-87.65",
+                                    "name": "Chicago",
+                                    "region": "Illinois",
+                                    "tz_id": "America/Chicago"
+                                }
+                            }
+                        },
+                        "resType": "json",
+                        "srvReqId": "AQnaR689L",
+                        "status": "QRY_READY",
+                        "updateTstamp": 1552527885155,
+                        "usrId": 7001
+                    }
+                ],
+                "status": "API_OK"
+            }
+        </pre>
         <p>
-
+            Once we got our response we can clear it from the server memory:
         </p>
+        <pre class="brush: js highlight: [2, 3, 4]">
+            $ nccurl.sh cancel '{"acsTok": "KMGWMQJ44", "srvReqIds": ["AQnaR689L"]}' | python -m json.tool
+            {
+                "status": "API_OK"
+            }
+        </pre>
+        <p>
+            Let's repeat this sequence for one more question:
+        </p>
+        <p>
+            <b>Q: Any chance of snow today in Moscow?</b>
+        </p>
+        <pre class="brush: js highlight: [2, 3, 4, 5]">
+            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "Any chance of snow today in Moscow?", "dsId": 8003}' | python -m json.tool
+            {
+                "srvReqId": "bgp299kX0",
+                "status": "API_OK"
+            }
+        </pre>
+        <p>
+            And we get today's Moscow weather report by calling <code>/check</code>:
+        </p>
+        <pre class="brush: js highlight: [8, 33, 33, 34, 35, 36, 37, 38, 39, 40, 41, 51, 52, 58, 59]">
+            $ nccurl.sh check '{"acsTok": "KMGWMQJ44"}' | python -m json.tool
+            {
+                "states": [
+                    {
+                        "createTstamp": 1552529034568,
+                        "dsId": 12001,
+                        "mdlId": "nlpcraft.weather.ex",
+                        "resBody": {
+                            "intentId": "curr|date?|city?",
+                            "result": {
+                                "forecast": {
+                                    "forecastday": [
+                                        {
+                                            "astro": {
+                                                "moonrise": "10:16 AM",
+                                                "moonset": "02:16 AM",
+                                                "sunrise": "06:49 AM",
+                                                "sunset": "06:30 PM"
+                                            },
+                                            "date": "2019-03-14",
+                                            "date_epoch": "1552521600",
+                                            "day": {
+                                                "avghumidity": 89.0,
+                                                "avgtemp_c": -3.9,
+                                                "avgtemp_f": 25.1,
+                                                "avgvis_km": 19.6,
+                                                "avgvis_miles": 12.0,
+                                                "condition": {
+                                                    "code": 1198.0,
+                                                    "icon": "//cdn.apixu.com/weather/64x64/day/311.png",
+                                                    "text": "Light freezing rain"
+                                                },
+                                                "maxtemp_c": -0.2,
+                                                "maxtemp_f": 31.6,
+                                                "maxwind_kph": 15.8,
+                                                "maxwind_mph": 9.8,
+                                                "mintemp_c": -7.3,
+                                                "mintemp_f": 18.9,
+                                                "totalprecip_in": 0.0,
+                                                "totalprecip_mm": 0.1,
+                                                "uv": 1.7
+                                            }
+                                        }
+                                    ]
+                                },
+                                "location": {
+                                    "lat": "55.75",
+                                    "localtime": "2019-03-14 5:03",
+                                    "localtime_epoch": "1552529035",
+                                    "lon": "37.62",
+                                    "name": "Moscow",
+                                    "region": "Moscow City",
+                                    "tz_id": "Europe/Moscow"
+                                }
+                            }
+                        },
+                        "resType": "json",
+                        "srvReqId": "bgp299kX0",
+                        "status": "QRY_READY",
+                        "updateTstamp": 1552529035186,
+                        "usrId": 7001
+                    }
+                ],
+                "status": "API_OK"
+            }
+        </pre>
+        <p>
+            Clean up:
+        </p>
+        <pre class="brush: js highlight: [2, 3, 4]">
+            $ nccurl.sh cancel '{"acsTok": "KMGWMQJ44", "srvReqIds": ["bgp299kX0"]}' | python -m json.tool
+            {
+                "status": "API_OK"
+            }
+        </pre>
+        <div class="bq info">
+            <p>
+                Note that you can do <code>/cancel</code> for a list of server request IDs instead of doing it one by one.
+            </p>
+        </div>
+
         <span class="section-sub-title"><b><code>/signout</code></b></span>
         <p>
-
+            Once we enjoyed our conversation about the weather we sign out:
         </p>
+        <pre class="brush: js highlight: [2, 3, 4]">
+            $ nccurl.sh user/signout '{"acsTok": "KMGWMQJ44"}' | python -m json.tool
+            {
+                "status": "API_OK"
+            }
+        </pre>
     </section>
 </div>
 <div class="col-md-2 third-column">

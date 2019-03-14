@@ -139,9 +139,9 @@ paths:
                         if status is QRY_READY and processing was not rejected
                         or terminated due to an exception)
                     resBody:
-                      type: string
+                      type: object
                       description: >-
-                        Optional body of the result if returned by model
+                        Optional body (string or JSON object) of the result if returned by model
                         (provided only if status is QRY_READY and processing was
                         not rejected or terminated due to an exception)
                     error:
