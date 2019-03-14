@@ -92,6 +92,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
     // Note, it cannot be declared inside methods because GSON requirements.
     case class QueryStateJs(
         srvReqId: String,
+        txt: String,
         usrId: Long,
         dsId: Long,
         mdlId: String,
@@ -271,6 +272,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             val v =
                 QueryStateJs(
                     s.srvReqId,
+                    s.text,
                     s.userId,
                     s.dsId,
                     s.modelId,

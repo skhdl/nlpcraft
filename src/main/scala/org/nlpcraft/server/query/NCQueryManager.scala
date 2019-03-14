@@ -315,7 +315,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         for (srvReqId ← srvReqIds) {
             NCProcessLogManager.updateCancel(srvReqId, now)
 
-            NCNotificationManager.addEvent("NC_CANCEL_QRY",
+            NCNotificationManager.addEvent(
+                "NC_CANCEL_QRY",
                 "srvReqId" → srvReqId
             )
         }

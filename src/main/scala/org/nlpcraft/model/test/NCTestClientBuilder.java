@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -229,6 +230,7 @@ public class NCTestClientBuilder {
      */
     static class NCRequestStateJson {
         @SerializedName("srvReqId") private String srvReqId;
+        @SerializedName("txt") private String text;
         @SerializedName("usrId") private long userId;
         @SerializedName("dsId") private long dsId;
         @SerializedName("resType") private String resType;
@@ -245,7 +247,15 @@ public class NCTestClientBuilder {
         public void setServerRequestId(String srvReqId) {
             this.srvReqId = srvReqId;
         }
-
+    
+        public String getText() {
+            return text;
+        }
+    
+        public void setText(String text) {
+            this.text = text;
+        }
+    
         public long getUserId() {
             return userId;
         }
@@ -341,6 +351,8 @@ public class NCTestClientBuilder {
 
         private volatile boolean opened = false;
         private volatile boolean closed = false;
+        
+        private Set<String> srvReqIds = ConcurrentHashMap.newKeySet();
 
         RequestConfig getRequestConfig() {
             return reqCfg;
@@ -418,6 +430,8 @@ public class NCTestClientBuilder {
                     0
                 );
             }
+    
+            srvReqIds.add(srvReqId);
 
             long maxTime = System.currentTimeMillis() + MAX_WAIT_TIME;
 
@@ -438,7 +452,7 @@ public class NCTestClientBuilder {
     
                     NCTestResult res =
                         mkResult(
-                            txt,
+                            js.getText(),
                             dsId,
                             mdlId,
                             js.getResultType(),
@@ -602,6 +616,10 @@ public class NCTestClientBuilder {
             if (srv != null) srv.stop(0);
             
             res.clear();
+            srvReqIds.clear();
+            
+            if (!srvReqIds.isEmpty())
+                restCancel();
             
             if (isDsCreated) restDeleteTestDs();
 
@@ -798,6 +816,26 @@ public class NCTestClientBuilder {
                 )
             );
         }
+    
+        /**
+         * @throws IOException Thrown in case of IO errors.
+         * @throws NCTestClientException Thrown in case of test client errors.
+         */
+        private void restCancel() throws IOException, NCTestClientException {
+            log.info("'cancel' request '{}' sent for requests: {}", srvReqIds);
+        
+            checkStatus(
+                gson.fromJson(
+                    post(
+                        "cancel",
+                        Pair.of("acsTok", acsTok),
+                        Pair.of("srvReqIds", srvReqIds)
+                    ),
+                    TYPE_RESP
+                )
+            );
+        }
+    
     
         /**
          * @throws IOException Thrown in case of IO errors.
