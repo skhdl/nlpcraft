@@ -616,10 +616,12 @@ public class NCTestClientBuilder {
             if (srv != null) srv.stop(0);
             
             res.clear();
-            srvReqIds.clear();
             
-            if (!srvReqIds.isEmpty())
+            if (!srvReqIds.isEmpty()) {
                 restCancel();
+                
+                srvReqIds.clear();
+            }
             
             if (isDsCreated) restDeleteTestDs();
 
