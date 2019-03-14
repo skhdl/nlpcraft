@@ -341,7 +341,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                 val newAcsTkn = tokenSigninCache.asScala.find(entry ⇒ entry.getValue.userId == usr.id) match {
                                     case Some(entry) ⇒ entry.getValue.acsToken // Already signed in.
                                     case None ⇒
-                                        val acsTkn = U.gen8ByteId()
+                                        val acsTkn = U.genGuid()
                                         val now = U.nowUtcMs()
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, None)

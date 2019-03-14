@@ -45,7 +45,7 @@ import scala.collection.mutable
   */
 class NCProbeMessage(val typ: String) extends mutable.HashMap[String/*Name*/, Serializable/*Value*/]
     with Serializable with NCAsciiLike {
-    private val guid = U.gen8ByteId()
+    private val guid = U.genGuid()
     private val hash = guid.hashCode()
     
     put("TYPE", typ)

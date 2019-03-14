@@ -84,10 +84,17 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgn
         ensureStarted()
     
         val normTxt = NCPreProcessManager.normalize(txt)
-
+        
+        if (normTxt != txt)
+            logger.info(s"Sentence normalized to: $normTxt")
+        
         catching(wrapIE) {
             cache(normTxt) match {
-                case Some(s) ⇒ s
+                case Some(s) ⇒
+                    prepareAsciiTable(s).info(logger, Some(s"Sentence enriched: $normTxt"))
+                    
+                    s
+                    
                 case None ⇒
                     val s = new NCNlpSentence(normTxt)
 

@@ -392,7 +392,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         val probeId = hsMsg.getProbeId
         val probeGuid = hsMsg.getProbeGuid
     
-        logger.info(s"Downlink handshake message received [" +
+        logger.trace(s"Downlink handshake received [" +
             s"probeToken=$probeTkn, " +
             s"probeId=$probeId, " +
             s"proveGuid=$probeGuid" +
@@ -534,7 +534,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         val probeKey = ProbeKey(probeTkn, probeId, probeGuid)
     
-        logger.info(s"Uplink handshake received [" +
+        logger.trace(s"Uplink handshake received [" +
             s"probeToken=$probeTkn, " +
             s"probeId=$probeId, " +
             s"proveGuid=$probeGuid" +
@@ -768,6 +768,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         "dsModelCfg" → ds.modelConfig.orNull
                     )
                 )
+                
+                logger.info(s"Sentence sent to '${holder.probeKey.probeId}' probe: $txt")
 
                 NCProcessLogManager.updateProbe(
                     srvReqId,
