@@ -98,6 +98,13 @@ object NCIgniteHelpers extends NCIgniteInstance {
             }
 
         /**
+          * Put map to the cache.
+          *
+          * @param m Map.
+          */
+        def ++=(m: Map[K, V]): Unit = ic.putAll(m.asJava)
+
+        /**
          * Put key-value pair to the cache.
          *
          * @param entry Key-value pair.

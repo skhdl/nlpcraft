@@ -332,7 +332,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
         catching(wrapIE) {
-            (if (usr.isAdmin) cache.values else cache.values.filter(_.userId == usrId)).toSeq
+            (if (usr.isAdmin) cache.values else cache.values.filter(_.userId == usrId)).
+                toSeq.sortBy(_.createTstamp.getTime)
         }
     }
 
