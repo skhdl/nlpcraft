@@ -1206,15 +1206,9 @@ object NCUtils extends LazyLogging {
     def neon(s: String): Boolean = s != null && !s.isEmpty
     
     /**
-      * Generates new Global Unique Identifier (GUID).
-      * Note that this is not compatible with Ignite-generated UUIDs.
+      * Generates (relatively) unique ID good for a short-term usage.
       */
-    def genGuid(): String = UUID.randomUUID().toString.toUpperCase()
-    
-    /**
-      * Generates 8-bytes (relatively) unique ID good for a short-term usage.
-      */
-    def gen8ByteId(): String = hashids.encode(System.currentTimeMillis())
+    def genGuid(): String = hashids.encode(System.currentTimeMillis(), System.nanoTime())
     
     /**
       * Converts non-empty sequence of '\n' and '\s' into one ' '.

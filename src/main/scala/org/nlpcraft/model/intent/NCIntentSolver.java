@@ -1301,12 +1301,7 @@ public class NCIntentSolver {
     
         @Override
         public String toString() {
-            return String.format("INTENT(id='%s', inclConv=%b, ordered=%b, %s)",
-                id,
-                inclConv,
-                ordered,
-                Arrays.stream(terms).map(Object::toString).collect(Collectors.joining(", "))
-            );
+            return String.format("INTENT: '%s'", id);
         }
     }
 

@@ -1,6 +1,6 @@
 ---
 active_crumb: Docs
-layout: interior
+layout: documentation
 ---
 
 <!--
@@ -34,151 +34,137 @@ layout: interior
           /_/
 -->
 
-<h1 class="page-title">
-    <span><i class="fas fa-fw fa-book"></i> {{ page.active_crumb }}</span>
-</h1>
-
-<div class="three-cols-container">
-    <div class="col-md-2 first-column">
-        <ul class="side-nav">
-            <li class="side-nav-title">Introduction</li>
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="/installation.html">Installation</a></li>
-            <li><a href="/getting_started.html">Getting Started</a></li>
-            <li class="side-nav-title">Developer Guide</li>
-        </ul>
-    </div>
-    <div class="col-md-8 second-column">
-        <section id="overview">
-            <span class="section-title">Overview</span>
-            <p>
-                Welcome to NLPCraft. Let's start with the obvious... what is NLPCraft?
-            </p>
-            <p>
-                NLPCraft is an <a href="/legal.html">open source</a> library for building advance natural language interface
-                to any public or private data sources like databases, REST services, IoT devices, voice assistants,
-                chatbots, etc. Think Alexa, Siri or Google Now for your own data sources.
-            </p>
-            <p>
-                It's important to note that NLPCraft is a pure software library and doesn't require any specific hardware.
-                It also doesn't deal with voice-to-text conversion as we consider this problem solved outside
-                of this project - NLPCraft simply accepts textual input irregardless of where it came from.
-            </p>
-            <p>
-                How does it work in a nutshell?
-            </p>
-            <p>
-                When using NLPCraft you will be dealing with three main components:
-            </p>
-            <ul>
-                <li><a href="#data-model">Data model</a></li>
-                <li><a href="#data-probe">Data probe</a></li>
-                <li><a href="#server">REST Server</a></li>
-            </ul>
-            <figure>
-                <img class="img-fluid" src="/images/homepage-fig1.1.png">
-                <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
-            </figure>
-        </section>
-        <section id="data-model">
-            <span class="section-sub-title">Data Model</span>
-            <p>
-                NLPCraft employs model-as-a-code approach where data model is simply an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> Java interface that
-                can be developed using any JVM programming language like Java, Scala, or Groovy.
-                Data model implementation defines how to interpret user input, how to query or control a particular data source, and
-                finally how to format the result back to the user. Model-as-a-code
-                natively supports any software life cycle tools and frameworks in Java eco-system.
-
-            </p>
-            <p>
-                Typically, declarative portion of the model will be stored in a separate JSON or YAML file
-                for simpler modifications. There are no practical limitation on how complex or simple a model
-                can be, or what other tools it can use. Most data models will also use intent-based matching
-                provided by NLPCraft out-of-the-box.
-            </p>
-            <p>
-                Here's an example of the absolutely minimal data model that simply returns the same answer back
-                for any user input:
-            </p>
-            <pre class="brush: java">
-            NCModelBuilder.newModel("id", "description", "1.0")
-                .setQueryFunction(ctx -> NCQueryResult.text("Hello World!")) 
-                .build()
-            </pre>
-            <p>
-                To use data model it has to be deployed into data probe.
-            </p>
-        </section>
-        <section id="data-probe">
-            <span class="section-sub-title">Data Probe</span>
-            <p>
-                Data probe is an application designed to securely deploy and manage data models.
-                Each probe can deploy and manage multiple models and many probes can be connected to the REST server.
-                The main purpose
-                of the data probe is to separate data model hosting from managing REST calls from the clients.
-                While you would typically have just one REST server, you may have multiple data probes deployed
-                in different geo-locations and configured differently.
-            </p>
-            <p>
-                Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and are
-                typically deployed in DMZ or close to your target data sources: on-premise, in the cloud, etc. Data
-                probe uses strong 256-bit encryption and ingress only connectivity for communicating with the REST server.
-            </p>
-        </section>
-        <section id="server">
-            <span class="section-sub-title">REST Server</span>
-            <p>
-                REST server provides URL endpoint for user applications to securely query data sources using NLI via
-                data models deployed in data probes. Its main purpose is to accept REST-over-HTTP calls from user applications,
-                manage connected data probes, and route user requests to and from requested data probes.
-            </p>
-        </section>
-    </div>
-    <div class="col-md-2 third-column">
-        <ul class="side-nav">
-            <li class="side-nav-title">On This Page</li>
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="#data-model">Data Model</a></li>
-            <li><a href="#data-probe">Data Probe</a></li>
+<div class="col-md-8 second-column">
+    <section id="overview">
+        <span class="section-title">Overview</span>
+        <p>
+            Welcome to NLPCraft. Let's start with the obvious... what is NLPCraft?
+        </p>
+        <p>
+            NLPCraft is an <a href="/legal.html">open source</a> library for building advance natural language interface
+            to any public or private data sources like databases, REST services, IoT devices, voice assistants,
+            chatbots, etc. Think Alexa, Siri or Google Now for your own data sources.
+        </p>
+        <p>
+            It's important to note that NLPCraft is a pure software library and doesn't require any specific hardware.
+            It also doesn't deal with voice-to-text conversion as we consider this problem solved outside
+            of this project - NLPCraft simply accepts textual input irregardless of where it came from.
+        </p>
+        <p>
+            How does it work in a nutshell?
+        </p>
+        <p>
+            When using NLPCraft you will be dealing with three main components:
+        </p>
+        <ul>
+            <li><a href="#data-model">Data model</a></li>
+            <li><a href="#data-probe">Data probe</a></li>
             <li><a href="#server">REST Server</a></li>
-            <li class="side-nav-title">Quick Links</li>
-            <li>
-                <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
-                    target="github"
-                    href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
-            </li>
-            <li>
-                <img class="quick-link-img mr-2" src="/images/java.png"><a
-                    target="javadoc"
-                    href="/apis/latest/index.html">Javadoc</a>
-            </li>
-            <li>
-                <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
-                    href="https://nlpcraft.docs.apiary.io"
-                    target="apiary">REST API</a>
-            </li>
-            <li>
-                <i class="fas fa-download mr-2"></i><a href="/download">Download</a>
-            </li>
-            <li class="side-nav-title">Support</li>
-            <li>
-                <nobr>
-                    <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
-                </nobr>
-            </li>
-            <li>
-                <nobr>
-                    <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
-                </nobr>
-            </li>
-            <li>
-                <nobr>
-                    <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
-                </nobr>
-            </li>
         </ul>
-    </div>
+        <figure>
+            <img class="img-fluid" src="/images/homepage-fig1.1.png">
+            <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
+        </figure>
+    </section>
+    <section id="data-model">
+        <span class="section-sub-title">Data Model</span>
+        <p>
+            NLPCraft employs model-as-a-code approach where data model is simply an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> Java interface that
+            can be developed using any JVM programming language like Java, Scala, or Groovy.
+            Data model implementation defines how to interpret user input, how to query or control a particular data source, and
+            finally how to format the result back to the user. Model-as-a-code
+            natively supports any software life cycle tools and frameworks in Java eco-system.
+
+        </p>
+        <p>
+            Typically, declarative portion of the model will be stored in a separate JSON or YAML file
+            for simpler modifications. There are no practical limitation on how complex or simple a model
+            can be, or what other tools it can use. Most data models will also use intent-based matching
+            provided by NLPCraft out-of-the-box.
+        </p>
+        <p>
+            Here's an example of the absolutely minimal data model that simply returns the same answer back
+            for any user input:
+        </p>
+        <pre class="brush: java">
+        NCModelBuilder.newModel("id", "description", "1.0")
+            .setQueryFunction(ctx -> NCQueryResult.text("Hello World!"))
+            .build()
+        </pre>
+        <p>
+            To use data model it has to be deployed into data probe.
+        </p>
+    </section>
+    <section id="data-probe">
+        <span class="section-sub-title">Data Probe</span>
+        <p>
+            Data probe is an application designed to securely deploy and manage data models.
+            Each probe can deploy and manage multiple models and many probes can be connected to the REST server.
+            The main purpose
+            of the data probe is to separate data model hosting from managing REST calls from the clients.
+            While you would typically have just one REST server, you may have multiple data probes deployed
+            in different geo-locations and configured differently.
+        </p>
+        <p>
+            Data probes can be deployed and run anywhere as long as there is an outbound connectivity, and are
+            typically deployed in DMZ or close to your target data sources: on-premise, in the cloud, etc. Data
+            probe uses strong 256-bit encryption and ingress only connectivity for communicating with the REST server.
+        </p>
+    </section>
+    <section id="server">
+        <span class="section-sub-title">REST Server</span>
+        <p>
+            REST server provides URL endpoint for user applications to securely query data sources using NLI via
+            data models deployed in data probes. Its main purpose is to accept REST-over-HTTP calls from user applications,
+            manage connected data probes, and route user requests to and from requested data probes.
+        </p>
+    </section>
 </div>
+<div class="col-md-2 third-column">
+    <ul class="side-nav">
+        <li class="side-nav-title">On This Page</li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#data-model">Data Model</a></li>
+        <li><a href="#data-probe">Data Probe</a></li>
+        <li><a href="#server">REST Server</a></li>
+        <li class="side-nav-title">Quick Links</li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+                target="github"
+                href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+        </li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/java.png"><a
+                target="javadoc"
+                href="/apis/latest/index.html">Javadoc</a>
+        </li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+                href="https://nlpcraft.docs.apiary.io"
+                target="apiary">REST API</a>
+        </li>
+        <li>
+            <i class="fas fa-download mr-2"></i><a href="/download">Download</a>
+        </li>
+        <li class="side-nav-title">Support</li>
+        <li>
+            <nobr>
+                <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+            </nobr>
+        </li>
+        <li>
+            <nobr>
+                <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+            </nobr>
+        </li>
+        <li>
+            <nobr>
+                <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+            </nobr>
+        </li>
+    </ul>
+</div>
+
 
 
 

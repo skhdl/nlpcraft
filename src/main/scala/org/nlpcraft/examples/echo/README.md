@@ -2,20 +2,15 @@
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
-### Examples
-This folder contains Java and Scala examples of NLPCraft data models. Each example is fully
-contained in its own sub-package. Every example provides data model implementation, Junit 5 based unit test to easily 
-run from IDE, <code>probe.conf</code> configuration file to start data probe with and optional YAML or JSON model definition.
+### Echo Example
+This is a Scala example.
 
-Here's an example of the files for `time` example:
-<pre>
-├── time
-│   ├── TimeModel.java
-│   ├── TimeTest.java
-│   ├── probe.conf
-│   └── time_model.yaml
-</pre>
-
+For any user input this example model returns JSON representation of the query 
+context corresponding to that input. This is a simple demonstration of the 
+JSON output and of most of the NLPCraft-provided data that a user defined model 
+can operate on. This example can be useful during the development to see what 
+object properties are available.
+  
 See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:

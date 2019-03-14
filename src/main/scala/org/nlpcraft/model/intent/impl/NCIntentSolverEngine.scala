@@ -221,14 +221,13 @@ object NCIntentSolverEngine extends LazyLogging {
             )
 
         if (sorted.nonEmpty) {
-            val tbl = NCAsciiTable("Variant", "Intent", "Tokens", "Order (Weight / Variant)")
+            val tbl = NCAsciiTable("Variant", "Intent", "Tokens")
 
             sorted.foreach(m ⇒
                 tbl += (
                     s"#${m.variantIdx}",
                     m.intentMatch.intent.getId,
-                    mkPickTokens(m.intentMatch),
-                    Seq(m.intentMatch.weight, m.variant)
+                    mkPickTokens(m.intentMatch)
                 )
             )
 

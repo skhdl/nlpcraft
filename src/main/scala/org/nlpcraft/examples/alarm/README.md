@@ -2,19 +2,11 @@
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
-### Examples
-This folder contains Java and Scala examples of NLPCraft data models. Each example is fully
-contained in its own sub-package. Every example provides data model implementation, Junit 5 based unit test to easily 
-run from IDE, <code>probe.conf</code> configuration file to start data probe with and optional YAML or JSON model definition.
-
-Here's an example of the files for `time` example:
-<pre>
-├── time
-│   ├── TimeModel.java
-│   ├── TimeTest.java
-│   ├── probe.conf
-│   └── time_model.yaml
-</pre>
+### Alarm Example
+This example provides a simple "alarm clock" interface where you can ask to set the timer for a 
+specific duration from now expressed in hours, minutes and/or seconds. You can say 
+`ping me in 3 minutes`, `buzz me in an hour and 15 minutes`, or `set my alarm for 30 secs`. 
+When the timers is up it will simply print out "BEEP BEEP BEEP" in the probe console.
 
 See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 

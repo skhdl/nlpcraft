@@ -106,7 +106,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
         
-        val srvReqId = U.gen8ByteId()
+        val srvReqId = U.genGuid()
     
         catching(wrapIE) {
             // Enlist for tracking.
@@ -147,6 +147,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 "userAgent" → usrAgent,
                 "rmtAddr" → rmtAddr
             )
+            
+            logger.info(s"New request received: $txt0")
     
             // Enrich the user input and send it to the probe.
             NCProbeManager.askProbe(

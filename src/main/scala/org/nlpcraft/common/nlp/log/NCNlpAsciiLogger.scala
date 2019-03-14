@@ -246,7 +246,7 @@ object NCNlpAsciiLogger extends LazyLogging {
                     s
                 // User tokens.
                 case _ ⇒
-                    seq.map(p ⇒ s"${p._1}=${if (p._2 == null) "null" else {p._2}.toString}").mkString(", ")
+                    s"unid=${getValueOpt("unid").get}"
             }
         }
     

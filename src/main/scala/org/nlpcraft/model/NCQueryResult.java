@@ -31,11 +31,8 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.common.NCException;
-import org.nlpcraft.common.util.NCUtils;
-import org.nlpcraft.model.intent.NCIntentSolver;
-
-import java.io.Serializable;
+import org.nlpcraft.model.intent.*;
+import java.io.*;
 
 /**
  * Model query result returned from {@link NCModel#query(NCQueryContext)} method. Query result consists of the
@@ -79,8 +76,6 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult text(String txt) {
-        checkBodyNull(txt);
-        
         return new NCQueryResult(txt, "text");
     }
     
@@ -91,8 +86,6 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult html(String html) {
-        checkBodyNull(html);
-        
         return new NCQueryResult(html, "html");
     }
     
@@ -103,16 +96,6 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult json(String json) {
-        checkBodyNull(json);
-        
-        // Validation.
-        try {
-            NCUtils.js2Map(json);
-        }
-        catch (NCException e) {
-            throw new IllegalArgumentException("Invalid JSON value: " + json, e);
-        }
-        
         return new NCQueryResult(json, "json");
     }
     
@@ -123,8 +106,6 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult yaml(String yaml) {
-        checkBodyNull(yaml);
-        
         return new NCQueryResult(yaml, "yaml");
     }
     
@@ -148,27 +129,16 @@ public class NCQueryResult implements Serializable {
      * @param type Type to check.
      * @throws IllegalArgumentException Thrown if type of invalid.
      */
-    private static String checkType(String type) {
+    private String checkType(String type) {
         String typeLc = type.toLowerCase();
         
         if (!typeLc.equals("html") &&
             !typeLc.equals("json") &&
             !typeLc.equals("yaml") &&
-            !typeLc.equals("text")
-        )
+            !typeLc.equals("text"))
             throw new IllegalArgumentException("Invalid result type: " + type);
         else
             return typeLc;
-    }
-    
-    /**
-     *
-     * @param val
-     * @return
-     */
-    private static void checkBodyNull(String val) {
-        if (val == null)
-            throw new IllegalArgumentException("Query result body cannot be 'null'.");
     }
     
     /**
@@ -178,6 +148,31 @@ public class NCQueryResult implements Serializable {
         // No-op.
     }
 
+    /**
+     * Sets result body.
+     *
+     * @param body Result body.
+     * @return This instance of chaining calls.
+     */
+    public NCQueryResult setBody(String body) {
+        this.body = body;
+
+        return this;
+    }
+
+    /**
+     * Set result type.
+     *
+     * @param type Result type.
+     * @throws IllegalArgumentException Thrown if type of invalid.
+     * @return This instance of chaining calls.
+     */
+    public NCQueryResult setType(String type) {
+        this.type = checkType(type);
+
+        return this;
+    }
+    
     /**
      * Gets optional sentence variant associated with this result.
      * <br><br>

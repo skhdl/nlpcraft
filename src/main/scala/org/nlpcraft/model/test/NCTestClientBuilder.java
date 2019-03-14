@@ -449,14 +449,13 @@ public class NCTestClientBuilder {
 
                     if (res.isSuccessful())
                         log.info(
-                            "Question `{}` answered successfully with '{}' result:\n{}",
+                            "'ask' request '{}' answered successfully with '{}' result:\n{}",
                             txt,
                             res.getResultType().get(),
                             mkPrettyString(res.getResultType().get(), res.getResult().get())
                         );
                     else
-                        log.info(
-                            "Question `{}` answered unsuccessfully with result:\n{}",
+                        log.info("'ask' request '{}' answered unsuccessfully with result:\n{}",
                             txt,
                             res.getResultError().get()
                         );
@@ -740,7 +739,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restClearConversation() throws IOException, NCTestClientException {
-            log.info("`clear/conversation` request sent for data source: `{}`", dsId);
+            log.info("'clear/conversation' request sent for data source: {}", dsId);
             
             checkStatus(gson.fromJson(
                 post(
@@ -759,7 +758,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private long restCreateTestDs(String mdlId) throws IOException, NCTestClientException {
-            log.info("`ds/add` request sent for model: `{}`", mdlId);
+            log.info("'ds/add' request sent for model ID: {}", mdlId);
             
             long id =
                 checkAndExtract(
@@ -786,7 +785,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restDeleteTestDs() throws IOException, NCTestClientException {
-            log.info("`ds/delete` request sent for temporary data source: `{}`", dsId);
+            log.info("'ds/delete' request sent for temporary data source ID: {}", dsId);
             
             checkStatus(
                 gson.fromJson(
@@ -805,7 +804,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restRegisterEndpoint() throws IOException, NCTestClientException {
-            log.info("`user/endpoint/register` request sent `{}`", endpoint);
+            log.info("'user/endpoint/register' request sent to: {}", endpoint);
         
             checkStatus(
                 gson.fromJson(
@@ -824,7 +823,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restRemoveEndpoint() throws IOException, NCTestClientException {
-            log.info("`user/endpoint/remove` request sent `{}`", endpoint);
+            log.info("'user/endpoint/remove' request sent to: {}", endpoint);
 
             checkStatus(
                 gson.fromJson(
@@ -843,7 +842,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private String restSignin() throws IOException, NCTestClientException {
-            log.info("`user/signin` request sent for: `{}`", email);
+            log.info("'user/signin' request sent for: {}", email);
             
             return checkAndExtract(
                 post(
@@ -862,7 +861,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private List<NCDsJson> restGetDataSources() throws IOException, NCTestClientException {
-            log.info("`ds/all` request sent for: `{}`", email);
+            log.info("'ds/all' request sent for: {}", email);
             
             Map<String, Object> m = gson.fromJson(
                 post(
@@ -884,7 +883,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private String restAsk(String txt) throws IOException, NCTestClientException {
-            log.info("`ask` request sent: `{}` to data source: `{}`", txt, dsId);
+            log.info("'ask' request '{}' sent for data source ID: {}", txt, dsId);
             
             return checkAndExtract(
                 post(
@@ -903,7 +902,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restSignout() throws IOException, NCTestClientException {
-            log.info("`user/signout` request sent for: `{}`", email);
+            log.info("'user/signout' request sent for: {}", email);
             
             checkStatus(gson.fromJson(
                 post(
