@@ -164,8 +164,9 @@ layout: documentation
     <section id="querying">
         <span class="section-title">Using REST API</span>
         <p>
-            There are many way to issue and test REST calls - but for our examples we'll use standard
-            <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility.
+            There are <a target=_ href="https://medium.com/@alicealdaine/top-10-api-testing-tools-rest-soap-services-5395cb03cfa9">many ways</a> to issue and test REST calls - but for our examples we'll use standard
+            <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility which you can simply use from the
+            command line in any OS.
             NLPCraft comes with a convenient wrapper script <code>bin/nccurl.sh</code> that shortens
             command line of the standard <code>cURL</code>. We recommend adding <code>bin/nccurl.sh</code> to
             your <code>$PATH</code> environment variable.
@@ -232,6 +233,20 @@ layout: documentation
             <code>/check</code> to check the status and get the result, and <code>/cancel</code> to clear the result
             from server once we obtained it. 
         </p>
+        <div class="bq info">
+            <p>
+                <b><code>/check</code> vs. endpoints</b>
+            </p>
+            <p>
+                Using <code>/check</code> REST call is one of the two ways to check for and get results. <code>/check</code>
+                represents a <b>pull model</b> of result notifications where you need to call <code>/check</code> periodically
+                until your request is in <code>QRY_READY</code> status at which point it would have a result.
+            </p>
+            <p>
+                Another, more convenient, option is to register an endpoint which would be notified with JSON result
+                object only when this result is ready. This represents a <b>push model</b> of result notifications.
+            </p>
+        </div>
         <p>
             Note that <code>/ask</code> request returns server request ID (<code>srvReqId</code> JSON field). We'll
             use this ID in <code>/cancel</code> call.
@@ -285,7 +300,7 @@ layout: documentation
                             }
                         },
                         "resType": "json",
-                        "srvReqId": "AQnaR689L",
+                        "srvReqId": "gJ0OJ0qXp",
                         "status": "QRY_READY",
                         "updateTstamp": 1552527885155,
                         "usrId": 7001
@@ -298,7 +313,7 @@ layout: documentation
             Once we got our response we can clear it from the server memory:
         </p>
         <pre class="brush: js highlight: [2, 3, 4]">
-            $ nccurl.sh cancel '{"acsTok": "KMGWMQJ44", "srvReqIds": ["AQnaR689L"]}' | python -m json.tool
+            $ nccurl.sh cancel '{"acsTok": "KMGWMQJ44", "srvReqIds": ["gJ0OJ0qXp"]}' | python -m json.tool
             {
                 "status": "API_OK"
             }

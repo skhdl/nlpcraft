@@ -285,6 +285,10 @@ $bq-success-border-color: $brand-success;
         margin: 0;
     }
 
+    & > p:not(:nth-child(1)) {
+        margin-top: 10px;
+    }
+
     & > p {
         letter-spacing: 0.05em;
     }
