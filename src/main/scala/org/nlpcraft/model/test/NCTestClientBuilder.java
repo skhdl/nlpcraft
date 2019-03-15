@@ -824,7 +824,7 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restCancel() throws IOException, NCTestClientException {
-            log.info("'cancel' request '{}' sent for requests: {}", srvReqIds);
+            log.info("'cancel' request sent for server request IDs: {}", srvReqIds);
         
             checkStatus(
                 gson.fromJson(

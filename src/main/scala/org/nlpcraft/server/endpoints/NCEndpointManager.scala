@@ -156,7 +156,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                                     cache.query(readyQry).getAll.asScala.map(p ⇒ p.getKey → p.getValue).toMap
                                 }
 
-                            logger.trace(s"Records for sending: ${readyData.size}")
+                            logger.trace(s"Endpoint records to send: ${readyData.size}")
 
                             if (readyData.nonEmpty) {
                                 val processed = readyData.values.map(p ⇒ {
@@ -250,7 +250,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                     val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
                     if (srvReqIds.nonEmpty) {
-                        logger.warn(s"Query state notifications dropped due to per-use queue size limit: $srvReqIds")
+                        logger.warn(s"Endpoint notifications dropped due to per-user queue size limit: $srvReqIds")
 
                         cache --= srvReqIds
                     }
@@ -274,7 +274,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                         val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
 
-                        logger.warn(s"Query state notifications dropped due to overall queue size limit: $srvReqIds")
+                        logger.warn(s"Endpoint notifications dropped due to overall queue size limit: $srvReqIds")
 
                         cache --= srvReqIds
                     }
@@ -282,7 +282,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             }
         }
         catch {
-            case e: Throwable ⇒ logger.error("Query notification GC error.", e)
+            case e: Throwable ⇒ logger.error("Endpoint notification unexpected error.", e)
         }
 
     /**
@@ -333,7 +333,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                             val code = resp.getStatusLine.getStatusCode
 
                             if (code != 200)
-                                throw new NCE(s"Unexpected query state endpoint send HTTP response [" +
+                                throw new NCE(s"Unexpected HTTP response during endpoint sending [" +
                                     s"userId=$usrId, " +
                                     s"endpoint=$ep, " +
                                     s"code=$code" +
@@ -389,7 +389,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                             val delIds = candidates.filter(_._2.getCreatedOn < min).keys
 
                             if (delIds.nonEmpty) {
-                                logger.warn(s"Requests deleted because timeout: ${delIds.mkString(", ")}")
+                                logger.warn(s"Endpoint notifications dropped due to timeout: ${delIds.mkString(", ")}")
 
                                 cache --= delIds.toSet
                                 candidates --= delIds
@@ -402,10 +402,10 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                                 if (firstErrsIds.nonEmpty)
                                     logger.warn(
-                                        s"Error sending notification, first attempt " +
+                                        s"Failed to send endpoint notification, first attempt " +
                                             s"[userId=$usrId" +
                                             s", endpoint=$ep" +
-                                            s", lifetimeMins=${Config.lifeTimeMins}" +
+                                            s", lifeTimeMins=${Config.lifeTimeMins}" +
                                             s", srvReqIds=${firstErrsIds.mkString(", ")}" +
                                             s", error=${e.getLocalizedMessage}" +
                                             s"]"
@@ -424,7 +424,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                         }
                 }
                 catch {
-                    case e: Exception ⇒ logger.error("Error processing data.", e)
+                    case e: Exception ⇒ logger.error("Unexpected error during endpoint sending.", e)
                 }
         },
         (_: Unit) ⇒ {
@@ -484,7 +484,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             },
             {
                 case e: Exception ⇒
-                    logger.error(s"Failed to add query state notification [state=$state, ep=$ep]", e)
+                    logger.error(s"Failed to add endpoint notification [state=$state, ep=$ep]", e)
             }
         )
     }
@@ -509,7 +509,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             },
             {
                 case e: Exception ⇒
-                    logger.error(s"Failed to cancel query state notification [srvReqIds=$srvReqIds]", e)
+                    logger.error(s"Failed to cancel endpoint notification [srvReqIds=$srvReqIds]", e)
             }
         )
     }
@@ -541,7 +541,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             },
             {
                 case e: Exception ⇒
-                    logger.error(s"Failed to cancel query state notification [usrId=$usrId]", e)
+                    logger.error(s"Failed to cancel endpoint notification [usrId=$usrId]", e)
             }
         )
     }

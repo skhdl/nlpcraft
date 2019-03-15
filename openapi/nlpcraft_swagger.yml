@@ -113,7 +113,7 @@ paths:
                       description: Server request ID
                     txt:
                       type: string
-                      description: Question text
+                      description: Original request text
                     userId:
                       type: integer
                       format: int64
