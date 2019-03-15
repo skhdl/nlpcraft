@@ -366,6 +366,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         NCQueryManager.check(userId).map(p ⇒
                             Map(
                                 "srvReqId" → p.srvReqId,
+                                "txt" → p.text,
                                 "usrId" → p.userId,
                                 "dsId" → p.dsId,
                                 "mdlId" → p.modelId,

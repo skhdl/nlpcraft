@@ -46,6 +46,7 @@ public class NCEndpointCacheValue implements Serializable  {
     private final long createdOn;
     private final long userId;
     private final String srvReqId;
+    private final boolean processed;
     
     public NCEndpointCacheValue(
         NCQueryStateMdo state,
@@ -54,7 +55,8 @@ public class NCEndpointCacheValue implements Serializable  {
         int attempts,
         long createdOn,
         long userId,
-        String srvReqId
+        String srvReqId,
+        boolean processed
     ) {
         this.state = state;
         this.endpoint = endpoint;
@@ -63,6 +65,7 @@ public class NCEndpointCacheValue implements Serializable  {
         this.createdOn = createdOn;
         this.userId = userId;
         this.srvReqId = srvReqId;
+        this.processed = processed;
     }
     
     public NCQueryStateMdo getState() {
@@ -91,5 +94,9 @@ public class NCEndpointCacheValue implements Serializable  {
     
     public String getSrvReqId() {
         return srvReqId;
+    }
+    
+    public boolean isProcessed() {
+        return processed;
     }
 }

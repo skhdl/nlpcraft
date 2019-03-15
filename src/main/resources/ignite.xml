@@ -128,6 +128,7 @@
                             <entry key="createdOn" value="java.lang.Long"/>
                             <entry key="userId" value="java.lang.Long"/>
                             <entry key="srvReqId" value="java.lang.String"/>
+                            <entry key="processed" value="java.lang.Boolean"/>
                         </map>
                     </property>
 
@@ -144,6 +145,9 @@
                             </bean>
                             <bean class="org.apache.ignite.cache.QueryIndex">
                                 <constructor-arg value="srvReqId"/>
+                            </bean>
+                            <bean class="org.apache.ignite.cache.QueryIndex">
+                                <constructor-arg value="processed"/>
                             </bean>
                         </list>
                     </property>

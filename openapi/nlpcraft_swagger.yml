@@ -99,6 +99,7 @@ paths:
                   type: object
                   required:
                     - srvReqId
+                    - txt
                     - userId
                     - dsId
                     - mdlId
@@ -110,6 +111,9 @@ paths:
                     srvReqId:
                       type: string
                       description: Server request ID
+                    txt:
+                      type: string
+                      description: Original request text
                     userId:
                       type: integer
                       format: int64
