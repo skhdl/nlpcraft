@@ -36,12 +36,195 @@ layout: documentation
 
 <div class="col-md-8 second-column">
     <section id="overview">
-        <span class="section-title">Overview</span>
+        <span class="section-title">Basic Concepts</span>
+        <p>
+            Below we’ll cover some of the key concepts that are important for NLPCraft.
+            Note that many of them will be covered in more details later in this guide.
+        </p>
+    </section>
+    <section id="sem-model">
+        <span class="section-sub-title">Semantic Modelling</span>
+        <p>
+            The concept of <a target=wiki href="https://en.wikipedia.org/wiki/Semantic_data_model">semantic modeling</a>
+            is at the core of NLPCraft capabilities. Semantic modelling
+            (or semantic grammar) defines a formal way of how a natural language sentence can be understood
+            and translated into actions. NLPCraft provides one of the most sophisticated tools and APIs
+            for semantic modelling applications.
+        </p>
+        <p>
+            <a target=wiki href="https://en.wikipedia.org/wiki/Semantic_data_model">Introduced</a> in mid-1970s the
+            semantic grammar differs from the traditional approach that is
+            based on the linguistic grammar which deals only with linguistic categories like
+            nouns, verbs, etc. The easiest way to understand the difference between semantic grammar and a
+            linguistic grammar is to look at the following illustration:
+        </p>
+        <figure>
+            <img class="img-fluid" src="/images/semmodel1.png">
+            <figcaption><b>Fig 1.</b> Semantic vs. Linguistic Grammar</figcaption>
+        </figure>
+        <p>
+            In Fig. 2 the lower and upper sentences are the same but they are parsed differently. Lower part is
+            parsed using traditional linguistic analysis where each word is tagged with a PoS (Point-of-Speech) tag
+            (e.g. <code>NN</code> for nous, <code>JJ</code> for adjective, and so on). The upper part, however, is
+            parsed using semantic grammar and instead of strictly individual words being tagged, potentially multiple words form
+            high-level semantic groups like <code>DATE</code> or <code>GEO</code>.
+        </p>
+        <p>
+            In a bit more formal way the semantic grammar is a type of grammar whose non-terminals are not
+            generic structural or linguistic categories like nouns or verbs but rather semantic
+            categories like <code>DATE</code> or <code>GEO</code> or <code>ENTITY</code>. Unlike linguist grammar
+            the semantic grammar allows to easily resolve the standard ambiguities prevailing in linguistic grammar, e.g.:
+        </p>
+        <figure>
+            <img style="width: 40%" class="img-fluid" src="/images/semmodel2.png">
+            <figcaption><b>Fig 2.</b> Linguistic Ambiguity</figcaption>
+        </figure>
+        <p>
+            In Fig. 3. even though the linguistic signatures of both sentences are almost the same, the
+            semantic meaning is completely different.
+            The resolution of such ambiguity in a linguistic approach will require very sophisticated
+            context analysis (if and when it is available) and in many cases simply impossible to do deterministically.
+            Semantic grammar on the other hand allows to cleanly resolve this ambiguity in
+            a simpler and fully deterministic way.
+        </p>
+    </section>
+    <section id="stm">
+        <span class="section-sub-title">Conversation <span class="amp">&amp;</span> STM</span>
+        <p>
+            NLPCraft provides automatic conversation context management right out of the box. It has
+            sophisticated short-term-memory (STM) implementation that is also conveniently integrated
+            with intent-based <a href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html" target=javadoc>intent solver</a>
+            utility class.
+        </p>
+        <p>
+            Maintaining conversation state is necessary for effective context resolution, so that users
+            could ask, for example, the following sequence of questions using example weather model:
+        </p>
+        <dl class="stm-example">
+            <dd><i class="fa fa-fw fa-angle-right"></i>What’s the weather in London today?</dd>
+            <dt>
+                <p>
+                    User gets the current London’s weather.<br/>
+                    STM is empty at this moment so NLPCraft expects to get all necessary information from
+                    the user sentence. Meaningful parts of the sentence get stored in STM.
+                </p>
+                <div class="stm-state">
+                    <div class="stm">
+                        <label>STM Before:</label>
+                        <span>&nbsp;</span>
+                    </div>
+                    <div class="stm">
+                        <label>STM After:</label>
+                        <span>weather</span>
+                        <span>London</span>
+                        <span>today</span>
+                    </div>
+                </div>
+            </dt>
+            <dd><i class="fa fa-fw fa-angle-right"></i>And what about Berlin?</dd>
+            <dt>
+                <p>
+                    User gets the current Berlin’s weather.<br/>
+                    The only useful data in the user sentence is name of the city Berlin. But since
+                    NLPCraft now has data from the previous question in its STM it can safely deduce that we
+                    are asking about <code>weather</code> for <code>today</code>.
+                    <code>Berlin</code> overrides <code>London</code> in STM.
+                </p>
+                <div class="stm-state">
+                    <div class="stm">
+                        <label>STM Before:</label>
+                        <span>weather</span>
+                        <span>London</span>
+                        <span>today</span>
+                    </div>
+                    <div class="stm">
+                        <label>STM After:</label>
+                        <span>weather</span>
+                        <span><b>Berlin</b></span>
+                        <span>today</span>
+                    </div>
+                </div>
+            </dt>
+            <dd><i class="fa fa-fw fa-angle-right"></i>Next week forecast?</dd>
+            <dt>
+                <p>
+                    User gets the next week forecast for Berlin.<br/>
+                    Again, the only useful data in the user sentence is <code>next week</code> and <code>forecast</code>.
+                    STM supplies <code>Berlin</code>. <code>Next week</code> override <code>today</code>, and
+                    <code>forecast</code> override <code>weather</code> in STM.
+                </p>
+                <div class="stm-state">
+                    <div class="stm">
+                        <label>STM Before:</label>
+                        <span>weather</span>
+                        <span>Berlin</span>
+                        <span>today</span>
+                    </div>
+                    <div class="stm">
+                        <label>STM After:</label>
+                        <span><b>forecast</b></span>
+                        <span>Berlin</span>
+                        <span><b>Next week</b></span>
+                    </div>
+                </div>
+            </dt>
+        </dl>
+        <p>
+            Note that STM is maintained per user and per data source.
+            Conversation management implementation is also smart enough to clear STM after certain
+            period of time, i.e. it “forgets” the conversational context after few minutes of inactivity.
+            Note also that conversational context can also be cleared explicitly
+            via <a href="https://nlpcraft.docs.apiary.io" target="apiary">REST API</a>.
+        </p>
+    </section>
+    <section id="model-ds">
+        <span class="section-sub-title">Models <span class="amp">&amp;</span> Data Sources</span>
+        <p>
+            When working with NLPCraft you’ll be most often dealing with three concepts you have already seen above:
+        </p>
+        <ul>
+            <li>Data Model</li>
+            <li>Data Source</li>
+            <li>Data Probe</li>
+        </ul>
+        <p>
+            If you haven’t done it already - we highly recommend to look over <a href="/getting-started.html">Getting Started</a>
+            guide which will give you a quick dive into how these concepts interconnect.
+        </p>
+        <p>
+            <b>Data Model</b> is essentially a small piece of Java/Scala/Groovy (or any other JVM-based language) code that
+            you will need to develop that defines how to translate user input into specific actions for a specific data endpoint.
+            Even though it may sounds complex - in reality most models are fairly simple and can be developed rather quickly.
+            Data model does not necessarily have to work with only one type of endpoint but it is a
+            good practice to have different types of endpoints handled by different models. The same model however can
+            be used for more than one instance of an endpoint and that’s where the notion of data source comes in play.
+        </p>
+        <p>
+            <b>Data Source</b> is a configured instance of data model. You create, update and delete data sources
+            through <a href="https://nlpcraft.docs.apiary.io" target="apiary">REST API</a>. Data source has name, description and associated data model
+            with its own unique configuration. Data source is used when you ask natural language questions via NLPCraft to
+            point to a specific instance of the data model. Note also that multiple data sources can share the same model
+            (although they will effectively represent different instances of the same model with potentially different configurations).
+        </p>
+        <p>
+            <b>Data Probe</b> is an application whose main purpose is to deploy and host user-defined data models.
+            A separate application is required since often NLPCraft will be connected to a private data
+            endpoint (like corporate database, for example) and open connectivity to this database from the
+            outside will not be possible - hence a need for a secure proxy type of application in
+            between. Data probe is a secure application that employs end-to-end encryption, HTTP tunneling and router
+            ingress-only connectivity. Each data probe can host multiple models, and you can have multiple
+            data probes. Data probes can be deployed anywhere as long as there is an outbound connectivity,
+            and are typically deployed in DMZ or close to your private data endpoints. Data probe can be
+            launched in-process for easier development and testing or as a command line tool for production usage.
+        </p>
     </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
         <li class="side-nav-title">On This Page</li>
+        <li><a href="#sem-model">Semantic Modelling</a></li>
+        <li><a href="#stm">Conversation <span class="amp">&amp;</span> STM</a></li>
+        <li><a href="#model-ds">Models <span class="amp">&amp;</span> Data Sources</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
