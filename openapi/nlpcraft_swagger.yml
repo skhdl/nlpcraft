@@ -590,7 +590,7 @@ paths:
         - Authentication
       summary: Signs in and obtains new access token.
       description: >-
-        Accepts user's probe token and email and returns a **new access** token
+        Accepts user's email and password and returns a **new access** token
         that should be used in all subsequent API calls. An access token can
         expire or be invalidated on the server side and this call should be used
         to obtain it again in such cases.
