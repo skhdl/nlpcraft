@@ -36,7 +36,7 @@ import java.sql.{Connection, PreparedStatement, ResultSet, SQLException, Timesta
 
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.ignite.{Ignite, IgniteAtomicSequence}
+import org.apache.ignite.{Ignite, IgniteAtomicSequence, IgniteJdbcThinDriver}
 import org.apache.ignite.transactions.Transaction
 import org.nlpcraft.common._
 import org.nlpcraft.server.NCConfigurable
@@ -626,4 +626,9 @@ object NCSql extends LazyLogging {
                 true
             )
         }
+
+    /**
+      * Gets Ignite database usage flag.
+      */
+    def isIgniteDb: Boolean = c3p0.getDriverClass == classOf[IgniteJdbcThinDriver].getName
 }

@@ -56,7 +56,8 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     override def start(): NCLifecycle = {
         ensureStopped()
 
-        prepareSchema()
+        if (NCSql.isIgniteDb)
+            prepareSchema()
 
         super.start()
     }
