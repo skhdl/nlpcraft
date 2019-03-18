@@ -288,7 +288,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
     /**
       *
-      * @param arg User id or server request identifiers.
+      * @param arg User ID or server request IDs.
       */
     @throws[NCE]
     def cancel(arg: Either[Long, Set[String]]): Unit = {

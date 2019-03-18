@@ -173,7 +173,8 @@ paths:
       summary: Cancels a question.
       description: >-
         Cancels the previously submitted sentence. Must be called when query
-        result is no longer needed.
+        result is no longer needed (i.e. downloaded by all client apps) to release the server memory.
+        Note that query results will auto-expire on server after certain period of time.
       operationId: cancel
       parameters:
         - in: body
@@ -193,7 +194,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Server IDs of the requests to cancel. Optional, all user requests cancel by default.
+                description: Server IDs of the requests to cancel. Optional, all current user requests will cancel by default.
       responses:
         '200':
           description: Successful operation.

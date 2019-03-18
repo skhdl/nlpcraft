@@ -339,15 +339,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     val initiatorUsr = authenticate(req.acsTok)
 
                     if (!initiatorUsr.isAdmin) {
-                        val states =
-                            req.srvReqIds match {
-                                case Some(srvReqIds) ⇒ NCQueryManager.get(srvReqIds)
-                                case None ⇒ NCQueryManager.get(initiatorUsr.id)
+                        val states = req.srvReqIds match {
+                            case Some(srvReqIds) ⇒ NCQueryManager.get(srvReqIds)
+                            case None ⇒ NCQueryManager.get(initiatorUsr.id)
 
-                            }
+                        }
+                        
                         if (states.exists(_.userId != initiatorUsr.id))
                             throw AdminRequired(initiatorUsr.email)
-
                     }
 
                     NCQueryManager.cancel(
@@ -355,7 +354,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             case Some(srvReqIds) ⇒ Right(srvReqIds)
                             case None ⇒ Left(initiatorUsr.id)
                         }
-
                     )
 
                     complete {
