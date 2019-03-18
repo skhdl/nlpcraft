@@ -184,7 +184,6 @@ paths:
             type: object
             required:
               - acsTok
-              - srvReqIds
             properties:
               acsTok:
                 type: string
@@ -194,7 +193,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Server IDs of the requests to cancel
+                description: Server IDs of the requests to cancel. Optional, all user requests cancel by default.
       responses:
         '200':
           description: Successful operation.

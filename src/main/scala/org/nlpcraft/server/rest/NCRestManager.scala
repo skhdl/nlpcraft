@@ -324,7 +324,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
             /**/path(API / "cancel") {
                 case class Req(
                     acsTok: String,
-                    srvReqIds: Set[String]
+                    srvReqIds: Option[Set[String]]
                 )
                 case class Res(
                     status: String
@@ -338,13 +338,25 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                     val initiatorUsr = authenticate(req.acsTok)
 
-                    if (
-                        !initiatorUsr.isAdmin &&
-                        NCQueryManager.get(req.srvReqIds).exists(_.userId != initiatorUsr.id)
-                    )
-                        throw AdminRequired(initiatorUsr.email)
+                    if (!initiatorUsr.isAdmin) {
+                        val states =
+                            req.srvReqIds match {
+                                case Some(srvReqIds) ⇒ NCQueryManager.get(srvReqIds)
+                                case None ⇒ NCQueryManager.get(initiatorUsr.id)
 
-                    NCQueryManager.cancel(req.srvReqIds)
+                            }
+                        if (states.exists(_.userId != initiatorUsr.id))
+                            throw AdminRequired(initiatorUsr.email)
+
+                    }
+
+                    NCQueryManager.cancel(
+                        req.srvReqIds match {
+                            case Some(srvReqIds) ⇒ Right(srvReqIds)
+                            case None ⇒ Left(initiatorUsr.id)
+                        }
+
+                    )
 
                     complete {
                         Res(API_OK)
