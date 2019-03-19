@@ -349,12 +349,10 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             throw AdminRequired(initiatorUsr.email)
                     }
 
-                    NCQueryManager.cancel(
-                        req.srvReqIds match {
-                            case Some(srvReqIds) ⇒ Right(srvReqIds)
-                            case None ⇒ Left(initiatorUsr.id)
-                        }
-                    )
+                    req.srvReqIds match {
+                        case Some(srvReqIds) ⇒ NCQueryManager.cancel(srvReqIds)
+                        case None ⇒ NCQueryManager.cancel(initiatorUsr.id)
+                    }
 
                     complete {
                         Res(API_OK)
