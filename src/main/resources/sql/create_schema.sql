@@ -43,7 +43,7 @@ CREATE TABLE nc_user (
 ) WITH "template=replicated, atomicity=transactional";
 
 CREATE INDEX nc_user_idx_1 ON nc_user(email);
-CREATE INDEX nc_user_idx_3 ON nc_user(last_ds_id);
+CREATE INDEX nc_user_idx_2 ON nc_user(last_ds_id);
 
 DROP TABLE IF EXISTS passwd_pool;
 CREATE TABLE passwd_pool (
@@ -104,3 +104,4 @@ CREATE TABLE proc_log (
     probe_mac_addr VARCHAR NULL
 ) WITH "template=replicated, atomicity=transactional";
 
+CREATE INDEX proc_log_idx_1 ON proc_log(srv_req_id);

@@ -49,11 +49,9 @@ case class NCDataSourceMdo(
     @NCMdoField(column = "model_name") modelName: String,
     @NCMdoField(column = "model_ver") modelVersion: String,
     @NCMdoField(column = "model_cfg") modelConfig: Option[String],
-
-    // Base MDO.
     @NCMdoField(json = false, column = "created_on") createdOn: Timestamp,
     @NCMdoField(json = false, column = "last_modified_on") lastModifiedOn: Timestamp
-) extends NCEntityMdo with NCAnnotatedMdo[NCDataSourceMdo]
+) extends NCAnnotatedMdo[NCDataSourceMdo]
 
 object NCDataSourceMdo {
     implicit val x: RsParser[NCDataSourceMdo] =

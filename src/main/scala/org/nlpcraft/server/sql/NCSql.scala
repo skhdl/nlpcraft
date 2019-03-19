@@ -128,6 +128,8 @@ object NCSql extends LazyLogging {
         ds
     }
 
+    logger.info(s"Driver initialized: ${Config.driver}")
+
     /**
      * Wraps database error.
      *
@@ -484,21 +486,17 @@ object NCSql extends LazyLogging {
 
     /**
      * Tests whether given SQL query produces any results at all. If so - 'true' is return, 'false' otherwise.
+     * Do not ask query with huge result here.
      *
      * @param sql SQL query statement to execute.
      * @param params Set of tuples with JDBC types (legacy only) or individual values for the parameters to set.
      */
     @throws[NCE]
-    def exists(sql: String, params: Any*): Boolean = {
-        val sqlUc = sql.trim.toUpperCase
-        val sql0 = if (!sqlUc.startsWith("SELECT 1")) "SELECT 1 FROM " + sql else sql
-        val sql1 = if (!sqlUc.endsWith("LIMIT 1")) sql0 + " LIMIT 1" else sql0
-        
-        selectSingle[Long](sql1, params: _*) match {
-            case None ⇒ false
-            case Some(_) ⇒ true
+    def exists(sql: String, params: Any*): Boolean =
+        selectSingle[Long](s"SELECT count(*) FROM $sql", params: _*) match {
+            case Some(cnt) ⇒ cnt > 0
+            case None ⇒ throw new AssertionError("Unexpected empty result")
         }
-    }
 
     /**
      * Executes given SQL query and returns a single row from result set parsed to an object. If

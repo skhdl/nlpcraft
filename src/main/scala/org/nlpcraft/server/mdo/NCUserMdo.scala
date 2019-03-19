@@ -50,11 +50,9 @@ case class NCUserMdo(
     @NCMdoField(column = "passwd_salt") passwordSalt: String,
     @NCMdoField(column = "last_ds_id") lastDsId: Long,
     @NCMdoField(column = "is_admin") isAdmin: Boolean,
-
-    // Base MDO.
     @NCMdoField(column = "created_on") createdOn: Timestamp,
     @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
-) extends NCEntityMdo with NCAnnotatedMdo[NCUserMdo]
+) extends NCAnnotatedMdo[NCUserMdo]
 
 object NCUserMdo {
     implicit val x: RsParser[NCUserMdo] =

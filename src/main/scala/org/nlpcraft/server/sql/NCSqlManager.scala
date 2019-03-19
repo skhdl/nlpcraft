@@ -38,6 +38,7 @@ import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.sql.NCSql.Implicits._
+import org.nlpcraft.server.tx.NCTxManager
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception.catching
@@ -282,7 +283,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     def getAllDataSources: List[NCDataSourceMdo] = {
         ensureStarted()
 
-        NCSql.select[NCDataSourceMdo]("SELECT *FROM ds_instance")
+        NCSql.select[NCDataSourceMdo]("SELECT * FROM ds_instance")
     }
 
     /**
@@ -683,4 +684,3 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         }
     }
 }
-
