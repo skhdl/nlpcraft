@@ -291,7 +291,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @param arg User ID or server request IDs.
       */
     @throws[NCE]
-    def cancel(arg: Either[Long, Set[String]]): Unit = {
+    def cancel0(arg: Either[Long, Set[String]]): Unit = {
         ensureStarted()
 
         val now = U.nowUtcTs()
@@ -330,7 +330,21 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             )
         }
     }
-    
+
+    /**
+      *
+      * @param srvReqIds Server request IDs.
+      */
+    @throws[NCE]
+    def cancel(srvReqIds: Set[String]): Unit = cancel0(Right(srvReqIds))
+
+    /**
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def cancel(usrId: Long): Unit = cancel0(Left(usrId))
+
     /**
       *
       */
