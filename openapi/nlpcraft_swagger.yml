@@ -14,15 +14,20 @@ produces:
 tags:
   - name: Authentication
     description: >-
-      User singing up, signing in (getting access token), singing out and password reset.
+      User signing in (getting access token), singing out and password reset.
   - name: Data Sources
-    description: Adding, removing and managing data sources.
+    description: >-
+      Adding, removing and managing data sources.
   - name: Users
-    description: Adding, removing and updating users. Managing result notification endpoints.
+    description: >-
+      Adding, removing and managing users.
   - name: Data Probe
-    description: Managing data probes.
+    description: >-
+      Managing data probes.
   - name: Asking
-    description: Asking questions, checking results, clearing conversation context.
+    description: >-
+      Asking questions, checking results, clearing conversation context.
+      Managing result notification endpoints.
 paths:
   /clear/conversation:
     post:
@@ -274,7 +279,7 @@ paths:
       tags:
         - Users
       summary: Gets all users.
-      description: Gets all users.
+      description: Gets all users. Admin privileges required.
       operationId: getAllUsers
       parameters:
         - in: body
@@ -349,7 +354,9 @@ paths:
       tags:
         - Users
       summary: Updates regular user.
-      description: Updates user with given parameters.
+      description: >-
+        Updates user with given ID or the current user with given parameters.
+        Admin privileges required for updating other user.
       operationId: updateUser
       parameters:
         - in: body
@@ -403,7 +410,9 @@ paths:
       tags:
         - Users
       summary: Deletes user.
-      description: Deletes user with given ID.
+      description: >-
+        Deletes user with given ID or the current user.
+        Admin privileges required for deleting other user.
       operationId: deleteUser
       parameters:
         - in: body
@@ -439,7 +448,7 @@ paths:
       tags:
         - Users
       summary: Adds new regular user.
-      description: Adds new user with given parameters.
+      description: Adds new user with given parameters. Admin privileges required.
       operationId: addUser
       parameters:
         - in: body
@@ -507,9 +516,12 @@ paths:
   /endpoint/register:
     post:
       tags:
-        - Users
+        - Asking
       summary: Register user endpoint.
-      description: Register session endpoint for query results. Note that only one endpoint per user is allowed. Previous endpoint will be overriden, if any.
+      description: >-
+        Register session endpoint for query results.
+        Note that only one endpoint per user is allowed.
+        Previous endpoint will be overridden, if any.
       operationId: registerEndpoint
       parameters:
         - in: body
@@ -550,10 +562,11 @@ paths:
   /endpoint/remove:
     post:
       tags:
-        - Users
+        - Asking
       summary: Removes user endpoint.
       description: >-
-        Removes session endpoint. Command is ignored if endpoint is not registered. Note that only one endpoint per use is allowed.
+        Removes session endpoint. Command is ignored if endpoint is not registered.
+        Note that only one endpoint per use is allowed.
       operationId: removeEndpoint
       parameters:
         - in: body
@@ -671,65 +684,14 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /signup:
-    post:
-      tags:
-        - Authentication
-      summary: Signs out and releases access token.
-      description: >-
-        Releases previously obtained access token. After this call given access
-        token is no longer valid for authentication.
-      operationId: signUp
-      parameters:
-        - in: body
-          name: Payload body
-          description: JSON request.
-          required: true
-          schema:
-            type: object
-            required:
-              - email
-              - passwd
-              - firstName
-              - lastName
-            properties:
-              email:
-                description: User email
-                type: string
-                maxLength: 64
-              passwd:
-                type: string
-                description: User password
-                maxLength: 64
-              firstName:
-                description: User first or given name
-                type: string
-                maxLength: 64
-              lastName:
-                description: User last name
-                type: string
-                maxLength: 64
-              avatarUrl:
-                description: User avatar URL
-                type: string
-                maxLength: 512000
-      responses:
-        '200':
-          description: Successful operation.
-          schema:
-            $ref: '#/definitions/Ok'
-        '400':
-          description: Failed operation.
-          schema:
-            $ref: '#/definitions/Error'
   /passwd/reset:
     post:
       tags:
         - Authentication
-      summary: Signs out and releases access token.
+      summary: Resets password for the user.
       description: >-
-        Releases previously obtained access token. After this call given access
-        token is no longer valid for authentication.
+        Resets the password for the user. Note that NLPCraft doesn't store clear text password
+        and there is no way to retrieve the current password - user can only reset the password.
       operationId: passwdReset
       parameters:
         - in: body
@@ -746,9 +708,9 @@ paths:
                 maxLength: 256
                 description: Previously obtained access token to release.
                 type: string
-              userId:
+              id:
                 description: >-
-                  Optional ID of the user to reset password. Only administrators
+                  Optional ID of the user to reset password. Only admins
                   can provide this parameter. User's own ID by default.
                 type: integer
                 format: int64
@@ -770,7 +732,8 @@ paths:
       tags:
         - Data Probes
       summary: Gets all probes.
-      description: Gets metadata for all active (currently connected) probes.
+      description: >-
+        Gets metadata for all active (currently connected) probes. Admin privileges required.
       operationId: getAllProbes
       parameters:
         - in: body
@@ -908,7 +871,7 @@ paths:
       tags:
         - Data Sources
       summary: Gets all data sources.
-      description: Gets all data sources for signed in user.
+      description: Gets all data sources. Admin privileges required.
       operationId: getAllDataSources
       parameters:
         - in: body
@@ -982,7 +945,7 @@ paths:
       tags:
         - Data Sources
       summary: Deletes data source.
-      description: Deletes data source with given ID.
+      description: Deletes data source with given ID. Admin privileges required.
       operationId: deleteDataSource
       parameters:
         - in: body
@@ -1017,7 +980,7 @@ paths:
       tags:
         - Data Sources
       summary: Updates data source.
-      description: Updates data source with given parameters.
+      description: Updates data source with given parameters. Admin privileges required.
       operationId: updateDataSource
       parameters:
         - in: body
@@ -1062,7 +1025,7 @@ paths:
       tags:
         - Data Sources
       summary: Adds new data source.
-      description: Adds new data source with given parameters.
+      description: Adds new data source with given parameters. Admin privileges required.
       operationId: addDataSource
       parameters:
         - in: body

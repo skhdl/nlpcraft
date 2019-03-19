@@ -42,7 +42,7 @@ import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 import scala.util.control.Exception.catching
 
 /**
-  * Data sources manager.
+  * Data sources CRUD manager.
   */
 object NCDsManager extends NCLifecycle("Data source manager") with NCIgniteInstance {
     @volatile private var dsSeq: IgniteAtomicSequence = _

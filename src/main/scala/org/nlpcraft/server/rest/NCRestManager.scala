@@ -508,7 +508,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     firstName: String,
                     lastName: String,
                     avatarUrl: Option[String],
-                    isAdmin: Boolean
+                    isAdmin: Boolean // TODO: remove
                 )
                 case class Res(
                     status: String
@@ -531,7 +531,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         req.firstName,
                         req.lastName,
                         req.avatarUrl,
-                        req.isAdmin
+                        req.isAdmin // TODO: remove
                     )
 
                     complete {
@@ -543,7 +543,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 case class Req(
                     // Caller.
                     acsTok: String,
-                    userId: Option[Long],
+                    id: Option[Long],
                     newPasswd: String
                 )
                 case class Res(
@@ -558,50 +558,13 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     checkLength("newPasswd", req.newPasswd, 64)
             
                     val initiatorUsr = authenticate(req.acsTok)
-                    val usrId = getUserId(initiatorUsr, req.userId)
+                    val usrId = getUserId(initiatorUsr, req.id)
             
                     NCUserManager.resetPassword(
                         usrId,
                         req.newPasswd
                     )
             
-                    complete {
-                        Res(API_OK)
-                    }
-                }
-            } ~
-            /**/path(API / "signup") {
-                case class Req(
-                    email: String,
-                    passwd: String,
-                    firstName: String,
-                    lastName: String,
-                    avatarUrl: Option[String]
-                )
-                case class Res(
-                    status: String
-                )
-
-                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
-                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                // NOTE: no authentication requires on signup.
-
-                entity(as[Req]) { req ⇒
-                    checkLength("email", req.email, 64)
-                    checkLength("passwd", req.passwd, 64)
-                    checkLength("firstName", req.firstName, 64)
-                    checkLength("lastName", req.lastName, 64)
-                    checkLengthOpt("avatarUrl", req.avatarUrl, 512000)
-
-                    NCUserManager.signup(
-                        req.email,
-                        req.passwd,
-                        req.firstName,
-                        req.lastName,
-                        req.avatarUrl
-                    )
-
                     complete {
                         Res(API_OK)
                     }

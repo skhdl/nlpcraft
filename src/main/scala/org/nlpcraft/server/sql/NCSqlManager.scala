@@ -281,7 +281,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     def getAllDataSources: List[NCDataSourceMdo] = {
         ensureStarted()
 
-        NCSql.select[NCDataSourceMdo]("SELECT *FROM ds_instance")
+        NCSql.select[NCDataSourceMdo]("SELECT * FROM ds_instance")
     }
 
     /**
