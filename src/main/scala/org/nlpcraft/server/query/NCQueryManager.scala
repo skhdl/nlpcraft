@@ -288,26 +288,35 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
     /**
       *
-      * @param srvReqIds
+      * @param arg User ID or server request IDs.
       */
     @throws[NCE]
-    def cancel(srvReqIds: Set[String]): Unit = {
+    def cancel0(arg: Either[Long, Set[String]]): Unit = {
         ensureStarted()
 
         val now = U.nowUtcTs()
 
-        val userSrvReqIds =
+        val (srvReqIds, userSrvReqIds) =
             catching(wrapIE) {
                 NCTxManager.startTx {
+                    val srvReqIds =
+                        if (arg.isLeft)
+                            cache.values.filter(_.userId == arg.left.get).map(_.srvReqId).toSet
+                        else
+                            arg.right.get
+
                     cache --= srvReqIds
 
-                    srvReqIds.
-                        flatMap(srvReqId ⇒ cache(srvReqId)).
-                        groupBy(_.userId).
-                        map { case (usrId, data) ⇒ usrId → data.map(_.srvReqId) }
+                    val userSrvReqIds =
+                        srvReqIds.
+                            flatMap(srvReqId ⇒ cache(srvReqId)).
+                            groupBy(_.userId).
+                            map { case (usrId, data) ⇒ usrId → data.map(_.srvReqId) }
 
+                    (srvReqIds, userSrvReqIds)
                 }
             }
+
         userSrvReqIds.foreach {
             case (usrId, usrSrvReqIds) ⇒ processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
         }
@@ -321,7 +330,21 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             )
         }
     }
-    
+
+    /**
+      *
+      * @param srvReqIds Server request IDs.
+      */
+    @throws[NCE]
+    def cancel(srvReqIds: Set[String]): Unit = cancel0(Right(srvReqIds))
+
+    /**
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def cancel(usrId: Long): Unit = cancel0(Left(usrId))
+
     /**
       *
       */
@@ -347,6 +370,19 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
         catching(wrapIE) {
             srvReqIds.flatMap(id ⇒ cache(id))
+        }
+    }
+
+    /**
+      *
+      * @param usrId
+      */
+    @throws[NCE]
+    def get(usrId: Long): Set[NCQueryStateMdo] = {
+        ensureStarted()
+
+        catching(wrapIE) {
+            cache.values.filter(_.userId == usrId).toSet
         }
     }
 

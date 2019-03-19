@@ -173,7 +173,8 @@ paths:
       summary: Cancels a question.
       description: >-
         Cancels the previously submitted sentence. Must be called when query
-        result is no longer needed.
+        result is no longer needed (i.e. downloaded by all client apps) to release the server memory.
+        Note that query results will auto-expire on server after certain period of time.
       operationId: cancel
       parameters:
         - in: body
@@ -184,7 +185,6 @@ paths:
             type: object
             required:
               - acsTok
-              - srvReqIds
             properties:
               acsTok:
                 type: string
@@ -194,7 +194,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Server IDs of the requests to cancel
+                description: Server IDs of the requests to cancel. Optional, all current user requests will cancel by default.
       responses:
         '200':
           description: Successful operation.
@@ -591,7 +591,7 @@ paths:
         - Authentication
       summary: Signs in and obtains new access token.
       description: >-
-        Accepts user's probe token and email and returns a **new access** token
+        Accepts user's email and password and returns a **new access** token
         that should be used in all subsequent API calls. An access token can
         expire or be invalidated on the server side and this call should be used
         to obtain it again in such cases.
