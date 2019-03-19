@@ -37,7 +37,7 @@
 # - 2nd parameter is JSON payload string
 #
 # Example usage:
-#   $./nccurl.sh /signin '{"email": "admin@admin.com", "passwd": "admin"}'
+#   $./nccurl.sh signin '{"email": "admin@admin.com", "passwd": "admin"}'
 #   $./nccurl.sh ask '{"acsTok": "OgJanjDzk", "txt": "Hi!", "mdlId": "nlpcraft.helloworld.ex"}'
 #   $./nccurl.sh check '{"acsTok": "OgJanjDzk"}'
 #

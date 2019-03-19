@@ -53,10 +53,52 @@ layout: documentation
             is hosted on <a href="https://nlpcraft.docs.apiary.io" target="apiary">apiary.io</a> where you can review
             it and test with it against your localhost or remote NLPCraft installation.
         </p>
+        <div class="bq warn">
+            <p>
+                <b>apiary.io <span class="amp">&amp;</span> localhost</b>
+            </p>
+            <p>
+                If you are using <code>apiary.io</code> to test REST API against localhost make sure
+                to install Chrome Apiary extension. Note that this will only work in Chrome browser.
+            </p>
+        </div>
         <div class="bq info">
             <p>
                 If you downloaded ZIP archive the REST API specification is also available in
                 <code>openapi/nlpcraft_swagger.yml</code> file.
+            </p>
+        </div>
+    </section>
+    <section id="format">
+        <span class="section-sub-title">REST URL</span>
+        <p>
+            REST API accepts only <code>POST</code> HTTP calls and <code>application/json</code> content type
+            for JSON payload and responses. When issuing a REST call you will be using the following URL:
+        </p>
+        <pre class="brush: plain">
+            http://localhost:8081/api/v1/signin
+        </pre>
+        <p>
+        where:
+        <dl>
+            <dt><code>http</code></dt>
+            <dd>Either <code>http</code> or <code>https</code> protocol.</dd>
+            <dt><code>localhost:8081</code></dt>
+            <dd>Host and port on which REST server is started. <code>localhost:8081</code> is the default configuration.</dd>
+            <dt><code>/api/v1</code></dt>
+            <dd>Mandatory prefix indicating API version.</dd>
+            <dt><code>/signin</code></dt>
+            <dd>Specific REST call.</dd>
+        </dl>
+        <div class="bq info">
+            <p>
+                <b>bin/nccurl.sh</b>
+            </p>
+            <p>
+                <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> is an excellent utility for testing REST services from the command line and scripts.
+                NLPCraft comes with a convenient wrapper script <code>bin/nccurl.sh</code> that shortens
+                command line of the standard cURL. We recommend adding <code>bin/nccurl.sh</code> to your
+                <code>$PATH</code> environment variable.
             </p>
         </div>
         <p>
@@ -73,14 +115,78 @@ layout: documentation
     <section id="auth">
         <span class="section-sub-title">Authentication</span>
         <p>
-
+            Before performing any REST calls a registered user needs to sign in to receive
+            an <b>access token</b> that will be used in all subsequent operations.
+            Authentication group of operations consists of the following calls:
         </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>REST call</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a target=apiary href=""><nobr><code>/signin</code></nobr></a></td>
+                    <td>Sign in and obtain <b>access token</b>.</td>
+                </tr>
+                <tr>
+                    <td><a target=apiary href=""><nobr><code>/signout</code></nobr></a></td>
+                    <td>Sign out and invalidate previously obtained <b>access token</b>.</td>
+                </tr>
+                <tr>
+                    <td><a target=apiary href=""><nobr><code>/passwd/reset</code></nobr></a></td>
+                    <td>
+                        Reset the current user password. 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </section>
     <section id="asking">
         <span class="section-sub-title">Asking</span>
         <p>
-
+            This is the main group of operation that allows to ask questions, check the status and get
+            result, as well as manage push notification endpoints.
+            Asking group of operations consists of the following calls:
         </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>REST call</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target=apiary href=""><nobr><code>/ask</code></nobr></a></td>
+                <td>Sign in and obtain <b>access token</b>.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href=""><nobr><code>/check</code></nobr></a></td>
+                <td>Sign out and invalidate previously obtained <b>access token</b>.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href=""><nobr><code>/cancel</code></nobr></a></td>
+                <td>
+                    Reset the current user password.
+                </td>
+            </tr>
+            <tr>
+                <td><a target=apiary href=""><nobr><code>/endpoint/register</code></nobr></a></td>
+                <td>
+                    Reset the current user password.
+                </td>
+            </tr>
+            <tr>
+                <td><a target=apiary href=""><nobr><code>/endpoint/remove</code></nobr></a></td>
+                <td>
+                    Reset the current user password.
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </section>
     <section id="user">
         <span class="section-sub-title">User Management</span>
@@ -104,6 +210,7 @@ layout: documentation
 <div class="col-md-2 third-column">
     <ul class="side-nav">
         <li class="side-nav-title">On This Page</li>
+        <li><a href="#format">REST URL</a></li>
         <li><a href="#auth">Authentication</a></li>
         <li><a href="#asking">Asking</a></li>
         <li><a href="#user">Users</a></li>

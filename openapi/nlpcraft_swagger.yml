@@ -690,7 +690,7 @@ paths:
         - Authentication
       summary: Resets password for the user.
       description: >-
-        Resets the password for the user. Note that NLPCraft doesn't store clear text password
+        Resets the password for the user. Note that NLPCraft doesn't store password in reversible way
         and there is no way to retrieve the current password - user can only reset the password.
       operationId: passwdReset
       parameters:
