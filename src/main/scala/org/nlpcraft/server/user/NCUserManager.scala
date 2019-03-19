@@ -428,6 +428,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         val usr =
             NCSql.sql {
                 val usr = NCSqlManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
+                
+                // TODO: don't allow to delete the last admin user.
+                // TODO: what happens if the user delete himself? Do we need to signout in this case?
 
                 NCSqlManager.deleteUser(usr.id)
 

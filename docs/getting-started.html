@@ -182,15 +182,15 @@ layout: documentation
             Note also that we'll be using python to pretty format
             cURL JSON responses from the server. Make sure you have python <a target=_ href="https://www.python.org/downloads/">installed</a>.
         </p>
-        <span class="section-sub-title"><b><code>/user/signin</code></b></span>
+        <span class="section-sub-title"><b><code>/signin</code></b></span>
         <p>
-            First, we need to sign in and obtain <em>access token</em> for further operations. We'll use <code>user/signin</code>
+            First, we need to sign in and obtain <em>access token</em> for further operations. We'll use <code>/signin</code>
             REST call for that. When REST server starts
             for the first time it creates a default user with email <code>admin@admin.com</code> and
             <code>admin</code> password. We'll use these default credentials for sing in:
         </p>
         <pre class="brush: js; highlight: [2, 3, 4, 5]">
-            $ nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
+            $ nccurl.sh /signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
             {
                 "acsTok": "KMGWMQJ44",
                 "status": "API_OK"
@@ -421,7 +421,7 @@ layout: documentation
             Once we enjoyed our conversation about the weather we sign out:
         </p>
         <pre class="brush: js highlight: [2, 3, 4]">
-            $ nccurl.sh user/signout '{"acsTok": "KMGWMQJ44"}' | python -m json.tool
+            $ nccurl.sh signout '{"acsTok": "KMGWMQJ44"}' | python -m json.tool
             {
                 "status": "API_OK"
             }

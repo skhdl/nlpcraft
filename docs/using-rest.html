@@ -35,10 +35,80 @@ layout: documentation
 -->
 
 <div class="col-md-8 second-column">
+    <section id="overview">
+        <span class="section-title">Overview</span>
+        <p>
+            REST API provides a universal integration path for any type of user applications to connect to and use NLPCraft.
+            By using REST API these applications can ask natural language questions, get results and perform
+            many supporting operations such as user and data source management.
+        </p>
+        <p>
+            REST server accepts the REST call,
+            interprets and routes it to the appropriate data probe which in turn invokes one of its deployed
+            data models. The result of data model processing travels all the way through the same chain of components
+            back to the user application that made the original call.
+        </p>
+        <p>
+            In this chapter we'll provide an overview on using REST API. Note that the full REST API specification
+            is hosted on <a href="https://nlpcraft.docs.apiary.io" target="apiary">apiary.io</a> where you can review
+            it and test with it against your localhost or remote NLPCraft installation.
+        </p>
+        <div class="bq info">
+            <p>
+                If you downloaded ZIP archive the REST API specification is also available in
+                <code>openapi/nlpcraft_swagger.yml</code> file.
+            </p>
+        </div>
+        <p>
+            REST API is divided into five functional groups:
+        </p>
+        <ul>
+            <li><a href="#auth">Authentication</a></li>
+            <li><a href="#asking">Asking</a></li>
+            <li><a href="#user">User Management</a></li>
+            <li><a href="#data_source">Data Source Management</a></li>
+            <li><a href="#data_probe">Data Probe Management</a></li>
+        </ul>
+    </section>
+    <section id="auth">
+        <span class="section-sub-title">Authentication</span>
+        <p>
+
+        </p>
+    </section>
+    <section id="asking">
+        <span class="section-sub-title">Asking</span>
+        <p>
+
+        </p>
+    </section>
+    <section id="user">
+        <span class="section-sub-title">User Management</span>
+        <p>
+
+        </p>
+    </section>
+    <section id="data_source">
+        <span class="section-sub-title">Data Source Management</span>
+        <p>
+
+        </p>
+    </section>
+    <section id="data_probe">
+        <span class="section-sub-title">Data Probe Management</span>
+        <p>
+
+        </p>
+    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
         <li class="side-nav-title">On This Page</li>
+        <li><a href="#auth">Authentication</a></li>
+        <li><a href="#asking">Asking</a></li>
+        <li><a href="#user">Users</a></li>
+        <li><a href="#data_probe">Data Probes</a></li>
+        <li><a href="#data_source">Data Sources</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a

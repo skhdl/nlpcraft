@@ -13,11 +13,12 @@ produces:
   - application/json
 tags:
   - name: Authentication
-    description: Singing up, signing in and out. Getting access token.
+    description: >-
+      User singing up, signing in (getting access token), singing out and password reset.
   - name: Data Sources
     description: Adding, removing and managing data sources.
   - name: Users
-    description: Adding, removing and managing users. Managing result notification endpoints.
+    description: Adding, removing and updating users. Managing result notification endpoints.
   - name: Data Probe
     description: Managing data probes.
   - name: Asking
@@ -503,7 +504,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/endpoint/register:
+  /endpoint/register:
     post:
       tags:
         - Users
@@ -546,7 +547,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/endpoint/remove:
+  /endpoint/remove:
     post:
       tags:
         - Users
@@ -585,7 +586,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/signin:
+  /signin:
     post:
       tags:
         - Authentication
@@ -638,7 +639,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/signout:
+  /signout:
     post:
       tags:
         - Authentication
@@ -670,7 +671,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/signup:
+  /signup:
     post:
       tags:
         - Authentication
@@ -721,7 +722,7 @@ paths:
           description: Failed operation.
           schema:
             $ref: '#/definitions/Error'
-  /user/passwd/reset:
+  /passwd/reset:
     post:
       tags:
         - Authentication

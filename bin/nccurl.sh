@@ -33,11 +33,11 @@
 # Quick shortcut script for localhost testing with curl (w/o excessive command line).
 #
 # Usage:
-# - 1st parameter is REST URL unique suffix (i.e. user/signin) w/o leading '/'
+# - 1st parameter is REST URL unique suffix (i.e. /signin) w/o leading '/'
 # - 2nd parameter is JSON payload string
 #
 # Example usage:
-#   $./nccurl.sh user/signin '{"email": "admin@admin.com", "passwd": "admin"}'
+#   $./nccurl.sh /signin '{"email": "admin@admin.com", "passwd": "admin"}'
 #   $./nccurl.sh ask '{"acsTok": "OgJanjDzk", "txt": "Hi!", "mdlId": "nlpcraft.helloworld.ex"}'
 #   $./nccurl.sh check '{"acsTok": "OgJanjDzk"}'
 #
