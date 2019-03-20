@@ -163,10 +163,23 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         }
         
         fut onFailure {
+            case e: NCE ⇒
+                logger.info(s"Query processing failed: ${e.getLocalizedMessage}", e)
+        
+                setError(
+                    srvReqId,
+                    e.getLocalizedMessage,
+                    NCErrorCodes.SYSTEM_ERROR
+                )
+
             case e: Throwable ⇒
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}", e)
                 
-                setError(srvReqId, "Processing failed due to a system error.")
+                setError(
+                    srvReqId,
+                    "Processing failed due to a system error.",
+                    NCErrorCodes.UNEXPECTED_ERROR
+                )
         }
         
         srvReqId
@@ -176,9 +189,10 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       *
       * @param srvReqId
       * @param errMsg
+      * @param errCode
       */
     @throws[NCE]
-    def setError(srvReqId: String, errMsg: String): Unit = {
+    def setError(srvReqId: String, errMsg: String, errCode: Int): Unit = {
         ensureStarted()
         
         val now = U.nowUtcTs()
@@ -189,6 +203,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                     copy.updateTstamp = now
                     copy.status = QRY_READY
                     copy.error = Some(errMsg)
+                    copy.errorCode = Some(errCode)
 
                     cache += srvReqId → copy
 

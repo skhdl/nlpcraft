@@ -391,6 +391,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                         p.resultBody.orNull
                                 ),
                                 "error" → p.error.orNull,
+                                "errorCode" → p.errorCode.map(Integer.valueOf).orNull,
                                 "createTstamp" → p.createTstamp.getTime,
                                 "updateTstamp" → p.updateTstamp.getTime
                             ).filter(_._2 != null).asJava
