@@ -362,16 +362,30 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
     /**
       *
+      * @param usrId
+      * @param srvReqIdsOpt
+      * @param maxRowsOpt
       */
     @throws[NCE]
-    def check(usrId: Long): Seq[NCQueryStateMdo] = {
+    def check(usrId: Long, srvReqIdsOpt: Option[Set[String]], maxRowsOpt: Option[Int]): Seq[NCQueryStateMdo] = {
         ensureStarted()
 
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
 
         catching(wrapIE) {
-            (if (usr.isAdmin) cache.values else cache.values.filter(_.userId == usrId)).
-                toSeq.sortBy(_.createTstamp.getTime)
+            var vals = if (usr.isAdmin) cache.values else cache.values.filter(_.userId == usrId)
+
+            srvReqIdsOpt match {
+                case Some(srvReqIds) ⇒ vals = vals.filter(p ⇒ srvReqIds.contains(p.srvReqId))
+                case None ⇒ // No-op.
+            }
+
+            val res = vals.toSeq.sortBy(-_.createTstamp.getTime)
+
+            maxRowsOpt match {
+                case Some(maxRows) ⇒ res.take(maxRows)
+                case None ⇒ res
+            }
         }
     }
 

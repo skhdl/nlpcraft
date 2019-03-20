@@ -68,7 +68,7 @@ paths:
     post:
       tags:
         - Asking
-      summary: Gets status of submitted requests.
+      summary: Gets status of submitted requests. Request statuses returned sorted by their registration time, starting from newest.
       description: Gets the status of the previously submitted requests.
       operationId: check
       parameters:
@@ -85,6 +85,15 @@ paths:
                 type: string
                 description: Access token obtain via '/api/signin' call
                 maxLength: 256
+              srvReqIds:
+                type: array
+                items:
+                  type: string
+                description: Server IDs of the requests to receive. Optional, all current user requests will be returned by default.
+              maxRows:
+                type: integer
+                format: int64
+                description: Maximum returned rows count. Optional, without count restrictions by default.
       responses:
         '200':
           description: Successful operation.

@@ -372,9 +372,11 @@ object NCRestManager extends NCLifecycle("REST manager") {
             } ~
             /**/path(API / "check") {
                 case class Req(
-                    acsTok: String
+                    acsTok: String,
+                    srvReqIds: Option[Set[String]],
+                    maxRows : Option[Int]
                 )
-                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
 
                 entity(as[Req]) { req ⇒
                     checkLength("acsTok", req.acsTok, 256)
@@ -382,7 +384,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     val userId = authenticate(req.acsTok).id
 
                     val states =
-                        NCQueryManager.check(userId).map(p ⇒
+                        NCQueryManager.check(userId, req.srvReqIds, req.maxRows).map(p ⇒
                             Map(
                                 "srvReqId" → p.srvReqId,
                                 "txt" → p.text,
