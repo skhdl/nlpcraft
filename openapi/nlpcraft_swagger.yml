@@ -89,11 +89,12 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Server IDs of the requests to receive. Optional, all current user requests will be returned by default.
+                description: >-
+                  Optional list of server request IDs to check - by default, all current user requests will be returned
               maxRows:
                 type: integer
                 format: int64
-                description: Maximum returned rows count. Optional, without count restrictions by default.
+                description: Optional maximum number of returned items - by default all items will be returned
       responses:
         '200':
           description: Successful operation.
