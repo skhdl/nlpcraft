@@ -50,7 +50,7 @@ import scala.collection.JavaConverters._
 import scala.util.control.Exception._
 
 /**
-  * User management (signup, add, delete, update) manager.
+  * User CRUD manager.
   */
 object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     // Static email validator.
@@ -428,6 +428,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         val usr =
             NCSql.sql {
                 val usr = NCSqlManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
+                
+                // TODO: don't allow to delete the last admin user.
+                // TODO: what happens if the user delete himself? Do we need to signout in this case?
 
                 NCSqlManager.deleteUser(usr.id)
 
@@ -504,44 +507,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         )
 
         logger.info(s"User $email created.")
-
-        id
-    }
-
-    /**
-      *
-      * @param email
-      * @param pswd
-      * @param firstName
-      * @param lastName
-      * @param avatarUrl
-      * @throws NCException Thrown in case of any signup errors.
-      * @return Newly created user ID.
-      */
-    @throws[NCE]
-    def signup(
-        email: String,
-        pswd: String,
-        firstName: String,
-        lastName: String,
-        avatarUrl: Option[String]
-    ): Long = {
-        ensureStarted()
-
-        val id =
-            NCSql.sql {
-                addUser0(email, pswd, firstName, lastName, avatarUrl, true)
-            }
-
-        NCNotificationManager.addEvent(
-            "NC_SIGNUP",
-            "userId" → id,
-            "firstName" → firstName,
-            "lastName" → lastName,
-            "email" → email
-        )
-
-        logger.info(s"User $email signup ok.")
 
         id
     }

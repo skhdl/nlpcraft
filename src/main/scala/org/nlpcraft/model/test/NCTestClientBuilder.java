@@ -844,12 +844,12 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restRegisterEndpoint() throws IOException, NCTestClientException {
-            log.info("'user/endpoint/register' request sent to: {}", endpoint);
+            log.info("'endpoint/register' request sent to: {}", endpoint);
         
             checkStatus(
                 gson.fromJson(
                     post(
-                        "user/endpoint/register",
+                        "endpoint/register",
                         Pair.of("acsTok", acsTok),
                         Pair.of("endpoint", endpoint)
                     ),
@@ -863,12 +863,12 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restRemoveEndpoint() throws IOException, NCTestClientException {
-            log.info("'user/endpoint/remove' request sent to: {}", endpoint);
+            log.info("'endpoint/remove' request sent to: {}", endpoint);
 
             checkStatus(
                 gson.fromJson(
                     post(
-                        "user/endpoint/remove",
+                        "endpoint/remove",
                         Pair.of("acsTok", acsTok)
                     ),
                     TYPE_RESP
@@ -882,11 +882,11 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private String restSignin() throws IOException, NCTestClientException {
-            log.info("'user/signin' request sent for: {}", email);
+            log.info("'/signin' request sent for: {}", email);
             
             return checkAndExtract(
                 post(
-                    "user/signin",
+                    "/signin",
                     Pair.of("email", email),
                     Pair.of("passwd", pswd)
                 ),
@@ -942,11 +942,11 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restSignout() throws IOException, NCTestClientException {
-            log.info("'user/signout' request sent for: {}", email);
+            log.info("'/signout' request sent for: {}", email);
             
             checkStatus(gson.fromJson(
                 post(
-                    "user/signout",
+                    "signout",
                     Pair.of("acsTok", acsTok)
                 ),
                 TYPE_RESP)
