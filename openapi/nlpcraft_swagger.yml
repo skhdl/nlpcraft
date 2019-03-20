@@ -369,7 +369,6 @@ paths:
               - acsTok
               - firstName
               - lastName
-              - isAdmin
             properties:
               acsTok:
                 type: string
@@ -393,9 +392,6 @@ paths:
                 type: string
                 description: Optional user avatar URL
                 maxLength: 512000
-              isAdmin:
-                type: boolean
-                description: Admin flag
       responses:
         '200':
           description: Successful operation.
@@ -434,6 +430,48 @@ paths:
                   provide this parameter. User's own ID by default.
                 type: integer
                 format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Ok'
+        '400':
+          description: Failed operation.
+          schema:
+            $ref: '#/definitions/Error'
+  /user/admin:
+    post:
+      tags:
+        - Users
+      summary: Updates user's permissions.
+      description: >-
+        Updates user's permissions with given ID or the current user.
+        Admin privileges required for this operation.
+        It doesn't throw any exceptions if user already has required permissions.
+      operationId: adminUser
+      parameters:
+        - in: body
+          name: Payload body
+          description: JSON request.
+          required: true
+          schema:
+            type: object
+            required:
+              - acsTok
+              - isAdmin
+            properties:
+              acsTok:
+                maxLength: 256
+                description: Access token obtain via '/api/signin' call
+                type: string
+              id:
+                description: >-
+                  Optional ID of the user to update. User's own ID by default.
+                type: integer
+                format: int64
+              isAdmin:
+                description: Whether or not user has admin privileges
+                type: boolean
       responses:
         '200':
           description: Successful operation.
@@ -1117,6 +1155,7 @@ definitions:
           - NC_NOT_IMPLEMENTED
           - NC_INVALID_FIELD
           - NC_ADMIN_REQUIRED
+          - NC_INVALID_OPERATION
           - NC_ERROR
           - NC_UNEXPECTED_ERROR
       reason:

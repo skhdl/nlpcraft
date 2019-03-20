@@ -102,6 +102,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     case class AccessTokenFailure(acsTkn: String) extends NCE(s"Unknown access token: $acsTkn")
     case class SignInFailure(email: String) extends NCE(s"Invalid user credentials for: $email")
     case class AdminRequired(email: String) extends NCE(s"Admin privileges required for: $email")
+    case class InvalidOperation(email: String) extends NCE(s"Invalid operation.")
     case class NotImplemented() extends NCE("Not implemented.")
 
     class ArgsException(msg: String) extends NCE(msg)
@@ -156,7 +157,17 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 )
 
                 complete(StatusCodes.Forbidden, errMsg)
-            
+
+            case e: InvalidOperation ⇒
+                val errMsg = e.getLocalizedMessage
+
+                NCNotificationManager.addEvent("NC_INVALID_OPERATION",
+                    "errMsg" → errMsg,
+                    "email" → e.email
+                )
+
+                complete(StatusCodes.Forbidden, errMsg)
+
             // General exception.
             case e: NCException ⇒
                 val errMsg = e.getLocalizedMessage
@@ -249,7 +260,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     private def getUserId(initiatorUsr: NCUserMdo, usrIdOpt: Option[Long]): Long =
         usrIdOpt match {
             case Some(userId) ⇒
-                if (!initiatorUsr.isAdmin)
+                if (!initiatorUsr.isAdmin && userId != initiatorUsr.id)
                     throw AdminRequired(initiatorUsr.email)
 
                 userId
@@ -489,6 +500,14 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     val initiatorUsr = authenticate(req.acsTok)
                     val usrId = getUserId(initiatorUsr, req.id)
 
+                    // Self deleting.
+                    if (usrId == initiatorUsr.id) {
+                        if (initiatorUsr.isAdmin && !NCUserManager.isOtherAdminsExist(initiatorUsr.id))
+                            throw InvalidOperation(initiatorUsr.email)
+
+                        NCUserManager.signout(req.acsTok)
+                    }
+
                     NCUserManager.deleteUser(usrId)
 
                     complete {
@@ -505,14 +524,13 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     id: Option[Long],
                     firstName: String,
                     lastName: String,
-                    avatarUrl: Option[String],
-                    isAdmin: Boolean // TODO: remove
+                    avatarUrl: Option[String]
                 )
                 case class Res(
                     status: String
                 )
 
-                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat6(Req)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat5(Req)
                 implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
                 entity(as[Req]) { req ⇒
@@ -528,9 +546,42 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         usrId,
                         req.firstName,
                         req.lastName,
-                        req.avatarUrl,
-                        req.isAdmin // TODO: remove
+                        req.avatarUrl
                     )
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+            /**/path(API / "user" / "admin") {
+                case class Req(
+                    acsTok: String,
+                    id: Option[Long],
+                    admin: Boolean
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+
+                    val initiatorUsr = authenticateAsAdmin(req.acsTok)
+                    val usrId = req.id.getOrElse(initiatorUsr.id)
+
+                    // Self operation.
+                    if (
+                        usrId == initiatorUsr.id &&
+                        !req.admin &&
+                        !NCUserManager.isOtherAdminsExist(initiatorUsr.id)
+                    )
+                        throw InvalidOperation(initiatorUsr.email)
+
+                    NCUserManager.updateUserPermissions(usrId, req.admin)
 
                     complete {
                         Res(API_OK)

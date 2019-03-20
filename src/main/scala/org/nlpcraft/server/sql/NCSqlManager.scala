@@ -38,7 +38,6 @@ import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo._
 import org.nlpcraft.server.sql.NCSql.Implicits._
-import org.nlpcraft.server.tx.NCTxManager
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception.catching
@@ -160,15 +159,13 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       * @param firstName First name.
       * @param lastName Last name.
       * @param avatarUrl Avatar URL.
-      * @param isAdmin Admin flag.
       */
     @throws[NCE]
     def updateUser(
         usrId: Long,
         firstName: String,
         lastName: String,
-        avatarUrl: Option[String],
-        isAdmin: Boolean
+        avatarUrl: Option[String]
     ): Int = {
         ensureStarted()
 
@@ -179,13 +176,35 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
                |    first_name = ?,
                |    last_name = ?,
                |    avatar_url = ?,
-               |    is_admin = ?,
                |    last_modified_on = ?
                |WHERE id = ?
                 """.stripMargin,
             firstName,
             lastName,
             avatarUrl.orNull,
+            U.nowUtcTs(),
+            usrId
+        )
+    }
+
+    /**
+      * Updates user.
+      *
+      * @param usrId ID of the user to update.
+      * @param isAdmin Admin flag.
+      */
+    @throws[NCE]
+    def updateUser(usrId: Long, isAdmin: Boolean): Int = {
+        ensureStarted()
+
+        NCSql.update(
+            s"""
+               |UPDATE nc_user
+               |SET
+               |    is_admin = ?,
+               |    last_modified_on = ?
+               |WHERE id = ?
+                """.stripMargin,
             isAdmin,
             U.nowUtcTs(),
             usrId
@@ -272,6 +291,19 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         ensureStarted()
 
         NCSql.select[NCUserMdo]("SELECT * FROM nc_user")
+    }
+
+    /**
+      * Gets flag which indicates there are another admin users in the system or not.
+      *
+      * @param usrId User ID.
+      * @return Flag.
+      */
+    @throws[NCE]
+    def isOtherAdminsExist(usrId: Long): Boolean = {
+        ensureStarted()
+
+        NCSql.exists("nc_user WHERE id <> ? AND is_admin = ?", usrId, true)
     }
 
     /**

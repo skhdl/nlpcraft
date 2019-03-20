@@ -36,7 +36,7 @@ import java.util.{Timer, TimerTask}
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
-import org.nlpcraft.common.{NCException, NCLifecycle, _}
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
@@ -198,6 +198,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCSqlManager.getAllUsers
         }
     }
+
+    /**
+      * Gets flag which indicates there are another admin users in the system or not.
+      *
+      * @param usrId User ID.
+      */
+    @throws[NCE]
+    def isOtherAdminsExist(usrId: Long): Boolean = {
+        ensureStarted()
+
+        NCSql.sql {
+            NCSqlManager.isOtherAdminsExist(usrId)
+        }
+    }
+
 
     /**
       * Stops this manager.
@@ -380,7 +395,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
       * @param firstName
       * @param lastName
       * @param avatarUrl
-      * @param isAdmin
       * @return
       */
     @throws[NCE]
@@ -388,8 +402,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         usrId: Long,
         firstName: String,
         lastName: String,
-        avatarUrl: Option[String],
-        isAdmin: Boolean
+        avatarUrl: Option[String]
     ): Unit = {
         ensureStarted()
 
@@ -399,8 +412,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                     usrId,
                     firstName,
                     lastName,
-                    avatarUrl,
-                    isAdmin
+                    avatarUrl
                 )
 
             if (n == 0)
@@ -411,7 +423,32 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
         NCNotificationManager.addEvent("NC_USER_UPDATE",
             "userId" → usrId,
             "firstName" → firstName,
-            "lastName" → lastName,
+            "lastName" → lastName
+        )
+    }
+
+    /**
+      *
+      * @param usrId
+      * @param firstName
+      * @param lastName
+      * @param avatarUrl
+      * @return
+      */
+    @throws[NCE]
+    def updateUserPermissions(usrId: Long, isAdmin: Boolean): Unit = {
+        ensureStarted()
+
+        NCSql.sql {
+            val n = NCSqlManager.updateUser(usrId, isAdmin)
+
+            if (n == 0)
+                throw new NCE(s"Unknown user ID: $usrId")
+        }
+
+        // Notification.
+        NCNotificationManager.addEvent("NC_USER_UPDATE",
+            "userId" → usrId,
             "isAdmin" → isAdmin
         )
     }
@@ -429,9 +466,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCSql.sql {
                 val usr = NCSqlManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
                 
-                // TODO: don't allow to delete the last admin user.
-                // TODO: what happens if the user delete himself? Do we need to signout in this case?
-
                 NCSqlManager.deleteUser(usr.id)
 
                 usr
