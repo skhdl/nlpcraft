@@ -217,7 +217,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                 resp.getType match {
                     case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err("Duplicate probes ID detected. Each probe has to have a unique ID.")
                     case "S2P_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
-                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Probe version is unsupported: ${ver.version}")
+                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Server does not support probe version: ${ver.version}")
                     case "S2P_PROBE_OK" ⇒ logger.trace("Uplink handshake OK.") // Bingo!
                     case _ ⇒ err(s"Unknown server message: ${resp.getType}")
                 }

@@ -36,6 +36,7 @@ import java.util.concurrent.Executors
 import java.util.function.Predicate
 
 import org.nlpcraft.common._
+import org.nlpcraft.common.NCErrorCodes._
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.model._
@@ -116,6 +117,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 val msg = NCProbeMessage("P2S_ASK_RESULT",
                     "srvReqId" → srvReqId,
                     "error" → "Processing failed due to a system error.",
+                    "errorCode" → UNEXPECTED_ERROR,
                     "dsId" → dsId,
                     "dsModelId" → dsModelId,
                     "txt" → txt
@@ -169,29 +171,29 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
           *
           * @param code Pre or post checker error code.
           */
-        def errorMsg(code: String): String =
+        def errorMsg(code: String): (String, Int) =
             code match {
-                case "MAX_UNKNOWN_WORDS" ⇒ "Too many unknown words."
-                case "MAX_FREE_WORDS" ⇒ "Sentence is too complex."
-                case "MAX_SUSPICIOUS_WORDS" ⇒ "Too many suspicious or unrelated words."
-                case "ALLOW_SWEAR_WORDS" ⇒ "Swear words are not allowed."
-                case "ALLOW_NO_NOUNS" ⇒ "Sentence contains no nouns."
-                case "ALLOW_NON_LATIN_CHARSET" ⇒ "Only latin charset is supported."
-                case "ALLOW_NON_ENGLISH" ⇒ "Only english language is supported."
-                case "ALLOW_NO_USER_TOKENS" ⇒ "Sentence seems unrelated to data source."
-                case "MIN_WORDS" ⇒ "Sentence is too short."
-                case "MIN_NON_STOPWORDS" ⇒ "Sentence is ambiguous."
-                case "MIN_TOKENS" ⇒ "Sentence is too short."
-                case "MAX_TOKENS" ⇒ "Sentence is too long."
-                case "MAX_GEO_TOKENS" ⇒ "Too many geographical locations detected."
-                case "MIN_GEO_TOKENS" ⇒ "Too few geographical locations detected."
-                case "MAX_DATE_TOKENS" ⇒ "Too many dates detected."
-                case "MIN_DATE_TOKENS" ⇒ "Too few dates detected."
-                case "MAX_NUM_TOKENS" ⇒ "Too many numbers detected."
-                case "MIN_NUM_TOKENS" ⇒ "Too few numbers detected."
-                case "MAX_FUNCTION_TOKENS" ⇒ "Too many functions detected."
-                case "MIN_FUNCTION_TOKENS" ⇒ "Too few functions detected."
-                case _ ⇒ s"System error: $code."
+                case "MAX_UNKNOWN_WORDS" ⇒ "Too many unknown words." → MAX_UNKNOWN_WORDS
+                case "MAX_FREE_WORDS" ⇒ "Sentence is too complex." → MAX_FREE_WORDS
+                case "MAX_SUSPICIOUS_WORDS" ⇒ "Too many suspicious or unrelated words." → MAX_SUSPICIOUS_WORDS
+                case "ALLOW_SWEAR_WORDS" ⇒ "Swear words are not allowed." → ALLOW_SWEAR_WORDS
+                case "ALLOW_NO_NOUNS" ⇒ "Sentence contains no nouns." → ALLOW_NO_NOUNS
+                case "ALLOW_NON_LATIN_CHARSET" ⇒ "Only latin charset is supported." → ALLOW_NON_LATIN_CHARSET
+                case "ALLOW_NON_ENGLISH" ⇒ "Only english language is supported." → ALLOW_NON_ENGLISH
+                case "ALLOW_NO_USER_TOKENS" ⇒ "Sentence seems unrelated to data source." → ALLOW_NO_USER_TOKENS
+                case "MIN_WORDS" ⇒ "Sentence is too short." → MIN_WORDS
+                case "MIN_NON_STOPWORDS" ⇒ "Sentence is ambiguous." → MIN_NON_STOPWORDS
+                case "MIN_TOKENS" ⇒ "Sentence is too short." → MIN_TOKENS
+                case "MAX_TOKENS" ⇒ "Sentence is too long." → MAX_TOKENS
+                case "MAX_GEO_TOKENS" ⇒ "Too many geographical locations detected." → MAX_GEO_TOKENS
+                case "MIN_GEO_TOKENS" ⇒ "Too few geographical locations detected." → MIN_GEO_TOKENS
+                case "MAX_DATE_TOKENS" ⇒ "Too many dates detected." → MAX_DATE_TOKENS
+                case "MIN_DATE_TOKENS" ⇒ "Too few dates detected." → MIN_DATE_TOKENS
+                case "MAX_NUM_TOKENS" ⇒ "Too many numbers detected." → MAX_NUM_TOKENS
+                case "MIN_NUM_TOKENS" ⇒ "Too few numbers detected." → MIN_NUM_TOKENS
+                case "MAX_FUNCTION_TOKENS" ⇒ "Too many functions detected." → MAX_FUNCTION_TOKENS
+                case "MIN_FUNCTION_TOKENS" ⇒ "Too few functions detected." → MIN_FUNCTION_TOKENS
+                case _ ⇒ s"System error: $code." -> UNEXPECTED_ERROR
             }
 
         /**
@@ -200,12 +202,14 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
           * @param resType Result type.
           * @param resBody Result body.
           * @param errMsg Error message.
+          * @param errCode Error code.
           * @param msgName Message name.
           */
         def respond(
             resType: Option[String],
             resBody: Option[String],
             errMsg: Option[String],
+            errCode: Option[Int],
             msgName: String
         ): Unit = {
             require(errMsg.isDefined || (resType.isDefined && resBody.isDefined))
@@ -217,10 +221,13 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             msg += "dsModelId" → dsModelId
             msg += "txt" → txt
 
-            if (resBody.isDefined && resBody.get.length > config.resultMaxSize)
+            if (resBody.isDefined && resBody.get.length > config.resultMaxSize) {
                 addOptional(msg, "error", Some("Result is too big. Model results must to be corrected."))
+                addOptional(msg, "errorCode", Some(RESULT_TOO_BIG))
+            }
             else {
                 addOptional(msg, "error", errMsg)
+                addOptional(msg, "errorCode", errCode.map(Integer.valueOf))
                 addOptional(msg, "resType", resType)
                 addOptional(msg, "resBody", resBody)
             }
@@ -239,7 +246,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             NCNlpPreChecker.validate(mdl, nlpSen)
         catch {
             case e: NCNlpPreException ⇒
-                val errMsg = errorMsg(e.status)
+                val (errMsg, errCode) = errorMsg(e.status)
 
                 logger.error(s"Pre-enrichment validation: $errMsg ")
 
@@ -247,6 +254,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                     None,
                     None,
                     Some(errMsg),
+                    Some(errCode),
                     "P2S_ASK_RESULT"
                 )
 
@@ -287,14 +295,15 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             senSeq.foreach(sen ⇒ NCPostChecker.validate(mdl, sen))
         catch {
             case e: NCPostException ⇒
-                val errMsg = errorMsg(e.code)
+                val (errMsg, errCode) = errorMsg(e.code)
 
                 logger.error(s"Post-enrichment validation: $errMsg ")
 
                 respond(
                     None,
                     None,
-                    Some(errorMsg(e.code)),
+                    Some(errMsg),
+                    Some(errCode),
                     "P2S_ASK_RESULT"
                 )
 
@@ -363,6 +372,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                         None,
                         None,
                         Some(e.getMessage), // User provided rejection message.
+                        Some(MODEL_REJECTION),
                         "P2S_ASK_RESULT"
                     )
 
@@ -373,6 +383,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                         None,
                         None,
                         Some("Processing failed with unexpected error."), // System error message.
+                        Some(UNEXPECTED_ERROR),
                         "P2S_ASK_RESULT"
                     )
             },
@@ -380,6 +391,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 respond(
                     Some(res.getType),
                     Some(res.getBody),
+                    None,
                     None,
                     "P2S_ASK_RESULT"
                 )

@@ -630,18 +630,21 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     
                     try {
                         val errOpt = probeMsg.dataOpt[String]("error")
+                        val errCodeOpt = probeMsg.dataOpt[Int]("errorCode")
                         val resTypeOpt = probeMsg.dataOpt[String]("resType")
                         val resBodyOpt = probeMsg.dataOpt[String]("resBody")
                         
                         if (errOpt.isDefined) { // Error.
                             val err = errOpt.get
+                            val errCode = errCodeOpt.get
                             
                             NCQueryManager.setError(
                                 srvReqId,
-                                err
+                                err,
+                                errCode
                             )
     
-                            logger.trace(s"Error result processed [srvReqId=$srvReqId, error=$err]")
+                            logger.trace(s"Error result processed [srvReqId=$srvReqId, error=$err, code=$errCode]")
                         }
                         else { // OK result.
                             require(resTypeOpt.isDefined && resBodyOpt.isDefined, "Result defined")
@@ -664,7 +667,8 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         
                             NCQueryManager.setError(
                                 srvReqId,
-                                "Processing failed due to a system error."
+                                "Processing failed due to a system error.",
+                                NCErrorCodes.UNEXPECTED_ERROR
                             )
                     }
                     

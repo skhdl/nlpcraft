@@ -499,7 +499,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCSqlManager.addPasswordHash(pswdSeq.incrementAndGet(), NCBlowfishHasher.hash(newPasswd, salt))
         }
 
-
         // Notification.
         NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
             "userId" → usrId

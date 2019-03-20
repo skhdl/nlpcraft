@@ -111,6 +111,7 @@ paths:
                     - mdlId
                     - status
                     - error
+                    - errorCode
                     - createTstamp
                     - updateTstamp
                   properties:
@@ -160,6 +161,12 @@ paths:
                         Optional error if returned by model (provided only if
                         status is QRY_READY and processing was rejected or
                         terminated due to an exception)
+                    errorCode:
+                      type: integer
+                      format: int32
+                      description: >-
+                        Optional error code indicating a type of error. Only present
+                        of 'error' field is present.
                     createTstamp:
                       type: integer
                       format: int64

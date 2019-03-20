@@ -37,7 +37,7 @@
     <name>NLPCraft</name>
     <artifactId>nlpcraft</artifactId>
     <groupId>org.nlpcraft</groupId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <url>https://www.nlpcraft.org</url>
     <description>An API to convert natural language into actions.</description>
 
