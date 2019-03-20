@@ -1,4 +1,4 @@
-<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="40px">
+<img src="https://nlpcraft.org/images/nlpcraft_logo_black.gif" height="40px">
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
@@ -6,7 +6,7 @@
 This trivial example simply responds with 'Hello World!' on any user input.
 This is the simplest and shortest user model that can be defined.
   
-See [Getting Started](http://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
+See [Getting Started](https://nlpcraft.org/getting-started.html) guide for more instructions on how to run these examples.
 
 For any questions, feedback or suggestions:
 

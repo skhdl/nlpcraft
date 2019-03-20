@@ -509,7 +509,7 @@
                     </footer>
                     <doctitle>
                         <![CDATA[
-                            <img style="margin-bottom: 10px" src="http://nlpcraft.org/images/nlpcraft_logo_darkblue.png" height="54px"><br>
+                            <img style="margin-bottom: 10px" src="https://nlpcraft.org/images/nlpcraft_logo_darkblue.png" height="54px"><br>
                             Data Model API ${project.version}
                         ]]>
                     </doctitle>

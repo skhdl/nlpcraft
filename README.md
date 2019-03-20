@@ -1,4 +1,4 @@
-<img src="http://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
+<img src="https://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
 
@@ -9,7 +9,7 @@ public or private data sources like databases, REST services, IoT devices,
 voice assistants, and chatbots:
 
  * Download and Maven/Grape/SBT [instructions](https://nlpcraft.org/download.html)
- * [Documentation](http://nlpcraft.org/docs.html), [Javadoc](http://nlpcraft.org/apis/latest/index.html), and [REST APIs](https://nlpcraft.docs.apiary.io/)
+ * [Documentation](https://nlpcraft.org/docs.html), [Javadoc](https://nlpcraft.org/apis/latest/index.html), and [REST APIs](https://nlpcraft.docs.apiary.io/)
  * [Example](https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples) data models
  * Licensed under [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) with [Commons Clause](https://commonsclause.com/).
 
