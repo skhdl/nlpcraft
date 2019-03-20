@@ -450,11 +450,10 @@ paths:
     post:
       tags:
         - Users
-      summary: Updates user's permissions.
+      summary: Updates user admin permissions.
       description: >-
         Updates user's permissions with given ID or the current user.
         Admin privileges required for this operation.
-        It doesn't throw any exceptions if user already has required permissions.
       operationId: adminUser
       parameters:
         - in: body
@@ -473,11 +472,11 @@ paths:
                 type: string
               id:
                 description: >-
-                  Optional ID of the user to update. User's own ID by default.
+                  Optional ID of the user to update. Current user is used ID by default.
                 type: integer
                 format: int64
               isAdmin:
-                description: Whether or not user has admin privileges
+                description: Admin privileges flag to update to
                 type: boolean
       responses:
         '200':

@@ -430,9 +430,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     /**
       *
       * @param usrId
-      * @param firstName
-      * @param lastName
-      * @param avatarUrl
+      * @param isAdmin
       * @return
       */
     @throws[NCE]
