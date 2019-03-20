@@ -128,7 +128,7 @@ object NCSql extends LazyLogging {
         ds
     }
 
-    logger.info(s"Driver initialized: ${Config.driver}")
+    logger.info(s"DB driver initialized: ${Config.driver}")
 
     /**
      * Wraps database error.

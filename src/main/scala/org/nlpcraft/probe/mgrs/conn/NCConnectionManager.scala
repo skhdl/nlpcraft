@@ -119,7 +119,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
     
-        logger.info(s"Opening downlink to '$host:$port'")
+        logger.trace(s"Opening downlink to '$host:$port'")
     
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)
@@ -169,7 +169,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
         
         val cryptoKey = NCCipher.makeTokenKey(config.token)
         
-        logger.info(s"Opening uplink to '$host:$port'")
+        logger.trace(s"Opening uplink to '$host:$port'")
     
         // Connect down socket.
         val sock = NCSocket(new Socket(host, port), host)

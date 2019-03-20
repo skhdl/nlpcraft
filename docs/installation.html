@@ -164,8 +164,8 @@ layout: documentation
     <section id="ignite">
         <span class="section-title">Apache Ignite 2.7 <span class="amp">&amp;</span> Java 9+</span>
         <p>
-            NLPCraft uses <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> project as its
-            underlying distributed storage and cluster computing framework. If running with Apache Ignite 2.7 or
+            By default NLPCraft uses <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> project as its
+            underlying distributed storage (it is also used as a cluster computing framework). If running with Apache Ignite 2.7 or
             earlier on Java 9/10/11 you need to follow these
             <a href="https://apacheignite.readme.io/docs/getting-started#section-running-ignite-with-java-9-10-11">instructions.</a>
             For Java 8 no additional parameters are required.
@@ -185,6 +185,7 @@ layout: documentation
         <pre style="border: 1px solid #dedede; border-radius: 4px; padding: 25px 30px 0 30px;">
 ├── LICENSE
 ├── bin
+├── sql
 ├── build
 │   └── nlpcraft-{{site.latest_version}}
 │       ├── application.conf
@@ -285,6 +286,7 @@ layout: documentation
             <dt><code>-igniteConfig=path</code></dt>
             <dd>
                 Optional parameter to provide <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> configuration file path.
+                Note that Apache Ignite is used as a cluster computing plane and a default distributed storage.
                 Server will automatically look for <code>ignite.xml</code>
                 configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
                 If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter

@@ -54,6 +54,7 @@ mkdir ${zipDir}/${tmpDir}/build
 rsync -avzq bin ${zipDir}/${tmpDir} --exclude '**/.DS_Store' --exclude bin/prepare.sh
 rsync -avzq openapi ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 rsync -avzq src ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
+rsync -avzq sql ${zipDir}/${tmpDir} --exclude '**/.DS_Store'
 
 cp LICENSE ${zipDir}/${tmpDir}
 cp src/main/resources/application.conf ${zipDir}/${tmpDir}/build
@@ -76,4 +77,5 @@ gpg --detach-sign ${zipFile}
 
 cd ${curDir}
 
+echo
 echo "Files prepared in folder: ${zipDir}"
