@@ -625,8 +625,6 @@ public class NCTestClientBuilder {
             
             if (isDsCreated) restDeleteTestDs();
 
-            restRemoveEndpoint();
-            
             restSignout();
             
             closed = true;
@@ -852,24 +850,6 @@ public class NCTestClientBuilder {
                         "endpoint/register",
                         Pair.of("acsTok", acsTok),
                         Pair.of("endpoint", endpoint)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-
-        /**
-         * @throws IOException Thrown in case of IO errors.
-         * @throws NCTestClientException Thrown in case of test client errors.
-         */
-        private void restRemoveEndpoint() throws IOException, NCTestClientException {
-            log.info("'endpoint/remove' request sent to: {}", endpoint);
-
-            checkStatus(
-                gson.fromJson(
-                    post(
-                        "endpoint/remove",
-                        Pair.of("acsTok", acsTok)
                     ),
                     TYPE_RESP
                 )

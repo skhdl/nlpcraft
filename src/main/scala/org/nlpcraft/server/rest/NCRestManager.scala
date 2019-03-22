@@ -750,6 +750,31 @@ object NCRestManager extends NCLifecycle("REST manager") {
             } ~
             /**/path(API / "endpoint" / "remove") {
                 case class Req(
+                    acsTok: String,
+                    endpoint: String
+                )
+                case class Res(
+                    status: String
+                )
+
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
+
+                entity(as[Req]) { req ⇒
+                    checkLength("acsTok", req.acsTok, 256)
+                    checkLength("endpoint", req.endpoint, 2083)
+
+                    val usrId = authenticate(req.acsTok).id
+
+                    NCUserManager.removeEndpoint(usrId, req.endpoint)
+
+                    complete {
+                        Res(API_OK)
+                    }
+                }
+            } ~
+                /**/path(API / "endpoint" / "removeAll") {
+                case class Req(
                     acsTok: String
                 )
                 case class Res(
@@ -764,7 +789,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                     val usrId = authenticate(req.acsTok).id
 
-                    NCUserManager.removeEndpoint(usrId)
+                    NCUserManager.removeEndpoints(usrId)
 
                     complete {
                         Res(API_OK)
@@ -878,7 +903,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 entity(as[Req]) { req ⇒
                     checkLength("acsTok", req.acsTok, 256)
 
-                    authenticateAsAdmin(req.acsTok)
+                    authenticate(req.acsTok)
 
                     val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
                         mdo.id,
