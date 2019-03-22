@@ -663,7 +663,6 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
       * De-registers session level user endpoints if some was registered
       *
       * @param usrId User ID.
-      * @param ep Endpoint URL.
       */
     def removeEndpoints(usrId: Long): Unit = {
         ensureStarted()
