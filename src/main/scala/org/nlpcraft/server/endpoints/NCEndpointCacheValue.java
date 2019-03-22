@@ -92,7 +92,7 @@ public class NCEndpointCacheValue implements Serializable  {
         return userId;
     }
     
-    public String getServerRequestId() {
+    public String getSrvReqId() {
         return srvReqId;
     }
     

@@ -47,7 +47,7 @@ public class NCEndpointCacheKey implements Serializable {
         this.endpoint = endpoint;
     }
     
-    public String getServerRequestId() {
+    public String getSrvReqId() {
         return srvReqId;
     }
     

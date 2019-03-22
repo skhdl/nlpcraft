@@ -160,7 +160,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                             if (readyData.nonEmpty) {
                                 val processed = readyData.values.map(p ⇒ {
-                                    new NCEndpointCacheKey(p.getServerRequestId, p.getEndpoint) →
+                                    new NCEndpointCacheKey(p.getSrvReqId, p.getEndpoint) →
                                     new NCEndpointCacheValue(
                                         p.getState,
                                         p.getEndpoint,
@@ -168,7 +168,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                                         p.getAttempts,
                                         p.getCreatedOn,
                                         p.getUserId,
-                                        p.getServerRequestId,
+                                        p.getSrvReqId,
                                         true
                                     )
                                 }).toMap
@@ -276,11 +276,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                         val keys = getKeys(query)
 
-                        logger.warn(
-                            s"Endpoint notifications dropped due to overall queue size limit: ${keys.mkString(", ")}"
-                        )
+                        if (keys.nonEmpty) {
+                            logger.warn(
+                                s"Endpoint notifications dropped due to overall queue size limit: ${keys.mkString(", ")}"
+                            )
 
-                        cache --= keys
+                            cache --= keys
+                        }
                     }
                 }
             }
@@ -299,7 +301,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             query(query).
             getAll.
             asScala.
-            map(_.getValue).map(p ⇒ new NCEndpointCacheKey(p.getServerRequestId, p.getEndpoint)).
+            map(_.getValue).map(p ⇒ new NCEndpointCacheKey(p.getSrvReqId, p.getEndpoint)).
             toSet
 
     /**
@@ -368,7 +370,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                 try {
                     val now = U.nowUtcMs()
 
-                    val delKeys = map.keySet.filter(v ⇒ !NCQueryManager.contains(v.getServerRequestId))
+                    val delKeys = map.keySet.filter(v ⇒ !NCQueryManager.contains(v.getSrvReqId))
 
                     var wakeUp = false
 
@@ -403,13 +405,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                         if (candidates.nonEmpty) {
                             val min = now - Config.lifeTimeMs
 
-                            val delIds = candidates.filter(_._2.getCreatedOn < min).keys
+                            val delKeys = candidates.filter(_._2.getCreatedOn < min).keys
 
-                            if (delIds.nonEmpty) {
-                                logger.warn(s"Endpoint notifications dropped due to timeout: ${delIds.mkString(", ")}")
+                            if (delKeys.nonEmpty) {
+                                logger.warn(s"Endpoint notifications dropped due to timeout: ${delKeys.mkString(", ")}")
 
-                                cache --= delIds.toSet
-                                candidates --= delIds
+                                cache --= delKeys.toSet
+                                candidates --= delKeys
                             }
 
                             if (candidates.nonEmpty) {
@@ -531,7 +533,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                                 "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
                             ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
 
-                        cache --= getKeys(query).filter(p ⇒ srvReqIds.contains(p.getServerRequestId))
+                        cache --= getKeys(query).filter(p ⇒ srvReqIds.contains(p.getSrvReqId))
                     }
                 }
             },
@@ -558,12 +560,12 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                         "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
                     ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
 
-                val keys = getKeys(query)
-
-                if (keys.nonEmpty)
                     catching(wrapIE) {
                         NCTxManager.startTx {
-                            cache --= keys
+                            val keys = getKeys(query)
+
+                            if (keys.nonEmpty)
+                                cache --= keys
                         }
                     }
             },
