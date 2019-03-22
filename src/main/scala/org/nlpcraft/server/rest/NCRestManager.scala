@@ -419,19 +419,21 @@ object NCRestManager extends NCLifecycle("REST manager") {
             /**/path(API / "clear" / "conversation") {
                 case class Req(
                     acsTok: String,
-                    dsId: Long
+                    dsId: Long,
+                    userId: Option[Long]
                 )
                 case class Res(
                     status: String
                 )
 
-                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
+                implicit val reqFmt: RootJsonFormat[Req] = jsonFormat3(Req)
                 implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
 
                 entity(as[Req]) { req ⇒
                     checkLength("acsTok", req.acsTok, 256)
 
-                    val userId = authenticate(req.acsTok).id
+                    val initiator = authenticate(req.acsTok)
+                    val userId = getUserId(initiator, req.userId)
 
                     NCProbeManager.clearConversation(userId, req.dsId)
 

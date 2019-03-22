@@ -55,6 +55,11 @@ paths:
                 type: integer
                 format: int64
                 description: Data source ID for which to clear conversation context
+              userId:
+                type: integer
+                format: int64
+                description: User ID for which to clear conversation context. Optional, initiator ID used by default
+
       responses:
         '200':
           description: Successful operation.
