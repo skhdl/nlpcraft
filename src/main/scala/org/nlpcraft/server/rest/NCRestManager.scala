@@ -111,7 +111,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     case class InvalidField(fn: String) extends ArgsException(s"API invalid field '$fn'")
     case class EmptyField(fn: String, max: Int) extends ArgsException(s"API field '$fn' value cannot be empty.")
     case class XorFields(f1: String, f2: String)
-        extends ArgsException(s"Only one API field must be defined: '$f1' or '$f2'")
+        extends ArgsException(s"One and only one API field must be defined: '$f1' or '$f2'")
 
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
