@@ -207,7 +207,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
                     cache += srvReqId → copy
 
-                    processEndpoints(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    processEndpoints(copy.userId, eps ⇒ NCEndpointManager.addNotification(copy, eps))
 
                     true
 
@@ -255,7 +255,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
                     cache += srvReqId → copy
 
-                    processEndpoints(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    processEndpoints(copy.userId, eps ⇒ NCEndpointManager.addNotification(copy, eps))
 
                     true
                 case None ⇒
@@ -295,8 +295,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @param usrId USer ID.
       * @param f Function.
       */
-    private def processEndpoints(usrId: Long, f: String ⇒ Unit): Unit =
-        NCUserManager.getUserEndpoints(usrId).foreach(p ⇒ f(p))
+    private def processEndpoints(usrId: Long, f: Set[String] ⇒ Unit): Unit = f(NCUserManager.getUserEndpoints(usrId))
 
     /**
       *
@@ -330,7 +329,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             }
 
         userSrvReqIds.foreach {
-            case (usrId, usrSrvReqIds) ⇒ processEndpoints(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
+            case (usrId, usrSrvReqIds) ⇒
+                processEndpoints(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrId, usrSrvReqIds))
         }
 
         for (srvReqId ← srvReqIds) {
