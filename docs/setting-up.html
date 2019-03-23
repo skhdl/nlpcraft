@@ -38,6 +38,72 @@ layout: documentation
     <section id="setup">
         <span class="section-title">Project Setup</span>
         <p>
+            Let's setup a project for our first example. To simplify this task we'll make certain assumptions:
+        </p>
+        <ul>
+            <li>We'll assume Mac OS/Linux environment</li>
+            <li>We'll use <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java</a> to implement our model</li>
+            <li>We'll use <a target=_ href="https://maven.apache.org/install.html">Maven</a> to create and build our project</li>
+            <li>We'll use <a target=_ href="https://www.jetbrains.com/idea/">JetBrains IDEA</a> as our Java IDE</li>
+        </ul>
+        <div class="bq info">
+            Note that following instructions will work for most OS, JVM languages or
+            IDE/text editors with minimal, if any, modifications.
+        </div>
+    </section>
+    <section id="new_project">
+        <span class="section-sub-title">Create New Project</span>
+        <p>
+            We'll use maven archetype generation to create new empty Java project. In your home folder run the following
+            command:
+        </p>
+        <pre class="brush: text">
+            mvn archetype:generate -DgroupId=examples -DartifactId=my-app -DarchetypeVersion=1.4 -DinteractiveMode=false
+        </pre>
+        <p>
+            This will create <code>my-app</code> folder with the following default maven project structure:
+        </p>
+        <pre class="console">
+$ cd my-app/
+$ tree
+.
+├── <b>pom.xml</b>
+└── src
+    ├── main
+    │   └── java
+    │       └── examples
+    │           └── App.java
+    └── test
+        └── java
+            └── examples
+                └── AppTest.java
+        </pre>
+    </section>
+    <section id="new_ide_project">
+        <span class="section-sub-title">New IDE Project</span>
+        <p>
+            Once we have maven-based project we can import it into our IDE. Details are specific for each IDE but
+            for our choice of JetBrains IDEA click on <code>File > New > Project from Existing Sources...</code> menu
+            and select <code>pom.xml</code> file from the project we just created above:
+        </p>
+        <figure class="alt">
+            <img class="img-fluid" src="/images/new_idea_project.png">
+            <figcaption><b>Fig 1.</b> New Maven Project</figcaption>
+        </figure>
+        <p>
+            Follow all the steps on the project creation wizard (default settings should be fine). Make sure to select
+            JDK 8 or later as your Java JDK. After you followed through all the steps you should have the project with
+            the structure looking similar to this:
+        </p>
+        <figure class="alt">
+            <img class="img-fluid" src="/images/new_idea_project1.png">
+            <figcaption><b>Fig 2.</b> Project Structure</figcaption>
+        </figure>
+    </section>
+    <section id="add_nlpcraft">
+        <span class="section-sub-title">Add NLPCraft</span>
+        <p>
+            Next we'll add NLPCraft dependency to our new project
         </p>
     </section>
     <section id="data_model">
