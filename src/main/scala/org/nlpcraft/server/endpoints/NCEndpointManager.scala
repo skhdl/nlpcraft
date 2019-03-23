@@ -296,7 +296,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
       * @param query
       * @return
       */
-    private def getKeys(query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue]):  Set[NCEndpointCacheKey] =
+    private def getKeys(query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue]): Set[NCEndpointCacheKey] =
         cache.
             query(query).
             getAll.
@@ -540,38 +540,6 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             {
                 case e: Exception ⇒
                     logger.error(s"Failed to cancel endpoint notification [srvReqIds=$srvReqIds]", e)
-            }
-        )
-    }
-
-    /**
-      * Cancel notifications for given user ID and its endpoint.
-      *
-      * @param usrId User ID.
-      */
-    def cancelNotifications(usrId: Long): Unit = {
-        ensureStarted()
-
-        U.asFuture(
-            _ ⇒ {
-                val query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue] =
-                    new SqlQuery(
-                        classOf[NCEndpointCacheValue],
-                        "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
-                    ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
-
-                    catching(wrapIE) {
-                        NCTxManager.startTx {
-                            val keys = getKeys(query)
-
-                            if (keys.nonEmpty)
-                                cache --= keys
-                        }
-                    }
-            },
-            {
-                case e: Exception ⇒
-                    logger.error(s"Failed to cancel endpoint notification [usrId=$usrId]", e)
             }
         )
     }

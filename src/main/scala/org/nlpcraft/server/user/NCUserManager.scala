@@ -133,7 +133,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                     clearSigninCache(ses)
 
                                     if (ses.endpoints.nonEmpty)
-                                        NCEndpointManager.cancelNotifications(ses.userId)
+                                        NCEndpointManager.cancelNotifications(ses.userId, ses.endpoints)
 
                                     // Notification.
                                     NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
@@ -242,7 +242,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                     case Some(ses) ⇒
                         clearSigninCache(ses)
 
-                        NCEndpointManager.cancelNotifications(ses.userId)
+                        if (ses.endpoints.nonEmpty)
+                            NCEndpointManager.cancelNotifications(ses.userId, ses.endpoints)
 
                         // Notification.
                         NCNotificationManager.addEvent("NC_USER_SIGNED_OUT",
@@ -355,17 +356,9 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, Set.empty)
 
-                                        val lock = idSigninCache.lock(usr.id)
-
-                                        lock.lock()
-
-                                        try
-                                            idSigninCache(usr.id) match {
-                                                case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
-                                                case None ⇒ idSigninCache += usr.id → Set(acsTkn)
-                                            }
-                                        finally {
-                                            lock.unlock()
+                                        idSigninCache(usr.id) match {
+                                            case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
+                                            case None ⇒ idSigninCache += usr.id → Set(acsTkn)
                                         }
 
                                         acsTkn
@@ -615,21 +608,12 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     private def clearSigninCache(ses: SigninSession): Unit =
         idSigninCache(ses.userId) match {
             case Some(toks) ⇒
-                val lock = idSigninCache.lock(ses.userId)
+                val fixedToks = toks -- Seq(ses.acsToken)
 
-                lock.lock()
-
-                try {
-                    val fixedToks = toks -- Seq(ses.acsToken)
-
-                    if (fixedToks.isEmpty)
-                        idSigninCache -= ses.userId
-                    else
-                        idSigninCache += ses.userId → fixedToks
-                }
-                finally {
-                    lock.unlock()
-                }
+                if (fixedToks.isEmpty)
+                    idSigninCache -= ses.userId
+                else
+                    idSigninCache += ses.userId → fixedToks
             case None ⇒ // No-op.
         }
 
