@@ -58,7 +58,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
     // Caches.
     @volatile private var tokenSigninCache: IgniteCache[String, SigninSession] = _
-    @volatile private var idSigninCache: IgniteCache[Long, String] = _
+    @volatile private var idSigninCache: IgniteCache[Long, Set[String]] = _
 
     @volatile private var usersSeq: IgniteAtomicSequence = _
     @volatile private var pswdSeq: IgniteAtomicSequence = _
@@ -108,7 +108,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             pswdSeq = NCSql.mkSeq(ignite, "pswdSeq", "passwd_pool", "id")
 
             tokenSigninCache = ignite.cache[String, SigninSession]("user-token-signin-cache")
-            idSigninCache = ignite.cache[Long, String]("user-id-signin-cache")
+            idSigninCache = ignite.cache[Long, Set[String]]("user-id-signin-cache")
 
             require(tokenSigninCache != null)
             require(idSigninCache != null)
@@ -129,7 +129,8 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                      if now - ses.lastAccessMs >= Config.expireMs
                                 ) {
                                     tokenSigninCache -= ses.acsToken
-                                    idSigninCache -= ses.userId
+
+                                    clearSigninCache(ses)
 
                                     if (ses.endpoints.nonEmpty)
                                         NCEndpointManager.cancelNotifications(ses.userId)
@@ -239,7 +240,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCTxManager.startTx {
                 tokenSigninCache -== acsTok match {
                     case Some(ses) ⇒
-                        idSigninCache -= ses.userId
+                        clearSigninCache(ses)
 
                         NCEndpointManager.cancelNotifications(ses.userId)
 
@@ -320,12 +321,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
         catching(wrapIE) {
             idSigninCache(usrId) match {
-                case Some(tok) ⇒
-                    tokenSigninCache(tok) match {
-                        case Some(ses) ⇒ ses.endpoints
-                        case None ⇒ Set.empty
-
-                    }
+                case Some(toks) ⇒ toks.flatMap(tok ⇒ tokenSigninCache(tok)).flatMap(_.endpoints)
                 case None ⇒ Set.empty
             }
         }
@@ -359,7 +355,10 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, Set.empty)
 
-                                        idSigninCache += usr.id → acsTkn
+                                        idSigninCache(usr.id) match {
+                                            case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
+                                            case None ⇒ idSigninCache += usr.id → Set(acsTkn)
+                                        }
 
                                         acsTkn
                                 }
@@ -495,6 +494,17 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
             NCSqlManager.addPasswordHash(pswdSeq.incrementAndGet(), NCBlowfishHasher.hash(newPasswd, salt))
         }
 
+        catching(wrapIE) {
+            NCTxManager.startTx {
+                idSigninCache(usrId) match {
+                    case Some(toks) ⇒
+                        tokenSigninCache --= toks
+                        idSigninCache -= usrId
+                    case None ⇒ // No-op.
+                }
+            }
+        }
+
         // Notification.
         NCNotificationManager.addEvent("NC_USER_PASSWD_RESET",
             "userId" → usrId
@@ -591,25 +601,33 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     }
 
     /**
+      *
+      * @param ses
+      */
+    private def clearSigninCache(ses: SigninSession): Unit =
+        idSigninCache(ses.userId) match {
+            case Some(toks) ⇒
+                val fixedToks = toks -- Seq(ses.acsToken)
+
+                if (fixedToks.isEmpty)
+                    idSigninCache -= ses.userId
+                else
+                    idSigninCache += ses.userId → fixedToks
+            case None ⇒ // No-op.
+        }
+
+    /**
       * Updates endpoint for user session.
       * 
-      * @param usrId User ID.
+      * @param tok User login token.
       * @param change Change method.
       */
-    private def updateEndpoints(usrId: Long, change: Set[String] ⇒ Set[String]): Unit =
+    private def updateEndpoints(tok: String, change: Set[String] ⇒ Set[String]): Option[Long] =
         catching(wrapIE) {
-            idSigninCache(usrId) match {
-                case Some(acsToken) ⇒
-                    tokenSigninCache(acsToken) match {
-                        case Some(ses) ⇒ Some(ses)
-                        case None ⇒
-                            logger.error(s"Token cache not found for: $acsToken")
-
-                            None
-                    }
-
+            tokenSigninCache(tok) match {
+                case Some(ses) ⇒ Some(ses)
                 case None ⇒
-                    logger.trace(s"User cache not found for: $usrId")
+                    logger.error(s"Token cache not found for: $tok")
 
                     None
             }
@@ -620,58 +638,67 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                         SigninSession(ses.acsToken, ses.userId, ses.signinMs, ses.lastAccessMs, change(ses.endpoints)
                 )
 
-            case None ⇒ // No-op.
+                Some(ses.userId)
+
+            case None ⇒ None
         }
 
     /**
       * Registers session level user endpoint.
       *
-      * @param usrId User ID.
+      * @param tok User login token.
       * @param ep Endpoint URL.
       */
-    def registerEndpoint(usrId: Long, ep: String): Unit = {
+    def registerEndpoint(tok: String, ep: String): Unit = {
         ensureStarted()
 
-        updateEndpoints(usrId, (eps: Set[String]) ⇒ eps ++ Set(ep))
-    
-        // Notification.
-        NCNotificationManager.addEvent("NC_USER_ADD_ENDPOINT",
-            "userId" → usrId,
-            "endpoint" → ep
-        )
+        updateEndpoints(tok, (eps: Set[String]) ⇒ eps ++ Set(ep)) match {
+            case Some(usrId) ⇒
+                // Notification.
+                NCNotificationManager.addEvent("NC_USER_ADD_ENDPOINT",
+                    "userId" → usrId,
+                    "endpoint" → ep
+                )
+            case None ⇒ None
+        }
     }
 
     /**
       * De-registers session level user endpoint if some was registered
       *
-      * @param usrId User ID.
+      * @param tok User login token.
       * @param ep Endpoint URL.
       */
-    def removeEndpoint(usrId: Long, ep: String): Unit = {
+    def removeEndpoint(tok: String, ep: String): Unit = {
         ensureStarted()
 
-        updateEndpoints(usrId, (eps: Set[String]) ⇒ eps -- Set(ep))
-    
-        // Notification.
-        NCNotificationManager.addEvent("NC_USER_REMOVE_ENDPOINT",
-            "userId" → usrId,
-            "endpoint" → ep
-        )
+        updateEndpoints(tok, (eps: Set[String]) ⇒ eps -- Set(ep)) match {
+            case Some(usrId) ⇒
+                // Notification.
+                NCNotificationManager.addEvent("NC_USER_REMOVE_ENDPOINT",
+                    "userId" → usrId,
+                    "endpoint" → ep
+                )
+            case None ⇒ // No-op.
+        }
     }
 
     /**
-      * De-registers session level user endpoints if some was registered
+      * De-registers session level user endpoints if some was registered.
       *
-      * @param usrId User ID.
+      * @param tok User login token.
       */
-    def removeEndpoints(usrId: Long): Unit = {
+    def removeEndpoints(tok: String): Unit = {
         ensureStarted()
 
-        updateEndpoints(usrId, (_: Set[String]) ⇒ Set.empty)
+        updateEndpoints(tok, (_: Set[String]) ⇒ Set.empty) match {
+            case Some(usrId) ⇒
+                // Notification.
+                NCNotificationManager.addEvent("NC_USER_REMOVE_ENDPOINTS",
+                    "userId" → usrId
+                )
+            case None ⇒ // No-op.
+        }
 
-        // Notification.
-        NCNotificationManager.addEvent("NC_USER_REMOVE_ENDPOINTS",
-            "userId" → usrId
-        )
     }
 }

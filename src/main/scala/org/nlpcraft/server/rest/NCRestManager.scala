@@ -739,9 +739,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     if (!urlVal.isValid(req.endpoint))
                         throw InvalidField(req.endpoint)
 
-                    val usrId = authenticate(req.acsTok).id
+                    authenticate(req.acsTok)
 
-                    NCUserManager.registerEndpoint(usrId, req.endpoint)
+                    NCUserManager.registerEndpoint(req.acsTok, req.endpoint)
 
                     complete {
                         Res(API_OK)
@@ -764,9 +764,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     checkLength("acsTok", req.acsTok, 256)
                     checkLength("endpoint", req.endpoint, 2083)
 
-                    val usrId = authenticate(req.acsTok).id
+                    authenticate(req.acsTok)
 
-                    NCUserManager.removeEndpoint(usrId, req.endpoint)
+                    NCUserManager.removeEndpoint(req.acsTok, req.endpoint)
 
                     complete {
                         Res(API_OK)
@@ -787,9 +787,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 entity(as[Req]) { req ⇒
                     checkLength("acsTok", req.acsTok, 256)
 
-                    val usrId = authenticate(req.acsTok).id
+                    authenticate(req.acsTok)
 
-                    NCUserManager.removeEndpoints(usrId)
+                    NCUserManager.removeEndpoints(req.acsTok)
 
                     complete {
                         Res(API_OK)
