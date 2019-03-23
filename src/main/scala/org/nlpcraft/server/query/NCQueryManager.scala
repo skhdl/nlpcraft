@@ -35,7 +35,7 @@ import org.apache.ignite.IgniteCache
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
-import org.nlpcraft.server.endpoints.NCEndpointManager
+import org.nlpcraft.server.endpoints.{NCEndpointCacheKey, NCEndpointManager}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCQueryStateMdo
@@ -330,7 +330,12 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
         userSrvReqIds.foreach {
             case (usrId, usrSrvReqIds) ⇒
-                processEndpoints(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrId, usrSrvReqIds))
+                processEndpoints(
+                    usrId, _ ⇒
+                    NCEndpointManager.cancelNotifications(usrId, (k: NCEndpointCacheKey) ⇒
+                        usrSrvReqIds.contains(k.getSrvReqId)
+                    )
+                )
         }
 
         for (srvReqId ← srvReqIds) {

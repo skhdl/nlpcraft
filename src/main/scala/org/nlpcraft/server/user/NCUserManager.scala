@@ -38,7 +38,7 @@ import org.apache.ignite.{IgniteAtomicSequence, IgniteCache}
 import org.nlpcraft.common.blowfish.NCBlowfishHasher
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.endpoints.NCEndpointManager
+import org.nlpcraft.server.endpoints.{NCEndpointCacheKey, NCEndpointManager}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCUserMdo
@@ -133,7 +133,10 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                     clearSigninCache(ses)
 
                                     if (ses.endpoints.nonEmpty)
-                                        NCEndpointManager.cancelNotifications(ses.userId, ses.endpoints)
+                                        NCEndpointManager.cancelNotifications(
+                                            ses.userId,
+                                            (k: NCEndpointCacheKey) ⇒ ses.endpoints.contains(k.getEndpoint)
+                                        )
 
                                     // Notification.
                                     NCNotificationManager.addEvent("NC_ACCESS_TOKEN_TIMEDOUT",
@@ -243,7 +246,10 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                         clearSigninCache(ses)
 
                         if (ses.endpoints.nonEmpty)
-                            NCEndpointManager.cancelNotifications(ses.userId, ses.endpoints)
+                            NCEndpointManager.cancelNotifications(
+                                ses.userId,
+                                (k: NCEndpointCacheKey) ⇒ ses.endpoints.contains(k.getEndpoint)
+                            )
 
                         // Notification.
                         NCNotificationManager.addEvent("NC_USER_SIGNED_OUT",

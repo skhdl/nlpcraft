@@ -508,19 +508,18 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                         s"Failed to add endpoint notification [state=$state, endpoints=${eps.mkString(", ")}]",
                         e
                     )
+
             }
         )
     }
 
     /**
-      * Cancel notifications for given server request IDs.
+      * Cancel notifications.
       *
       * @param usrId User ID.
-      * @param srvReqIds Server request IDs.
+      * @param filter Filter.
       */
-    def cancelNotifications(usrId: Long, srvReqIds: Set[String]): Unit = {
-        require(srvReqIds != null)
-
+    def cancelNotifications(usrId: Long, filter: NCEndpointCacheKey ⇒ Boolean): Unit = {
         ensureStarted()
 
         U.asFuture(
@@ -533,13 +532,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                                 "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
                             ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
 
-                        cache --= getKeys(query).filter(p ⇒ srvReqIds.contains(p.getSrvReqId))
+                        cache --= getKeys(query).filter(filter(_))
                     }
                 }
             },
             {
                 case e: Exception ⇒
-                    logger.error(s"Failed to cancel endpoint notification [srvReqIds=$srvReqIds]", e)
+                    logger.error(s"Failed to cancel endpoint notification [usrId=$usrId]", e)
             }
         )
     }
