@@ -355,9 +355,17 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
 
                                         tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, Set.empty)
 
-                                        idSigninCache(usr.id) match {
-                                            case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
-                                            case None ⇒ idSigninCache += usr.id → Set(acsTkn)
+                                        val lock = idSigninCache.lock(usr.id)
+
+                                        lock.lock()
+
+                                        try
+                                            idSigninCache(usr.id) match {
+                                                case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
+                                                case None ⇒ idSigninCache += usr.id → Set(acsTkn)
+                                            }
+                                        finally {
+                                            lock.unlock()
                                         }
 
                                         acsTkn
@@ -607,12 +615,21 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
     private def clearSigninCache(ses: SigninSession): Unit =
         idSigninCache(ses.userId) match {
             case Some(toks) ⇒
-                val fixedToks = toks -- Seq(ses.acsToken)
+                val lock = idSigninCache.lock(ses.userId)
 
-                if (fixedToks.isEmpty)
-                    idSigninCache -= ses.userId
-                else
-                    idSigninCache += ses.userId → fixedToks
+                lock.lock()
+
+                try {
+                    val fixedToks = toks -- Seq(ses.acsToken)
+
+                    if (fixedToks.isEmpty)
+                        idSigninCache -= ses.userId
+                    else
+                        idSigninCache += ses.userId → fixedToks
+                }
+                finally {
+                    lock.unlock()
+                }
             case None ⇒ // No-op.
         }
 
