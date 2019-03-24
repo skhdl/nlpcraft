@@ -41,7 +41,7 @@ layout: documentation
             Let's setup a project for our first example. To simplify this task we'll make certain assumptions:
         </p>
         <ul>
-            <li>We'll assume Mac OS/Linux environment</li>
+            <li>We'll use Mac OS/Linux environment</li>
             <li>We'll use <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java</a> to implement our model</li>
             <li>We'll use <a target=_ href="https://maven.apache.org/install.html">Maven</a> to create and build our project</li>
             <li>We'll use <a target=_ href="https://www.jetbrains.com/idea/">JetBrains IDEA</a> as our Java IDE</li>
@@ -93,6 +93,13 @@ $ tree
             <img class="img-fluid" src="/images/new_idea_project1.png">
             <figcaption><b>Fig 1.</b> Project Structure</figcaption>
         </figure>
+        <div class="bq info">
+            <b>Delete App.java <span class="amp">&amp;</span> AppTest.java</b>
+            <p>
+                Let's delete auto-generated files <code>App.java</code> and <code>AppTest.java</code> from our
+                project as we won't be using them.
+            </p>
+        </div>
     </section>
     <section id="add_nlpcraft">
         <span class="section-sub-title">Add NLPCraft</span>
@@ -128,15 +135,16 @@ $ tree
         <span class="section-title">First Data Model</span>
         <p>
             For our first data model we'll develop an alarm clock with a natural language interface. You will be able
-            to say something like <code>"Buzz me in 10 mins"</code> or <code>"Set up my morning wake up call in 2 hours and 10 minutes"</code>
-            and the system will set Java timer that would buzz the alarm by printing <code>BEEP BEEP BEEP</code> into the console.
+            to say something like <code>"Buzz me in 10 mins"</code> or <code>"Set up my morning wake up
+            call in 7 hours and 30 minutes"</code>
+            and the system will set Java timer that would buzz the alarm by printing <code>"BEEP BEEP BEEP"</code> into the console.
             Note that this is
             similar to <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example
             available in NLPCraft - but we'll build it from scratch here.
         </p>
         <div class="bq info">
             <p>
-                Note that we'll explain many technical details in later chapters while concentrating here
+                We'll explain all technical details in later chapters while this section concentrates
                 on high level project and code organization.
             </p>
         </div>
@@ -151,7 +159,7 @@ $ tree
         </p>
         <p>
             Let's add new <code>alarm_model.json</code> file containing model's static configuration in JSON
-            along sides the auto-generated <code>App.java</code> with the following content:
+            into <code>src/main/java/examples</code> folder with the following content:
         </p>
         <pre class="brush: js, highlight: [2, 18, 19, 20, 21, 22, 23]">
             {
@@ -182,14 +190,14 @@ $ tree
             }
         </pre>
         <p>
-            Note the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
-            both of which we'll use later. Model element <code>x:alarm</code> defines a textual (or speech) indicator
-            that we are asking about setting up the alarm clock. It consists of the ID, description and a set of
+            Notice the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
+            both of which we'll use later. Semantic model element <code>x:alarm</code> defines a textual (or speech) indicator
+            that the user is asking about setting up the alarm clock. It consists of the ID, description and a set of
             synonyms written with a special macro expression language.
         </p>
         <p>
-            Next let's go ahead and add model's logic. Rename <code>App.java</code> to <code>AlarmModel.java</code>
-            and copy the following model code into it:
+            Next let's go ahead and add model's logic. Create new <code>AlarmModel.java</code> file along side
+            <code>alarm_model.json</code> configuration file and copy the following model code into it:
         </p>
         <pre class="brush: java, highlight: [15, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 50]">
 package examples;
@@ -314,18 +322,57 @@ public class AlarmModel extends NCModelProviderAdapter {
                 <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface that
                 we built using
                 <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
-                factory; notice that we load our static configuration file <code>alarm_model.json</code>
+                factory - notice that we load our static configuration file <code>alarm_model.json</code>.
             </li>
             <li>
-                This data model uses intent-based matching of the user input. On line 25 we add one intent that
+                Our data model uses intent-based matching of the user input. On line 25 we add one intent that
                 essentially matches one indicator token <code>x:alarm</code> (see <code>alarm_model.json</code> file)
-                and up to 7 numbers with date or time related units (i.e. <code>2 hours</code>, <code>5 mins</code>).
+                and up to 7 numeric values with date or time related units (i.e. <code>2 hours</code>, <code>5 mins</code>).
             </li>
             <li>
                 If the intent is matched the method <code>onMatch(...)</code> on line 50 is called (see line 39 as well).
                 Its implementation is a vanilla Java code that simply schedules standard Java timer for the requested time.
                 Note that numeric tokens and their units are built-in system tokens that NLPCraft detects automatically
                 and provides to your models.
+            </li>
+        </ul>
+    </section>
+    <section>
+        <span class="section-sub-title">Deploying <span class="amp">&amp;</span> Testing</span>
+        <p>
+            NLPCraft data models get deployed into Data Probe. Let's configure Data Probe to deploy our newly
+            create alarm clock data model. To do that we just need to create a <code>probe.conf</code> file in the
+            same folder as the rest of our files with the following content:
+        </p>
+        <pre class="brush: js, highlight: [7, 8, 9]">
+            probe {
+                id = "alarm"
+                token = "3141592653589793"
+                upLink = "localhost:8201"
+                downLink = "localhost:8202"
+                jarsFolder = null
+                modelProviders = [
+                    "examples.AlarmModel"
+                ]
+                result.maxSize = 1048576
+            }
+        </pre>
+        <p>
+            Note the <code>modelProviders</code> property on lines 7-9 that contains a list of all data models (as fully
+            qualified Java class names) to be deployed when a Data Probe starts with this configuration.
+        </p>
+        <p>
+            To start Data Probe let's configure Runtime Configuration in IDEA with the following parameters:
+        </p>
+        <ul>
+            <li>
+                <b>Main class:</b> <code>org.nlpcraft.NCStart</code>
+            </li>
+            <li>
+                <b>Program arguments: </b> <code>-probe -config=<b>/Users/admin/</b>my-app/src/main/java/examples/probe.conf</code>
+            </li>
+            <li>
+                <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
             </li>
         </ul>
     </section>

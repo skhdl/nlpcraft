@@ -64,6 +64,16 @@ import scala.util.control.Exception._
   */
 object NCProbe extends App with LazyLogging {
     object Config {
+        /**
+          *
+          * @param errMsgs
+          */
+        private def abortError(errMsgs: String*): Unit = {
+            errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
+        
+            System.exit(1)
+        }
+    
         // If configuration file path is passed on - always use it.
         // Otherwise, check local and external on classpath 'probe.conf' files.
         private val hocon: Config = args.find(_.startsWith("-config=")) match {
@@ -73,20 +83,16 @@ object NCProbe extends App with LazyLogging {
                     withFallback(ConfigFactory.load("probe.conf"))
                 
             case Some(s) ⇒
+                val cfgPath = s.substring("-config=".length)
+                val cfgFile = new java.io.File(cfgPath)
+                
+                if (!(cfgFile.exists && cfgFile.canRead && cfgFile.isFile))
+                    abortError(s"Configuration file does not exist or cannot be read: $cfgPath")                 
+                    
                 ConfigFactory.
-                    parseFile(new java.io.File(s.substring("-config=".length)))
+                    parseFile(cfgFile)
         }
     
-        /**
-          *
-          * @param errMsgs
-          */
-        private def abortError(errMsgs: String*): Unit = {
-            errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
-            
-            System.exit(1)
-        }
-        
         if (!hocon.hasPath("probe")) {
             abortError(
                 "No configuration found.",
