@@ -190,7 +190,7 @@ layout: documentation
             <code>admin</code> password. We'll use these default credentials for sing in:
         </p>
         <pre class="brush: js; highlight: [2, 3, 4, 5]">
-            $ nccurl.sh /signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
+            $ nccurl.sh signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
             {
                 "acsTok": "KMGWMQJ44",
                 "status": "API_OK"

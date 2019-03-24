@@ -84,32 +84,216 @@ $ tree
         <p>
             Once we have maven-based project we can import it into our IDE. Details are specific for each IDE but
             for our choice of JetBrains IDEA click on <code>File > New > Project from Existing Sources...</code> menu
-            and select <code>pom.xml</code> file from the project we just created above:
-        </p>
-        <figure class="alt">
-            <img class="img-fluid" src="/images/new_idea_project.png">
-            <figcaption><b>Fig 1.</b> New Maven Project</figcaption>
-        </figure>
-        <p>
+            and select <code>pom.xml</code> file from the project we just created above.
             Follow all the steps on the project creation wizard (default settings should be fine). Make sure to select
-            JDK 8 or later as your Java JDK. After you followed through all the steps you should have the project with
+            JDK 8 or later as your Java JDK as well as project language level as 8 or above. After you followed through all the steps you should have the project with
             the structure looking similar to this:
         </p>
         <figure class="alt">
             <img class="img-fluid" src="/images/new_idea_project1.png">
-            <figcaption><b>Fig 2.</b> Project Structure</figcaption>
+            <figcaption><b>Fig 1.</b> Project Structure</figcaption>
         </figure>
     </section>
     <section id="add_nlpcraft">
         <span class="section-sub-title">Add NLPCraft</span>
         <p>
-            Next we'll add NLPCraft dependency to our new project
+            Finally we'll add NLPCraft dependency to our new project. Open <code>pom.xml</code> file and replace
+            <code>dependencies</code> section with the following code:
+        </p>
+        <pre class="brush: xml, highlight: [3, 4, 5]">
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;org.nlpcraft&lt;/groupId&gt;
+                    &lt;artifactId&gt;nlpcraft&lt;/artifactId&gt;
+                    &lt;version&gt;{{site.latest_version}}&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+        </pre>
+        <p>
+            Also make sure that you have correct JDK version (1.8 or above) for the maven compiler plugin:
+        </p>
+        <pre class="brush: xml, highlight: [3, 4]">
+            &lt;properties&gt;
+                &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+                &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+                &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+            &lt;/properties&gt;
+        </pre>
+        <p>
+            IDEA should automatically reload the project with newly updated <code>pom.xml</code> file and
+            we should be ready now to develop our new first data model.
         </p>
     </section>
     <section id="data_model">
         <span class="section-title">First Data Model</span>
         <p>
+            For our first data model we'll develop an alarm clock with a natural language interface. This would be
+            similar to <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example
+            available in NLPCraft - but we'll build it from scratch here.
         </p>
+        <div class="bq info">
+            <p>
+                Note that we'll explain many technical details in later chapters while concentrating here
+                on high level project and code organization.
+            </p>
+        </div>
+        <p>
+            In NLPCraft a data model is simply an implementation of <a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            interface. You can implement this interface in many ways but we recommend to use
+            <a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a> class with external JSON/YAML definition for the static
+            part of the model. This way you cleanly separate the logic of the model from its declarative configuration.
+        </p>
+        <p>
+            Let's add new <code>alarm_model.json</code> file containing model's static configuration in JSON
+            along sides the auto-generated <code>App.java</code> with the following content:
+        </p>
+        <pre class="brush: js, highlight: [2, 18, 19, 20, 21, 22, 23]">
+            {
+                "id": "nlpcraft.alarm.ex",
+                "name": "Alarm Example Model",
+                "version": "1.0",
+                "description": "Alarm example model.",
+                "vendorName": "NLPCraft",
+                "vendorUrl": "https://www.nlpcraft.org",
+                "vendorContact": "Support",
+                "vendorEmail": "info@nlpcraft.org",
+                "docsUrl": "https://www.nlpcraft.org",
+                "examples": [
+                    "Ping me in 3 minutes",
+                    "Buzz me in an hour and 15mins",
+                    "Set my alarm for 30s"
+                ],
+                "elements": [
+                    {
+                        "id": "x:alarm",
+                        "description": "Alarm token indicator.",
+                        "synonyms": [
+                            "{ping|buzz|wake|call|hit} {me|up|me up|*}",
+                            "{set|*} {my|*} {wake|wake up|*} {morning|evening|*} {alarm|timer|alarm clock|buzzer|call} {up|*}"
+                        ]
+                    }
+                ]
+            }
+        </pre>
+        <p>
+            Note the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
+            both of which we'll use later. Model element <code>x:alarm</code> defines a textual (or speech) indicator
+            that we are asking about setting up the alarm clock. It consists of the ID and a set of synonyms written
+            in a special macro expression language.
+        </p>
+        <p>
+            Next let's go ahead and add model's logic. Rename <code>App.java</code> to <code>AlarmModel.java</code>
+            and copy the following model code into it:
+        </p>
+        <pre class="brush: java">
+package examples;
+
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.intent.NCIntentSolver.*;
+import org.nlpcraft.model.utils.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
+
+import static java.time.temporal.ChronoUnit.*;
+import static org.nlpcraft.model.utils.NCTokenUtils.*;
+
+public class AlarmModel extends NCModelProviderAdapter {
+    private static final DateTimeFormatter FMT =
+        DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'")
+            .withZone(ZoneId.systemDefault());
+
+    private final Timer timer = new Timer();
+
+    public AlarmModel() {
+        NCIntentSolver solver = new NCIntentSolver();
+
+        solver.addIntent(
+            new NON_CONV_INTENT(
+                "x:alarm|num{1+}",
+                new TERM("id == x:alarm", 1, 1),
+                new TERM(
+                    new AND(
+                        "id == nlp:num",
+                        "~NUM_UNITTYPE == datetime",
+                        "~NUM_ISEQUALCONDITION == true"
+                    ),
+                    0,
+                    7
+                )
+            ),
+            this::onMatch
+        );
+
+        setup(NCModelBuilder.newJsonModel(
+            AlarmModel.class.getClassLoader()
+                .getResourceAsStream("examples/alarm_model.json"))
+            .setQueryFunction(solver::solve)
+            .build()
+        );
+    }
+
+    private NCQueryResult onMatch(NCIntentSolverContext ctx) {
+        if (!ctx.isExactMatch())
+            throw new NCRejection("Not exact match.");
+
+        List&lt;NCToken&gt; nums = ctx.getIntentTokens().get(1);
+
+        long unitsCnt = nums.stream().map(NCTokenUtils::getNumUnit)
+            .distinct().count();
+
+        if (unitsCnt != nums.size())
+            throw new NCRejection("Ambiguous time units.");
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dt = now;
+
+        for (NCToken num : nums) {
+            String unit = getNumUnit(num);
+
+            // Skips possible fractional to simplify.
+            long v = (long)getNumFrom(num);
+
+            if (v <= 0)
+                throw new NCRejection("Value must be positive: " + unit);
+
+            switch (unit) {
+                case "second": { dt = dt.plusSeconds(v); break; }
+                case "minute": { dt = dt.plusMinutes(v); break; }
+                case "hour": { dt = dt.plusHours(v); break; }
+                case "day": { dt = dt.plusDays(v); break; }
+                case "week": { dt = dt.plusWeeks(v); break; }
+                case "month": { dt = dt.plusMonths(v); break; }
+                case "year": { dt = dt.plusYears(v); break; }
+
+                default:
+                    throw new NCRejection("Unsupported time unit: " + unit);
+            }
+        }
+
+        long ms = now.until(dt, MILLIS);
+
+        assert ms >= 0;
+
+        timer.schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println(
+                        "BEEP BEEP BEEP for: " +
+                            ctx.getQueryContext().getSentence().getNormalizedText()
+                    );
+                }
+            },
+            ms
+        );
+
+        return NCQueryResult.text("Timer set for: " + FMT.format(dt));
+    }
+}
+        </pre>
     </section>
 </div>
 <div class="col-md-2 third-column">
