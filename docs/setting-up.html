@@ -340,8 +340,8 @@ public class AlarmModel extends NCModelProviderAdapter {
     <section>
         <span class="section-sub-title">Start Data Probe</span>
         <p>
-            NLPCraft data models get deployed into Data Probe. Let's configure and start Data Probe to deploy our newly
-            create alarm clock data model. To do that we just need to create a <code>probe.conf</code> file in the
+            NLPCraft data models get deployed into data probe. Let's configure and start data probe to deploy our newly
+            create alarm clock data model. To do that we need to create a <code>probe.conf</code> file in the
             same folder as the rest of our files with the following content:
         </p>
         <pre class="brush: js, highlight: [7, 8, 9]">
@@ -359,10 +359,10 @@ public class AlarmModel extends NCModelProviderAdapter {
         </pre>
         <p>
             Note the <code>modelProviders</code> property on lines 7-9 that contains a list of all data models (as fully
-            qualified Java class names) to be deployed when a Data Probe starts with this configuration.
+            qualified Java class names) to be deployed when a data probe starts with this configuration.
         </p>
         <p>
-            To start Data Probe let's configure Run Configuration in IDEA with the following parameters:
+            To start data probe let's configure Run Configuration in IDEA with the following parameters:
         </p>
         <ul>
             <li>
@@ -432,8 +432,28 @@ Mar-24 10:53:31 [INFO ] Probe Configuration:
     <section>
         <span class="section-sub-title">Start REST Server</span>
         <p>
-            REST server is what we are going to use to send our NLI-based requests to. REST server starts in an exact
-            same way as the data probe. Let's configure new Run Configuration in IDEA with the following parameters:
+            REST server listens for requests from client applications.
+        </p>
+        <div class="bq info">
+            <b>REST Server vs. Data Probe</b>
+            <p>
+                It's important to remember why REST server is a separate component from a data probe. While a
+                typical deployment would have only one REST server (or a cluster of REST servers behind a single
+                load balancer), there are maybe multiple data probes hosting different data models deployed in
+                different physical locations, managed through different life cycles and requiring different
+                security and network configurations.
+            </p>
+            <p>
+                Moreover, REST server is a heavy and resource consuming component that is built around Apache
+                Ignite distributing in-memory computing capabilities - while the data probe is a lightweight
+                data model container. During the development and testing of data models, the developers need to
+                frequently redeploy data models by restarting the data probe. If the REST server and the data probe
+                would be one component - this process would be very inefficient.
+            </p>
+        </div>
+        <p>
+            REST server starts in an exact same way as the data probe. Let's configure new
+            Run Configuration in IDEA with the following parameters:
         </p>
         <ul>
             <li>
@@ -492,7 +512,7 @@ Mar-24 11:34:28 [INFO ] REST server is listening on 'localhost:8081'.
         <p>
             At this point we've developed our data model, deployed it into the data probe, and started the REST server.
             Our NLI-based alarm clock is ready to accept user requests. Instead of using direct REST calls we'll
-            demonstrate the built-in test framework that allows you to write convienient unit tests against our
+            demonstrate the built-in <a href="/testing-data-model.html">test framework</a> that allows you to write convienient unit tests against our
             data model.
         </p>
         <p>
@@ -502,13 +522,15 @@ Mar-24 11:34:28 [INFO ] REST server is listening on 'localhost:8081'.
     <section>
         <span class="section-sub-title">Testing</span>
         <p>
-            NLPCraft comes bundled with easy to use test framework for data models that can be used with
+            NLPCraft comes bundled with easy to use <a href="/testing-data-model.html">test framework</a> for data models that can be used with
             any unit testing framework like JUnit or ScalaTest. It is essentially a simplified
-            version of Java REST client that is custom designed for data model testing.
+            version of <a href="/rest-clients.html">Java REST client</a> that is custom designed for data model testing.
+        </p>
+        <p>
             Let's create new Java class <code>AlarmTest.java</code> in <code>src/<b>test</b>/java/examples</code>
             folder with the following code:
         </p>
-        <pre class="brush: java">
+        <pre class="brush: java, highlight: [35, 36, 37]">
 package examples;
 
 import org.junit.jupiter.api.*;
@@ -549,6 +571,18 @@ public class AlarmTest {
     }
 }
         </pre>
+        <p>
+            Right click on this class in the project view and run it. You should be getting following output from
+            JUnit panel as well as alarm clock output in the data probe console:
+        </p>
+        <figure class="alt">
+            <img class="img-fluid" src="/images/model-test.png">
+            <figcaption><b>Fig 3.</b> Model Test Run</figcaption>
+        </figure>
+        <p>
+            Congratulation! You've created your first data model, deployed it into the data probe, started the
+            REST server and tested the model using JUnit 5 and the built-in test framework.
+        </p>
     </section>
 </div>
 <div class="col-md-2 third-column">
