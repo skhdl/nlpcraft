@@ -512,7 +512,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     // Self deleting.
                     if (usrId == initiatorUsr.id) {
                         if (initiatorUsr.isAdmin && !NCUserManager.isOtherAdminsExist(initiatorUsr.id))
-                            throw new NCE(s"Last admin user cannot be deleted: ${initiatorUsr.email}")
+                            throw new InvalidOperation(s"Last admin user cannot be deleted: ${initiatorUsr.email}")
 
                         NCUserManager.signout(req.acsTok)
                     }
@@ -588,7 +588,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         !req.admin &&
                         !NCUserManager.isOtherAdminsExist(initiatorUsr.id)
                     )
-                        throw new NCE(s"Last admin user cannot lose admin privileges: ${initiatorUsr.email}")
+                        throw new InvalidOperation(s"Last admin user cannot lose admin privileges: ${initiatorUsr.email}")
 
                     NCUserManager.updateUserPermissions(usrId, req.admin)
 
