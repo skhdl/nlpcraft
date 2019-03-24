@@ -127,7 +127,10 @@ $ tree
     <section id="data_model">
         <span class="section-title">First Data Model</span>
         <p>
-            For our first data model we'll develop an alarm clock with a natural language interface. This would be
+            For our first data model we'll develop an alarm clock with a natural language interface. You will be able
+            to say something like <code>"Buzz me in 10 mins"</code> or <code>"Set up my morning wake up call in 2 hours and 10 minutes"</code>
+            and the system will set Java timer that would buzz the alarm by printing <code>BEEP BEEP BEEP</code> into the console.
+            Note that this is
             similar to <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example
             available in NLPCraft - but we'll build it from scratch here.
         </p>
@@ -138,10 +141,13 @@ $ tree
             </p>
         </div>
         <p>
-            In NLPCraft a data model is simply an implementation of <a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
-            interface. You can implement this interface in many ways but we recommend to use
-            <a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a> class with external JSON/YAML definition for the static
-            part of the model. This way you cleanly separate the logic of the model from its declarative configuration.
+            In NLPCraft a data model is simply an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a>
+            interface. You can implement this interface in many ways but in most cases we recommend to use
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a>
+            adapter as well as <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a> factory
+            with external JSON/YAML definition for the static
+            part of the model. This is a canonical pattern to build models in NLPCraft and it allows you cleanly
+            separate the logic of the model from its declarative configuration.
         </p>
         <p>
             Let's add new <code>alarm_model.json</code> file containing model's static configuration in JSON
@@ -178,14 +184,14 @@ $ tree
         <p>
             Note the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
             both of which we'll use later. Model element <code>x:alarm</code> defines a textual (or speech) indicator
-            that we are asking about setting up the alarm clock. It consists of the ID and a set of synonyms written
-            in a special macro expression language.
+            that we are asking about setting up the alarm clock. It consists of the ID, description and a set of
+            synonyms written with a special macro expression language.
         </p>
         <p>
             Next let's go ahead and add model's logic. Rename <code>App.java</code> to <code>AlarmModel.java</code>
             and copy the following model code into it:
         </p>
-        <pre class="brush: java">
+        <pre class="brush: java, highlight: [15, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 50]">
 package examples;
 
 import org.nlpcraft.model.*;
@@ -294,6 +300,34 @@ public class AlarmModel extends NCModelProviderAdapter {
     }
 }
         </pre>
+        <p>
+            Chapter <a href="/data-model.html">Data Model API</a> will provide detailed explanation on how
+            data models work. Here are few comments as to what this code does and how it is organized:
+        </p>
+        <ul>
+            <li>
+                On line 15 we use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a>
+                adapter for simpler implementation. 
+            </li>
+            <li>
+                On line 42 we call method <code>setup</code> on the adapter where we pass an instance of
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface that
+                we built using
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                factory; notice that we load our static configuration file <code>alarm_model.json</code>
+            </li>
+            <li>
+                This data model uses intent-based matching of the user input. On line 25 we add one intent that
+                essentially matches one indicator token <code>x:alarm</code> (see <code>alarm_model.json</code> file)
+                and up to 7 numbers with date or time related units (i.e. <code>2 hours</code>, <code>5 mins</code>).
+            </li>
+            <li>
+                If the intent is matched the method <code>onMatch(...)</code> on line 50 is called (see line 39 as well).
+                Its implementation is a vanilla Java code that simply schedules standard Java timer for the requested time.
+                Note that numeric tokens and their units are built-in system tokens that NLPCraft detects automatically
+                and provides to your models.
+            </li>
+        </ul>
     </section>
 </div>
 <div class="col-md-2 third-column">
