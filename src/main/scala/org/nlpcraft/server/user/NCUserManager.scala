@@ -354,20 +354,14 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                             if (!NCSqlManager.isKnownPasswordHash(NCBlowfishHasher.hash(passwd, usr.passwordSalt)))
                                 None
                             else {
-                                val newAcsTkn = tokenSigninCache.asScala.find(entry ⇒ entry.getValue.userId == usr.id) match {
-                                    case Some(entry) ⇒ entry.getValue.acsToken // Already signed in.
-                                    case None ⇒
-                                        val acsTkn = U.genGuid()
-                                        val now = U.nowUtcMs()
+                                val acsTkn = U.genGuid()
+                                val now = U.nowUtcMs()
 
-                                        tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, Set.empty)
+                                tokenSigninCache += acsTkn → SigninSession(acsTkn, usr.id, now, now, Set.empty)
 
-                                        idSigninCache(usr.id) match {
-                                            case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
-                                            case None ⇒ idSigninCache += usr.id → Set(acsTkn)
-                                        }
-
-                                        acsTkn
+                                idSigninCache(usr.id) match {
+                                    case Some(toks) ⇒ idSigninCache += usr.id → (toks ++ Set(acsTkn))
+                                    case None ⇒ idSigninCache += usr.id → Set(acsTkn)
                                 }
 
                                 // Notification.
@@ -384,7 +378,7 @@ object NCUserManager extends NCLifecycle("User manager") with NCIgniteInstance {
                                     s"lastName=${usr.lastName}" +
                                     s"]")
 
-                                Some(newAcsTkn)
+                                Some(acsTkn)
                             }
                         }
                     case None ⇒ None

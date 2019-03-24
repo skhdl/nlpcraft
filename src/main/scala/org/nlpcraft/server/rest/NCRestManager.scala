@@ -31,6 +31,8 @@
 
 package org.nlpcraft.server.rest
 
+import java.util
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -117,80 +119,82 @@ object NCRestManager extends NCLifecycle("REST manager") {
         ExceptionHandler {
             case e: AccessTokenFailure ⇒
                 val errMsg = e.getLocalizedMessage
+                val code = "NC_UNKNOWN_ACCESS_TOKEN"
 
-                NCNotificationManager.addEvent("NC_UNKNOWN_ACCESS_TOKEN",
-                    "errMsg" → errMsg
-                )
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                complete(StatusCodes.Unauthorized, errMsg)
+                complete(StatusCodes.Unauthorized, mkErrorBody(code, errMsg))
 
             case e: SignInFailure ⇒
                 val errMsg = e.getLocalizedMessage
+                val code = "NC_SIGNIN_FAILURE"
 
-                NCNotificationManager.addEvent("NC_SIGNIN_FAILURE",
-                    "errMsg" → errMsg,
-                    "email" → e.email
-                )
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
 
-                complete(StatusCodes.Unauthorized, errMsg)
+                complete(StatusCodes.Unauthorized, mkErrorBody(code, errMsg))
 
             case e: NotImplemented ⇒
                 val errMsg = e.getLocalizedMessage
+                val code = "NC_NOT_IMPLEMENTED"
 
-                NCNotificationManager.addEvent("NC_NOT_IMPLEMENTED")
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                complete(StatusCodes.NotImplemented, errMsg)
+                complete(StatusCodes.NotImplemented, mkErrorBody(code, errMsg))
 
             case e: ArgsException ⇒
                 val errMsg = e.getLocalizedMessage
+                val code = "NC_INVALID_FIELD"
 
-                NCNotificationManager.addEvent("NC_INVALID_FIELD")
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                complete(StatusCodes.BadRequest, errMsg)
+                complete(StatusCodes.BadRequest, mkErrorBody(code, errMsg))
 
             case e: AdminRequired ⇒
                 val errMsg = e.getLocalizedMessage
-    
-                NCNotificationManager.addEvent("NC_ADMIN_REQUIRED",
-                    "errMsg" → errMsg,
-                    "email" → e.email
-                )
+                val code = "NC_ADMIN_REQUIRED"
 
-                complete(StatusCodes.Forbidden, errMsg)
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
+
+                complete(StatusCodes.Forbidden, mkErrorBody(code, errMsg))
 
             case e: InvalidOperation ⇒
                 val errMsg = e.getLocalizedMessage
+                val code = "NC_INVALID_OPERATION"
 
-                NCNotificationManager.addEvent("NC_INVALID_OPERATION",
-                    "errMsg" → errMsg,
-                    "email" → e.email
-                )
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
 
-                complete(StatusCodes.Forbidden, errMsg)
+                complete(StatusCodes.Forbidden, mkErrorBody(code, errMsg))
 
             // General exception.
             case e: NCException ⇒
                 val errMsg = e.getLocalizedMessage
-                
-                NCNotificationManager.addEvent("NC_ERROR", "errMsg" → errMsg)
+                val code = "NC_ERROR"
+
+                NCNotificationManager.addEvent(code, "errMsg" → errMsg)
                 
                 logger.error(s"Unexpected error: $errMsg", e)
                 
-                complete(StatusCodes.BadRequest, errMsg)
+                complete(StatusCodes.BadRequest, mkErrorBody(code, errMsg))
             
             // Unexpected errors.
             case e: Throwable ⇒
                 val errMsg = e.getLocalizedMessage
-    
-                NCNotificationManager.addEvent("NC_UNEXPECTED_ERROR",
-                    "exception" → e.getClass.getSimpleName,
-                    "errMsg" → errMsg
-                )
+                val code = "NC_UNEXPECTED_ERROR"
+
+                NCNotificationManager.addEvent(code, "exception" → e.getClass.getSimpleName, "errMsg" → errMsg)
     
                 logger.error(s"Unexpected system error: $errMsg", e)
                 
-                complete(InternalServerError, errMsg)
+                complete(InternalServerError, mkErrorBody(code, errMsg))
         }
+
+    /**
+      *
+      * @param code
+      * @param msg
+      * @return
+      */
+    private def mkErrorBody(code: String, msg: String): String = GSON.toJson(Map("code" → code, "msg" → msg).asJava)
 
     /**
       *
