@@ -362,7 +362,7 @@ public class AlarmModel extends NCModelProviderAdapter {
             qualified Java class names) to be deployed when a Data Probe starts with this configuration.
         </p>
         <p>
-            To start Data Probe let's configure Runtime Configuration in IDEA with the following parameters:
+            To start Data Probe let's configure Run Configuration in IDEA with the following parameters:
         </p>
         <ul>
             <li>
@@ -381,10 +381,10 @@ public class AlarmModel extends NCModelProviderAdapter {
         </p>
         <figure class="alt">
             <img class="img-fluid" src="/images/idea_run_config.png">
-            <figcaption><b>Fig 2.</b> IDEA Runtime Configuration</figcaption>
+            <figcaption><b>Fig 2.</b> IDEA Run Configuration</figcaption>
         </figure>
         <p>
-            Start this runtime configuration and you should get console output similar to this:
+            Start this run configuration and you should get console output similar to this:
         </p>
         <pre class="brush: plain, highlight: [19, 28]">
     _   ____      ______           ______
@@ -432,8 +432,123 @@ Mar-24 10:53:31 [INFO ] Probe Configuration:
     <section>
         <span class="section-sub-title">Start REST Server</span>
         <p>
-            REST
+            REST server is what we are going to use to send our NLI-based requests to. REST server starts in an exact
+            same way as the data probe. Let's configure new Run Configuration in IDEA with the following parameters:
         </p>
+        <ul>
+            <li>
+                <b>Main class:</b> <code>org.nlpcraft.NCStart</code>
+            </li>
+            <li>
+                <b>Program arguments: </b> <code>-server</code>
+            </li>
+            <li>
+                <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
+            </li>
+        </ul>
+        <p>
+            As before make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
+            your system.
+        </p>
+        <p>
+            Once you created and started this Run Configuration you should have the contole output
+            similar to this:
+        </p>
+        <pre class="brush: plain, highlight: [19, 29]">
+Mar-24 11:34:09 [INFO ]
+    _   ____      ______           ______
+   / | / / /___  / ____/________ _/ __/ /_
+  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+       /_/
+
+Server
+Version: {{site.latest_version}}
+Copyright (C) DataLingvo, Inc.
+
+...
+
+Mar-24 11:34:26 [INFO ] New probe registered:
++===================================================================================================================+
+| Probe ID |          OS           |      Timezone      |           Host           |             Models             |
++===================================================================================================================+
+| alarm    | Mac OS X ver. 10.14.3 | GMT, Europe/London | kernal.local (127.0.0.1) | ID: nlpcraft.alarm.ex, ver.1.0 |
++-------------------------------------------------------------------------------------------------------------------+
+
+Mar-24 11:34:28 [INFO ] REST manager started [2661ms]
+Mar-24 11:34:28 [INFO ]
+
++-------------------------+
+| Server started [21.70s] |
++-------------------------+
+            
+Mar-24 11:34:28 [INFO ] REST server is listening on 'localhost:8081'.
+        </pre>
+        <p>
+            Line 19 indicates that our data probe and REST server successfully connected to each other, and
+            line 29 announces that REST server is online and listening on the default endpoint <code>localhost:8081</code>.
+        </p>
+        <p>
+            At this point we've developed our data model, deployed it into the data probe, and started the REST server.
+            Our NLI-based alarm clock is ready to accept user requests. Instead of using direct REST calls we'll
+            demonstrate the built-in test framework that allows you to write convienient unit tests against our
+            data model.
+        </p>
+        <p>
+
+        </p>
+    </section>
+    <section>
+        <span class="section-sub-title">Testing</span>
+        <p>
+            NLPCraft comes bundled with easy to use test framework for data models that can be used with
+            any unit testing framework like JUnit or ScalaTest. It is essentially a simplified
+            version of Java REST client that is custom designed for data model testing.
+            Let's create new Java class <code>AlarmTest.java</code> in <code>src/<b>test</b>/java/examples</code>
+            folder with the following code:
+        </p>
+        <pre class="brush: java">
+package examples;
+
+import org.junit.jupiter.api.*;
+import org.nlpcraft.common.*;
+import org.nlpcraft.model.test.*;
+import java.io.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class AlarmTest {
+    private NCTestClient cli;
+
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        cli = new NCTestClientBuilder().newBuilder().build();
+
+        // See alarm_model.json
+        cli.openForModelId("nlpcraft.alarm.ex");
+    }
+
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        cli.close();
+    }
+
+    @Test
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(cli.ask("").isFailed());
+
+        // Only latin charset is supported.
+        assertTrue(cli.ask("El tiempo en España").isFailed());
+
+        // Should be passed.
+        assertTrue(cli.ask("Ping me in 3 minutes").isSuccessful());
+        assertTrue(cli.ask("Buzz me in an hour and 15mins").isSuccessful());
+        assertTrue(cli.ask("Set my alarm for 30s").isSuccessful());
+    }
+}
+        </pre>
     </section>
 </div>
 <div class="col-md-2 third-column">
