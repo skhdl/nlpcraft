@@ -338,9 +338,9 @@ public class AlarmModel extends NCModelProviderAdapter {
         </ul>
     </section>
     <section>
-        <span class="section-sub-title">Deploying <span class="amp">&amp;</span> Testing</span>
+        <span class="section-sub-title">Start Data Probe</span>
         <p>
-            NLPCraft data models get deployed into Data Probe. Let's configure Data Probe to deploy our newly
+            NLPCraft data models get deployed into Data Probe. Let's configure and start Data Probe to deploy our newly
             create alarm clock data model. To do that we just need to create a <code>probe.conf</code> file in the
             same folder as the rest of our files with the following content:
         </p>
@@ -375,6 +375,65 @@ public class AlarmModel extends NCModelProviderAdapter {
                 <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
             </li>
         </ul>
+        <p>
+            Make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
+            your system.
+        </p>
+        <figure class="alt">
+            <img class="img-fluid" src="/images/idea_run_config.png">
+            <figcaption><b>Fig 2.</b> IDEA Runtime Configuration</figcaption>
+        </figure>
+        <p>
+            Start this runtime configuration and you should get console output similar to this:
+        </p>
+        <pre class="brush: plain, highlight: [19, 28]">
+    _   ____      ______           ______
+   / | / / /___  / ____/________ _/ __/ /_
+  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+ / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+       /_/
+
+Data Probe
+Version: {{site.latest_version}}
+Copyright (C) DataLingvo, Inc.
+
+Mar-24 10:53:31 [INFO ] Probe Configuration:
++---------------------------------------+
+| Probe ID        | alarm               |
+| Probe Token     | 3141592653589793    |
+| API Version     | {{site.latest_version}}, 2019-03-01   |
+| Down-Link       | localhost:8202      |
+| Up-Link         | localhost:8201      |
+| Model providers | examples.AlarmModel |
+| JARs Folder     |                     |
++---------------------------------------+
+
+...
+
++======================================================================+
+|     Model ID      |        Name         | Ver. | Elements | Synonyms |
++======================================================================+
+| nlpcraft.alarm.ex | Alarm Example Model | 1.0  | 1        | 1543     |
++----------------------------------------------------------------------+
+
+...
+
++--------------------------+
+| Probe started [5.20 sec] |
++--------------------------+
+
+        </pre>
+        <p>
+            Line 19 indicates that we are using proper configuration and line 28 indicates that our
+            data model was successfully loaded and deployed.
+        </p>
+    </section>
+    <section>
+        <span class="section-sub-title">Start REST Server</span>
+        <p>
+            REST
+        </p>
     </section>
 </div>
 <div class="col-md-2 third-column">
