@@ -622,7 +622,8 @@ paths:
         - Asking
       summary: Removes user endpoint.
       description: >-
-        Removes session endpoint. Command is ignored if endpoint is not registered.
+        Removes session endpoint.
+        Command is ignored if endpoint is not registered.
       operationId: removeEndpoint
       parameters:
         - in: body
@@ -637,7 +638,7 @@ paths:
             properties:
               acsTok:
                 type: string
-                description: Access token obtain via '/api/signin' call
+                description: Access token obtain via '/signin' call
                 maxLength: 256
               endpoint:
                 type: string
@@ -664,9 +665,9 @@ paths:
     post:
       tags:
         - Asking
-      summary: Removes user endpoints.
+      summary: Removes all user endpoints.
       description: >-
-        Removes all session endpoints. Command is ignored if endpoint is not registered.
+        Removes all session endpoints.
       operationId: removeEndpoints
       parameters:
         - in: body

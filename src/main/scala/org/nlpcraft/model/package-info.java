@@ -30,6 +30,6 @@
  */
 
 /**
- * Contains <b>main API</b> for defining user models.
+ * Contains <b>main API</b> for defining data models.
  */
 package org.nlpcraft.model;

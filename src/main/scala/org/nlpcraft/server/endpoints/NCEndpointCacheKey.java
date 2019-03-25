@@ -31,8 +31,6 @@
 
 package org.nlpcraft.server.endpoints;
 
-import org.nlpcraft.server.mdo.NCQueryStateMdo;
-
 import java.io.Serializable;
 
 /**
@@ -41,20 +39,38 @@ import java.io.Serializable;
 public class NCEndpointCacheKey implements Serializable {
     private final String srvReqId;
     private final String endpoint;
-    
+
+    /**
+     *
+     * @param srvReqId
+     * @param endpoint
+     */
     public NCEndpointCacheKey(String srvReqId, String endpoint) {
         this.srvReqId = srvReqId;
         this.endpoint = endpoint;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getSrvReqId() {
         return srvReqId;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getEndpoint() {
         return endpoint;
     }
-    
+
+    /**
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,14 +81,22 @@ public class NCEndpointCacheKey implements Serializable {
         if (!srvReqId.equals(that.srvReqId)) return false;
         return endpoint.equals(that.endpoint);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     @Override
     public int hashCode() {
         int result = srvReqId.hashCode();
         result = 31 * result + endpoint.hashCode();
         return result;
     }
-    
+
+    /**
+     * 
+     * @return
+     */
     @Override
     public String toString() {
         return String.format("Key [srvReqId=%s, endpoint=%s]", srvReqId, endpoint);

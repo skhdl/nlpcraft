@@ -47,7 +47,18 @@ public class NCEndpointCacheValue implements Serializable  {
     private final long userId;
     private final String srvReqId;
     private final boolean processed;
-    
+
+    /**
+     *
+     * @param state
+     * @param endpoint
+     * @param sendTime
+     * @param attempts
+     * @param createdOn
+     * @param userId
+     * @param srvReqId
+     * @param processed
+     */
     public NCEndpointCacheValue(
         NCQueryStateMdo state,
         String endpoint,
@@ -67,35 +78,67 @@ public class NCEndpointCacheValue implements Serializable  {
         this.srvReqId = srvReqId;
         this.processed = processed;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public NCQueryStateMdo getState() {
         return state;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getEndpoint() {
         return endpoint;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public long getSendTime() {
         return sendTime;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public int getAttempts() {
         return attempts;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public long getCreatedOn() {
         return createdOn;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public long getUserId() {
         return userId;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getSrvReqId() {
         return srvReqId;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public boolean isProcessed() {
         return processed;
     }
