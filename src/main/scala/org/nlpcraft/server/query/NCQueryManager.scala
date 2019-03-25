@@ -35,7 +35,7 @@ import org.apache.ignite.IgniteCache
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
 import org.nlpcraft.server.ds.NCDsManager
-import org.nlpcraft.server.endpoints.NCEndpointManager
+import org.nlpcraft.server.endpoints.{NCEndpointCacheKey, NCEndpointManager}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
 import org.nlpcraft.server.mdo.NCQueryStateMdo
@@ -207,7 +207,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
                     cache += srvReqId → copy
 
-                    processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    processEndpoints(copy.userId, eps ⇒ NCEndpointManager.addNotification(copy, eps))
 
                     true
 
@@ -255,7 +255,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
 
                     cache += srvReqId → copy
 
-                    processEndpoint(copy.userId, ep ⇒ NCEndpointManager.addNotification(copy, ep))
+                    processEndpoints(copy.userId, eps ⇒ NCEndpointManager.addNotification(copy, eps))
 
                     true
                 case None ⇒
@@ -295,11 +295,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @param usrId USer ID.
       * @param f Function.
       */
-    private def processEndpoint(usrId: Long, f: String ⇒ Unit): Unit =
-        NCUserManager.getUserEndpoint(usrId) match {
-            case Some(ep) ⇒ f(ep)
-            case None ⇒ // No-op
-        }
+    private def processEndpoints(usrId: Long, f: Set[String] ⇒ Unit): Unit = f(NCUserManager.getUserEndpoints(usrId))
 
     /**
       *
@@ -333,7 +329,13 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             }
 
         userSrvReqIds.foreach {
-            case (usrId, usrSrvReqIds) ⇒ processEndpoint(usrId, _ ⇒ NCEndpointManager.cancelNotifications(usrSrvReqIds))
+            case (usrId, usrSrvReqIds) ⇒
+                processEndpoints(
+                    usrId, _ ⇒
+                    NCEndpointManager.cancelNotifications(usrId, (k: NCEndpointCacheKey) ⇒
+                        usrSrvReqIds.contains(k.getSrvReqId)
+                    )
+                )
         }
 
         for (srvReqId ← srvReqIds) {

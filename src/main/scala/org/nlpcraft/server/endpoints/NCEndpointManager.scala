@@ -112,7 +112,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
     @volatile private var work = false
 
-    @volatile private var cache: IgniteCache[String, NCEndpointCacheValue] = _
+    @volatile private var cache: IgniteCache[NCEndpointCacheKey, NCEndpointCacheValue] = _
     @volatile private var sender: Thread = _
     @volatile private var cleaner: ScheduledExecutorService = _
     @volatile private var httpCli: CloseableHttpClient = _
@@ -122,7 +122,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
       */
     override def start(): NCLifecycle = {
         catching(wrapIE) {
-            cache = ignite.cache[String, NCEndpointCacheValue]("endpoint-cache")
+            cache = ignite.cache[NCEndpointCacheKey, NCEndpointCacheValue]("endpoint-cache")
         }
 
         require(cache != null)
@@ -145,7 +145,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                             val now = U.nowUtcMs()
 
-                            val readyQry: SqlQuery[String, NCEndpointCacheValue] =
+                            val readyQry: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue] =
                                 new SqlQuery(
                                     classOf[NCEndpointCacheValue],
                                     "SELECT * FROM NCEndpointCacheValue WHERE sendTime <= ? AND processed = FALSE"
@@ -160,17 +160,17 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
                             if (readyData.nonEmpty) {
                                 val processed = readyData.values.map(p ⇒ {
-                                    p.getSrvReqId →
-                                        new NCEndpointCacheValue(
-                                            p.getState,
-                                            p.getEndpoint,
-                                            p.getSendTime,
-                                            p.getAttempts,
-                                            p.getCreatedOn,
-                                            p.getUserId,
-                                            p.getSrvReqId,
-                                            true
-                                        )
+                                    new NCEndpointCacheKey(p.getSrvReqId, p.getEndpoint) →
+                                    new NCEndpointCacheValue(
+                                        p.getState,
+                                        p.getEndpoint,
+                                        p.getSendTime,
+                                        p.getAttempts,
+                                        p.getCreatedOn,
+                                        p.getUserId,
+                                        p.getSrvReqId,
+                                        true
+                                    )
                                 }).toMap
 
                                 NCTxManager.startTx {
@@ -220,7 +220,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
     private def clean(): Unit =
         try {
             // Clears cache for each user.
-            val query: SqlQuery[String, NCEndpointCacheValue] =
+            val query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue] =
                 new SqlQuery(
                     classOf[NCEndpointCacheValue],
                         s"""
@@ -247,17 +247,19 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
 
             catching(wrapIE) {
                 NCTxManager.startTx {
-                    val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
+                    val keys = getKeys(query)
 
-                    if (srvReqIds.nonEmpty) {
-                        logger.warn(s"Endpoint notifications dropped due to per-user queue size limit: $srvReqIds")
+                    if (keys.nonEmpty) {
+                        logger.warn(
+                            s"Endpoint notifications dropped due to per-user queue size limit: ${keys.mkString(", ")}"
+                        )
 
-                        cache --= srvReqIds
+                        cache --= keys
                     }
 
                     // Clears summary cache.
                     if (cache.size() > Config.maxQueueSize) {
-                        val query: SqlQuery[String, NCEndpointCacheValue] =
+                        val query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue] =
                             new SqlQuery(
                                 classOf[NCEndpointCacheValue],
                                 s"""
@@ -272,11 +274,15 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                                     """.stripMargin
                             )
 
-                        val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
+                        val keys = getKeys(query)
 
-                        logger.warn(s"Endpoint notifications dropped due to overall queue size limit: $srvReqIds")
+                        if (keys.nonEmpty) {
+                            logger.warn(
+                                s"Endpoint notifications dropped due to overall queue size limit: ${keys.mkString(", ")}"
+                            )
 
-                        cache --= srvReqIds
+                            cache --= keys
+                        }
                     }
                 }
             }
@@ -284,6 +290,19 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         catch {
             case e: Throwable ⇒ logger.error("Endpoint notification unexpected error.", e)
         }
+
+    /**
+      *
+      * @param query
+      * @return
+      */
+    private def getKeys(query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue]): Set[NCEndpointCacheKey] =
+        cache.
+            query(query).
+            getAll.
+            asScala.
+            map(_.getValue).map(p ⇒ new NCEndpointCacheKey(p.getSrvReqId, p.getEndpoint)).
+            toSet
 
     /**
       * Sends states events to user endpoint.
@@ -315,7 +334,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                     s.updateTstamp.getTime
                 )
 
-            s.srvReqId → v
+            new NCEndpointCacheKey(s.srvReqId, ep) → v
         }).toMap
 
         U.asFuture(
@@ -351,15 +370,15 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                 try {
                     val now = U.nowUtcMs()
 
-                    val delIds = map.keySet.filter(v ⇒ !NCQueryManager.contains(v))
+                    val delKeys = map.keySet.filter(v ⇒ !NCQueryManager.contains(v.getSrvReqId))
 
                     var wakeUp = false
 
                     NCTxManager.startTx {
-                        cache --= delIds
+                        cache --= delKeys
 
                         var candidates =
-                            (map.keySet -- delIds).flatMap(srvReqId ⇒
+                            (map.keySet -- delKeys).flatMap(srvReqId ⇒
                                 cache(srvReqId) match {
                                     case Some(v) ⇒
                                         val i = v.getAttempts
@@ -386,13 +405,13 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                         if (candidates.nonEmpty) {
                             val min = now - Config.lifeTimeMs
 
-                            val delIds = candidates.filter(_._2.getCreatedOn < min).keys
+                            val delKeys = candidates.filter(_._2.getCreatedOn < min).keys
 
-                            if (delIds.nonEmpty) {
-                                logger.warn(s"Endpoint notifications dropped due to timeout: ${delIds.mkString(", ")}")
+                            if (delKeys.nonEmpty) {
+                                logger.warn(s"Endpoint notifications dropped due to timeout: ${delKeys.mkString(", ")}")
 
-                                cache --= delIds.toSet
-                                candidates --= delIds
+                                cache --= delKeys.toSet
+                                candidates --= delKeys
                             }
 
                             if (candidates.nonEmpty) {
@@ -457,9 +476,9 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
       * Adds event for asynchronous notification.
       *
       * @param state Query state.
-      * @param ep Endpoint.
+      * @param eps Endpoints.
       */
-    def addNotification(state: NCQueryStateMdo, ep: String): Unit = {
+    def addNotification(state: NCQueryStateMdo, eps: Set[String]): Unit = {
         require(state != null)
         
         ensureStarted()
@@ -469,11 +488,12 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                 val t = U.nowUtcMs()
 
                 catching(wrapIE) {
-                    cache +=
-                        state.srvReqId →
-                        new NCEndpointCacheValue(
-                            state, ep, t, 0, t, state.userId, state.srvReqId, false
-                        )
+                    for (ep ← eps)
+                        cache +=
+                            new NCEndpointCacheKey(state.srvReqId, ep) →
+                            new NCEndpointCacheValue(
+                                state, ep, t, 0, t, state.userId, state.srvReqId, false
+                            )
                 }
 
                 mux.synchronized {
@@ -484,60 +504,37 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
             },
             {
                 case e: Exception ⇒
-                    logger.error(s"Failed to add endpoint notification [state=$state, ep=$ep]", e)
+                    logger.error(
+                        s"Failed to add endpoint notification [state=$state, endpoints=${eps.mkString(", ")}]",
+                        e
+                    )
+
             }
         )
     }
 
     /**
-      * Cancel notifications for given server request IDs.
+      * Cancel notifications.
       *
-      * @param srvReqIds Server request IDs.
+      * @param usrId User ID.
+      * @param filter Filter.
       */
-    def cancelNotifications(srvReqIds: Set[String]): Unit = {
-        require(srvReqIds != null)
-
+    def cancelNotifications(usrId: Long, filter: NCEndpointCacheKey ⇒ Boolean): Unit = {
         ensureStarted()
 
         U.asFuture(
             _ ⇒ {
                 catching(wrapIE) {
                     NCTxManager.startTx {
-                        cache --= srvReqIds
+                        val query: SqlQuery[NCEndpointCacheKey, NCEndpointCacheValue] =
+                            new SqlQuery(
+                                classOf[NCEndpointCacheValue],
+                                "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
+                            ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
+
+                        cache --= getKeys(query).filter(filter(_))
                     }
                 }
-            },
-            {
-                case e: Exception ⇒
-                    logger.error(s"Failed to cancel endpoint notification [srvReqIds=$srvReqIds]", e)
-            }
-        )
-    }
-
-    /**
-      * Cancel notifications for given user ID and its endpoint.
-      *
-      * @param usrId User ID.
-      */
-    def cancelNotifications(usrId: Long): Unit = {
-        ensureStarted()
-
-        U.asFuture(
-            _ ⇒ {
-                val query: SqlQuery[String, NCEndpointCacheValue] =
-                    new SqlQuery(
-                        classOf[NCEndpointCacheValue],
-                        "SELECT * FROM NCEndpointCacheValue WHERE userId = ?"
-                    ).setArgs(List(usrId).map(_.asInstanceOf[java.lang.Object]): _*)
-
-                val srvReqIds = cache.query(query).getAll.asScala.map(_.getKey).toSet
-
-                if (srvReqIds.nonEmpty)
-                    catching(wrapIE) {
-                        NCTxManager.startTx {
-                            cache --= srvReqIds
-                        }
-                    }
             },
             {
                 case e: Exception ⇒

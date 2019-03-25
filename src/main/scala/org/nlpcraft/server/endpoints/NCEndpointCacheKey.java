@@ -31,100 +31,23 @@
 
 package org.nlpcraft.server.endpoints;
 
-import org.nlpcraft.server.mdo.NCQueryStateMdo;
-
 import java.io.Serializable;
 
 /**
- * Cache value bean.
+ * Cache key bean.
  */
-public class NCEndpointCacheValue implements Serializable  {
-    private final NCQueryStateMdo state;
-    private final String endpoint;
-    private final long sendTime;
-    private final int attempts;
-    private final long createdOn;
-    private final long userId;
+public class NCEndpointCacheKey implements Serializable {
     private final String srvReqId;
-    private final boolean processed;
+    private final String endpoint;
 
     /**
      *
-     * @param state
-     * @param endpoint
-     * @param sendTime
-     * @param attempts
-     * @param createdOn
-     * @param userId
      * @param srvReqId
-     * @param processed
+     * @param endpoint
      */
-    public NCEndpointCacheValue(
-        NCQueryStateMdo state,
-        String endpoint,
-        long sendTime,
-        int attempts,
-        long createdOn,
-        long userId,
-        String srvReqId,
-        boolean processed
-    ) {
-        this.state = state;
-        this.endpoint = endpoint;
-        this.sendTime = sendTime;
-        this.attempts = attempts;
-        this.createdOn = createdOn;
-        this.userId = userId;
+    public NCEndpointCacheKey(String srvReqId, String endpoint) {
         this.srvReqId = srvReqId;
-        this.processed = processed;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public NCQueryStateMdo getState() {
-        return state;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public long getSendTime() {
-        return sendTime;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getAttempts() {
-        return attempts;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public long getCreatedOn() {
-        return createdOn;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public long getUserId() {
-        return userId;
+        this.endpoint = endpoint;
     }
 
     /**
@@ -139,7 +62,43 @@ public class NCEndpointCacheValue implements Serializable  {
      *
      * @return
      */
-    public boolean isProcessed() {
-        return processed;
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    /**
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        NCEndpointCacheKey that = (NCEndpointCacheKey) o;
+        
+        if (!srvReqId.equals(that.srvReqId)) return false;
+        return endpoint.equals(that.endpoint);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int result = srvReqId.hashCode();
+        result = 31 * result + endpoint.hashCode();
+        return result;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    @Override
+    public String toString() {
+        return String.format("Key [srvReqId=%s, endpoint=%s]", srvReqId, endpoint);
     }
 }

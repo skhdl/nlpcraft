@@ -579,8 +579,6 @@ paths:
       summary: Register user endpoint.
       description: >-
         Register session endpoint for query results.
-        Note that only one endpoint per user is allowed.
-        Previous endpoint will be overridden, if any.
       operationId: registerEndpoint
       parameters:
         - in: body
@@ -624,9 +622,53 @@ paths:
         - Asking
       summary: Removes user endpoint.
       description: >-
-        Removes session endpoint. Command is ignored if endpoint is not registered.
-        Note that only one endpoint per use is allowed.
+        Removes session endpoint.
+        Command is ignored if endpoint is not registered.
       operationId: removeEndpoint
+      parameters:
+        - in: body
+          name: Payload body
+          description: JSON request.
+          required: true
+          schema:
+            type: object
+            required:
+              - acsTok
+              - endpoint
+            properties:
+              acsTok:
+                type: string
+                description: Access token obtain via '/signin' call
+                maxLength: 256
+              endpoint:
+                type: string
+                description: User endpoint URL.
+                maxLength: 2083
+      responses:
+        '200':
+          description: Successful operation.
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                description: Status code of this operation
+                enum:
+                  - API_OK
+        '400':
+          description: Failed operation.
+          schema:
+            $ref: '#/definitions/Error'
+  /endpoint/removeAll:
+    post:
+      tags:
+        - Asking
+      summary: Removes all user endpoints.
+      description: >-
+        Removes all session endpoints.
+      operationId: removeEndpoints
       parameters:
         - in: body
           name: Payload body
