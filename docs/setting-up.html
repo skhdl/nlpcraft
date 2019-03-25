@@ -54,8 +54,8 @@ layout: documentation
     <section id="new_project">
         <span class="section-sub-title">Create New Project</span>
         <p>
-            We'll use maven archetype generation to create new empty Java project. In your home folder run the following
-            command:
+            You can create new Maven-based project in many different ways - we'll use maven archetype generation
+            for that. In your home folder run the following command:
         </p>
         <pre class="brush: text">
             mvn archetype:generate -DgroupId=examples -DartifactId=my-app -DarchetypeVersion=1.4 -DinteractiveMode=false
@@ -64,9 +64,6 @@ layout: documentation
             This will create <code>my-app</code> folder with the following default maven project structure:
         </p>
         <pre class="console">
-$ cd my-app/
-$ tree
-.
 ├── <b>pom.xml</b>
 └── src
     ├── main
@@ -78,33 +75,16 @@ $ tree
             └── examples
                 └── AppTest.java
         </pre>
-    </section>
-    <section id="new_ide_project">
-        <span class="section-sub-title">New IDE Project</span>
         <p>
-            Once we have maven-based project we can import it into our IDE. Details are specific for each IDE but
-            for our choice of JetBrains IDEA click on <code>File > New > Project from Existing Sources...</code> menu
-            and select <code>pom.xml</code> file from the project we just created above.
-            Follow all the steps on the project creation wizard (default settings should be fine). Make sure to select
-            JDK 8 or later as your Java JDK as well as project language level as 8 or above. After you followed through all the steps you should have the project with
-            the structure looking similar to this:
+            Create new IDEA project from this source folder (make sure to pick JDK 8 or later JDK and language support).
+            Let's also delete auto-generated files <code>App.java</code> and <code>AppTest.java</code> from our
+            project as we won't be using them.
         </p>
-        <figure class="alt">
-            <img class="img-fluid" src="/images/new_idea_project1.png">
-            <figcaption><b>Fig 1.</b> Project Structure</figcaption>
-        </figure>
-        <div class="bq info">
-            <b>Delete App.java <span class="amp">&amp;</span> AppTest.java</b>
-            <p>
-                Let's delete auto-generated files <code>App.java</code> and <code>AppTest.java</code> from our
-                project as we won't be using them.
-            </p>
-        </div>
     </section>
     <section id="add_nlpcraft">
         <span class="section-sub-title">Add NLPCraft</span>
         <p>
-            Finally we'll add NLPCraft dependency to our new project. Open <code>pom.xml</code> file and replace
+            We also need to add NLPCraft dependency to our new project. Open <code>pom.xml</code> file and replace
             <code>dependencies</code> section with the following code:
         </p>
         <pre class="brush: xml, highlight: [3, 4, 5]">
@@ -191,9 +171,13 @@ $ tree
         </pre>
         <p>
             Notice the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
-            both of which we'll use later. Semantic model element <code>x:alarm</code> defines a textual (or speech) indicator
-            that the user is asking about setting up the alarm clock. It consists of the ID, description and a set of
-            synonyms written with a special macro expression language.
+            both of which we'll use later.
+        </p>
+        <p>
+            Semantic model element <code>x:alarm</code> defines a textual indicator, a token,
+            that the user is asking specifically about setting up the alarm clock. It consists of the ID, description and a set of
+            synonyms written with a special macro expression language. In other words, we are defining the token
+            that we'll be matching in the user input using intent-based matching.
         </p>
         <p>
             Next let's go ahead and add model's logic. Create new <code>AlarmModel.java</code> file along side
@@ -226,7 +210,7 @@ public class AlarmModel extends NCModelProviderAdapter {
 
         solver.addIntent(
             new NON_CONV_INTENT(
-                "x:alarm|num{1+}",
+                "intent",
                 new TERM("id == x:alarm", 1, 1),
                 new TERM(
                     new AND(
@@ -325,8 +309,14 @@ public class AlarmModel extends NCModelProviderAdapter {
                 factory - notice that we load our static configuration file <code>alarm_model.json</code>.
             </li>
             <li>
-                Our data model uses intent-based matching of the user input. On line 25 we add one intent that
-                essentially matches one indicator token <code>x:alarm</code> (see <code>alarm_model.json</code> file)
+                Our data model uses intent-based matching of the user input. Intent is a template and a callback.
+                Intent is similar to regular
+                expressions and consists of the tokens we defined in our model (i.e. <code>x:alarm</code>) and
+                built-in system tokens. When such intent matches the user input its callback is called.
+            </li>
+            <li>
+                On line 25 we add one intent that
+                matches one token <code>x:alarm</code> (see <code>alarm_model.json</code> file)
                 and up to 7 numeric values with date or time related units (i.e. <code>2 hours</code>, <code>5 mins</code>).
             </li>
             <li>
@@ -341,7 +331,10 @@ public class AlarmModel extends NCModelProviderAdapter {
         <span class="section-sub-title">Start Data Probe</span>
         <p>
             NLPCraft data models get deployed into data probe. Let's configure and start data probe to deploy our newly
-            create alarm clock data model. To do that we need to create a <code>probe.conf</code> file in the
+            create alarm clock data model.
+        </p>
+        <p>
+            To do that we need to create a <code>probe.conf</code> file in the
             same folder as the rest of our files with the following content:
         </p>
         <pre class="brush: js, highlight: [7, 8, 9]">
@@ -375,65 +368,26 @@ public class AlarmModel extends NCModelProviderAdapter {
                 <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
             </li>
         </ul>
+        <div class="bq info">
+            <p>
+                Make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
+                your system.
+            </p>
+        </div>
         <p>
-            Make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
-            your system.
-        </p>
-        <figure class="alt">
-            <img class="img-fluid" src="/images/idea_run_config.png">
-            <figcaption><b>Fig 2.</b> IDEA Run Configuration</figcaption>
-        </figure>
-        <p>
-            Start this run configuration and you should get console output similar to this:
-        </p>
-        <pre class="brush: plain, highlight: [19, 28]">
-    _   ____      ______           ______
-   / | / / /___  / ____/________ _/ __/ /_
-  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
- / /|  / / /_/ / /___/ /  / /_/ / __/ /_
-/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
-       /_/
-
-Data Probe
-Version: {{site.latest_version}}
-Copyright (C) DataLingvo, Inc.
-
-Mar-24 10:53:31 [INFO ] Probe Configuration:
-+---------------------------------------+
-| Probe ID        | alarm               |
-| Probe Token     | 3141592653589793    |
-| API Version     | {{site.latest_version}}, 2019-03-01   |
-| Down-Link       | localhost:8202      |
-| Up-Link         | localhost:8201      |
-| Model providers | examples.AlarmModel |
-| JARs Folder     |                     |
-+---------------------------------------+
-
-...
-
-+======================================================================+
-|     Model ID      |        Name         | Ver. | Elements | Synonyms |
-+======================================================================+
-| nlpcraft.alarm.ex | Alarm Example Model | 1.0  | 1        | 1543     |
-+----------------------------------------------------------------------+
-
-...
-
-+--------------------------+
-| Probe started [5.20 sec] |
-+--------------------------+
-
-        </pre>
-        <p>
-            Line 19 indicates that we are using proper configuration and line 28 indicates that our
-            data model was successfully loaded and deployed.
+            Start this run configuration and make sure you have positive console output indicating that our model
+            has been successfully loaded and probe started.
         </p>
     </section>
     <section>
         <span class="section-sub-title">Start REST Server</span>
         <p>
-            REST server listens for requests from client applications.
+            REST server listens for requests from client applications:
         </p>
+        <figure>
+            <img class="img-fluid" src="/images/homepage-fig1.1.png">
+            <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
+        </figure>
         <div class="bq info">
             <b>REST Server vs. Data Probe</b>
             <p>
@@ -452,7 +406,7 @@ Mar-24 10:53:31 [INFO ] Probe Configuration:
             </p>
         </div>
         <p>
-            REST server starts in an exact same way as the data probe. Let's configure new
+            REST server starts the same way as the data probe. Configure new
             Run Configuration in IDEA with the following parameters:
         </p>
         <ul>
@@ -466,48 +420,13 @@ Mar-24 10:53:31 [INFO ] Probe Configuration:
                 <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
             </li>
         </ul>
-        <p>
+        <div class="bq info">
             As before make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
             your system.
-        </p>
+        </div>
         <p>
-            Once you created and started this Run Configuration you should have the contole output
-            similar to this:
-        </p>
-        <pre class="brush: plain, highlight: [19, 29]">
-Mar-24 11:34:09 [INFO ]
-    _   ____      ______           ______
-   / | / / /___  / ____/________ _/ __/ /_
-  /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
- / /|  / / /_/ / /___/ /  / /_/ / __/ /_
-/_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
-       /_/
-
-Server
-Version: {{site.latest_version}}
-Copyright (C) DataLingvo, Inc.
-
-...
-
-Mar-24 11:34:26 [INFO ] New probe registered:
-+===================================================================================================================+
-| Probe ID |          OS           |      Timezone      |           Host           |             Models             |
-+===================================================================================================================+
-| alarm    | Mac OS X ver. 10.14.3 | GMT, Europe/London | kernal.local (127.0.0.1) | ID: nlpcraft.alarm.ex, ver.1.0 |
-+-------------------------------------------------------------------------------------------------------------------+
-
-Mar-24 11:34:28 [INFO ] REST manager started [2661ms]
-Mar-24 11:34:28 [INFO ]
-
-+-------------------------+
-| Server started [21.70s] |
-+-------------------------+
-            
-Mar-24 11:34:28 [INFO ] REST server is listening on 'localhost:8081'.
-        </pre>
-        <p>
-            Line 19 indicates that our data probe and REST server successfully connected to each other, and
-            line 29 announces that REST server is online and listening on the default endpoint <code>localhost:8081</code>.
+            Once started ensure that your REST server console output shows that data probe is connected and the
+            REST server is listening on the default <code>localhost:8081</code> endpoint.
         </p>
         <p>
             At this point we've developed our data model, deployed it into the data probe, and started the REST server.
@@ -522,7 +441,7 @@ Mar-24 11:34:28 [INFO ] REST server is listening on 'localhost:8081'.
     <section>
         <span class="section-sub-title">Testing</span>
         <p>
-            NLPCraft comes bundled with easy to use <a href="/testing-data-model.html">test framework</a> for data models that can be used with
+            NLPCraft comes with easy to use <a href="/testing-data-model.html">test framework</a> for data models that can be used with
             any unit testing framework like JUnit or ScalaTest. It is essentially a simplified
             version of <a href="/rest-clients.html">Java REST client</a> that is custom designed for data model testing.
         </p>
@@ -572,15 +491,14 @@ public class AlarmTest {
 }
         </pre>
         <p>
-            Right click on this class in the project view and run it. You should be getting following output from
-            JUnit panel as well as alarm clock output in the data probe console:
+            Right click on this class in the project view and run it. You should be getting standard output in
+            JUnit panel as well as alarm clock output in the data probe console.
         </p>
-        <figure class="alt">
-            <img class="img-fluid" src="/images/model-test.png">
-            <figcaption><b>Fig 3.</b> Model Test Run</figcaption>
-        </figure>
+    </section>
+    <section>
+        <span class="section-sub-title">Congratulation! 👌</span>
         <p>
-            Congratulation! You've created your first data model, deployed it into the data probe, started the
+            You've created your first data model, deployed it into the data probe, started the
             REST server and tested the model using JUnit 5 and the built-in test framework.
         </p>
     </section>
