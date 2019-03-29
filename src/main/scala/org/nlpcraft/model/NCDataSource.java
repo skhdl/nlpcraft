@@ -33,7 +33,7 @@ package org.nlpcraft.model;
 
 /**
  * Descriptor of the data source. Data source logically acts as a specific instance of the
- * model.
+ * data model.
  */
 public interface NCDataSource {
     /**
