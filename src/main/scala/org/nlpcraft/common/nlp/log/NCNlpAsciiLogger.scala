@@ -69,7 +69,8 @@ object NCNlpAsciiLogger extends LazyLogging {
             "dict",
             "wordIndexes",
             "direct",
-            "sparsity"
+            "sparsity",
+            "ne"
         )
     )
     

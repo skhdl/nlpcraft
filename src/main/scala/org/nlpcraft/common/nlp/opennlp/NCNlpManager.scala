@@ -51,8 +51,8 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     @volatile private var tokenizer: Tokenizer = _
     @volatile private var tagger: POSTagger = _
     @volatile private var lemmatizer: DictionaryLemmatizer = _
-    @volatile private var nameFinder: NameFinderME = _
     @volatile private var stemmer: Stemmer = _
+    @volatile private var nerFinders: Map[NameFinderME, String] = _
 
     /**
       * Starts this component.
@@ -68,10 +68,20 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 new POSTaggerME(new POSModel(in))
             }
 
-        nameFinder =
-            managed(new BufferedInputStream(U.getStream("opennlp/en-ner-location.bin"))) acquireAndGet { in ⇒
+        def getNer(name: String): NameFinderME =
+            managed(new BufferedInputStream(U.getStream(s"opennlp/$name"))) acquireAndGet { in ⇒
                 new NameFinderME(new TokenNameFinderModel(in))
             }
+
+        nerFinders = Map(
+            getNer("en-ner-location.bin") → "LOCATION",
+            getNer("en-ner-money.bin") → "MONEY",
+            getNer("en-ner-person.bin") → "PERSON",
+            getNer("en-ner-organization.bin") → "ORGANIZATION",
+            getNer("en-ner-date.bin") → "DATE",
+            getNer("en-ner-time.bin") → "TIME",
+            getNer("en-ner-percentage.bin") → "PERCENTAGE"
+        )
 
         lemmatizer =
             managed(new BufferedInputStream(U.getStream("opennlp/en-lemmatizer.dict"))) acquireAndGet { in ⇒
@@ -136,7 +146,19 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 (spans, words, poses, lemmas)
             }
 
-        spans.zip(words).zip(poses).zip(lemmas).map { case (((span, word), pos), lemma) ⇒
+        val ners: Map[Array[Int], String] =
+            this.
+                synchronized {
+                    val res = nerFinders.map { case (finder, name) ⇒
+                        finder.find(words).flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1)) → name
+                    }
+
+                    nerFinders.keySet.foreach(_.clearAdaptiveData())
+
+                    res
+                }
+
+        spans.zip(words).zip(poses).zip(lemmas).zipWithIndex.map { case ((((span, word), pos), lemma), idx) ⇒
             val normalWord = word.toLowerCase
 
             NCNlpWord(
@@ -148,7 +170,8 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 pos = pos,
                 start = span.getStart,
                 end = span.getEnd,
-                length = span.length
+                length = span.length,
+                ners.flatMap { case (idxs, name) ⇒ if (idxs.contains(idx)) Some(name) else None }.toSet
             )
         }
     }
@@ -192,22 +215,9 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
       *
       * @param words Sequence of words to stemmatize.
       */
-    def stemSeq(words: Iterable[String]): Seq[String] =
-        words.map(stem).toSeq         
-
-    /**
-      * Gets indexes for words which detected as GEO locations.
-      * Note that OpenNLP can only detect location in a specific case
-      * (`Moscow` detected, `MOSCOW` or `moscow` is not detected).
-      *
-      * @param words Words
-      * @return Indexes list.
-      */
-    def findLocations(words: Seq[String]): Seq[Int] = {
+    def stemSeq(words: Iterable[String]): Seq[String] = {
         ensureStarted()
 
-        this.
-            synchronized { nameFinder.find(words.toArray) }.
-            flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1))
+        words.map(stem).toSeq
     }
 }

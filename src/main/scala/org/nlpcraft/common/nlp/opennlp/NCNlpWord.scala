@@ -42,6 +42,7 @@ package org.nlpcraft.common.nlp.opennlp
   * @param start From index.
   * @param end To index.
   * @param length Length.
+  * @param ners NERs.
   */
 case class NCNlpWord(
     word: String,
@@ -51,5 +52,6 @@ case class NCNlpWord(
     pos: String,
     start: Int,
     end: Int,
-    length: Int
+    length: Int,
+    ners: Set[String]
 )

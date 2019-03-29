@@ -104,9 +104,7 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                     case None ⇒ (origTxt.toLowerCase, word.pos)
                 }
 
-            val note = NCNlpSentenceNote(
-                Seq(idx),
-                "nlp:nlp",
+            var seq = mutable.ArrayBuffer(
                 "lemma" → processBracket(lemma),
                 "index" → idx,
                 "pos" → pos,
@@ -122,8 +120,11 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                 "bracketed" → false,
                 "direct" → true
             )
-            
-            tok.add(note)
+
+            if (word.ners.nonEmpty)
+                seq += "ne" → word.ners.head
+
+            tok.add(NCNlpSentenceNote(Seq(idx), "nlp:nlp", seq:_*))
             
             // Add new token to NLP sentence.
             ns += tok
