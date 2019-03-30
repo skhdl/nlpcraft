@@ -204,7 +204,8 @@ layout: interior
             </p>
             <span class="section-sub-title">PostgreSQL</span>
             <p>
-                You can install and use PostgreSQL as a system database instead of the built-in SQL storage
+                You can install and use PostgreSQL as a system database in the REST server instead of the built-in
+                distributed SQL storage
                 from Apache Ignite that is used by default. Add the following dependency to your project:
             </p>
             <nav>
@@ -244,18 +245,29 @@ layout: interior
                 </div>
             </div>
             <p>
-                Make sure to change <code>42.2.5</code> version to the latest or required one.
+                Comments:
             </p>
-            <div class="bq info">
-                <p>
+            <ul>
+                <li>
+                    Make sure to change <code>42.2.5</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>server.database.jdbc</code> in file <code>application.conf</code>
+                    with required JDBC driver class and JDBC URL.
+                </li>
+                <li>
+                    Use scripts from <code>sql/postgres</code> folder to create database and initialize DB schema.
+                </li>
+                <li>
                     Note that you can also <a target=_ href="https://jdbc.postgresql.org/">download</a> PostgreSQL
                     JDBC driver as a separate JAR file and add it to your
                     project classpath if you are not using, or instead of, build tools.
-                </p>
-            </div>
+                </li>
+            </ul>
             <span class="section-sub-title">MySQL</span>
             <p>
-                You can install and use MySQL as a system database instead of the built-in SQL storage
+                You can install and use MySQL as a system database in the REST server instead of the built-in
+                distributed SQL storage
                 from Apache Ignite that is used by default. Add the following dependency to your project:
             </p>
             <nav>
@@ -295,15 +307,25 @@ layout: interior
                 </div>
             </div>
             <p>
-                Make sure to change <code>8.0.15</code> version to the latest or required one.
+                Comments:
             </p>
-            <div class="bq info">
-                <p>
+            <ul>
+                <li>
+                    Make sure to change <code>8.0.15</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>server.database.jdbc</code> in file <code>application.conf</code>
+                    with required JDBC driver class and JDBC URL.
+                </li>
+                <li>
+                    Use scripts from <code>sql/mysql</code> folder to create database and initialize DB schema.
+                </li>
+                <li>
                     Note that you can also <a target=_ href="https://dev.mysql.com/downloads/connector/j">download</a> MySQL
                     JDBC driver as a separate JAR file and add it to your
                     project classpath if you are not using, or instead of, build tools.
-                </p>
-            </div>
+                </li>
+            </ul>
             <span class="section-sub-title">StanfordNLP</span>
             <p>
                 By default, NLPCraft uses <a target=_ href="https://opennlp.apache.org/">Apache OpenNLP</a> as
@@ -312,50 +334,57 @@ layout: interior
             </p>
             <nav>
                 <div class="nav nav-tabs" role="tablist">
-                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-mysql-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-stanfordnlp-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
                 </div>
             </nav>
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="nav-mysql-maven" role="tabpanel">
+                <div class="tab-pane fade show active" id="nav-stanfordnlp-maven" role="tabpanel">
                     <pre class="brush: xml, highlight: 4">
                     &lt;dependency&gt;
-                        &lt;groupId&gt;mysql&lt;/groupId&gt;
-                        &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-                        &lt;version&gt;8.0.15&lt;/version&gt;
+                        &lt;groupId&gt;edu.stanford.nlp&lt;/groupId&gt;
+                        &lt;artifactId&gt;stanford-corenlp&lt;/artifactId&gt;
+                        &lt;version&gt;3.9.2&lt;/version&gt;
                     &lt;/dependency&gt;
                     </pre>
                 </div>
-                <div class="tab-pane fade" id="nav-mysql-grape" role="tabpanel">
+                <div class="tab-pane fade" id="nav-stanfordnlp-grape" role="tabpanel">
                     <pre class="brush: java">
-                    @Grab ('mysql:mysql-connector-java:8.0.15')
+                    @Grab ('edu.stanford.nlp:stanford-corenlp:3.9.2')
                     </pre>
                 </div>
-                <div class="tab-pane fade" id="nav-mysql-gradle" role="tabpanel">
+                <div class="tab-pane fade" id="nav-stanfordnlp-gradle" role="tabpanel">
                     <pre class="brush: java">
                     dependencies {
-                        runtime group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
+                        runtime group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '3.9.2'
                     }
                     </pre>
                 </div>
-                <div class="tab-pane fade" id="nav-mysql-sbt" role="tabpanel">
+                <div class="tab-pane fade" id="nav-stanfordnlp-sbt" role="tabpanel">
                     <pre class="brush: scala">
-                    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.15"
+                    libraryDependencies += "mysql" % "stanford-corenlp" % "3.9.2"
                     </pre>
                 </div>
             </div>
             <p>
-                Make sure to change <code>8.0.15</code> version to the latest or required one.
+                Comments:
             </p>
-            <div class="bq info">
-                <p>
-                    Note that you can also <a target=_ href="https://dev.mysql.com/downloads/connector/j">download</a> MySQL
-                    JDBC driver as a separate JAR file and add it to your
+            <ul>
+                <li>
+                    Make sure to change <code>3.9.2</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>server.nlp.engine</code> in file <code>application.conf</code>
+                    to <code>stanford</code> value (from default <code>opennlp</code>).
+                </li>
+                <li>
+                    Note that you can also <a target=_ href="https://stanfordnlp.github.io/CoreNLP/">download</a>
+                    Stanford CoreNLP as a separate JAR file and add it to your
                     project classpath if you are not using, or instead of, build tools.
-                </p>
-            </div>
+                </li>
+            </ul>
         </section>
     </div>
     <div class="col-md-2 third-column">
