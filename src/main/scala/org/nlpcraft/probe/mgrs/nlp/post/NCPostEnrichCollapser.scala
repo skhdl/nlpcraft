@@ -35,10 +35,9 @@ import java.io.{Serializable ⇒ JSerializable}
 import java.util.{List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.nlp._
 import org.nlpcraft.common.nlp.pos._
+import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._
@@ -64,20 +63,12 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
     def collapse(mdl: NCModelDecorator, ns: NCNlpSentence): Seq[NCNlpSentence] = {
         ensureStarted()
 
-        def get(toks: Seq[NCNlpSentenceToken]): Seq[NCNlpSentenceNote] = toks.flatten.filter(!_.isNlp).distinct
-
-        val userNotesTypes = get(ns).map(_.noteType).distinct
-
-        var delCombs: Seq[NCNlpSentenceNote] = get(ns).
-            flatMap(n ⇒ get(ns.slice(n.tokenFrom, n.tokenTo + 1)).filter(_ != n)).
-            distinct
-
         // Always deletes `similar` notes.
         // Some words with same note type can be detected various ways.
         // We keep only one variant -  with `best` direct and sparsity parameters,
         // other variants for these words are redundant.
         val redundant: Seq[NCNlpSentenceNote] =
-            delCombs.
+            ns.flatten.filter(!_.isNlp).distinct.
             groupBy(p ⇒
                     if (p.isUser)
                         (p.wordIndexes, p.noteType)
@@ -85,28 +76,41 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
                         p.noteType match {
                             case "nlp:geo" ⇒
                                 (
-                                    p.wordIndexes, p.noteType,
-                                    p.get("country"), p.get("region"), p.get("city"), p.get("metro"), p.get("kind")
+                                    p.wordIndexes,
+                                    p.noteType,
+                                    p.get("country"),
+                                    p.get("region"),
+                                    p.get("city"),
+                                    p.get("metro"),
+                                    p.get("kind")
                                 )
                             case "nlp:date" ⇒
                                 (
-                                    p.wordIndexes, p.noteType,
-                                    p.get("from"), p.get("to")
+                                    p.wordIndexes,
+                                    p.noteType,
+                                    p.get("from"),
+                                    p.get("to")
                                 )
                             case "nlp:function" ⇒
                                 (
-                                    p.wordIndexes, p.noteType,
-                                    p.get("type"), p.get("indexes")
+                                    p.wordIndexes,
+                                    p.noteType,
+                                    p.get("type"),
+                                    p.get("indexes")
                                 )
                             case "nlp:coordinate" ⇒
                                 (
-                                    p.wordIndexes, p.noteType,
-                                    p.get("latitude"), p.get("longitude")
+                                    p.wordIndexes,
+                                    p.noteType,
+                                    p.get("latitude"),
+                                    p.get("longitude")
                                 )
                             case "nlp:num" ⇒
                                 (
-                                    p.wordIndexes, p.noteType,
-                                    p.get("from"), p.get("to")
+                                    p.wordIndexes,
+                                    p.noteType,
+                                    p.get("from"),
+                                    p.get("to")
                                 )
                             case _ ⇒ throw new AssertionError(s"Unexpected note type: ${p.noteType}")
                         }
@@ -115,16 +119,26 @@ object NCPostEnrichCollapser extends NCLifecycle("Post-enrich collapser") with L
             map(p ⇒ p._2.sortBy(p ⇒
                 (
                     // System notes don't have such flags.
-                    if (p.isUser) if (p.isDirect) 0 else 1 else 0,
+                    if (p.isUser) {
+                        if (p.isDirect) 0 else 1
+                    }
+                    else
+                        0,
                     if (p.isUser) p.sparsity else 0
                 )
             )).
-            flatMap(p ⇒ if (p.size == 1) Seq.empty else p.drop(1)).
+            flatMap(_.drop(1)).
             toSeq
 
-        delCombs = delCombs.filter(p ⇒ !redundant.contains(p))
-
         redundant.map(_.id).foreach(ns.removeNote)
+
+        def get(toks: Seq[NCNlpSentenceToken]): Seq[NCNlpSentenceNote] = toks.flatten.filter(!_.isNlp).distinct
+
+        val userNotesTypes = get(ns).map(_.noteType).distinct
+
+        val delCombs: Seq[NCNlpSentenceNote] = get(ns).
+            flatMap(n ⇒ get(ns.slice(n.tokenFrom, n.tokenTo + 1)).filter(_ != n)).
+            distinct
 
         if (delCombs.nonEmpty) {
             val deleted = mutable.ArrayBuffer.empty[Seq[NCNlpSentenceNote]]
