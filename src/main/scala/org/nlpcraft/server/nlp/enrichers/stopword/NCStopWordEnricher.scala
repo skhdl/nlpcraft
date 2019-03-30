@@ -33,7 +33,7 @@ package org.nlpcraft.server.nlp.enrichers.stopword
 
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher

@@ -36,9 +36,9 @@ import java.util.concurrent.CountDownLatch
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.common.version._
 import org.nlpcraft.server.sql.NCSqlManager
 import org.nlpcraft.server.ds.NCDsManager

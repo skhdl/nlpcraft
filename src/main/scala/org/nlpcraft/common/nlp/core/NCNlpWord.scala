@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.opennlp
+package org.nlpcraft.common.nlp.core
 
 /**
   * Word information holder.
@@ -42,7 +42,8 @@ package org.nlpcraft.common.nlp.opennlp
   * @param start From index.
   * @param end To index.
   * @param length Length.
-  * @param ners NERs.
+  * @param ne Named entity.
+  * @param nne Normalized named entity.
   */
 case class NCNlpWord(
     word: String,
@@ -53,5 +54,6 @@ case class NCNlpWord(
     start: Int,
     end: Int,
     length: Int,
-    ners: Set[String]
+    ne: Option[String],
+    nne: Option[String]
 )

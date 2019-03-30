@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.opennlp
+package org.nlpcraft.common.nlp.core.opennlp
 
 import java.io.BufferedInputStream
 
@@ -38,8 +38,9 @@ import opennlp.tools.namefind.{NameFinderME, TokenNameFinderModel}
 import opennlp.tools.postag.{POSModel, POSTagger, POSTaggerME}
 import opennlp.tools.stemmer.{PorterStemmer, Stemmer}
 import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
-import org.nlpcraft.common._
-import org.nlpcraft.common.NCLifecycle
+import opennlp.tools.util.Span
+import org.nlpcraft.common.nlp.core.{NCNlpCore, NCNlpWord}
+import org.nlpcraft.common.{NCLifecycle, U}
 import resource.managed
 
 import scala.collection.Seq
@@ -47,7 +48,7 @@ import scala.collection.Seq
 /**
   * OpenNLP manager.
   */
-object NCNlpManager extends NCLifecycle("OpenNLP manager") {
+object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
     @volatile private var tokenizer: Tokenizer = _
     @volatile private var tagger: POSTagger = _
     @volatile private var lemmatizer: DictionaryLemmatizer = _
@@ -171,7 +172,8 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
                 start = span.getStart,
                 end = span.getEnd,
                 length = span.length,
-                ners.flatMap { case (idxs, name) ⇒ if (idxs.contains(idx)) Some(name) else None }.toSet
+                ners.flatMap { case (idxs, name) ⇒ if (idxs.contains(idx)) Some(name) else None }.toStream.headOption,
+                None
             )
         }
     }
@@ -197,7 +199,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
     def stem(words: String): String = {
         ensureStarted()
 
-        val seq = this.synchronized {
+        val seq: Array[(Span, CharSequence)] = this.synchronized {
             tokenizer.tokenizePos(words).map(span ⇒ (span, stemmer.stem(span.getCoveredText(words).toString)))
         }
 
@@ -209,7 +211,7 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
             }
         }.mkString("")
     }
-    
+
     /**
       * Stemmatizes sequence of words.
       *

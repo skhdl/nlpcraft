@@ -36,7 +36,7 @@ import java.util.Locale
 
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpManager
 
 case class NCNumericUnit(name: String, unitType: String)
 case class NCNumeric(

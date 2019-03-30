@@ -33,8 +33,8 @@ package org.nlpcraft.server.nlp.enrichers.numeric
 
 import org.nlpcraft.common._
 import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.numeric._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
 import scala.collection._

@@ -31,10 +31,10 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs
 
-import org.nlpcraft.common.makro.{NCMacroParser ⇒ Parser}
+import org.nlpcraft.common.makro.{NCMacroParser => Parser}
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
-import org.nlpcraft.common.nlp.{NCNlpSentence ⇒ Sentence, NCNlpSentenceToken ⇒ Token}
+import org.nlpcraft.common.nlp.{NCNlpSentence => Sentence, NCNlpSentenceToken => Token}
 
 /**
   * Limit data container.

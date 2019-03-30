@@ -33,8 +33,8 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates
 
 import org.nlpcraft.common.makro.NCMacroParser
 import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.numeric._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 

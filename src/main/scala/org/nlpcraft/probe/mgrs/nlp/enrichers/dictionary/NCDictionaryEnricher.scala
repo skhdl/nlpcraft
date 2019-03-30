@@ -34,8 +34,8 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.nlp._
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.dict._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 

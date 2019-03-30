@@ -32,7 +32,7 @@
 package org.nlpcraft.server.nlp.enrichers.basenlp
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
@@ -121,8 +121,11 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                 "direct" → true
             )
 
-            if (word.ners.nonEmpty)
-                seq += "ne" → word.ners.head
+            if (word.ne.isDefined)
+                seq += "ne" → word.ne.get
+
+            if (word.nne.isDefined)
+                seq += "nne" → word.nne.get
 
             tok.add(NCNlpSentenceNote(Seq(idx), "nlp:nlp", seq:_*))
             

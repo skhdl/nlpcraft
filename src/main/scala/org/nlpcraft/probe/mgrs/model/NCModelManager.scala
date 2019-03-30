@@ -37,8 +37,8 @@ import java.util.{List ⇒ JList, Set ⇒ JSet}
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.makro.{NCMacroParser ⇒ MacroParser}
+import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.model._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.common.nlp.pos._
 import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
 import org.nlpcraft.probe.mgrs.deploy._
