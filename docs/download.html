@@ -116,6 +116,7 @@ layout: interior
                     <th>Version</th>
                     <th>Release Date</th>
                     <th>Signatures</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,6 +130,9 @@ layout: interior
                         <a href="{{rel.sha1_url}}">SHA1</a>
                         <a href="{{rel.sha256_url}}">SHA256</a>
                         <a href="{{rel.pgp_url}}">PGP</a>
+                    </td>
+                    <td class="release-notes">
+                        <a href="/release-notes-{{rel.version}}.html">Release notes</a>
                     </td>
                 </tr>
                 {% endfor %}
