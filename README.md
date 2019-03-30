@@ -1,6 +1,6 @@
 <img src="https://nlpcraft.org/images/nlpcraft_logo_black.gif" height="80px">
 <br>
-<img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
+[![Build](https://travis-ci.org/vic64/nlpcraft.svg?branch=master)](https://travis-ci.org/vic64/nlpcraft#)
 
 ### Overview
 [NLPCraft](https://nlpcraft.org/) is an open source library for adding Natural Language Interface to any applications.
