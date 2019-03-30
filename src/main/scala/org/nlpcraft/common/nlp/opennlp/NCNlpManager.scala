@@ -149,8 +149,9 @@ object NCNlpManager extends NCLifecycle("OpenNLP manager") {
         val ners: Map[Array[Int], String] =
             this.
                 synchronized {
-                    val res = nerFinders.map { case (finder, name) ⇒
-                        finder.find(words).flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1)) → name
+                    val res = nerFinders.map {
+                        case (finder, name) ⇒
+                            finder.find(words).flatMap(p ⇒ Range.inclusive(p.getStart, p.getEnd - 1)) → name
                     }
 
                     nerFinders.keySet.foreach(_.clearAdaptiveData())
