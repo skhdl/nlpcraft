@@ -222,7 +222,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Server IDs of the requests to cancel. Optional, all current user requests will cancel by default.
+                description: Server IDs of the requests to cancel. Optional, all current user requests will be cancelled by default.
       responses:
         '200':
           description: Successful operation.
@@ -576,9 +576,11 @@ paths:
     post:
       tags:
         - Asking
-      summary: Register user endpoint.
+      summary: Register push notification HTTP endpoint.
       description: >-
-        Register session endpoint for query results.
+        Register session HTTP endpoint for push notification on query results.
+        HTTP endpoint will receive exactly the same object that is returned by '/check' call.
+        When user signs out all endpoints registered will be removed.
       operationId: registerEndpoint
       parameters:
         - in: body
@@ -620,10 +622,10 @@ paths:
     post:
       tags:
         - Asking
-      summary: Removes user endpoint.
+      summary: Removes push notification HTTP endpoint.
       description: >-
-        Removes session endpoint.
-        Command is ignored if endpoint is not registered.
+        Removes session push notification HTTP endpoint, if any.
+        Note that when user signs out all endpoints registered will be removed.
       operationId: removeEndpoint
       parameters:
         - in: body
@@ -665,9 +667,9 @@ paths:
     post:
       tags:
         - Asking
-      summary: Removes all user endpoints.
+      summary: Removes all push notification HTTP endpoints.
       description: >-
-        Removes all session endpoints.
+        Removes all push notification HTTP endpoints.
       operationId: removeEndpoints
       parameters:
         - in: body

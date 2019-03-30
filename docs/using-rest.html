@@ -111,13 +111,20 @@ layout: documentation
             <li><a href="#data_source">Data Source Management</a></li>
             <li><a href="#data_probe">Data Probe Management</a></li>
         </ul>
+        <div class="bq info">
+            <b>Admins</b>
+            <p>
+                Note that many operations are only available to the users with administrative privileges. Note
+                also that some operations will implicitly behave differently based on whether the currently signed in user
+                have administrative privileges or not.
+            </p>
+        </div>
     </section>
     <section id="auth">
         <span class="section-sub-title">Authentication</span>
         <p>
             Before performing any REST calls a registered user needs to sign in to receive
-            an <b>access token</b> that will be used in all subsequent operations.
-            Authentication group of operations consists of the following calls:
+            an <b>access token</b> that will be used in all subsequent operations:
         </p>
         <table class="gradient-table">
             <thead>
@@ -128,28 +135,44 @@ layout: documentation
             </thead>
             <tbody>
                 <tr>
-                    <td><a target=apiary href=""><nobr><code>/signin</code></nobr></a></td>
+                    <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/authentication"><nobr><code>/signin</code></nobr></a></td>
                     <td>Sign in and obtain <b>access token</b>.</td>
                 </tr>
                 <tr>
-                    <td><a target=apiary href=""><nobr><code>/signout</code></nobr></a></td>
+                    <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/authentication"><nobr><code>/signout</code></nobr></a></td>
                     <td>Sign out and invalidate previously obtained <b>access token</b>.</td>
                 </tr>
                 <tr>
-                    <td><a target=apiary href=""><nobr><code>/passwd/reset</code></nobr></a></td>
+                    <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/authentication"><nobr><code>/passwd/reset</code></nobr></a></td>
                     <td>
                         Reset the current user password. 
                     </td>
                 </tr>
             </tbody>
         </table>
+        <div class="bq info">
+            <b>Default User</b>
+            <p>
+                NLPCraft comes with a default built-in credentials that you can use when signing in for the
+                first time:
+            </p>
+            <ul>
+                <li>Email: <code>admin@admin.com</code></li>
+                <li>Password: <code>admin</code></li>
+            </ul>
+        </div>
+        <div class="bq warn">
+            <p>
+                In production environment make sure to delete this default user once you add at least one of your
+                own users with administrative privileges.
+            </p>
+        </div>
     </section>
     <section id="asking">
         <span class="section-sub-title">Asking</span>
         <p>
             This is the main group of operation that allows to ask questions, check the status and get
-            result, as well as manage push notification endpoints.
-            Asking group of operations consists of the following calls:
+            result, as well as manage push notification endpoints:
         </p>
         <table class="gradient-table">
             <thead>
@@ -160,51 +183,150 @@ layout: documentation
             </thead>
             <tbody>
             <tr>
-                <td><a target=apiary href=""><nobr><code>/ask</code></nobr></a></td>
-                <td>Sign in and obtain <b>access token</b>.</td>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/ask</code></nobr></a></td>
+                <td>Submit the sentence to be processed.</td>
             </tr>
             <tr>
-                <td><a target=apiary href=""><nobr><code>/check</code></nobr></a></td>
-                <td>Sign out and invalidate previously obtained <b>access token</b>.</td>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/check</code></nobr></a></td>
+                <td>Get statuses and results for previously submitted <code>/ask</code> requests.</td>
             </tr>
             <tr>
-                <td><a target=apiary href=""><nobr><code>/cancel</code></nobr></a></td>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/cancel</code></nobr></a></td>
                 <td>
-                    Reset the current user password.
+                    Remove results from the server memory.
                 </td>
             </tr>
             <tr>
-                <td><a target=apiary href=""><nobr><code>/endpoint/register</code></nobr></a></td>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/clear/conversation</code></nobr></a></td>
                 <td>
-                    Reset the current user password.
+                    Clear the conversation context for current user and data source.
                 </td>
             </tr>
             <tr>
-                <td><a target=apiary href=""><nobr><code>/endpoint/remove</code></nobr></a></td>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/endpoint/register</code></nobr></a></td>
                 <td>
-                    Reset the current user password.
+                    Register new HTTP endpoint for push result notifications.
+                </td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/endpoint/remove</code></nobr></a></td>
+                <td>
+                    Remove registered HTTP endpoint for push result notifications.
+                </td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/endpoint/removeAll</code></nobr></a></td>
+                <td>
+                    Remove all registered push notification HTTP endpoints for current user.
                 </td>
             </tr>
             </tbody>
         </table>
+        <div class="bq info">
+            <p>
+                <b><code>/check</code> vs. endpoints</b>
+            </p>
+            <p>
+                Using <code>/check</code> REST call is one of the two ways to check for and get results. <code>/check</code>
+                represents a <b>pull model</b> of result notifications where you need to call <code>/check</code> periodically
+                until your request is in <code>QRY_READY</code> status at which point it would have a result.
+            </p>
+            <p>
+                Another, more convenient, option is to register an endpoint which would be notified with JSON result
+                object only when this result is ready (the same object returned by the <code>/check</code> call).
+                This represents a <b>push model</b> of result notifications.
+            </p>
+        </div>
     </section>
     <section id="user">
         <span class="section-sub-title">User Management</span>
         <p>
-
+            This group of operations allows to add, update and remove users in the systems. Note that many
+            functional areas are implicitly linked to a user like the conversation context or push notifications:
         </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>REST call</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/users"><nobr><code>/user/all</code></nobr></a></td>
+                <td>Get all users.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/users"><nobr><code>/user/add</code></nobr></a></td>
+                <td>Add new user.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/users"><nobr><code>/user/update</code></nobr></a></td>
+                <td>Update user information.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/users"><nobr><code>/user/delete</code></nobr></a></td>
+                <td>Delete user.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/users"><nobr><code>/user/admin</code></nobr></a></td>
+                <td>Change user administrative privileges.</td>
+            </tr>
+            </tbody>
+        </table>
     </section>
     <section id="data_source">
         <span class="section-sub-title">Data Source Management</span>
         <p>
-
+            This group of operations allows to add, update and remove data sources in the systems. As we discussed above
+            a data source represents an instance of the deployed data model with its configuration:
         </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>REST call</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/all</code></nobr></a></td>
+                <td>Get all data sources.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/add</code></nobr></a></td>
+                <td>Add new data source.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/update</code></nobr></a></td>
+                <td>Update data source information.</td>
+            </tr>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/delete</code></nobr></a></td>
+                <td>Delete data source.</td>
+            </tr>
+            </tbody>
+        </table>
     </section>
     <section id="data_probe">
         <span class="section-sub-title">Data Probe Management</span>
         <p>
-
+            This group of operations allows to get the information about connected data probes:
         </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>REST call</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-probes"><nobr><code>/probes/all</code></nobr></a></td>
+                <td>Get information about connected probes.</td>
+            </tr>
+            </tbody>
+        </table>
     </section>
 </div>
 <div class="col-md-2 third-column">
