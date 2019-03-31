@@ -103,6 +103,230 @@ layout: documentation
             configuration or implementation, as in the development and testing phases,  you need to restart the
             probe to redeploy this data model.
         </p>
+        <span class="section-sub-title">Lifecycle Events</span>
+        <p>
+            There are two data model lifecycle callbacks on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface
+            that you can optionally override:
+        </p>
+        <ul>
+            <li><code>initialize(NCProbeContext)</code> - called to initialize the model when it gets deployed.</li>
+            <li><code>discard()</code> - called to discard the data model when data probe is shutting down.</li>
+        </ul>
+    </section>
+    <section>
+        <span class="section-title">Data Model Elements</span>
+        <p>
+            One of the most important parts of developing a data model is defining its elements. A data model
+            element is the main building block of the semantic data model. A semantic element defines an entity
+            that will be automatically recognized in the user input either by one of its synonyms or values or
+            directly by its ID.
+        </p>
+        <p>
+            When defining the elements the synonyms play the most critical role. It is the synonyms that define
+            how a particular element will be detected in the user input. While adding synonyms sounds rather
+            trivial - in real models, this may become a daunting and time-consuming task. It is not uncommon
+            for a particular model element to have thousands and even tens of thousands of possible synonyms
+            due to words, grammar, and linguistic permutations.
+        </p>
+        <p>
+            NLPCraft provides effective support for a compact synonyms representation. Instead of listing all possible
+            multi-word synonyms one by one you can use macros, option groups, regular expressions, and PoS tags to
+            significantly shorten that list.
+        </p>
+        <span class="section-sub-title">Synonyms</span>
+        <p>
+            Synonyms are the key building blocks of the data model element and used in the following
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> methods:
+        </p>
+        <ul>
+            <li><code>getSynonyms()</code> - gets synonyms to match on.</li>
+            <li><code>getExcludedSynonyms()</code> - gets synonyms to exclude.</li>
+            <li><code>getValues()</code> - get values to match on.</li>
+        </ul>
+        <p>
+            Each data model element has one or more synonyms. Note that element ID is its implicit synonym so that
+            even if no additional synonyms are defined at least one synonym always exists. Each individual synonym
+            is a whitespace separated combination of:
+        </p>
+        <ul>
+           <li>simple word,</li>
+           <li>regular expression, or</li>
+           <li>PoS tag</li>
+        </ul>
+        <p>
+            Note that synonym matching for simple words is case insensitive and automatically
+            performed on <b>normalized and stemmatized forms</b> of such word and therefore the model
+            developer doesn't have to account for this in the synonyms themselves.
+        </p>
+        <span class="section-sub-title">Macros</span>
+        <p>
+            Listing all possible multi-word synonyms for a given element can be a time-consuming task. Macros
+            together with option groups allow for significant simplification of this process.
+            Macros let you give a name to an often used set of words or option groups and reuse it without
+            repeating those words or option groups again and again. A model provides a list of macros via
+            <code>getMacros()</code> method on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface. Each macro
+            has a name in a form of <code>&lt;X&gt;</code> where <code>X</code>
+            is just any string, and a string value. Note that macros can be nested, i.e. macro value can include
+            references to other macros. When macro name <code>X</code> is encountered in the synonym it gets recursively
+            replaced with its value.
+        </p>
+        <p>
+            Here's a code snippet of macro definitions in JSON model:
+        </p>
+        <pre class="brush: js">
+            "macros": [
+                {
+                    "name": "&lt;A&gt;",
+                    "macro": "aaa"
+                },
+                {
+                    "name": "&lt;B&gt;",
+                    "macro": "&lt;A&gt; bbb"
+                },
+                {
+                    "name": "&lt;C&gt;",
+                    "macro": "&lt;A&gt; bbb {z|w}"
+                }
+             ]
+        </pre>
+<!--
+
+
+
+
+
+
+
+            *
+           <h3>Option Groups</h3>
+           Option groups are a simplified form of regular expressions that operates on a single word base. The
+           following examples demonstrate how to use option groups. Consider that the following macros are defined:
+           <table summary="" class="dl-table">
+                   <tr>
+                       <th>Macro Name</th>
+                       <th>Macro Value</th>
+                   </tr>
+                   <tr>
+                       <td>{@code &lt;A&gt;}</td>
+                       <td>{@code aaa}</td>
+                   </tr>
+                   <tr>
+                       <td>{@code &lt;B&gt;}</td>
+                       <td>{@code &lt;A&gt; bbb}</td>
+                   </tr>
+                   <tr>
+                       <td>{@code &lt;C&gt;}</td>
+                       <td>{@code &lt;A&gt; bbb {z|w}}</td>
+                   </tr>
+               </table>
+           Note that macros {@code &lt;B&gt;} and {@code &lt;C&gt;} are nested. Then the following option group expansions
+               will occur in these examples:
+               <table summary="" class="dl-table">
+                       <tr>
+                           <th>Synonym</th>
+                           <th>Expanded Synonyms</th>
+                       </tr>
+                       <tr>
+                           <td>{@code &lt;A&gt; {b|*} c}</td>
+                           <td>
+                               {@code "aaa b c"}<br>
+                               {@code "aaa c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code &lt;B&gt; {b|*} c}</td>
+                           <td>
+                               {@code "aaa bbb b c"}<br>
+                                {@code "aaa bbb c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code {b|```NN```} c}</td>
+                           <td>
+                               {@code "b c"}<br>
+                               {@code "```NN``` c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code {b|\{\*\}}}</td>
+                           <td>
+                               {@code "b"}<br>
+                               {@code "b {*}"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code a {b|*}. c}</td>
+                           <td>
+                               {@code "a b. c"}<br>
+                               {@code "a . c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code a .{b,  |*}. c}</td>
+                           <td>
+                               {@code "a .b, . c"}<br>
+                               {@code "a .. c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code a \{\{b|c}|*}.}</td>
+                           <td>
+                               {@code "a ."}<br>
+                               {@code "a b."}<br>
+                               {@code "a c."}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code a \{\{{&lt;C&gt;}}|{*}} c}</td>
+                           <td>
+                               {@code "a aaa bbb z c"}<br>
+                               {@code "a aaa bbb w c"}<br>
+                               {@code "a c"}
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>{@code \{\{{a}}} {b||*|\{\{*}}||*}}</td>
+                           <td>
+                               {@code "a b"}<br>
+                               {@code "a"}
+                           </td>
+                       </tr>
+                   </table>
+               Specifically:
+               <ul>
+                       <li>{@code {A|B}}  denotes either {@code A} or {@code B}.</li>
+                       <li>{@code {A|B|*}}  denotes either {@code A} or {@code B} or nothing.</li>
+                       <li>Excessive curly brackets are ignored, when safe to do so.</li>
+                       <li>Macros cannot be recursive but can be nested.</li>
+                       <li>Option groups can be nested.</li>
+                       <li>
+                           {@code '\'} (backslash) can be used to escape <code>'{'</code>, <code>'}'</code>, {@code '|'} and
+                           {@code '*'} special symbols used by the option groups.
+                       </li>
+                       <li>Excessive whitespaces are trimmed when expanding option groups.</li>
+                   </ul>
+                *
+               <h3>Regular Expressions</h3>
+               Any individual synonym word that starts and ends with {@code "///"} (three forward slashes) is considered to be Java
+               regular expression as defined in {@link Pattern}. Note that regular expression can only span a single word, i.e.
+               only individual words from the user input will be matched against given regular expression and no whitespaces are
+               allowed within regular expression. Note also that option group special symbols <code>'{'</code>, <code>'}'</code>,
+               {@code '|'} and {@code '*'} have to be escaped in the regular expression using {@code '\'} (backslash).
+               <br><br>
+               For example, the following synonym {@code {foo|///[bar].+///}} will match word {@code foo} or any other strings
+               that start with {@code bar} as long as this string doesn't contain whitespaces.
+                *
+               <h3>PoS Tags</h3>
+               Any individual synonym word that that starts and ends with {@code "```"} (three back ticks) in a form <code>```XXX```</code> is
+               considered to be a PoS (Part-of-Speech) tag that will be matched against PoS tag of the individual word in the
+               user input, where {@code XXX} is one of the
+               <a target=_ href="https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">Penn Treebank PoS</a> tags.
+               <br><br>
+               For example, the following synonym <code>{foo|{```NN```|```NNS```|```NNP```|```NNPS```}}</code> will match word {@code foo} or any
+               form of a noun.
+                   -->
     </section>
 </div>
 <div class="col-md-2 third-column">
