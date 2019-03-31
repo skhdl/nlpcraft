@@ -29,7 +29,7 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.core
+package org.nlpcraft.server.nlp.core
 
 /**
   * Word information holder.

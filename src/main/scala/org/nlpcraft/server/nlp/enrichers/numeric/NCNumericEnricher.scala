@@ -33,7 +33,7 @@ package org.nlpcraft.server.nlp.enrichers.numeric
 
 import org.nlpcraft.common._
 import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.numeric._
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
@@ -63,7 +63,7 @@ object NCNumericEnricher extends NCNlpEnricher("Numeric enricher") {
 
     case class P(text: String, length: Int, prepositionType: T)
 
-    private final val NUM_PREFIX_STOPS = NCNlpManager.stemSeq(Seq(
+    private final val NUM_PREFIX_STOPS = Seq(
         "is",
         "was",
         "were",
@@ -75,7 +75,7 @@ object NCNumericEnricher extends NCNlpEnricher("Numeric enricher") {
         "can be",
         "should be",
         "must be"
-    ))
+    ).map(NCNlpCoreManager.stem)
 
     // Note, that some sequences duplicated (like '==' and '= =') to be independent from tokenizer.
     // Note also that we account for frequent misspelling of 'then' vs. 'than'.

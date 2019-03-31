@@ -29,50 +29,20 @@
  *        /_/
  */
 
-package org.nlpcraft.probe.mgrs.nlp.enrichers.dictionary
+package org.nlpcraft.server.nlp.core
 
-import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
-import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.core.NCNlpCoreManager
-import org.nlpcraft.common.nlp.dict._
-import org.nlpcraft.probe.mgrs.NCModelDecorator
-import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
+
+import scala.collection.Seq
 
 /**
-  * Dictionary enricher.
-  *
-  * This enricher must be used after all enrichers which can manipulate 'quote' and 'stopword' notes of token.
+  * Parser.
   */
-object NCDictionaryEnricher extends NCProbeEnricher("Dictionary enricher") {
-    @volatile private var swearWords: Set[String] = _
-
+trait NCNlpParser extends NCLifecycle {
     /**
-      * Starts this component.
+      *
+      * @param sen
+      * @return
       */
-    override def start(): NCLifecycle = {
-        swearWords =
-            U.readTextResource(s"badfilter/swear_words.txt", "UTF-8", logger).
-                map(NCNlpCoreManager.stem).
-                toSet
-
-        super.start()
-    }
-
-    @throws[NCE]
-    override def enrich(mdl: NCModelDecorator, ns: NCNlpSentence): Unit = {
-        ns.foreach(t ⇒ {
-            // Dictionary.
-            val nlpNote = t.getNlpNote
-
-            // Single letters seems suspiciously.
-            nlpNote += "dict" → (NCDictionaryManager.contains(t.lemma) && t.lemma.length > 1)
-
-            // English.
-            nlpNote += "english" → t.origText.matches("""[\s\w\p{Punct}]+""")
-
-            // Swearwords.
-            nlpNote += "swear" → swearWords.contains(t.stem)
-        })
-    }
+    def parse(sen: String): Seq[NCNlpWord]
 }

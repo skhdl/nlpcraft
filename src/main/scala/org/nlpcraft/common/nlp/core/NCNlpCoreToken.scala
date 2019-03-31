@@ -31,13 +31,11 @@
 
 package org.nlpcraft.common.nlp.core
 
-import org.nlpcraft.common.NCLifecycle
-
-import scala.collection.Seq
-
-trait NCNlpCore extends NCLifecycle {
-    def parse(sen: String): Seq[NCNlpWord]
-    def tokenize(sen: String): Seq[String]
-    def stem(words: String): String
-    def stemSeq(words: Iterable[String]): Seq[String]
-}
+/**
+  * Token data.
+  * @param token Token.
+  * @param from From index.
+  * @param to To index.
+  * @param length Length.
+  */
+case class NCNlpCoreToken(token: String, from: Int, to: Int, length: Int)

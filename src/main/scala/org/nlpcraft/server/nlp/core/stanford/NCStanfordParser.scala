@@ -29,30 +29,28 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.core.stanford
+package org.nlpcraft.server.nlp.core.stanford
 
-import java.io.StringReader
 import java.util
 
 import edu.stanford.nlp.ling.CoreAnnotations.{NormalizedNamedEntityTagAnnotation, SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.ling.CoreLabel
 import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
-import edu.stanford.nlp.process.PTBTokenizer
 import edu.stanford.nlp.util.{ArrayCoreMap, CoreMap}
-import opennlp.tools.stemmer.{PorterStemmer, Stemmer}
-import org.nlpcraft.common.nlp.core.{NCNlpCore, NCNlpWord}
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.{NCE, NCLifecycle}
+import org.nlpcraft.server.nlp.core.{NCNlpParser, NCNlpWord}
 
 import scala.collection.JavaConverters._
 
-
-object NCNlpStanford extends NCLifecycle("Stanford NLP manager") with NCNlpCore {
+/**
+  * Stanford NLP parser implementation.
+  */
+object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpParser {
     // Properties file for CoreNLP.
-    private final val CORENLP_PROPS = "corenlp.properties"
+    private final val CORENLP_PROPS = "stanford/corenlp.properties"
 
     private var stanford: StanfordCoreNLP = _
-
-    @volatile private var stemmer: Stemmer = _
 
     /**
       *
@@ -82,10 +80,6 @@ object NCNlpStanford extends NCLifecycle("Stanford NLP manager") with NCNlpCore 
     override def start(): NCLifecycle = {
         stanford = new StanfordCoreNLP(CORENLP_PROPS)
 
-        // Note that stemmer is used from OpenNLP package.
-        // OpenNLP is default library, also Stanford 3.9.2 doesn't have its own.
-        stemmer = new PorterStemmer
-
         super.start()
     }
 
@@ -94,13 +88,13 @@ object NCNlpStanford extends NCLifecycle("Stanford NLP manager") with NCNlpCore 
 
         coreLabels(sen).map(t ⇒ {
             val nne = t.get(classOf[NormalizedNamedEntityTagAnnotation])
-            val normal = t.originalText().toLowerCase
+            val normalWord = t.originalText().toLowerCase
 
             NCNlpWord(
                 word = t.originalText(),
-                normalWord = normal,
+                normalWord = normalWord,
                 lemma = Some(t.lemma()),
-                stem = stemmer.stem(normal).toString,
+                stem = NCNlpCoreManager.stemWord(normalWord).toString,
                 pos = t.tag(),
                 start = t.beginPosition,
                 end = t.endPosition(),
@@ -109,23 +103,5 @@ object NCNlpStanford extends NCLifecycle("Stanford NLP manager") with NCNlpCore 
                 nne = Option(nne)
             )
         })
-    }
-
-    override def tokenize(sen: String): Seq[String] = {
-        ensureStarted()
-
-        PTBTokenizer.newPTBTokenizer(new StringReader(sen)).tokenize().asScala.map(_.word)
-    }
-
-    override def stem(words: String): String = {
-        ensureStarted()
-
-        tokenize(words).map(stemmer.stem).mkString("")
-    }
-
-    override def stemSeq(words: Iterable[String]): Seq[String] = {
-        ensureStarted()
-
-        words.map(stem).toSeq
     }
 }

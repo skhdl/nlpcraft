@@ -53,8 +53,7 @@ import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, N
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
 import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
 import org.nlpcraft.common._
-import org.nlpcraft.common.nlp.core.NCNlpManager
-
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import scala.collection.JavaConverters._
 import scala.compat.Platform.currentTime
 import scala.util.control.Exception._
@@ -245,7 +244,7 @@ object NCProbe extends App with LazyLogging {
     private def startManagers(cfg: Config.type): Unit = {
         // Order is important!
         NCVersionManager.start()
-        NCNlpManager.start()
+        NCNlpCoreManager.start()
         NCNumericManager.start()
         NCDeployManager.startWithConfig(cfg)
         NCModelManager.startWithConfig(cfg)
@@ -291,7 +290,7 @@ object NCProbe extends App with LazyLogging {
         NCModelManager.stop()
         NCDeployManager.stop()
         NCNumericManager.stop()
-        NCNlpManager.stop()
+        NCNlpCoreManager.stop()
         NCVersionManager.stop()
     }
     

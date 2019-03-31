@@ -29,39 +29,39 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.core
+package org.nlpcraft.server.nlp.core
 
 import org.nlpcraft.common.NCLifecycle
-import org.nlpcraft.common.nlp.core.opennlp.NCOpenNlp
-import org.nlpcraft.common.nlp.core.stanford.NCNlpStanford
 import org.nlpcraft.server.NCConfigurable
+import org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser
+import org.nlpcraft.server.nlp.core.stanford.NCStanfordParser
 
 /**
   * OpenNLP manager.
   */
-object NCNlpManager extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
+object NCNlpManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
     private object Config extends NCConfigurable {
-        val engine: String = getString("nlp.engine")
+        val engine: String = getString("server.nlp.engine")
 
         override def check(): Unit = require(engine == "stanford" || engine == "opennlp")
     }
 
     Config.check()
 
-    @volatile var nlp: NCNlpCore = _
+    @volatile var parser: NCNlpParser = _
 
     /**
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        nlp =
+        parser =
             Config.engine match {
-                case "stanford" ⇒ NCNlpStanford
-                case "opennlp" ⇒  NCOpenNlp
+                case "stanford" ⇒ NCStanfordParser
+                case "opennlp" ⇒  NCOpenNlpParser
                 case _ ⇒ throw new AssertionError(s"Unexpected engine: ${Config.engine}")
             }
 
-        nlp.start()
+        parser.start()
 
         super.start()
     }
@@ -75,41 +75,6 @@ object NCNlpManager extends NCLifecycle("Apache Open NLP manager") with NCNlpCor
     def parse(sen: String): Seq[NCNlpWord] = {
         ensureStarted()
 
-        nlp.parse(sen)
-    }
-
-    /**
-      * Tokenizes given sentence.
-      *
-      * @param sen Sentence text.
-      * @return Tokens.
-      */
-    def tokenize(sen: String): Seq[String] = {
-        ensureStarted()
-
-        nlp.tokenize(sen)
-    }
-
-    /**
-      * Stems given word or a sequence of words which will be tokenized before.
-      *
-      * @param words One or more words to stemmatize.
-      * @return Sentence with stemmed words.
-      */
-    def stem(words: String): String = {
-        ensureStarted()
-
-        nlp.stem(words)
-    }
-
-    /**
-      * Stemmatizes sequence of words.
-      *
-      * @param words Sequence of words to stemmatize.
-      */
-    def stemSeq(words: Iterable[String]): Seq[String] = {
-        ensureStarted()
-
-        nlp.stemSeq(words)
+        parser.parse(sen)
     }
 }

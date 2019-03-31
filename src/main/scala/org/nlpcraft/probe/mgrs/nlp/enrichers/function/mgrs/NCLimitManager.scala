@@ -31,10 +31,10 @@
 
 package org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs
 
-import org.nlpcraft.common.makro.{NCMacroParser => Parser}
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.makro.{NCMacroParser ⇒ Parser}
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
-import org.nlpcraft.common.nlp.{NCNlpSentence => Sentence, NCNlpSentenceToken => Token}
+import org.nlpcraft.common.nlp.{NCNlpSentence ⇒ Sentence, NCNlpSentenceToken ⇒ Token}
 
 /**
   * Limit data container.
@@ -76,13 +76,13 @@ object NCLimitManager {
         "bottom",
         "first",
         "last"
-    ).map(NCNlpManager.stem)
+    ).map(NCNlpCoreManager.stem)
 
     private final val POST_WORDS: Seq[String] = Seq(
         "total",
         "all together",
         "overall"
-    ).map(NCNlpManager.stem)
+    ).map(NCNlpCoreManager.stem)
 
     // It designates:
     // - digits (like `25`),
@@ -170,7 +170,7 @@ object NCLimitManager {
       *
       * @param m Map.
       */
-    private def stemmatizeWords[T](m: Map[String, T]): Map[String, T] = m.map(p ⇒ NCNlpManager.stem(p._1) → p._2)
+    private def stemmatizeWords[T](m: Map[String, T]): Map[String, T] = m.map(p ⇒ NCNlpCoreManager.stem(p._1) → p._2)
 }
 
 import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs.NCLimitManager._

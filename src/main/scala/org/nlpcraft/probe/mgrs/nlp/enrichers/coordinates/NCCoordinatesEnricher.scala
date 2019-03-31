@@ -33,7 +33,7 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.coordinates
 
 import org.nlpcraft.common.makro.NCMacroParser
 import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.numeric._
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
@@ -48,8 +48,8 @@ import scala.collection._
   * See http://www.geomidpoint.com/latlon.html.
   */
 object NCCoordinatesEnricher extends NCProbeEnricher("Coordinates enricher") {
-    private final val LAT_STEMS = Seq("lat", "latitude").map(NCNlpManager.stem)
-    private final val LON_STEMS = Seq("lon", "longitude").map(NCNlpManager.stem)
+    private final val LAT_STEMS = Seq("lat", "latitude").map(NCNlpCoreManager.stem)
+    private final val LON_STEMS = Seq("lon", "longitude").map(NCNlpCoreManager.stem)
 
     private final val MARKERS_STEMS = {
         val p = new NCMacroParser
@@ -58,7 +58,7 @@ object NCCoordinatesEnricher extends NCProbeEnricher("Coordinates enricher") {
             "°",
             "{exact|approximate|*} {latitude|lat|longitude|lon}",
             "{following|*} {geo|*} coordinates {data|info|information|*}"
-        ).flatMap(p.expand).map(NCNlpManager.stem)
+        ).flatMap(p.expand).map(NCNlpCoreManager.stem)
     }
 
     private final val SEPS = Seq(",", ";", "and")

@@ -29,41 +29,32 @@
  *        /_/
  */
 
-package org.nlpcraft.common.nlp.core.opennlp
+package org.nlpcraft.server.nlp.core.opennlp
 
 import java.io.BufferedInputStream
 
 import opennlp.tools.lemmatizer.DictionaryLemmatizer
 import opennlp.tools.namefind.{NameFinderME, TokenNameFinderModel}
 import opennlp.tools.postag.{POSModel, POSTagger, POSTaggerME}
-import opennlp.tools.stemmer.{PorterStemmer, Stemmer}
-import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
-import opennlp.tools.util.Span
-import org.nlpcraft.common.nlp.core.{NCNlpCore, NCNlpWord}
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.{NCLifecycle, U}
+import org.nlpcraft.server.nlp.core.{NCNlpParser, NCNlpWord}
 import resource.managed
 
 import scala.collection.Seq
 
 /**
-  * OpenNLP manager.
+  * OpenNLP parser implementation.
   */
-object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
-    @volatile private var tokenizer: Tokenizer = _
+object NCOpenNlpParser extends NCLifecycle("Open NLP parser") with NCNlpParser {
     @volatile private var tagger: POSTagger = _
     @volatile private var lemmatizer: DictionaryLemmatizer = _
-    @volatile private var stemmer: Stemmer = _
     @volatile private var nerFinders: Map[NameFinderME, String] = _
 
     /**
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        tokenizer =
-            managed(new BufferedInputStream(U.getStream("opennlp/en-token.bin"))) acquireAndGet { in ⇒
-                new TokenizerME(new TokenizerModel(in))
-            }
-
         tagger =
             managed(new BufferedInputStream(U.getStream("opennlp/en-pos-maxent.bin"))) acquireAndGet { in ⇒
                 new POSTaggerME(new POSModel(in))
@@ -89,8 +80,6 @@ object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
                 new DictionaryLemmatizer(in)
             }
 
-        stemmer = new PorterStemmer
-
         super.start()
     }
 
@@ -104,17 +93,13 @@ object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
         ensureStarted()
 
         // Can be optimized.
-        val (spans, words, poses, lemmas) =
+        val (toks, words, poses, lemmas) =
             this.synchronized {
-                val spans = tokenizer.tokenizePos(sen)
-                val words = spans.map(_.getCoveredText(sen).toString)
+                val toks = NCNlpCoreManager.tokenize(sen).toArray
+                val words = toks.map(_.token)
                 val poses = tagger.tag(words)
 
-                require(spans.length == poses.length)
-
                 var lemmas = lemmatizer.lemmatize(words, poses).toSeq
-
-                require(spans.length == lemmas.length)
 
                 // Hack.
                 // For some reasons lemmatizer dictionary (en-lemmatizer.dict) marks some words with non-existent POS 'NNN'
@@ -144,7 +129,7 @@ object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
                     lemmas = lemmas.zipWithIndex.map { case (lemma, idx) ⇒ fixes.getOrElse(idx, lemma) }
                 }
 
-                (spans, words, poses, lemmas)
+                (toks, words, poses, lemmas)
             }
 
         val ners: Map[Array[Int], String] =
@@ -160,7 +145,8 @@ object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
                     res
                 }
 
-        spans.zip(words).zip(poses).zip(lemmas).zipWithIndex.map { case ((((span, word), pos), lemma), idx) ⇒
+        toks.zip(poses).zip(lemmas).zipWithIndex.map { case (((tok, pos), lemma), idx) ⇒
+            val word = tok.token
             val normalWord = word.toLowerCase
 
             NCNlpWord(
@@ -168,59 +154,14 @@ object NCOpenNlp extends NCLifecycle("Apache Open NLP manager") with NCNlpCore {
                 normalWord = normalWord,
                 // "0" is flag that lemma cannot be obtained for some reasons.
                 lemma = if (lemma == "O") None else Some(lemma),
-                stem = stemmer.stem(normalWord).toString,
+                stem = NCNlpCoreManager.stemWord(normalWord),
                 pos = pos,
-                start = span.getStart,
-                end = span.getEnd,
-                length = span.length,
+                start = tok.from,
+                end = tok.to,
+                length = tok.length,
                 ners.flatMap { case (idxs, name) ⇒ if (idxs.contains(idx)) Some(name) else None }.toStream.headOption,
                 None
             )
         }
-    }
-
-    /**
-      * Tokenizes given sentence.
-      *
-      * @param sen Sentence text.
-      * @return Tokens.
-      */
-    def tokenize(sen: String): Seq[String] = {
-        ensureStarted()
-
-        this.synchronized { tokenizer.tokenize(sen) }
-    }
-
-    /**
-      * Stems given word or a sequence of words which will be tokenized before.
-      *
-      * @param words One or more words to stemmatize.
-      * @return Sentence with stemmed words.
-      */
-    def stem(words: String): String = {
-        ensureStarted()
-
-        val seq: Array[(Span, CharSequence)] = this.synchronized {
-            tokenizer.tokenizePos(words).map(span ⇒ (span, stemmer.stem(span.getCoveredText(words).toString)))
-        }
-
-        seq.zipWithIndex.map { case ((span, stem), idx) ⇒
-            idx match {
-                case 0 ⇒ stem
-                // Suppose there aren't multiple spaces.
-                case _ ⇒ if (seq(idx - 1)._1.getEnd <  span.getStart) s" $stem" else stem
-            }
-        }.mkString("")
-    }
-
-    /**
-      * Stemmatizes sequence of words.
-      *
-      * @param words Sequence of words to stemmatize.
-      */
-    def stemSeq(words: Iterable[String]): Seq[String] = {
-        ensureStarted()
-
-        words.map(stem).toSeq
     }
 }

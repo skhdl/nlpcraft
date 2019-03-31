@@ -37,7 +37,7 @@ import java.util.{List ⇒ JList, Set ⇒ JSet}
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.makro.{NCMacroParser ⇒ MacroParser}
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.model._
 import org.nlpcraft.common.nlp.pos._
 import org.nlpcraft.probe.mgrs.NCSynonymChunkKind._
@@ -230,7 +230,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsS
         }
         // Regular word.
         else
-            NCSynonymChunk(kind = TEXT, origText = chunk, wordStem = NCNlpManager.stem(chunk))
+            NCSynonymChunk(kind = TEXT, origText = chunk, wordStem = NCNlpCoreManager.stem(chunk))
     }
 
     /**
@@ -361,7 +361,8 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsS
                     add(chunks, true)
             }
 
-            def chunk0(s: String): Seq[NCSynonymChunk] = chunkSplit(NCNlpManager.tokenize(s).mkString(" "))
+            def chunk0(s: String): Seq[NCSynonymChunk] =
+                chunkSplit(NCNlpCoreManager.tokenize(s).map(_.token).mkString(" "))
 
             // Add element ID as a synonyms (Duplications ignored)
             val idChunks = Seq(chunk0(elmId), chunkSplit(elmId))
@@ -551,7 +552,7 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsS
             if (hasWhitespace(word))
                 throw new NCE(s"$name cannot have whitespace: '$word'")
             else
-                NCNlpManager.stem(word)
+                NCNlpCoreManager.stem(word)
 
     /**
       * Checks cyclic child-parent dependencies.

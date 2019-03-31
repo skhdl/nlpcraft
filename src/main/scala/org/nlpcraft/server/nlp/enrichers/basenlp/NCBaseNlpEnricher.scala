@@ -32,9 +32,9 @@
 package org.nlpcraft.server.nlp.enrichers.basenlp
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.nlp.core.NCNlpManager
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.server.nlp.core.NCNlpManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
 import scala.collection._

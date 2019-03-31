@@ -33,7 +33,7 @@ package org.nlpcraft.probe.mgrs.nlp.enrichers.context
 
 import org.nlpcraft.common._
 import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 import org.nlpcraft.probe.mgrs.nlp.NCProbeEnricher
 
@@ -56,7 +56,7 @@ object NCContextEnricher extends NCProbeEnricher("Context-based enricher") {
             "COUNTRY" → Seq("country", "land", "countryside", "area", "territory"),
             "REGION" → Seq("region", "area", "state", "county", "district", "ground", "territory"),
             "CONTINENT" → Seq("continent", "land", "area")
-        ).map(p ⇒ p._1 → p._2.map(NCNlpManager.stem))
+        ).map(p ⇒ p._1 → p._2.map(NCNlpCoreManager.stem))
 
     private def isStopPos(t: NCNlpSentenceToken): Boolean = STOP_BEFORE.contains(t.pos)
 

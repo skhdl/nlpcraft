@@ -36,7 +36,7 @@ import java.util.concurrent.CountDownLatch
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
-import org.nlpcraft.common.nlp.core.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
 import org.nlpcraft.common.version._
@@ -45,6 +45,7 @@ import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.geo.NCGeoManager
 import org.nlpcraft.server.ignite.{NCIgniteInstance, NCIgniteRunner}
+import org.nlpcraft.server.nlp.core.NCNlpManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.server.nlp.preproc.NCPreProcessManager
 import org.nlpcraft.server.nlp.spell.NCSpellCheckManager
@@ -92,6 +93,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
       */
     private def startManagers(): Unit = {
         NCVersionManager.start()
+        NCNlpCoreManager.start()
         NCPluginManager.start()
         NCTxManager.start()
         NCSqlManager.start()
@@ -151,6 +153,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             NCSqlManager,
             NCTxManager,
             NCPluginManager,
+            NCNlpCoreManager,
             NCVersionManager
         ).foreach(p ⇒
             try
