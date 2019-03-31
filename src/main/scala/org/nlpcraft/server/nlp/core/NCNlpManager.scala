@@ -31,10 +31,10 @@
 
 package org.nlpcraft.server.nlp.core
 
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCE, NCLifecycle}
 import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser
-import org.nlpcraft.server.nlp.core.stanford.NCStanfordParser
+
+import scala.reflect.runtime.universe._
 
 /**
   * OpenNLP manager.
@@ -54,10 +54,20 @@ object NCNlpManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
       * Starts this component.
       */
     override def start(): NCLifecycle = {
+        val mirror = runtimeMirror(getClass.getClassLoader)
+
+        def mkInstance(name: String): NCNlpParser =
+            try
+                mirror.reflectModule(mirror.staticModule(name)).instance.asInstanceOf[NCNlpParser]
+            catch {
+                case e: Throwable ⇒ throw new NCE(s"Error initializing class: $name", e)
+            }
+
         parser =
             Config.engine match {
-                case "stanford" ⇒ NCStanfordParser
-                case "opennlp" ⇒  NCOpenNlpParser
+                case "stanford" ⇒ mkInstance("org.nlpcraft.server.nlp.core.stanford.NCStanfordParser")
+                case "opennlp" ⇒ mkInstance("org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser")
+
                 case _ ⇒ throw new AssertionError(s"Unexpected engine: ${Config.engine}")
             }
 

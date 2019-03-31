@@ -554,7 +554,8 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>**/stanford/**</exclude>
+                        <exclude>stanford/corenlp.properties</exclude>
+                        <exclude>stanford</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -588,11 +589,6 @@
                                     <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                             </transformers>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>edu.stanford.nlp:stanford-corenlp</exclude>
-                                </excludes>
-                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
@@ -627,7 +623,7 @@
 
     <profiles>
         <profile>
-            <id>sign</id>
+            <id>pack</id>
             <activation>
                 <property>
                     <name>performRelease</name>
