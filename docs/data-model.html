@@ -36,7 +36,35 @@ layout: documentation
 
 <div class="col-md-8 second-column">
     <section>
-        <span class="section-title">This Section Is Under Development...</span>
+        <span class="section-title">Data Model Overview</span>
+        <p>
+            NLPCraft employs model-as-a-code approach where data model is simply an implementation of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> Java interface that can be developed using any JVM programming
+            language like Java, Scala, Kotlin, or Groovy. Data model implementation defines:
+        </p>
+        <ul>
+            <li>
+                How to interpret user input
+            </li>
+            <li>
+                How to query or control a particular data source
+            </li>
+            <li>
+                How to format the result back to the user
+            </li>
+        </ul>
+        <p>
+            Note that model-as-a-code approach natively supports any software life
+            cycle tools and frameworks in Java eco-system like various build tools, CI/SCM tools, IDEs, etc.
+            In other words, you don't have to use awkward web-based tools to manage some aspects of your
+            models - your entire model is part of your project source code.
+        </p>
+    </section>
+    <section>
+        <span class="section-title">Data Model Lifecycle</span>
+        <p>
+            Data models get deployed
+        </p>
     </section>
 </div>
 <div class="col-md-2 third-column">
