@@ -95,10 +95,6 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsS
                     val dec = verifyAndDecorate(mdl, parser)
 
                     mdl.initialize(new NCProbeContext {
-                        override def reloadModel(modelId: String): Unit = new Thread() {
-                            override def run(): Unit =reload(modelId)
-                        }.start()
-
                         override lazy val getId: String = config.id
                         override lazy val getToken: String = config.token
                         override lazy val getUpLink: String = config.upLink
@@ -687,56 +683,6 @@ object NCModelManager extends NCProbeLifecycle("Model manager") with DecorateAsS
 
         mux.synchronized {
             models.get(id)
-        }
-    }
-
-    /**
-      *
-      * @param modelId Model ID.
-      */
-    def reload(modelId: String): Unit = {
-        ensureStarted()
-
-        mux.synchronized {
-            logger.info(s"Started reloading model: $modelId")
-
-            models.remove(modelId) match {
-                case Some(m) ⇒
-                    // Discard current model instance.
-                    discardModel(m.model)
-
-                    // Scan providers to reload the same model.
-                    for (provider ← NCDeployManager.getProviders)
-                        addNewModel(provider, modelId)
-
-                    models.get(modelId) match {
-                        case Some(mdl) ⇒
-                            // Invariant.
-                            require(mdl.model.getDescriptor.getId == modelId)
-
-                            // Ack.
-                            val tbl = NCAsciiTable("Model ID", "Name", "Ver.", "Elements", "Synonyms")
-
-                            val synCnt = mdl.synonyms.values.flatMap(_.values).flatten.size
-                            val newDs = mdl.model.getDescriptor
-
-                            tbl += (
-                                newDs.getId,
-                                newDs.getName,
-                                newDs.getVersion,
-                                mdl.elements.keySet.size,
-                                synCnt
-                            )
-
-                            tbl.info(logger, Some(s"Model reloaded: $modelId\n"))
-
-                        case None ⇒
-                            logger.error(s"Failed to reload model: $modelId")
-                    }
-
-                case None ⇒
-                    logger.error(s"Failed to reload unknown model: $modelId")
-            }
         }
     }
 }

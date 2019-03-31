@@ -42,19 +42,6 @@ import java.util.List;
  */
 public interface NCProbeContext {
     /**
-     * Asynchronously reloads model with given ID without restarting the probe.
-     * This method will return immediately and model will be reloaded from a separate thread.
-     * <br><br>
-     * Note that after calling this method the specified model will be {@link NCModel#discard() discarded}
-     * and will no longer be valid. It is important that {@link NCModel#discard()} method implementation would
-     * properly de-initialize the model and perform all necessary clean up and end-of-life operations such as
-     * closing files, networks and database connections, flushing caches, etc.
-     * 
-     * @param modelId Unique, <i>immutable</i> ID of the model to reload.
-     */
-    void reloadModel(String modelId);
-
-    /**
      * Gets ID of the probe.
      *
      * @return ID of the probe.
