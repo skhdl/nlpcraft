@@ -44,31 +44,32 @@ import scala.collection._
   */
 object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
     // http://www.vidarholen.net/contents/interjections/
-    private final val INTERJECTIONS = immutable.HashSet[String](
-        "aah", "aaah", "aaaahh", "aha", "a-ha", "ahem",
-        "ahh", "ahhh", "argh", "augh", "aww", "aw",
-        "awww", "aww", "aw", "ohh", "ahh", "aw",
-        "oh", "bah", "boo", "booh", "brr", "brrrr",
-        "duh", "eek", "eeeek", "eep", "eh", "huh",
-        "eh", "huh", "eyh", "eww", "ugh", "ewww",
-        "gah", "gee", "grr", "grrrr", "hmm", "hm",
-        "hmmmm", "humph", "harumph", "huh", "hurrah", "hooray",
-        "huzzah", "ich", "yuck", "yak", "meh", "eh",
-        "mhm", "mmhm", "uh-hu", "mm", "mmm", "mmh",
-        "muahaha", "mwahaha", "bwahaha", "nah", "nuh-uh", "nuh-hu",
-        "nuhuh", "oh", "ooh-la-la", "oh-lala", "ooh", "oooh",
-        "oomph", "umph", "oops", "ow", "oww", "ouch",
-        "oy", "oi", "oyh", "oy", "oyvay", "oy-vay",
-        "pew", "pee-yew", "pff", "pffh", "pssh", "pfft",
-        "phew", "psst", "sheesh", "jeez", "shh", "hush",
-        "shush", "shoo", "tsk-tsk", "tut-tut", "uh-hu", "uhuh",
-        "mhm", "uh-oh", "oh-oh", "uh-uh", "unh-unh", "uhh",
-        "uhm", "err", "wee", "whee", "weee", "whoa",
-        "wow", "yahoo", "yippie", "yay", "yeah", "yeeeeaah",
-        "yee-haw", "yeehaw", "yoo-hoo", "yoohoo", "yuh-uh", "yuh-hu",
-        "yuhuh", "yuck", "ich", "blech", "bleh", "zing",
-        "ba-dum-tss", "badum-tish"
-    )
+    private final val INTERJECTIONS =
+        Set(
+            "aah", "aaah", "aaaahh", "aha", "a-ha", "ahem",
+            "ahh", "ahhh", "argh", "augh", "aww", "aw",
+            "awww", "aww", "aw", "ohh", "ahh", "aw",
+            "oh", "bah", "boo", "booh", "brr", "brrrr",
+            "duh", "eek", "eeeek", "eep", "eh", "huh",
+            "eh", "huh", "eyh", "eww", "ugh", "ewww",
+            "gah", "gee", "grr", "grrrr", "hmm", "hm",
+            "hmmmm", "humph", "harumph", "huh", "hurrah", "hooray",
+            "huzzah", "ich", "yuck", "yak", "meh", "eh",
+            "mhm", "mmhm", "uh-hu", "mm", "mmm", "mmh",
+            "muahaha", "mwahaha", "bwahaha", "nah", "nuh-uh", "nuh-hu",
+            "nuhuh", "oh", "ooh-la-la", "oh-lala", "ooh", "oooh",
+            "oomph", "umph", "oops", "ow", "oww", "ouch",
+            "oy", "oi", "oyh", "oy", "oyvay", "oy-vay",
+            "pew", "pee-yew", "pff", "pffh", "pssh", "pfft",
+            "phew", "psst", "sheesh", "jeez", "shh", "hush",
+            "shush", "shoo", "tsk-tsk", "tut-tut", "uh-hu", "uhuh",
+            "mhm", "uh-oh", "oh-oh", "uh-uh", "unh-unh", "uhh",
+            "uhm", "err", "wee", "whee", "weee", "whoa",
+            "wow", "yahoo", "yippie", "yay", "yeah", "yeeeeaah",
+            "yee-haw", "yeehaw", "yoo-hoo", "yoohoo", "yuh-uh", "yuh-hu",
+            "yuhuh", "yuck", "ich", "blech", "bleh", "zing",
+            "ba-dum-tss", "badum-tish"
+        ).map(_.toLowerCase)
     
     // The acronyms stand for (Left|Right) (Round|Square|Curly) Bracket.
     // http://www.cis.upenn.edu/~treebank/tokenization.html
@@ -97,10 +98,8 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
             // Override interjection (UH) analysis.
             val (lemma, pos) =
                 word.lemma match {
-                    case Some(wordLemma) ⇒
-                        val lc = wordLemma.toLowerCase
-
-                        (lc, if (INTERJECTIONS.contains(lc)) "UH" else word.pos)
+                    // Lemma already should be in lowercase.
+                    case Some(wordLemma) ⇒ (wordLemma, if (INTERJECTIONS.contains(wordLemma)) "UH" else word.pos)
                     case None ⇒ (origTxt.toLowerCase, word.pos)
                 }
 

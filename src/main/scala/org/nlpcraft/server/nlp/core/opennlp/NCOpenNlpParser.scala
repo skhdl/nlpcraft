@@ -146,14 +146,13 @@ object NCOpenNlpParser extends NCLifecycle("Open NLP parser") with NCNlpParser {
                 }
 
         toks.zip(poses).zip(lemmas).zipWithIndex.map { case (((tok, pos), lemma), idx) ⇒
-            val word = tok.token
-            val normalWord = word.toLowerCase
+            val normalWord = tok.token.toLowerCase
 
             NCNlpWord(
-                word = word,
+                word = tok.token,
                 normalWord = normalWord,
                 // "0" is flag that lemma cannot be obtained for some reasons.
-                lemma = if (lemma == "O") None else Some(lemma),
+                lemma = if (lemma == "O") None else Some(lemma.toLowerCase),
                 stem = NCNlpCoreManager.stemWord(normalWord),
                 pos = pos,
                 start = tok.from,

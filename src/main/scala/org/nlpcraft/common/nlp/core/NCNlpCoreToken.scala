@@ -33,6 +33,7 @@ package org.nlpcraft.common.nlp.core
 
 /**
   * Token data.
+  *
   * @param token Token.
   * @param from From index.
   * @param to To index.

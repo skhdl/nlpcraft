@@ -93,7 +93,7 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
             NCNlpWord(
                 word = t.originalText(),
                 normalWord = normalWord,
-                lemma = Some(t.lemma()),
+                lemma = Some(t.lemma().toLowerCase),
                 stem = NCNlpCoreManager.stemWord(normalWord).toString,
                 pos = t.tag(),
                 start = t.beginPosition,
