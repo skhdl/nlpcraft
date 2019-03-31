@@ -38,8 +38,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Convenient model provider adapter. This provider takes one or more pre-created models and will
- * return them from {@link #makeModel(String)} method.
+ * Convenient model provider adapter. This provider takes one or more pre-created data models and will
+ * return them from {@link #makeModel(String)} method. Sub-classes or client classes should call one of the following
+ * methods to pass data model instances this adapter will return:
+ * <ul>
+ *     <li>{@link #setup(NCModel...)}</li>
+ *     <li>{@link #setup(Collection)}</li>
+ * </ul>
  */
 public class NCModelProviderAdapter implements NCModelProvider {
     private final List<String> ids = new ArrayList<>();
@@ -47,7 +52,9 @@ public class NCModelProviderAdapter implements NCModelProvider {
     private final List<NCModelDescriptor> dss = new ArrayList<>();
 
     /**
-     * Sets up this provider with given model instances.
+     * Sets up this provider with given model instances. This method can be called
+     * multiple times to initialize the provider with different data models. On each call previous
+     * data models will be cleared.
      *
      * @param models Model instances.
      */
@@ -57,7 +64,8 @@ public class NCModelProviderAdapter implements NCModelProvider {
 
     /**
      * Sets up this provider with given model instances. This method can be called
-     * multiple times to initialize the provider with different models.
+     * multiple times to initialize the provider with different data models. On each call previous
+     * data models will be cleared.
      *
      * @param models Model instances.
      */
