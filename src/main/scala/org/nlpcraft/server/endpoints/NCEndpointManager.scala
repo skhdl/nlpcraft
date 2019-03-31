@@ -197,6 +197,7 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                             sleepTime = if (minTime != 0) minTime - now else Long.MaxValue
                         }
                         catch {
+                            case _: InterruptedException ⇒ // No-op.
                             case e: Throwable ⇒ logger.error("Notifications sending error.", e)
                         }
                     }

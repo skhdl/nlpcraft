@@ -61,6 +61,8 @@ object NCNlpManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
                 case _ ⇒ throw new AssertionError(s"Unexpected engine: ${Config.engine}")
             }
 
+        logger.info(s"NLP engined configured: ${Config.engine}")
+
         parser.start()
 
         super.start()

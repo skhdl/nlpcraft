@@ -351,7 +351,6 @@
             <classifier>models</classifier>
             <scope>runtime</scope>
         </dependency>
-        <!---->
     </dependencies>
 
     <build>
@@ -635,6 +634,30 @@
                     <value>true</value>
                 </property>
             </activation>
+            <dependencies>
+                <!--Should be excluded from build zip.-->
+                <dependency>
+                    <groupId>edu.stanford.nlp</groupId>
+                    <artifactId>stanford-corenlp</artifactId>
+                    <version>${stanford.corenlp.ver}</version>
+                    <scope>provided</scope>
+                    <!-- org.apache.tika contains javax.activation. -->
+                    <exclusions>
+                        <exclusion>
+                            <groupId>javax.activation</groupId>
+                            <artifactId>javax.activation-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>edu.stanford.nlp</groupId>
+                    <artifactId>stanford-corenlp</artifactId>
+                    <version>${stanford.corenlp.ver}</version>
+                    <classifier>models</classifier>
+                    <scope>provided</scope>
+                </dependency>
+                <!---->
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
