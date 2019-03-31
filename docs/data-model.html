@@ -63,7 +63,45 @@ layout: documentation
     <section>
         <span class="section-title">Data Model Lifecycle</span>
         <p>
-            Data models get deployed
+            To deploy a data model you need to provide an implementation of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> - a simple
+            interface that acts as a factory or a builder for one or more data models. This separation is
+            important as it enables data probes to query data model provider about which models it supports
+            without necessarily instantiating an actual data model which could be expensive, not idempotent
+            and time-consuming operation.
+        </p>
+        <div class="bq info">
+            <b>NCModelProviderAdapter</b>
+            <p>
+                Note that instead of implementing
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> interface
+                directly in most cases you can use a
+                convenient
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a> adapter class.
+            </p>
+        </div>
+        <p>
+            As described before the data models get deployed to and hosted by the data probes - a lightweight
+            container whose job is to host data models and transfer requests between REST server and the data
+            models. When a data probe starts it reads its configuration file <code>probe.conf</code> to see which models to
+            deploy:
+        </p>
+        <ul>
+            <li>
+                If property <code>modelProviders</code> is defined the data probe will try to deploy all models
+                this property defines by their fully qualified class names.
+            </li>
+            <li>
+                If property <code>jarsFolder</code> is defined the data probe will recursively scan for all JAR files in this
+                folder and will try to find all implementations of
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> interface
+                and deploy their data models.
+            </li>
+        </ul>
+        <p>
+            Note that once deployed the data model is immutable. If you need to change the data model
+            configuration or implementation, as in the development and testing phases,  you need to restart the
+            probe to redeploy this data model.
         </p>
     </section>
 </div>
