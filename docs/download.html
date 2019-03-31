@@ -129,8 +129,10 @@ layout: interior
                         <a href="{{rel.sha256_url}}">SHA256</a>
                         <a href="{{rel.pgp_url}}">PGP</a>
                     </td>
-                    <td class="release-notes">
-                        <a href="/release-notes-{{rel.version}}.html">Release notes</a>
+                    <td class="links">
+                        <a href="/release-notes-{{rel.version}}.html">Release notes</a>,
+                        <a target="javadoc" href="/apis/javadoc-{{rel.version}}/index.html">Javadoc</a>,
+                        <a target="github" href="{{rel.github_link}}">GitHub</a>
                     </td>
                 </tr>
                 {% endfor %}

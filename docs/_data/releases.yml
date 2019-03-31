@@ -36,6 +36,7 @@
   sha1_url: https://www.dropbox.com/s/snnjfie6m1kp5e2/nlpcraft-0.1.0.zip.sha1?dl=1
   sha256_url: https://www.dropbox.com/s/qdbtjaxq1yf7fg2/nlpcraft-0.1.0.zip.sha256?dl=1
   pgp_url: https://www.dropbox.com/s/k5uy3umbifkjfao/nlpcraft-0.1.0.zip.sig?dl=1
+  github_link: https://github.com/vic64/nlpcraft/tree/v0.2.0
 
 - version: 0.1.0
   date: Mar 17, 2019
@@ -44,4 +45,5 @@
   sha1_url: https://www.dropbox.com/s/snnjfie6m1kp5e2/nlpcraft-0.1.0.zip.sha1?dl=1
   sha256_url: https://www.dropbox.com/s/qdbtjaxq1yf7fg2/nlpcraft-0.1.0.zip.sha256?dl=1
   pgp_url: https://www.dropbox.com/s/k5uy3umbifkjfao/nlpcraft-0.1.0.zip.sig?dl=1
+  github_link: https://github.com/vic64/nlpcraft/tree/0.1.0
 
