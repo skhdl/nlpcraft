@@ -65,7 +65,8 @@ layout: documentation
         <p>
             To deploy a data model you need to provide an implementation of
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> - a simple
-            interface that acts as a factory or a builder for one or more data models. This separation is
+            interface that acts as a factory or a builder for one or more
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> instances. This separation is
             important as it enables data probes to query data model provider about which models it supports
             without necessarily instantiating an actual data model which could be expensive, not idempotent
             and time-consuming operation.
@@ -81,7 +82,7 @@ layout: documentation
             </p>
         </div>
         <p>
-            As described before the data models get deployed to and hosted by the data probes - a lightweight
+            As described before the data models get <a href="/deploying-data-model.html">deployed</a> to and hosted by the data probes - a lightweight
             container whose job is to host data models and transfer requests between REST server and the data
             models. When a data probe starts it reads its configuration file <code>probe.conf</code> to see which models to
             deploy:
@@ -119,9 +120,48 @@ layout: documentation
         <p>
             One of the most important parts of developing a data model is defining its elements. A data model
             element is the main building block of the semantic data model. A semantic element defines an entity
-            that will be automatically recognized in the user input either by one of its synonyms or values or
-            directly by its ID.
+            that will be automatically recognized as a token in the user input either by one of its synonyms or values or
+            directly by its ID. These tokens in turn will be used by the data model in its matching logic.
         </p>
+        <p>
+            Data model element is defined by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>
+            interface:
+        </p>
+        <pre class="brush: java">
+            public interface NCElement {
+                interface NCValue {
+                    String getName();
+                    List&lt;String&gt; getSynonyms();
+                }
+
+                String getId();
+                String getGroup();
+                NCMetadata getMetadata();
+                String getDescription();
+                List&lt;NCValue&gt; getValues();
+                String getParentId();
+                List&lt;String&gt; getSynonyms();
+                List&lt;String&gt; getExcludedSynonyms();
+            }
+
+        </pre>
+        <p>
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> returns
+            its elements via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">getElements()</a> method. To create model element
+            you can either:
+        </p>
+        <ul>
+            <li>
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> interface directly, or
+            </li>
+            <li>
+                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCElementBuilder.html">NCElementBuilder</a>
+                builder class if element definition is constructed dynamically, or
+            </li>
+            <li>
+                Use JSON or YAML static model configuration (the preferred way in most cases).
+            </li>
+        </ul>
         <p>
             When defining the elements the synonyms play the most critical role. It is the synonyms that define
             how a particular element will be detected in the user input. While adding synonyms sounds rather
@@ -165,7 +205,7 @@ layout: documentation
             together with option groups allow for significant simplification of this process.
             Macros let you give a name to an often used set of words or option groups and reuse it without
             repeating those words or option groups again and again. A model provides a list of macros via
-            <code>getMacros()</code> method on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getMacros--">getMacros()</a> method on
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface. Each macro
             has a name in a form of <code>&lt;X&gt;</code> where <code>X</code>
             is just any string, and a string value. Note that macros can be nested, i.e. macro value can include
@@ -173,7 +213,7 @@ layout: documentation
             replaced with its value.
         </p>
         <p>
-            Here's a code snippet of macro definitions in JSON model:
+            Here's a code snippet of macro definitions using JSON configuration:
         </p>
         <pre class="brush: js">
             "macros": [
