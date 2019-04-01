@@ -87,6 +87,40 @@ layout: documentation
             Semantic grammar on the other hand allows to cleanly resolve this ambiguity in
             a simpler and fully deterministic way.
         </p>
+        <div class="bq info">
+            <b>Named Entity Resolution vs. Semantic Model</b>
+            <p>
+                An astute reader can notice the similarities between classic Named Entity Resolution (NER) and
+                semantic modeling. Indeed, both try to identify semantic categories rather than generic structural or
+                linguistic categories.
+            </p>
+            <p>
+                However, there is a number of important distinctions:
+            </p>
+            <ul>
+                <li>
+                    Most of the modern NER implementations employ a statistical machine learning (ML) approach and
+                    therefore require substantial training corpora to create the ML models in the first place.  That
+                    limits such implementations only to a very generic, well-understood categories like TIME,
+                    DATE or PERSON for which well-defined corpora data exists.
+                </li>
+                <li>
+                    Because of previous limitations standard NER is not suitable for domain-specific knowledge
+                    areas where no large pre-existing data corpus exists.
+                </li>
+            </ul>
+            <p>
+                It's important to note that some NLP toolkits provide a variation of NER sometimes called as a
+                Normalized Named Entity Resolution (NNER) that are based on rule-based logic or semantic
+                modeling. For example, DATE or CURRENCY named entities can be normalized by
+                <a target=_ href="https://stanfordnlp.github.io/CoreNLP/ner.html">Stanford CoreNLP</a>
+                toolkit (which is one of the base NLP engines that NLPCraft can be configured with).
+            </p>
+            <p>
+                Assuming a simplified  NER terminology, one could argue that Semantic Modeling allows you to efficiently
+                build your own named entity resolution specific to your own domain area.
+            </p>
+        </div>
     </section>
     <section id="stm">
         <span class="section-sub-title">Conversation <span class="amp">&amp;</span> STM</span>
