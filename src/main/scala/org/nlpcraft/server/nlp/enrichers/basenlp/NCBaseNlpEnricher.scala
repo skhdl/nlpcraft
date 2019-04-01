@@ -34,7 +34,7 @@ package org.nlpcraft.server.nlp.enrichers.basenlp
 import org.nlpcraft.common._
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
-import org.nlpcraft.server.nlp.core.NCNlpManager
+import org.nlpcraft.server.nlp.core.NCNlpServerManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
 import scala.collection._
@@ -89,7 +89,7 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
         
         var idx = 0
         
-        for (word ← NCNlpManager.parse(ns.text)) {
+        for (word ← NCNlpServerManager.parse(ns.text)) {
             val value = word.word.toLowerCase
             val origTxt = word.word
             

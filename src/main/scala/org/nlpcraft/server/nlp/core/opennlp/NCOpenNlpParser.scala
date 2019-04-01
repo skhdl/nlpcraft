@@ -99,7 +99,11 @@ object NCOpenNlpParser extends NCLifecycle("Open NLP parser") with NCNlpParser {
                 val words = toks.map(_.token)
                 val poses = tagger.tag(words)
 
+                require(toks.length == poses.length)
+
                 var lemmas = lemmatizer.lemmatize(words, poses).toSeq
+
+                require(toks.length == lemmas.length)
 
                 // Hack.
                 // For some reasons lemmatizer dictionary (en-lemmatizer.dict) marks some words with non-existent POS 'NNN'

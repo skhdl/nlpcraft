@@ -45,7 +45,7 @@ import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.geo.NCGeoManager
 import org.nlpcraft.server.ignite.{NCIgniteInstance, NCIgniteRunner}
-import org.nlpcraft.server.nlp.core.NCNlpManager
+import org.nlpcraft.server.nlp.core.NCNlpServerManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricherManager
 import org.nlpcraft.server.nlp.preproc.NCPreProcessManager
 import org.nlpcraft.server.nlp.spell.NCSpellCheckManager
@@ -104,7 +104,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         NCSynonymManager.start()
         NCPreProcessManager.start()
         NCGeoManager.start()
-        NCNlpManager.start()
+        NCNlpServerManager.start()
         NCNumericManager.start()
         NCNlpEnricherManager.start()
         NCNotificationManager.start()
@@ -142,7 +142,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             NCNotificationManager,
             NCNlpEnricherManager,
             NCNumericManager,
-            NCNlpManager,
+            NCNlpServerManager,
             NCGeoManager,
             NCPreProcessManager,
             NCSynonymManager,
