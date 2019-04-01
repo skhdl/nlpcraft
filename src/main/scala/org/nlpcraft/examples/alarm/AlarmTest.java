@@ -50,7 +50,7 @@ public class AlarmTest {
     
     @BeforeEach
     void setUp() throws NCException, IOException {
-        client = new NCTestClientBuilder().newBuilder().build();
+        client = new NCTestClientBuilder().newBuilder().setReplaceLocalHost(false).build();
         
         client.openForModelId("nlpcraft.alarm.ex"); // See alarm_model.json
     }

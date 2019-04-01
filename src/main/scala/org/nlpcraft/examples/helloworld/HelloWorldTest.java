@@ -53,7 +53,7 @@ public class HelloWorldTest {
     @BeforeEach
     void setUp() throws NCException, IOException {
         // Use all defaults.
-        client = new NCTestClientBuilder().newBuilder().build();
+        client = new NCTestClientBuilder().newBuilder().setReplaceLocalHost(false).build();
         
         client.openForModelId("nlpcraft.helloworld.ex");
     }

@@ -58,9 +58,32 @@ public class WeatherTest {
     
     private NCTestClient client;
     
+    /**
+     *
+     * @param txt
+     * @param intentId
+     * @param shouldBeSame
+     * @throws NCException
+     * @throws IOException
+     */
+    private void checkIntent(String txt, String intentId, boolean shouldBeSame) throws NCException, IOException {
+        NCTestResult res = client.ask(txt);
+        
+        assertTrue(res.isSuccessful());
+        
+        assert res.getResult().isPresent();
+        
+        Map<String, Object> map = GSON.fromJson(res.getResult().get(), TYPE_MAP_RESP);
+        
+        if (shouldBeSame)
+            assertEquals(intentId, map.get("intentId"));
+        else
+            assertNotEquals(intentId, map.get("intentId"));
+    }
+    
     @BeforeEach
     void setUp() throws NCException, IOException {
-        client = new NCTestClientBuilder().newBuilder().build();
+        client = new NCTestClientBuilder().newBuilder().setReplaceLocalHost(false).build();
         
         client.openForModelId("nlpcraft.weather.ex");  // See weather_model.json
     }
@@ -68,21 +91,6 @@ public class WeatherTest {
     @AfterEach
     void tearDown() throws NCException, IOException {
         client.close();
-    }
-    
-    private void checkIntent(String txt, String intentId, boolean shouldBeSame) throws NCException, IOException {
-        NCTestResult res = client.ask(txt);
-    
-        assertTrue(res.isSuccessful());
-        
-        assert res.getResult().isPresent();
-    
-        Map<String, Object> map = GSON.fromJson(res.getResult().get(), TYPE_MAP_RESP);
-    
-        if (shouldBeSame)
-            assertEquals(intentId, map.get("intentId"));
-        else
-            assertNotEquals(intentId, map.get("intentId"));
     }
     
     @Test

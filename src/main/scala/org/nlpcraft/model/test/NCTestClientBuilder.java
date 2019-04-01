@@ -90,6 +90,9 @@ public class NCTestClientBuilder {
     /** Default local endpoint to get result notifications. */
     public static final String DFLT_ENDPOINT = "http://localhost:8463/test";
     
+    /** Default replace localhost property flag. */
+    public static final boolean DFLT_REPLACE_LOCAL_HOST = true;
+    
     private static final Logger log = LoggerFactory.getLogger(NCTestClientBuilder.class);
     
     private static final UrlValidator urlValidator =
@@ -182,6 +185,25 @@ public class NCTestClientBuilder {
         
         impl.setEndpoint(endpoint);
         
+        return this;
+    }
+    
+    /**
+     * TODO:
+     * If this flag set as `true` and endpoint is referenced to `localhost` domain,
+     * `localhost` values is replaced to endpoint host address. See {@link InetAddress#getLocalHost()}
+     *
+     * Default flag value is {@link #DFLT_REPLACE_LOCAL_HOST}
+     *
+     * Sometimes for performance reasons, when server and client are working on the same node,
+     * this property better define as `false`.
+ 
+     * @param replaceLocalHost Boolean flag.
+     * @return Builder instance for chaining calls.
+     */
+    public NCTestClientBuilder setReplaceLocalHost(boolean replaceLocalHost) {
+        impl.setReplaceLocalHost(replaceLocalHost);
+    
         return this;
     }
     
@@ -339,6 +361,7 @@ public class NCTestClientBuilder {
         private String email = DFLT_EMAIL;
         private String pswd = DFLT_PASSWORD;
         private String endpoint = DFLT_ENDPOINT;
+        private boolean replaceLocalHost = DFLT_REPLACE_LOCAL_HOST;
 
         private CloseableHttpClient httpCli;
         private RequestConfig reqCfg;
@@ -385,7 +408,15 @@ public class NCTestClientBuilder {
         void setPassword(String pswd) {
             this.pswd = pswd;
         }
-        
+    
+        boolean isReplaceLocalHost() {
+            return replaceLocalHost;
+        }
+    
+        void setReplaceLocalHost(boolean replaceLocalHost) {
+            this.replaceLocalHost = replaceLocalHost;
+        }
+    
         Supplier<CloseableHttpClient> getClientSupplier() {
             return cliSup;
         }
@@ -543,7 +574,7 @@ public class NCTestClientBuilder {
 
             String host = url.getHost();
 
-            if (host.equals("127.0.0.1") || host.equalsIgnoreCase("localhost")) {
+            if (replaceLocalHost && (host.equals("127.0.0.1") || host.equalsIgnoreCase("localhost"))) {
                 endpoint = endpoint.replaceAll(host, InetAddress.getLocalHost().getHostAddress());
 
                 url = new URL(endpoint);
