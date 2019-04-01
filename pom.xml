@@ -132,6 +132,7 @@
         <apache.common.lang.ver>3.8.1</apache.common.lang.ver>
         <apache.httpcomponents.ver>4.5.7</apache.httpcomponents.ver>
         <apache.opennlp.ver>1.9.1</apache.opennlp.ver>
+        <stanford.corenlp.ver>3.9.2</stanford.corenlp.ver>
         <maven.javadoc.plugin.ver>3.0.0-M1</maven.javadoc.plugin.ver>
         <maven.shade.plugin.ver>3.2.1</maven.shade.plugin.ver>
         <maven.source.plugin.ver>3.0.1</maven.source.plugin.ver>
@@ -335,6 +336,20 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.ver}</version>
+        </dependency>
+
+        <!--Stanford NLP dependencies should be excluded from build zip.-->
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.corenlp.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.corenlp.ver}</version>
+            <classifier>models</classifier>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -602,13 +617,36 @@
 
     <profiles>
         <profile>
-            <id>sign</id>
+            <id>release</id>
             <activation>
                 <property>
                     <name>performRelease</name>
                     <value>true</value>
                 </property>
             </activation>
+            <dependencies>
+                <!--Stanford NLP dependencies should be excluded from build zip.-->
+                <dependency>
+                    <groupId>edu.stanford.nlp</groupId>
+                    <artifactId>stanford-corenlp</artifactId>
+                    <version>${stanford.corenlp.ver}</version>
+                    <scope>provided</scope>
+                    <!-- org.apache.tika contains javax.activation. -->
+                    <exclusions>
+                        <exclusion>
+                            <groupId>javax.activation</groupId>
+                            <artifactId>javax.activation-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>edu.stanford.nlp</groupId>
+                    <artifactId>stanford-corenlp</artifactId>
+                    <version>${stanford.corenlp.ver}</version>
+                    <classifier>models</classifier>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>

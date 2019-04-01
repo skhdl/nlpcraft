@@ -33,7 +33,7 @@ package org.nlpcraft.server.nlp.enrichers.stopword
 
 import org.nlpcraft.common._
 import org.nlpcraft.common.NCLifecycle
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
@@ -98,7 +98,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
 
     private final val STOP_BEFORE_STOP: Seq[Word] = Seq("DT", "PRP", "PRP$", "WDT", "WP", "WP$", "WRB")
 
-    private final val PERCENTS = NCNlpManager.stemSeq(Set(
+    private final val PERCENTS = Set(
         "%",
         "pct",
         "pc",
@@ -107,7 +107,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
         "interest",
         "rate",
         "percent"
-    ))
+    ).map(NCNlpCoreManager.stem)
 
     @volatile private var POSSESSIVE_WORDS: Set[String] = _
     @volatile private var FIRST_WORDS: Set[String] = _
@@ -340,7 +340,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
                     if (isCase)
                         (s, ORIG)
                     else {
-                        if (!hasPoses) (NCNlpManager.stem(s), STEM) else (NCNlpManager.stem(s), LEM)
+                        if (!hasPoses) (NCNlpCoreManager.stem(s), STEM) else (NCNlpCoreManager.stem(s), LEM)
                     }
 
                 mHash((isExc, form)).addCondition(word, poses)

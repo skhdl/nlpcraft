@@ -32,9 +32,9 @@
 package org.nlpcraft.server.nlp.enrichers.basenlp
 
 import org.nlpcraft.common._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.common.nlp.pos.NCPennTreebank
 import org.nlpcraft.common.nlp.{NCNlpSentence, NCNlpSentenceNote, NCNlpSentenceToken}
+import org.nlpcraft.server.nlp.core.NCNlpServerManager
 import org.nlpcraft.server.nlp.enrichers.NCNlpEnricher
 
 import scala.collection._
@@ -44,31 +44,32 @@ import scala.collection._
   */
 object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
     // http://www.vidarholen.net/contents/interjections/
-    private final val INTERJECTIONS = immutable.HashSet[String](
-        "aah", "aaah", "aaaahh", "aha", "a-ha", "ahem",
-        "ahh", "ahhh", "argh", "augh", "aww", "aw",
-        "awww", "aww", "aw", "ohh", "ahh", "aw",
-        "oh", "bah", "boo", "booh", "brr", "brrrr",
-        "duh", "eek", "eeeek", "eep", "eh", "huh",
-        "eh", "huh", "eyh", "eww", "ugh", "ewww",
-        "gah", "gee", "grr", "grrrr", "hmm", "hm",
-        "hmmmm", "humph", "harumph", "huh", "hurrah", "hooray",
-        "huzzah", "ich", "yuck", "yak", "meh", "eh",
-        "mhm", "mmhm", "uh-hu", "mm", "mmm", "mmh",
-        "muahaha", "mwahaha", "bwahaha", "nah", "nuh-uh", "nuh-hu",
-        "nuhuh", "oh", "ooh-la-la", "oh-lala", "ooh", "oooh",
-        "oomph", "umph", "oops", "ow", "oww", "ouch",
-        "oy", "oi", "oyh", "oy", "oyvay", "oy-vay",
-        "pew", "pee-yew", "pff", "pffh", "pssh", "pfft",
-        "phew", "psst", "sheesh", "jeez", "shh", "hush",
-        "shush", "shoo", "tsk-tsk", "tut-tut", "uh-hu", "uhuh",
-        "mhm", "uh-oh", "oh-oh", "uh-uh", "unh-unh", "uhh",
-        "uhm", "err", "wee", "whee", "weee", "whoa",
-        "wow", "yahoo", "yippie", "yay", "yeah", "yeeeeaah",
-        "yee-haw", "yeehaw", "yoo-hoo", "yoohoo", "yuh-uh", "yuh-hu",
-        "yuhuh", "yuck", "ich", "blech", "bleh", "zing",
-        "ba-dum-tss", "badum-tish"
-    )
+    private final val INTERJECTIONS =
+        Set(
+            "aah", "aaah", "aaaahh", "aha", "a-ha", "ahem",
+            "ahh", "ahhh", "argh", "augh", "aww", "aw",
+            "awww", "aww", "aw", "ohh", "ahh", "aw",
+            "oh", "bah", "boo", "booh", "brr", "brrrr",
+            "duh", "eek", "eeeek", "eep", "eh", "huh",
+            "eh", "huh", "eyh", "eww", "ugh", "ewww",
+            "gah", "gee", "grr", "grrrr", "hmm", "hm",
+            "hmmmm", "humph", "harumph", "huh", "hurrah", "hooray",
+            "huzzah", "ich", "yuck", "yak", "meh", "eh",
+            "mhm", "mmhm", "uh-hu", "mm", "mmm", "mmh",
+            "muahaha", "mwahaha", "bwahaha", "nah", "nuh-uh", "nuh-hu",
+            "nuhuh", "oh", "ooh-la-la", "oh-lala", "ooh", "oooh",
+            "oomph", "umph", "oops", "ow", "oww", "ouch",
+            "oy", "oi", "oyh", "oy", "oyvay", "oy-vay",
+            "pew", "pee-yew", "pff", "pffh", "pssh", "pfft",
+            "phew", "psst", "sheesh", "jeez", "shh", "hush",
+            "shush", "shoo", "tsk-tsk", "tut-tut", "uh-hu", "uhuh",
+            "mhm", "uh-oh", "oh-oh", "uh-uh", "unh-unh", "uhh",
+            "uhm", "err", "wee", "whee", "weee", "whoa",
+            "wow", "yahoo", "yippie", "yay", "yeah", "yeeeeaah",
+            "yee-haw", "yeehaw", "yoo-hoo", "yoohoo", "yuh-uh", "yuh-hu",
+            "yuhuh", "yuck", "ich", "blech", "bleh", "zing",
+            "ba-dum-tss", "badum-tish"
+        ).map(_.toLowerCase)
     
     // The acronyms stand for (Left|Right) (Round|Square|Curly) Bracket.
     // http://www.cis.upenn.edu/~treebank/tokenization.html
@@ -88,26 +89,18 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
         
         var idx = 0
         
-        for (word ← NCNlpManager.parse(ns.text)) {
+        for (word ← NCNlpServerManager.parse(ns.text)) {
             val value = word.word.toLowerCase
             val origTxt = word.word
             
             val tok = NCNlpSentenceToken(idx)
             
             // Override interjection (UH) analysis.
-            val (lemma, pos) =
-                word.lemma match {
-                    case Some(wordLemma) ⇒
-                        val lc = wordLemma.toLowerCase
+            // (INTERJECTIONS and lemma are should be in lowercase.)
+            val pos = if (INTERJECTIONS.contains(word.lemma)) "UH" else word.pos
 
-                        (lc, if (INTERJECTIONS.contains(lc)) "UH" else word.pos)
-                    case None ⇒ (origTxt.toLowerCase, word.pos)
-                }
-
-            val note = NCNlpSentenceNote(
-                Seq(idx),
-                "nlp:nlp",
-                "lemma" → processBracket(lemma),
+            var seq = mutable.ArrayBuffer(
+                "lemma" → processBracket(word.lemma),
                 "index" → idx,
                 "pos" → pos,
                 "origText" → processBracket(origTxt),
@@ -122,8 +115,14 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                 "bracketed" → false,
                 "direct" → true
             )
-            
-            tok.add(note)
+
+            if (word.ne.isDefined)
+                seq += "ne" → word.ne.get
+
+            if (word.nne.isDefined)
+                seq += "nne" → word.nne.get
+
+            tok.add(NCNlpSentenceNote(Seq(idx), "nlp:nlp", seq:_*))
             
             // Add new token to NLP sentence.
             ns += tok

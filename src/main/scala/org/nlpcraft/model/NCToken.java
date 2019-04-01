@@ -188,6 +188,20 @@ public interface NCToken extends Serializable {
      *         <td>{@link String}</td>
      *     </tr>
      *     <tr>
+     *         <td>NLP_NE</td>
+     *         <td>
+     *             Optional (nullable) named entity.
+     *         </td>
+     *         <td>{@link String}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>NLP_NNE</td>
+     *         <td>
+     *             Optional (nullable) normalized named entity. Currently provided only by 'stanford' NLP engine.
+     *         </td>
+     *         <td>{@link String}</td>
+     *     </tr>
+     *     <tr>
      *         <td>NLP_SPARSITY</td>
      *         <td>
      *              Numeric value of how sparse the token is. Sparsity zero means that all individual words in the token

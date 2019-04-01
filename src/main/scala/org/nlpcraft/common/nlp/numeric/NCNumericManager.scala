@@ -36,7 +36,7 @@ import java.util.Locale
 
 import org.nlpcraft.common.NCLifecycle
 import org.nlpcraft.common.nlp._
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 
 case class NCNumericUnit(name: String, unitType: String)
 case class NCNumeric(
@@ -87,7 +87,7 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
             unitsOrigs.get(after) match {
                 case Some(u) ⇒ mkNumeric(u)
                 case None ⇒
-                    unitsStem.get(NCNlpManager.stem(after)) match {
+                    unitsStem.get(NCNlpCoreManager.stem(after)) match {
                         case Some(u) ⇒ mkNumeric(u)
                         case None ⇒ None
                     }
@@ -116,7 +116,7 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
                         // To avoid difference in tokenization behaviour.
                         flatMap(p ⇒ Seq(s"$p .", s"$p."))
 
-            val stem: String = NCNlpManager.stem(name)
+            val stem: String = NCNlpCoreManager.stem(name)
         }
 
         val hs =
