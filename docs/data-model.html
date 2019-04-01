@@ -38,9 +38,13 @@ layout: documentation
     <section>
         <span class="section-title">Data Model Overview</span>
         <p>
+            99% of what you do when using NLPCraft is developing a semantic data model for your own data endpoints
+            like a database or a service.
+        </p>
+        <p>
             NLPCraft employs model-as-a-code approach where data model is simply an implementation of
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> Java interface that can be developed using any JVM programming
-            language like Java, Scala, Kotlin, or Groovy. Data model implementation defines:
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>  interface that can be developed using any JVM programming
+            language like Java, Scala, Kotlin, or Groovy. Generally, a data model implementation defines:
         </p>
         <ul>
             <li>
@@ -62,6 +66,28 @@ layout: documentation
     </section>
     <section>
         <span class="section-title">Data Model Lifecycle</span>
+        <p>
+            Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            interface. To create data model you can either:
+        </p>
+        <ul>
+            <li>
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface directly
+            </li>
+            <li>
+                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                builder class which is a recommended way under the most circumstances.
+            </li>
+        </ul>
+        <div class="bq info">
+            <b>JSON <span class="amp">&amp;</span> YAML</b>
+            <p>
+                When using
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                model builder you can abstract most of the static model definition into an external JSON or YAML file -
+                which is a recommended approach in most cases. 
+            </p>
+        </div>
         <p>
             To deploy a data model you need to provide an implementation of
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> - a simple
@@ -123,43 +149,62 @@ layout: documentation
             that will be automatically recognized as a token in the user input either by one of its synonyms or values or
             directly by its ID. These tokens in turn will be used by the data model in its matching logic.
         </p>
+        <div class="bq info">
+            <b>Named Entity Resolution <span class="amp">&amp;</span> Semantic Model</b>
+            <p>
+                An astute reader can notice the similarities between classic Named Entity Resolution (NER) and
+                model elements. Indeed, both try to identify semantic categories rather than generic structural or
+                linguistic categories.
+            </p>
+            <p>
+                However, there is a number of important distinctions:
+            </p>
+            <ul>
+                <li>
+                    Most of the modern NER implementations employ a statistical machine learning (ML) approach and
+                    therefore require substantial training corpora to create the ML models in the first place.  That
+                    limits such implementations only to a very generic, well-understood categories like TIME,
+                    DATE or PERSON for which well-defined corpora data exists.
+                </li>
+                <li>
+                    Due to probabilistic nature of ML approach classic NER is often unreliable in a short-sentence,
+                    command oriented interfaces.
+                </li>
+                <li>
+                    Because of previous limitations standard NER is not suitable for domain-specific knowledge
+                    areas where no large pre-existing data corpus exists.
+                </li>
+            </ul>
+            <p>
+                It's important to note that some NLP toolkits provide a variation of NER sometimes called a
+                Normalized Named Entity Resolution (NNER) that is based on rule-based logic or semantic
+                modeling. For example, DATE or CURRENCY named entities can be normalized by
+                <a target=_ href="https://stanfordnlp.github.io/CoreNLP/ner.html">Stanford CoreNLP</a>
+                toolkit (which is one of the base NLP engines that NLPCraft can be
+                <a href="/download.html#optional">configured</a> with).
+            </p>
+            <p>
+                Assuming a simplified  NER terminology, one could argue that Semantic Modeling allows you to build
+                your own <b>reliable named entity resolver</b> specific to your own domain area.
+            </p>
+        </div>
         <p>
             Data model element is defined by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>
-            interface:
-        </p>
-        <pre class="brush: java">
-            public interface NCElement {
-                interface NCValue {
-                    String getName();
-                    List&lt;String&gt; getSynonyms();
-                }
-
-                String getId();
-                String getGroup();
-                NCMetadata getMetadata();
-                String getDescription();
-                List&lt;NCValue&gt; getValues();
-                String getParentId();
-                List&lt;String&gt; getSynonyms();
-                List&lt;String&gt; getExcludedSynonyms();
-            }
-
-        </pre>
-        <p>
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> returns
+            interface.
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> defines
             its elements via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">getElements()</a> method. To create model element
             you can either:
         </p>
         <ul>
             <li>
-                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> interface directly, or
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> interface directly
             </li>
             <li>
                 Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCElementBuilder.html">NCElementBuilder</a>
-                builder class if element definition is constructed dynamically, or
+                builder class if element definition is constructed dynamically
             </li>
             <li>
-                Use JSON or YAML static model configuration (the preferred way in most cases).
+                Use JSON or YAML static model configuration (the preferred way in most cases)
             </li>
         </ul>
         <p>
@@ -171,8 +216,8 @@ layout: documentation
         </p>
         <p>
             NLPCraft provides effective support for a compact synonyms representation. Instead of listing all possible
-            multi-word synonyms one by one you can use macros, option groups, regular expressions, and PoS tags to
-            significantly shorten that list.
+            multi-word synonyms one by one you can use <b>macros</b>, <b>option groups</b>, <b>regular expressions</b>,
+            and <b>PoS tags</b> to significantly shorten that list.
         </p>
         <span class="section-sub-title">Synonyms</span>
         <p>

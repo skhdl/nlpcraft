@@ -88,10 +88,10 @@ layout: documentation
             a simpler and fully deterministic way.
         </p>
         <div class="bq info">
-            <b>Named Entity Resolution vs. Semantic Model</b>
+            <b>Named Entity Resolution <span class="amp">&amp;</span> Semantic Model</b>
             <p>
                 An astute reader can notice the similarities between classic Named Entity Resolution (NER) and
-                semantic modeling. Indeed, both try to identify semantic categories rather than generic structural or
+                model elements. Indeed, both try to identify semantic categories rather than generic structural or
                 linguistic categories.
             </p>
             <p>
@@ -105,20 +105,25 @@ layout: documentation
                     DATE or PERSON for which well-defined corpora data exists.
                 </li>
                 <li>
+                    Due to probabilistic nature of ML approach classic NER is often unreliable in a short-sentence,
+                    command oriented interfaces.
+                </li>
+                <li>
                     Because of previous limitations standard NER is not suitable for domain-specific knowledge
                     areas where no large pre-existing data corpus exists.
                 </li>
             </ul>
             <p>
-                It's important to note that some NLP toolkits provide a variation of NER sometimes called as a
-                Normalized Named Entity Resolution (NNER) that are based on rule-based logic or semantic
+                It's important to note that some NLP toolkits provide a variation of NER sometimes called a
+                Normalized Named Entity Resolution (NNER) that is based on rule-based logic or semantic
                 modeling. For example, DATE or CURRENCY named entities can be normalized by
                 <a target=_ href="https://stanfordnlp.github.io/CoreNLP/ner.html">Stanford CoreNLP</a>
-                toolkit (which is one of the base NLP engines that NLPCraft can be configured with).
+                toolkit (which is one of the base NLP engines that NLPCraft can be
+                <a href="/download.html#optional">configured</a> with).
             </p>
             <p>
-                Assuming a simplified  NER terminology, one could argue that Semantic Modeling allows you to efficiently
-                build your own named entity resolution specific to your own domain area.
+                Assuming a simplified  NER terminology, one could argue that Semantic Modeling allows you to build
+                your own <b>reliable named entity resolver</b> specific to your own domain area.
             </p>
         </div>
     </section>
