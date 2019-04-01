@@ -36,7 +36,7 @@ import org.nlpcraft.common.NCLifecycle
 import scala.collection.Seq
 
 /**
-  * Parser.
+  * NLP parser.
   */
 trait NCNlpParser extends NCLifecycle {
     /**

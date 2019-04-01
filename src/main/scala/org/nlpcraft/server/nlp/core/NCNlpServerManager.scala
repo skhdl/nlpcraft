@@ -37,13 +37,16 @@ import org.nlpcraft.server.NCConfigurable
 import scala.reflect.runtime.universe._
 
 /**
-  * OpenNLP manager.
+  * Server NLP manager.
   */
 object NCNlpServerManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
     private object Config extends NCConfigurable {
         val engine: String = getString("server.nlp.engine")
-
-        override def check(): Unit = require(engine == "stanford" || engine == "opennlp")
+    
+        override def check(): Unit = {
+            if (engine != "stanford" && engine != "opennlp")
+                abortError(s"Configuration property 'server.nlp.engine' must be either 'stanford' or 'opennlp'.")
+        }
     }
 
     Config.check()

@@ -85,7 +85,12 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
 
         super.start()
     }
-
+    
+    /**
+      * 
+      * @param sen
+      * @return
+      */
     override def parse(sen: String): Seq[NCNlpWord] = {
         ensureStarted()
 
