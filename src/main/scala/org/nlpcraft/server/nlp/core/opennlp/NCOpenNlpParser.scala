@@ -152,7 +152,7 @@ object NCOpenNlpParser extends NCLifecycle("Open NLP parser") with NCNlpParser {
                 word = tok.token,
                 normalWord = normalWord,
                 // "0" is flag that lemma cannot be obtained for some reasons.
-                lemma = if (lemma == "O") None else Some(lemma.toLowerCase),
+                lemma = if (lemma == "O") normalWord else lemma.toLowerCase,
                 stem = NCNlpCoreManager.stemWord(normalWord),
                 pos = pos,
                 start = tok.from,

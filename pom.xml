@@ -338,7 +338,7 @@
             <version>${junit.ver}</version>
         </dependency>
 
-        <!--Should be excluded from build zip.-->
+        <!--Stanford NLP dependencies should be excluded from build zip.-->
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
@@ -552,12 +552,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>stanford/corenlp.properties</exclude>
-                        <exclude>stanford</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -623,7 +617,7 @@
 
     <profiles>
         <profile>
-            <id>pack</id>
+            <id>release</id>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -631,7 +625,7 @@
                 </property>
             </activation>
             <dependencies>
-                <!--Should be excluded from build zip.-->
+                <!--Stanford NLP dependencies should be excluded from build zip.-->
                 <dependency>
                     <groupId>edu.stanford.nlp</groupId>
                     <artifactId>stanford-corenlp</artifactId>
@@ -652,7 +646,6 @@
                     <classifier>models</classifier>
                     <scope>provided</scope>
                 </dependency>
-                <!---->
             </dependencies>
             <build>
                 <plugins>

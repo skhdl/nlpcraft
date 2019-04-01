@@ -96,15 +96,11 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
             val tok = NCNlpSentenceToken(idx)
             
             // Override interjection (UH) analysis.
-            val (lemma, pos) =
-                word.lemma match {
-                    // Lemma already should be in lowercase.
-                    case Some(wordLemma) ⇒ (wordLemma, if (INTERJECTIONS.contains(wordLemma)) "UH" else word.pos)
-                    case None ⇒ (origTxt.toLowerCase, word.pos)
-                }
+            // (INTERJECTIONS and lemma are should be in lowercase.)
+            val pos = if (INTERJECTIONS.contains(word.lemma)) "UH" else word.pos
 
             var seq = mutable.ArrayBuffer(
-                "lemma" → processBracket(lemma),
+                "lemma" → processBracket(word.lemma),
                 "index" → idx,
                 "pos" → pos,
                 "origText" → processBracket(origTxt),

@@ -66,6 +66,7 @@ object NCNlpManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
         parser =
             Config.engine match {
                 case "stanford" ⇒ mkInstance("org.nlpcraft.server.nlp.core.stanford.NCStanfordParser")
+                // NCOpenNlpParser added via reflection just for symmetry.
                 case "opennlp" ⇒ mkInstance("org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser")
 
                 case _ ⇒ throw new AssertionError(s"Unexpected engine: ${Config.engine}")

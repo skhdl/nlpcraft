@@ -36,7 +36,7 @@ package org.nlpcraft.server.nlp.core
   *
   * @param word Original word.
   * @param normalWord Normalized word (lower case representation)
-  * @param lemma Lemma (lower case representation). Optional.
+  * @param lemma Lemma (lower case representation).
   * @param stem Stem (lower case representation).
   * @param pos POS.
   * @param start From index.
@@ -48,7 +48,7 @@ package org.nlpcraft.server.nlp.core
 case class NCNlpWord(
     word: String,
     normalWord: String,
-    lemma: Option[String],
+    lemma: String,
     stem: String,
     pos: String,
     start: Int,

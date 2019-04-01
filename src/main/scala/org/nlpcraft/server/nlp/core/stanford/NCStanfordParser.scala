@@ -32,6 +32,7 @@
 package org.nlpcraft.server.nlp.core.stanford
 
 import java.util
+import java.util.Properties
 
 import edu.stanford.nlp.ling.CoreAnnotations.{NormalizedNamedEntityTagAnnotation, SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.ling.CoreLabel
@@ -47,9 +48,6 @@ import scala.collection.JavaConverters._
   * Stanford NLP parser implementation.
   */
 object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpParser {
-    // Properties file for CoreNLP.
-    private final val CORENLP_PROPS = "stanford/corenlp.properties"
-
     private var stanford: StanfordCoreNLP = _
 
     /**
@@ -78,7 +76,12 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
       * Starts this component.
       */
     override def start(): NCLifecycle = {
-        stanford = new StanfordCoreNLP(CORENLP_PROPS)
+        val p = new Properties()
+
+        p.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
+
+        // Created with hardcoded properties just for minimize configuration issues.
+        stanford = new StanfordCoreNLP(p)
 
         super.start()
     }
@@ -93,7 +96,7 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
             NCNlpWord(
                 word = t.originalText(),
                 normalWord = normalWord,
-                lemma = Some(t.lemma().toLowerCase),
+                lemma = t.lemma().toLowerCase,
                 stem = NCNlpCoreManager.stemWord(normalWord).toString,
                 pos = t.tag(),
                 start = t.beginPosition,
