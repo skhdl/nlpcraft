@@ -299,6 +299,7 @@ $bq-success-border-color: $brand-success;
     border-collapse: collapse;
     border-radius: 2px;
     overflow: auto;
+    margin-bottom: 1rem;
 
     & > thead {
         background: linear-gradient(141deg, #6980fa 0%, #2cb5e8 51%, #4298fc 75%) fixed;
