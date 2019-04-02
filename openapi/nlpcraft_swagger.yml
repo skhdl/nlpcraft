@@ -73,8 +73,8 @@ paths:
     post:
       tags:
         - Asking
-      summary: Gets status of submitted requests. Request statuses returned sorted by their registration time, starting from newest.
-      description: Gets the status of the previously submitted requests.
+      summary: Gets status of submitted requests.
+      description: Gets the status of the previously submitted requests. Request statuses returned sorted by their registration time, starting from newest.
       operationId: check
       parameters:
         - in: body
