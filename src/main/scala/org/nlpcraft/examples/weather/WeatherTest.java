@@ -49,8 +49,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Weather2 model test.
- *
+ * Weather model test.
  */
 public class WeatherTest {
     private static final Gson GSON = new Gson();
@@ -59,12 +58,11 @@ public class WeatherTest {
     private NCTestClient client;
     
     /**
+     * Checks given intent.
      *
-     * @param txt
-     * @param intentId
-     * @param shouldBeSame
-     * @throws NCException
-     * @throws IOException
+     * @param txt Sentence.
+     * @param intentId Intent ID.
+     * @param shouldBeSame Equal vs. non-equal flag.
      */
     private void checkIntent(String txt, String intentId, boolean shouldBeSame) throws NCException, IOException {
         NCTestResult res = client.ask(txt);
