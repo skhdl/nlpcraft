@@ -50,7 +50,7 @@ public class EchoTest {
     
     @BeforeEach
     void setUp() throws NCException, IOException {
-        client = new NCTestClientBuilder().newBuilder().setReplaceLocalHost(false).build();
+        client = new NCTestClientBuilder().newBuilder().build();
     
         client.openForModelId("nlpcraft.echo.ex"); // See EchoProvider#MODEL_ID
     }

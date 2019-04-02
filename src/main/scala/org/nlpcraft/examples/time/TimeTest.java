@@ -50,7 +50,7 @@ public class TimeTest {
     
     @BeforeEach
     void setUp() throws NCException, IOException {
-        client = new NCTestClientBuilder().newBuilder().setReplaceLocalHost(false).build();
+        client = new NCTestClientBuilder().newBuilder().build();
         
         client.openForModelId("nlpcraft.time.ex"); // See time_model.json
     }
