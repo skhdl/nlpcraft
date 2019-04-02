@@ -39,7 +39,7 @@
     <groupId>org.nlpcraft</groupId>
     <version>0.2.0</version>
     <url>https://www.nlpcraft.org</url>
-    <description>An API to convert natural language into actions.</description>
+    <description>An open source API to convert natural language into actions.</description>
 
     <developers>
         <developer>

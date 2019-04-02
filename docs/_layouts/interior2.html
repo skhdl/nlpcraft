@@ -1,5 +1,5 @@
 ---
-layout: interior
+layout: default
 ---
 
 <!--
@@ -33,27 +33,14 @@ layout: interior
           /_/
 -->
 
-<h1 class="page-title">
-    <span><i class="fas fa-fw fa-book"></i> {{ page.active_crumb }}</span>
-</h1>
+<div class="container-fluid">
+    <div class="navbar-aligned">
+        <ol class="breadcrumb">
+            <li class="mr-1"><a href="index.html">Home</a></li>
+            <li class="mr-1"><a href="{{ page.home2_href }}">{{ page.home2_crumb }}</a></li>
+            <li class="mr-1 active">{{ page.active_crumb }}</li>
+        </ol>
 
-<div class="three-cols-container">
-    <div class="col-md-2 first-column">
-        <ul class="side-nav">
-            <li class="side-nav-title">Introduction</li>
-            <li><a href="/docs.html">Overview</a></li>
-            <li><a href="/installation.html">Installation</a></li>
-            <li><a href="/getting-started.html">Getting Started</a></li>
-            <li class="side-nav-title">Developer Guide</li>
-            <li><a href="/basic-concepts.html">Basic Concepts</a></li>
-            <li><a href="/setting-up.html">Setting Up</a></li>
-            <li><a href="/data-model.html">Data Model API</a></li>
-            <li><a href="/testing-data-model.html">Testing</a></li>
-            <li><a href="/deploying-data-model.html">Deploying</a></li>
-            <li><a href="/using-rest.html">Using REST API</a></li>
-            <li><a href="/rest-clients.html">REST Clients</a></li>
-        </ul>
+        {{ content }}
     </div>
-
-    {{ content }}
 </div>

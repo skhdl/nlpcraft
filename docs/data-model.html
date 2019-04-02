@@ -35,10 +35,406 @@ layout: documentation
 -->
 
 <div class="col-md-8 second-column">
+    <section id="overview">
+        <span class="section-title">Data Model Overview</span>
+        <p>
+            99% of what you do when using NLPCraft is developing a semantic data model for your own data endpoints
+            like a database or a service.
+        </p>
+        <p>
+            NLPCraft employs model-as-a-code approach where data model is simply an implementation of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>  interface that can be developed using any JVM programming
+            language like Java, Scala, Kotlin, or Groovy. Generally, a data model implementation defines:
+        </p>
+        <ul>
+            <li>
+                How to interpret user input
+            </li>
+            <li>
+                How to query or control a particular data source
+            </li>
+            <li>
+                How to format the result back to the user
+            </li>
+        </ul>
+        <p>
+            Note that model-as-a-code approach natively supports any software life
+            cycle tools and frameworks in Java eco-system like various build tools, CI/SCM tools, IDEs, etc.
+            In other words, you don't have to use awkward web-based tools to manage some aspects of your
+            models - your entire model is part of your project source code.
+        </p>
+    </section>
+    <section id="lifecycle">
+        <span class="section-title">Data Model Lifecycle</span>
+        <p>
+            Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            interface. To create data model you can either:
+        </p>
+        <ul>
+            <li>
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface directly
+            </li>
+            <li>
+                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                builder class which is a recommended way under the most circumstances.
+            </li>
+        </ul>
+        <div class="bq info">
+            <b>JSON <span class="amp">&amp;</span> YAML</b>
+            <p>
+                When using
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                model builder you can abstract most of the static model definition into an external JSON or YAML file -
+                which is a recommended approach in most cases. 
+            </p>
+        </div>
+        <p>
+            To deploy a data model you need to provide an implementation of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> - a simple
+            interface that acts as a factory or a builder for one or more
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> instances. This separation is
+            important as it enables data probes to query data model provider about which models it supports
+            without necessarily instantiating an actual data model which could be expensive, not idempotent
+            and time-consuming operation.
+        </p>
+        <div class="bq info">
+            <b>NCModelProviderAdapter</b>
+            <p>
+                Note that instead of implementing
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> interface
+                directly in most cases you can use a
+                convenient
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a> adapter class.
+            </p>
+        </div>
+        <p>
+            As described before the data models get <a href="/deploying-data-model.html">deployed</a> to and hosted by the data probes - a lightweight
+            container whose job is to host data models and transfer requests between REST server and the data
+            models. When a data probe starts it reads its configuration file <code>probe.conf</code> to see which models to
+            deploy:
+        </p>
+        <ul>
+            <li>
+                If property <code>modelProviders</code> is defined the data probe will try to deploy all models
+                this property defines by their fully qualified class names.
+            </li>
+            <li>
+                If property <code>jarsFolder</code> is defined the data probe will recursively scan for all JAR files in this
+                folder and will try to find all implementations of
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> interface
+                and deploy their data models.
+            </li>
+        </ul>
+        <p>
+            Note that once deployed the data model is immutable. If you need to change the data model
+            configuration or implementation, as in the development and testing phases,  you need to restart the
+            probe to redeploy this data model.
+        </p>
+        <span class="section-sub-title">Lifecycle Events</span>
+        <p>
+            There are two data model lifecycle callbacks on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface
+            that you can optionally override:
+        </p>
+        <ul>
+            <li><code>initialize(NCProbeContext)</code> - called to initialize the model when it gets deployed.</li>
+            <li><code>discard()</code> - called to discard the data model when data probe is shutting down.</li>
+        </ul>
+    </section>
+    <section id="elements">
+        <span class="section-title">Data Model Elements</span>
+        <p>
+            One of the most important parts of developing a data model is defining its elements. A data model
+            element is the main building block of the semantic data model. A semantic element defines an entity
+            that will be automatically recognized as a token in the user input either by one of its synonyms or values or
+            directly by its ID. These tokens in turn will be used by the data model in its matching logic.
+        </p>
+        <div class="bq info">
+            <b>Named Entity Resolution <span class="amp">&amp;</span> Semantic Model</b>
+            <p>
+                An astute reader can notice the similarities between classic Named Entity Resolution (NER) and
+                model elements. Indeed, both try to identify semantic categories rather than generic structural or
+                linguistic categories.
+            </p>
+            <p>
+                However, there is a number of important distinctions:
+            </p>
+            <ul>
+                <li>
+                    Most of the modern NER implementations employ a statistical machine learning (ML) approach and
+                    therefore require substantial training corpora to create the ML models in the first place.  That
+                    limits such implementations only to a very generic, well-understood categories like TIME,
+                    DATE or PERSON for which well-defined corpora data exists.
+                </li>
+                <li>
+                    Due to probabilistic nature of ML approach classic NER is often unreliable in a short-sentence,
+                    command oriented interfaces.
+                </li>
+                <li>
+                    Because of previous limitations standard NER is not suitable for domain-specific knowledge
+                    areas where no large pre-existing data corpus exists.
+                </li>
+            </ul>
+            <p>
+                It's important to note that some NLP toolkits provide a variation of NER sometimes called a
+                Normalized Named Entity Resolution (NNER) that is based on rule-based logic or semantic
+                modeling. For example, DATE or CURRENCY named entities can be normalized by
+                <a target=_ href="https://stanfordnlp.github.io/CoreNLP/ner.html">Stanford CoreNLP</a>
+                toolkit (which is one of the base NLP engines that NLPCraft can be
+                <a href="/download.html#optional">configured</a> with).
+            </p>
+            <p>
+                Assuming a simplified  NER terminology, one could argue that Semantic Modeling allows you to build
+                your own <b>reliable named entity resolver</b> specific to your own domain area.
+            </p>
+        </div>
+        <p>
+            Data model element is defined by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>
+            interface.
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> defines
+            its elements via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">getElements()</a> method. To create model element
+            you can either:
+        </p>
+        <ul>
+            <li>
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> interface directly
+            </li>
+            <li>
+                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCElementBuilder.html">NCElementBuilder</a>
+                builder class if element definition is constructed dynamically
+            </li>
+            <li>
+                Use JSON or YAML static model configuration (the preferred way in most cases)
+            </li>
+        </ul>
+        <p>
+            When defining the elements the synonyms play the most critical role. It is the synonyms that define
+            how a particular element will be detected in the user input. While adding synonyms sounds rather
+            trivial - in real models, this may become a daunting and time-consuming task. It is not uncommon
+            for a particular model element to have thousands and even tens of thousands of possible synonyms
+            due to words, grammar, and linguistic permutations.
+        </p>
+        <p>
+            NLPCraft provides effective support for a compact synonyms representation. Instead of listing all possible
+            multi-word synonyms one by one you can use <b>macros</b>, <b>option groups</b>, <b>regular expressions</b>,
+            and <b>PoS tags</b> to significantly shorten that list.
+        </p>
+        <span class="section-sub-title">Synonyms</span>
+        <p>
+            Synonyms are the key building blocks of the data model element and used in the following
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> methods:
+        </p>
+        <ul>
+            <li><code>getSynonyms()</code> - gets synonyms to match on.</li>
+            <li><code>getExcludedSynonyms()</code> - gets synonyms to exclude.</li>
+            <li><code>getValues()</code> - get values to match on.</li>
+        </ul>
+        <p>
+            Each data model element has one or more synonyms. Note that element ID is its implicit synonym so that
+            even if no additional synonyms are defined at least one synonym always exists. Each individual synonym
+            is a whitespace separated combination of:
+        </p>
+        <ul>
+           <li>simple word,</li>
+           <li>regular expression, or</li>
+           <li>PoS tag</li>
+        </ul>
+        <p>
+            Note that synonym matching for simple words is case insensitive and automatically
+            performed on <b>normalized and stemmatized forms</b> of such word and therefore the model
+            developer doesn't have to account for this in the synonyms themselves.
+        </p>
+        <span class="section-sub-title">Macros</span>
+        <p>
+            Listing all possible multi-word synonyms for a given element can be a time-consuming task. Macros
+            together with option groups allow for significant simplification of this process.
+            Macros let you give a name to an often used set of words or option groups and reuse it without
+            repeating those words or option groups again and again. A model provides a list of macros via
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getMacros--">getMacros()</a> method on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface. Each macro
+            has a name in a form of <code>&lt;X&gt;</code> where <code>X</code>
+            is just any string, and a string value. Note that macros can be nested, i.e. macro value can include
+            references to other macros. When macro name <code>X</code> is encountered in the synonym it gets recursively
+            replaced with its value.
+        </p>
+        <p>
+            Here's a code snippet of macro definitions using JSON definition:
+        </p>
+        <pre class="brush: js">
+            "macros": [
+                {
+                    "name": "&lt;A&gt;",
+                    "macro": "aaa"
+                },
+                {
+                    "name": "&lt;B&gt;",
+                    "macro": "&lt;A&gt; bbb"
+                },
+                {
+                    "name": "&lt;C&gt;",
+                    "macro": "&lt;A&gt; bbb {z|w}"
+                }
+             ]
+        </pre>
+        <span class="section-sub-title">Option Groups</span>
+        <p>
+           Option groups are a simplified form of regular expressions that operates on a single word base. The
+           following examples demonstrate how to use option groups.
+        </p>
+        <p>
+            Consider the following macros defined below (note that macros <code>&lt;B&gt;</code> and <code>&lt;C&gt;</code>
+            are nested):
+        </p>
+        <table class="gradient-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>&lt;A&gt;</code></td>
+                    <td><code>aaa</code></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;B&gt;</code></td>
+                    <td><code>&lt;A&gt; bbb</code></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;C&gt;</code></td>
+                    <td><code>&lt;A&gt; bbb {z|w}</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            Then the following option group expansions will occur in the following examples:
+        </p>
+        <table class="gradient-table">
+            <thead>
+               <tr>
+                   <th>Synonym</th>
+                   <th>Expanded Synonyms</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                   <td><code>&lt;A&gt; {b|*} c</code></td>
+                   <td>
+                       <code>"aaa b c"</code><br>
+                       <code>"aaa c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>&lt;B&gt; {b|*} c</code></td>
+                   <td>
+                       <code>"aaa bbb b c"</code><br>
+                        <code>"aaa bbb c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>{b|```NN```} c</code></td>
+                   <td>
+                       <code>"b c"</code><br>
+                       <code>"```NN``` c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>{b|\{\*\}}</code></td>
+                   <td>
+                       <code>"b"</code><br>
+                       <code>"b {*}"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>a {b|*}. c</code></td>
+                   <td>
+                       <code>"a b. c"</code><br>
+                       <code>"a . c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>a .{b,  |*}. c</code></td>
+                   <td>
+                       <code>"a .b, . c"</code><br>
+                       <code>"a .. c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>
+                       {% raw %}a {{b|c}|*}.{% endraw %}</code></td>
+                   <td>
+                       <code>"a ."</code><br>
+                       <code>"a b."</code><br>
+                       <code>"a c."</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>a {% raw %}{{{&lt;C&gt;}}|{*}}{% endraw %} c</code></td>
+                   <td>
+                       <code>"a aaa bbb z c"</code><br>
+                       <code>"a aaa bbb w c"</code><br>
+                       <code>"a c"</code>
+                   </td>
+               </tr>
+               <tr>
+                   <td><code>{% raw %}{{{a}}} {b||*|{{*}}||*}{% endraw %}</code></td>
+                   <td>
+                       <code>"a b"</code><br>
+                       <code>"a"</code>
+                   </td>
+               </tr>
+            </tbody>
+        </table>
+        <p>
+           Specifically:
+        </p>
+        <ul>
+            <li><code>{A|B}</code>  denotes either <code>A</code> or <code>B</code>.</li>
+            <li><code>{A|B|*}</code>  denotes either <code>A</code> or <code>B</code> or nothing.</li>
+            <li>Excessive curly brackets are ignored, when safe to do so.</li>
+            <li>Macros cannot be recursive but can be nested.</li>
+            <li>Option groups can be nested.</li>
+            <li>
+                <code>'\'</code> (backslash) can be used to escape <code>'{'</code>, <code>'}'</code>, <code>'|'</code> and
+                <code>'*'</code> special symbols used by the option groups.
+            </li>
+            <li>Excessive whitespaces are trimmed when expanding option groups.</li>
+        </ul>
+        <span class="section-sub-title">Regular Expressions</span>
+        <p>
+            Any individual synonym word that starts and ends with <code>///</code> (three forward slashes) is
+            considered to be Java regular expression as defined in <code>java.util.regex.Pattern</code>. Note that
+            regular expression can only span a single word, i.e. only individual words from the user input will be
+            matched against given regular expression and no whitespaces are allowed within regular expression. Note
+            also that option group special symbols <code>{</code>, <code>}</code>,
+            <code>|</code> and <code>*</code> have to be escaped in the regular expression using <code>\</code>
+            (backslash).
+        </p>
+        <p>
+            For example, the following synonym <code>{foo|///[bar].+///}}</code> will match word <code>foo</code>
+            or any other strings that start with <code>bar</code> as long as this string doesn't contain whitespaces.
+        </p>
+        <span class="section-sub-title">Regular Expressions</span>
+        <p>
+            Any individual synonym word that that starts and ends with <code>```</code> (three back ticks) in a
+            form <code>```XXX```</code> is
+            considered to be a PoS (Part-of-Speech) tag that will be matched against PoS tag of the individual word in the
+            user input, where <code>XXX</code> is one of the
+            <a target=_ href="https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">Penn Treebank PoS</a> tags.
+        </p>
+        <p>
+            For example, the following synonym <code>{foo|{```NN```|```NNS```|```NNP```|```NNPS```}}</code> will
+            match word <code>foo</code> or any form of a noun.
+        </p>
+    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
         <li class="side-nav-title">On This Page</li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#lifecycle">Lifecycle</a></li>
+        <li><a href="#elements">Elements</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a

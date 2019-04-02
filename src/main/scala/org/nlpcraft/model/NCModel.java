@@ -55,6 +55,11 @@ import java.util.Set;
  *     <li>{@link #getDescriptor()} - model identification.</li>
  *     <li>{@link #query(NCQueryContext)} - the main method that user implements to provide result.</li>
  * </ul>
+ * There are two lifecycle callbacks that you can optionally override:
+ * <ul>
+ *     <li>{@link #initialize(NCProbeContext)} - called to initialize the model.</li>
+ *     <li>{@link #discard()} - called to discard the model.</li>
+ * </ul>
  * All other methods have reasonable defaults. In most cases, however, method {@link #getElements()}
  * should provide at least one user-defined element.
  * <br><br>
@@ -75,7 +80,9 @@ import java.util.Set;
  * )
  * .build()
  * </pre>
- * For external JSON definition here's the JSON template. Note that only properties marked with
+ * Most of the model static configuration can declared via external JSON or YAML files (see {@link NCModelBuilder}
+ * methods for loading JSON or YAML models). For external JSON definition here's the JSON template. Note that only
+ * properties marked with
  * <code>--==MANDATORY==--</code> comment are mandatory and JSON supports C-style comments. All JSON properties
  * correspond to their counterparts in this interface:
  * <pre class="brush: js">

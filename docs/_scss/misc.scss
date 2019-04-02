@@ -299,6 +299,7 @@ $bq-success-border-color: $brand-success;
     border-collapse: collapse;
     border-radius: 2px;
     overflow: auto;
+    margin-bottom: 1rem;
 
     & > thead {
         background: linear-gradient(141deg, #6980fa 0%, #2cb5e8 51%, #4298fc 75%) fixed;
@@ -341,6 +342,12 @@ $bq-success-border-color: $brand-success;
             border-left: 1px solid #eee;
         }
     }
+}
+
+pre.console {
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    padding: 25px 30px 0 30px;
 }
 
 

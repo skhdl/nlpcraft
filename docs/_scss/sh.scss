@@ -31,7 +31,7 @@
 
 .syntaxhighlighter {
     padding: 15px 0;
-    font-size: 100% !important;
+    font-size: 95% !important;
     border-radius: 2px !important;
     overflow-y: hidden !important;
     overflow-x: auto !important;
@@ -39,6 +39,14 @@
     .toolbar {
         display: none;
     }
+}
+
+.syntaxhighlighter table td.gutter .line {
+    text-align: right !important;
+    padding: 1px 0.5em 1px 1em !important;
+}
+.syntaxhighlighter table td.code .line {
+    padding: 1px 1em !important;
 }
 
 .syntaxhighlighter a,

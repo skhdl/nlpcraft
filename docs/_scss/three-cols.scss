@@ -114,6 +114,23 @@
             }
         }
 
+        figure.alt {
+            margin: 15px 0;
+
+            img {
+                display: block;
+                border-radius: 4px;
+                padding: 0;
+                border: none;
+            }
+
+            figcaption {
+                font-size: 80%;
+                text-align: left;
+                margin-top: 5px;
+            }
+        }
+
         dl {
             margin-top: 10px;
             margin-left: 20px;

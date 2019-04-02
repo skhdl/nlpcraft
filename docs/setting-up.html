@@ -38,11 +38,468 @@ layout: documentation
     <section id="setup">
         <span class="section-title">Project Setup</span>
         <p>
+            Let's setup a project for our first example. To simplify this task we'll make certain assumptions:
+        </p>
+        <ul>
+            <li>We'll use Mac OS/Linux environment</li>
+            <li>We'll use <a target=_new href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Java</a> to implement our model</li>
+            <li>We'll use <a target=_ href="https://maven.apache.org/install.html">Maven</a> to create and build our project</li>
+            <li>We'll use <a target=_ href="https://www.jetbrains.com/idea/">JetBrains IDEA</a> as our Java IDE</li>
+        </ul>
+        <div class="bq info">
+            Note that following instructions will work for most OS, JVM languages or
+            IDE/text editors with minimal, if any, modifications.
+        </div>
+    </section>
+    <section id="new_project">
+        <span class="section-sub-title">Create New Project</span>
+        <p>
+            You can create new Maven-based project in many different ways - we'll use maven archetype generation
+            for that. In your home folder run the following command:
+        </p>
+        <pre class="brush: text">
+            mvn archetype:generate -DgroupId=examples -DartifactId=my-app -DarchetypeVersion=1.4 -DinteractiveMode=false
+        </pre>
+        <p>
+            This will create <code>my-app</code> folder with the following default maven project structure:
+        </p>
+        <pre class="console">
+├── <b>pom.xml</b>
+└── src
+    ├── main
+    │   └── java
+    │       └── examples
+    │           └── App.java
+    └── test
+        └── java
+            └── examples
+                └── AppTest.java
+        </pre>
+        <p>
+            Create new IDEA project from this source folder (make sure to pick JDK 8 or later JDK and language support).
+            Let's also delete auto-generated files <code>App.java</code> and <code>AppTest.java</code> from our
+            project as we won't be using them.
+        </p>
+    </section>
+    <section id="add_nlpcraft">
+        <span class="section-sub-title">Add NLPCraft</span>
+        <p>
+            We also need to add NLPCraft dependency to our new project. Open <code>pom.xml</code> file and replace
+            <code>dependencies</code> section with the following code:
+        </p>
+        <pre class="brush: xml, highlight: [3, 4, 5]">
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;org.nlpcraft&lt;/groupId&gt;
+                    &lt;artifactId&gt;nlpcraft&lt;/artifactId&gt;
+                    &lt;version&gt;{{site.latest_version}}&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+        </pre>
+        <p>
+            Also make sure that you have correct JDK version (1.8 or above) for the maven compiler plugin:
+        </p>
+        <pre class="brush: xml, highlight: [3, 4]">
+            &lt;properties&gt;
+                &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+                &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+                &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+            &lt;/properties&gt;
+        </pre>
+        <p>
+            IDEA should automatically reload the project with newly updated <code>pom.xml</code> file and
+            we should be ready now to develop our new first data model.
         </p>
     </section>
     <section id="data_model">
         <span class="section-title">First Data Model</span>
         <p>
+            For our first data model we'll develop an alarm clock with a natural language interface. You will be able
+            to say something like <code>"Buzz me in 10 mins"</code> or <code>"Set up my morning wake up
+            call in 7 hours and 30 minutes"</code>
+            and the system will set Java timer that would buzz the alarm by printing <code>"BEEP BEEP BEEP"</code> into the console.
+            Note that this is
+            similar to <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example
+            available in NLPCraft - but we'll build it from scratch here.
+        </p>
+        <div class="bq info">
+            <p>
+                We'll explain all technical details in later chapters while this section concentrates
+                on high level project and code organization.
+            </p>
+        </div>
+        <p>
+            In NLPCraft a data model is simply an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a>
+            interface. You can implement this interface in many ways but in most cases we recommend to use
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a>
+            adapter as well as <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a> factory
+            with external JSON/YAML definition for the static
+            part of the model. This is a canonical pattern to build models in NLPCraft and it allows you cleanly
+            separate the logic of the model from its declarative configuration.
+        </p>
+        <p>
+            Let's add new <code>alarm_model.json</code> file containing model's static configuration in JSON
+            into <code>src/main/java/examples</code> folder with the following content:
+        </p>
+        <pre class="brush: js, highlight: [2, 18, 19, 20, 21, 22, 23]">
+            {
+                "id": "nlpcraft.alarm.ex",
+                "name": "Alarm Example Model",
+                "version": "1.0",
+                "description": "Alarm example model.",
+                "vendorName": "NLPCraft",
+                "vendorUrl": "https://www.nlpcraft.org",
+                "vendorContact": "Support",
+                "vendorEmail": "info@nlpcraft.org",
+                "docsUrl": "https://www.nlpcraft.org",
+                "examples": [
+                    "Ping me in 3 minutes",
+                    "Buzz me in an hour and 15mins",
+                    "Set my alarm for 30s"
+                ],
+                "elements": [
+                    {
+                        "id": "x:alarm",
+                        "description": "Alarm token indicator.",
+                        "synonyms": [
+                            "{ping|buzz|wake|call|hit} {me|up|me up|*}",
+                            "{set|*} {my|*} {wake|wake up|*} {morning|evening|*} {alarm|timer|alarm clock|buzzer|call} {up|*}"
+                        ]
+                    }
+                ]
+            }
+        </pre>
+        <p>
+            Notice the model ID <code>nlpcraft.alarm.ex</code> as well as one semantic model element <code>x:alarm</code>
+            both of which we'll use later.
+        </p>
+        <p>
+            Semantic model element <code>x:alarm</code> defines a textual indicator, a token,
+            that the user is asking specifically about setting up the alarm clock. It consists of the ID, description and a set of
+            synonyms written with a special macro expression language. In other words, we are defining the token
+            that we'll be matching in the user input using intent-based matching.
+        </p>
+        <p>
+            Next let's go ahead and add model's logic. Create new <code>AlarmModel.java</code> file along side
+            <code>alarm_model.json</code> configuration file and copy the following model code into it:
+        </p>
+        <pre class="brush: java, highlight: [15, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 50]">
+package examples;
+
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.intent.NCIntentSolver.*;
+import org.nlpcraft.model.utils.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
+
+import static java.time.temporal.ChronoUnit.*;
+import static org.nlpcraft.model.utils.NCTokenUtils.*;
+
+public class AlarmModel extends NCModelProviderAdapter {
+    private static final DateTimeFormatter FMT =
+        DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'")
+            .withZone(ZoneId.systemDefault());
+
+    private final Timer timer = new Timer();
+
+    public AlarmModel() {
+        NCIntentSolver solver = new NCIntentSolver();
+
+        solver.addIntent(
+            new NON_CONV_INTENT(
+                "intent",
+                new TERM("id == x:alarm", 1, 1),
+                new TERM(
+                    new AND(
+                        "id == nlp:num",
+                        "~NUM_UNITTYPE == datetime",
+                        "~NUM_ISEQUALCONDITION == true"
+                    ),
+                    0,
+                    7
+                )
+            ),
+            this::onMatch
+        );
+
+        setup(NCModelBuilder.newJsonModel(
+            AlarmModel.class.getClassLoader()
+                .getResourceAsStream("examples/alarm_model.json"))
+            .setQueryFunction(solver::solve)
+            .build()
+        );
+    }
+
+    private NCQueryResult onMatch(NCIntentSolverContext ctx) {
+        if (!ctx.isExactMatch())
+            throw new NCRejection("Not exact match.");
+
+        List&lt;NCToken&gt; nums = ctx.getIntentTokens().get(1);
+
+        long unitsCnt = nums.stream().map(NCTokenUtils::getNumUnit)
+            .distinct().count();
+
+        if (unitsCnt != nums.size())
+            throw new NCRejection("Ambiguous time units.");
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dt = now;
+
+        for (NCToken num : nums) {
+            String unit = getNumUnit(num);
+
+            // Skips possible fractional to simplify.
+            long v = (long)getNumFrom(num);
+
+            if (v <= 0)
+                throw new NCRejection("Value must be positive: " + unit);
+
+            switch (unit) {
+                case "second": { dt = dt.plusSeconds(v); break; }
+                case "minute": { dt = dt.plusMinutes(v); break; }
+                case "hour": { dt = dt.plusHours(v); break; }
+                case "day": { dt = dt.plusDays(v); break; }
+                case "week": { dt = dt.plusWeeks(v); break; }
+                case "month": { dt = dt.plusMonths(v); break; }
+                case "year": { dt = dt.plusYears(v); break; }
+
+                default:
+                    throw new NCRejection("Unsupported time unit: " + unit);
+            }
+        }
+
+        long ms = now.until(dt, MILLIS);
+
+        assert ms >= 0;
+
+        timer.schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println(
+                        "BEEP BEEP BEEP for: " +
+                            ctx.getQueryContext().getSentence().getNormalizedText()
+                    );
+                }
+            },
+            ms
+        );
+
+        return NCQueryResult.text("Timer set for: " + FMT.format(dt));
+    }
+}
+        </pre>
+        <p>
+            Chapter <a href="/data-model.html">Data Model API</a> will provide detailed explanation on how
+            data models work. Here are few comments as to what this code does and how it is organized:
+        </p>
+        <ul>
+            <li>
+                On line 15 we use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProviderAdapter.html">NCModelProviderAdapter</a>
+                adapter for simpler implementation. 
+            </li>
+            <li>
+                On line 42 we call method <code>setup</code> on the adapter where we pass an instance of
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface that
+                we built using
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
+                factory - notice that we load our static configuration file <code>alarm_model.json</code>.
+            </li>
+            <li>
+                Our data model uses intent-based matching of the user input. Intent is a template and a callback.
+                Intent is similar to regular
+                expressions and consists of the tokens we defined in our model (i.e. <code>x:alarm</code>) and
+                built-in system tokens. When such intent matches the user input its callback is called.
+            </li>
+            <li>
+                On line 25 we add one intent that
+                matches one token <code>x:alarm</code> (see <code>alarm_model.json</code> file)
+                and up to 7 numeric values with date or time related units (i.e. <code>2 hours</code>, <code>5 mins</code>).
+            </li>
+            <li>
+                If the intent is matched the method <code>onMatch(...)</code> on line 50 is called (see line 39 as well).
+                Its implementation is a vanilla Java code that simply schedules standard Java timer for the requested time.
+                Note that numeric tokens and their units are built-in system tokens that NLPCraft detects automatically
+                and provides to your models.
+            </li>
+        </ul>
+    </section>
+    <section>
+        <span class="section-sub-title">Start Data Probe</span>
+        <p>
+            NLPCraft data models get deployed into data probe. Let's configure and start data probe to deploy our newly
+            create alarm clock data model.
+        </p>
+        <p>
+            To do that we need to create a <code>probe.conf</code> file in the
+            same folder as the rest of our files with the following content:
+        </p>
+        <pre class="brush: js, highlight: [7, 8, 9]">
+            probe {
+                id = "alarm"
+                token = "3141592653589793"
+                upLink = "localhost:8201"
+                downLink = "localhost:8202"
+                jarsFolder = null
+                modelProviders = [
+                    "examples.AlarmModel"
+                ]
+                resultMaxSizeBytes = 1048576
+            }
+        </pre>
+        <p>
+            Note the <code>modelProviders</code> property on lines 7-9 that contains a list of all data models (as fully
+            qualified Java class names) to be deployed when a data probe starts with this configuration.
+        </p>
+        <p>
+            To start data probe let's configure Run Configuration in IDEA with the following parameters:
+        </p>
+        <ul>
+            <li>
+                <b>Main class:</b> <code>org.nlpcraft.NCStart</code>
+            </li>
+            <li>
+                <b>Program arguments: </b> <code>-probe -config=<b>/Users/admin/</b>my-app/src/main/java/examples/probe.conf</code>
+            </li>
+            <li>
+                <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
+            </li>
+        </ul>
+        <div class="bq info">
+            <p>
+                Make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
+                your system.
+            </p>
+        </div>
+        <p>
+            Start this run configuration and make sure you have positive console output indicating that our model
+            has been successfully loaded and probe started.
+        </p>
+    </section>
+    <section>
+        <span class="section-sub-title">Start REST Server</span>
+        <p>
+            REST server listens for requests from client applications:
+        </p>
+        <figure>
+            <img class="img-fluid" src="/images/homepage-fig1.1.png">
+            <figcaption><b>Fig 1.</b> NLPCraft Architecture</figcaption>
+        </figure>
+        <div class="bq info">
+            <b>REST Server vs. Data Probe</b>
+            <p>
+                It's important to remember why REST server is a separate component from a data probe. While a
+                typical deployment would have only one REST server (or a cluster of REST servers behind a single
+                load balancer), there are maybe multiple data probes hosting different data models deployed in
+                different physical locations, managed through different life cycles and requiring different
+                security and network configurations.
+            </p>
+            <p>
+                Moreover, REST server is a heavy and resource consuming component that is built around Apache
+                Ignite distributing in-memory computing capabilities - while the data probe is a lightweight
+                data model container. During the development and testing of data models, the developers need to
+                frequently redeploy data models by restarting the data probe. If the REST server and the data probe
+                would be one component - this process would be very inefficient.
+            </p>
+        </div>
+        <p>
+            REST server starts the same way as the data probe. Configure new
+            Run Configuration in IDEA with the following parameters:
+        </p>
+        <ul>
+            <li>
+                <b>Main class:</b> <code>org.nlpcraft.NCStart</code>
+            </li>
+            <li>
+                <b>Program arguments: </b> <code>-server</code>
+            </li>
+            <li>
+                <b>Working directory: </b> <code><b>/Users/admin</b>/my-app/</code>
+            </li>
+        </ul>
+        <div class="bq info">
+            As before make sure to replace <code><b>/Users/admin</b></code> portion of the path with the actual one on
+            your system.
+        </div>
+        <p>
+            Once started ensure that your REST server console output shows that data probe is connected and the
+            REST server is listening on the default <code>localhost:8081</code> endpoint.
+        </p>
+        <p>
+            At this point we've developed our data model, deployed it into the data probe, and started the REST server.
+            Our NLI-based alarm clock is ready to accept user requests. Instead of using direct REST calls we'll
+            demonstrate the built-in <a href="/testing-data-model.html">test framework</a> that allows you to write convienient unit tests against our
+            data model.
+        </p>
+        <p>
+
+        </p>
+    </section>
+    <section>
+        <span class="section-sub-title">Testing</span>
+        <p>
+            NLPCraft comes with easy to use <a href="/testing-data-model.html">test framework</a> for data models that can be used with
+            any unit testing framework like JUnit or ScalaTest. It is essentially a simplified
+            version of <a href="/rest-clients.html">Java REST client</a> that is custom designed for data model testing.
+        </p>
+        <p>
+            Let's create new Java class <code>AlarmTest.java</code> in <code>src/<b>test</b>/java/examples</code>
+            folder with the following code:
+        </p>
+        <pre class="brush: java, highlight: [35, 36, 37]">
+package examples;
+
+import org.junit.jupiter.api.*;
+import org.nlpcraft.common.*;
+import org.nlpcraft.model.test.*;
+import java.io.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class AlarmTest {
+    private NCTestClient cli;
+
+    @BeforeEach
+    void setUp() throws NCException, IOException {
+        cli = new NCTestClientBuilder().newBuilder().build();
+
+        // See alarm_model.json
+        cli.openForModelId("nlpcraft.alarm.ex");
+    }
+
+    @AfterEach
+    void tearDown() throws NCException, IOException {
+        cli.close();
+    }
+
+    @Test
+    public void test() throws NCException, IOException {
+        // Empty parameter.
+        assertTrue(cli.ask("").isFailed());
+
+        // Only latin charset is supported.
+        assertTrue(cli.ask("El tiempo en España").isFailed());
+
+        // Should be passed.
+        assertTrue(cli.ask("Ping me in 3 minutes").isSuccessful());
+        assertTrue(cli.ask("Buzz me in an hour and 15mins").isSuccessful());
+        assertTrue(cli.ask("Set my alarm for 30s").isSuccessful());
+    }
+}
+        </pre>
+        <p>
+            Right click on this class in the project view and run it. You should be getting standard output in
+            JUnit panel as well as alarm clock output in the data probe console.
+        </p>
+    </section>
+    <section>
+        <span class="section-sub-title">Congratulation! 👌</span>
+        <p>
+            You've created your first data model, deployed it into the data probe, started the
+            REST server and tested the model using JUnit 5 and the built-in test framework.
         </p>
     </section>
 </div>

@@ -41,12 +41,10 @@ layout: interior
 <div class="three-cols-container">
     <div class="col-md-2 first-column">
         <ul class="side-nav">
-            <li class="side-nav-title">Download</li>
-            <li><a href="#github">GitHub</a></li>
-            <li><a href="#zip">ZIP Archive</a></li>
-            <li><a href="#maven">Maven/Grape/SBT</a></li>
-            <li class="side-nav-title">Install</li>
-            <li><a href="/installation.html">Instructions</a></li>
+            <li class="side-nav-title">Introduction</li>
+            <li><a href="/docs.html">Overview</a></li>
+            <li><a href="/installation.html">Installation</a></li>
+            <li><a href="/getting-started.html">Getting Started</a></li>
         </ul>
     </div>
     <div class="col-md-8 second-column">
@@ -100,7 +98,7 @@ layout: interior
                 <p>
                     Use GitHub clone if you want to contribute to the project or build it from source.
                     To build your own models and integrate into your own application it is recommended to
-                    download ZIP archive or add Maven/Grape/SBT dependency.
+                    download ZIP archive or use build tools and add build dependency.
                 </p>
             </div>
         </section>
@@ -116,6 +114,7 @@ layout: interior
                     <th>Version</th>
                     <th>Release Date</th>
                     <th>Signatures</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,6 +128,11 @@ layout: interior
                         <a href="{{rel.sha1_url}}">SHA1</a>
                         <a href="{{rel.sha256_url}}">SHA256</a>
                         <a href="{{rel.pgp_url}}">PGP</a>
+                    </td>
+                    <td class="links">
+                        <a href="/release-notes-{{rel.version}}.html">Release notes</a>,
+                        <a target="javadoc" href="/apis/javadoc-{{rel.version}}/index.html">Javadoc</a>,
+                        <a target="github" href="{{rel.github_link}}">GitHub</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -153,22 +157,30 @@ layout: interior
                 <div class="nav nav-tabs" role="tablist">
                     <a class="nav-item nav-link active" data-toggle="tab" href="#nav-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
                     <a class="nav-item nav-link" data-toggle="tab" href="#nav-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
                     <a class="nav-item nav-link" data-toggle="tab" href="#nav-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
                 </div>
             </nav>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="nav-maven" role="tabpanel">
                     <pre class="brush: xml">
-                    <dependency>
-                        <groupId>org.nlpcraft</groupId>
-                        <artifactId>nlpcraft</artifactId>
-                        <version>{{site.latest_version}}</version>
-                    </dependency>
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;org.nlpcraft&lt;/groupId&gt;
+                        &lt;artifactId&gt;nlpcraft&lt;/artifactId&gt;
+                        &lt;version&gt;{{site.latest_version}}&lt;/version&gt;
+                    &lt;/dependency&gt;
                     </pre>
                 </div>
                 <div class="tab-pane fade" id="nav-grape" role="tabpanel">
                     <pre class="brush: java">
                     @Grab ('org.nlpcraft:nlpcraft:{{site.latest_version}}')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-gradle" role="tabpanel">
+                    <pre class="brush: java">
+                    dependencies {
+                        runtime group: 'org.nlpcraft', name: 'nlpcraft', version: '{{site.latest_version}}'
+                    }
                     </pre>
                 </div>
                 <div class="tab-pane fade" id="nav-sbt" role="tabpanel">
@@ -187,9 +199,203 @@ layout: interior
                 </p>
             </div>
         </section>
+        <section id="optional">
+            <span class="section-title">Optional Packages</span>
+            <p>
+                There are number of optional package that can be installed and used with NLPCraft.
+            </p>
+            <span class="section-sub-title">PostgreSQL</span>
+            <p>
+                You can install and use PostgreSQL as a system database in the REST server instead of the built-in
+                distributed SQL storage
+                from Apache Ignite that is used by default. Add the following dependency to your project:
+            </p>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-postgres-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-postgres-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-postgres-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-postgres-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-postgres-maven" role="tabpanel">
+                    <pre class="brush: xml, highlight: 4">
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+                        &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+                        &lt;version&gt;42.2.5&lt;/version&gt;
+                    &lt;/dependency&gt;
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-postgres-grape" role="tabpanel">
+                    <pre class="brush: java">
+                    @Grab ('org.postgresql:postgresql:42.2.5')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-postgres-gradle" role="tabpanel">
+                    <pre class="brush: java">
+                    dependencies {
+                        runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+                    }
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-postgres-sbt" role="tabpanel">
+                    <pre class="brush: scala">
+                    libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
+                    </pre>
+                </div>
+            </div>
+            <p>
+                Comments:
+            </p>
+            <ul>
+                <li>
+                    Make sure to change <code>42.2.5</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>server.database.jdbc</code> in file <code>application.conf</code>
+                    with required JDBC driver class and JDBC URL.
+                </li>
+                <li>
+                    Use scripts from <code>sql/postgres</code> folder to create database and initialize DB schema.
+                </li>
+                <li>
+                    Note that you can also <a target=_ href="https://jdbc.postgresql.org/">download</a> PostgreSQL
+                    JDBC driver as a separate JAR file and add it to your
+                    project classpath if you are not using, or instead of, build tools.
+                </li>
+            </ul>
+            <span class="section-sub-title">MySQL</span>
+            <p>
+                You can install and use MySQL as a system database in the REST server instead of the built-in
+                distributed SQL storage
+                from Apache Ignite that is used by default. Add the following dependency to your project:
+            </p>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-mysql-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-mysql-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-mysql-maven" role="tabpanel">
+                    <pre class="brush: xml, highlight: 4">
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;mysql&lt;/groupId&gt;
+                        &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+                        &lt;version&gt;8.0.15&lt;/version&gt;
+                    &lt;/dependency&gt;
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-mysql-grape" role="tabpanel">
+                    <pre class="brush: java">
+                    @Grab ('mysql:mysql-connector-java:8.0.15')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-mysql-gradle" role="tabpanel">
+                    <pre class="brush: java">
+                    dependencies {
+                        runtime group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
+                    }
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-mysql-sbt" role="tabpanel">
+                    <pre class="brush: scala">
+                    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.15"
+                    </pre>
+                </div>
+            </div>
+            <p>
+                Comments:
+            </p>
+            <ul>
+                <li>
+                    Make sure to change <code>8.0.15</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>server.database.jdbc</code> in file <code>application.conf</code>
+                    with required JDBC driver class and JDBC URL.
+                </li>
+                <li>
+                    Use scripts from <code>sql/mysql</code> folder to create database and initialize DB schema.
+                </li>
+                <li>
+                    Note that you can also <a target=_ href="https://dev.mysql.com/downloads/connector/j">download</a> MySQL
+                    JDBC driver as a separate JAR file and add it to your
+                    project classpath if you are not using, or instead of, build tools.
+                </li>
+            </ul>
+            <span class="section-sub-title">StanfordNLP</span>
+            <p>
+                By default, NLPCraft uses <a target=_ href="https://opennlp.apache.org/">Apache OpenNLP</a> as
+                its base NLP engine for PoS tagging, tokenization, NE/NNE resolution, etc. If desired, you can
+                switch to <a target=_ href="https://stanfordnlp.github.io/CoreNLP/">Stanford CoreNLP</a> engine instead.
+            </p>
+            <nav>
+                <div class="nav nav-tabs" role="tablist">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#nav-stanfordnlp-maven" role="tab" aria-controls="nav-home" aria-selected="true">Maven <sup>Java</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-grape" role="tab" aria-controls="nav-profile" aria-selected="false">Grape <sup>Groovy</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-gradle" role="tab" aria-controls="nav-profile" aria-selected="false">Gradle <sup>Kotlin</sup></a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#nav-stanfordnlp-sbt" role="tab" aria-controls="nav-contact" aria-selected="false">SBT <sup>Scala</sup></a>
+                </div>
+            </nav>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="nav-stanfordnlp-maven" role="tabpanel">
+                    <pre class="brush: xml, highlight: 4">
+                    &lt;dependency&gt;
+                        &lt;groupId&gt;edu.stanford.nlp&lt;/groupId&gt;
+                        &lt;artifactId&gt;stanford-corenlp&lt;/artifactId&gt;
+                        &lt;version&gt;3.9.2&lt;/version&gt;
+                    &lt;/dependency&gt;
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-stanfordnlp-grape" role="tabpanel">
+                    <pre class="brush: java">
+                    @Grab ('edu.stanford.nlp:stanford-corenlp:3.9.2')
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-stanfordnlp-gradle" role="tabpanel">
+                    <pre class="brush: java">
+                    dependencies {
+                        runtime group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '3.9.2'
+                    }
+                    </pre>
+                </div>
+                <div class="tab-pane fade" id="nav-stanfordnlp-sbt" role="tabpanel">
+                    <pre class="brush: scala">
+                    libraryDependencies += "mysql" % "stanford-corenlp" % "3.9.2"
+                    </pre>
+                </div>
+            </div>
+            <p>
+                Comments:
+            </p>
+            <ul>
+                <li>
+                    Make sure to change <code>3.9.2</code> version to the latest or required one.
+                </li>
+                <li>
+                    Update configuration property <code>nlp.engine</code> in file <code>application.conf</code>
+                    to <code>stanford</code> value (from default <code>opennlp</code>).
+                </li>
+                <li>
+                    Note that you can also <a target=_ href="https://stanfordnlp.github.io/CoreNLP/">download</a>
+                    Stanford CoreNLP as a separate JAR file and add it to your
+                    project classpath if you are not using, or instead of, build tools.
+                </li>
+            </ul>
+        </section>
     </div>
     <div class="col-md-2 third-column">
         <ul class="side-nav">
+            <li class="side-nav-title">On This Page</li>
+            <li><a href="#github">GitHub</a></li>
+            <li><a href="#zip">ZIP Archive</a></li>
+            <li><a href="#maven">Maven/Grape/SBT</a></li>
+            <li><a href="#optional">Optional Packages</a></li>
             <li class="side-nav-title">Quick Links</li>
             <li>
                 <img class="quick-link-img mr-2" src="/images/github_logo.png"><a

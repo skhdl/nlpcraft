@@ -80,7 +80,7 @@ public class AlarmModel extends NCModelProviderAdapter {
         // we allow such idiosyncratic input.
         solver.addIntent(
             new NON_CONV_INTENT(
-                "timer|num{1+}",
+                "x:alarm|num{1+}",
                 new TERM("id == x:alarm", 1, 1),
                 new TERM(
                     new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),

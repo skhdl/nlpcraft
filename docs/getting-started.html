@@ -44,9 +44,17 @@ layout: documentation
             <a href="/download.html">downloaded</a> NLPCraft and looked through <a href="/installation.html">installation</a> instructions.
             We'll also assume Mac OS/Linux environment and that NLPCraft was downloaded and installed as a ZIP archive.
         </p>
+        <div class="bq info">
+            We'll take a deeper look at these components in <a href="/setting-up.html">Setting Up</a> chapter where we'll setup a
+            Java IDE project and develop and test our own first data model.
+        </div>
     </section>
     <section id="probe-server">
         <span class="section-title">Data Probe <span class="amp">&amp;</span> REST Server</span>
+        <p>
+            As mentioned above data probes are used to deploy and host data model, while REST server (or a
+            cluster of servers) is used to accept client REST call and route them to the data model via data probes.
+        </p>
         <p>
             Both data probe and the REST server start the same way. We'll use command line to start the both.
             Open two console windows and start server first and then data probe by typing these commands:
@@ -190,7 +198,7 @@ layout: documentation
             <code>admin</code> password. We'll use these default credentials for sing in:
         </p>
         <pre class="brush: js; highlight: [2, 3, 4, 5]">
-            $ nccurl.sh /signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
+            $ nccurl.sh signin '{"email": "admin@admin.com", "passwd": "admin"}' | python -m json.tool
             {
                 "acsTok": "KMGWMQJ44",
                 "status": "API_OK"

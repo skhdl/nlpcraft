@@ -47,14 +47,16 @@ import java.util.stream.*;
 /**
  * Model builder for {@link NCModel} instances.
  * <br><br>
- * To use this builder start by invoking one of the following static method to create new builder instance:
+ * To use this builder start by either invoking:
+ * <ul>
+ *     <li>{@link #newModel()}</li>
+ * </ul>
+ * or by loading static model definition in JSON or YAML:
  * <ul>
  *     <li>{@link #newJsonModel(InputStream)}</li>
  *     <li>{@link #newJsonModel(String)}</li>
  *     <li>{@link #newYamlModel(InputStream)}</li>
  *     <li>{@link #newYamlModel(String)}</li>
- *     <li>{@link #newModel(String, String, String)}</li>
- *     <li>{@link #newModel()}</li>
  *     <li>{@link #newJsonStringModel(String)}</li>
  *     <li>{@link #newYamlStringModel(String)}</li>
  * </ul>

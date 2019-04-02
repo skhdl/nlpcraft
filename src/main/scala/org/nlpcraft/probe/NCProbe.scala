@@ -63,6 +63,16 @@ import scala.util.control.Exception._
   */
 object NCProbe extends App with LazyLogging {
     object Config {
+        /**
+          *
+          * @param errMsgs
+          */
+        private def abortError(errMsgs: String*): Unit = {
+            errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
+        
+            System.exit(1)
+        }
+    
         // If configuration file path is passed on - always use it.
         // Otherwise, check local and external on classpath 'probe.conf' files.
         private val hocon: Config = args.find(_.startsWith("-config=")) match {
@@ -72,20 +82,16 @@ object NCProbe extends App with LazyLogging {
                     withFallback(ConfigFactory.load("probe.conf"))
                 
             case Some(s) ⇒
+                val cfgPath = s.substring("-config=".length)
+                val cfgFile = new java.io.File(cfgPath)
+                
+                if (!(cfgFile.exists && cfgFile.canRead && cfgFile.isFile))
+                    abortError(s"Configuration file does not exist or cannot be read: $cfgPath")                 
+                    
                 ConfigFactory.
-                    parseFile(new java.io.File(s.substring("-config=".length)))
+                    parseFile(cfgFile)
         }
     
-        /**
-          *
-          * @param errMsgs
-          */
-        private def abortError(errMsgs: String*): Unit = {
-            errMsgs.foreach(s ⇒ logger.error(s"ERROR: $s"))
-            
-            System.exit(1)
-        }
-        
         if (!hocon.hasPath("probe")) {
             abortError(
                 "No configuration found.",
@@ -152,7 +158,7 @@ object NCProbe extends App with LazyLogging {
         val downLink: String = hocon.getString("probe.downLink") // probe-to-server data pipe (downlink).
         val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
         val modelProviders: List[String] = hocon.getStringList("probe.modelProviders").asScala.toList
-        val resultMaxSize: Int = hocon.getInt("probe.result.maxSize")
+        val resultMaxSize: Int = hocon.getInt("probe.resultMaxSizeBytes")
     
         /**
           * 
@@ -174,7 +180,7 @@ object NCProbe extends App with LazyLogging {
                 abortError("Configuration property 'probe.modelProviders' cannot have duplicates.")
 
             if (resultMaxSize <= 0)
-                abortError("Configuration property 'probe.result.maxSize' must be positive.")
+                abortError("Configuration property 'probe.resultMaxSizeBytes' must be positive.")
         }
     }
     
