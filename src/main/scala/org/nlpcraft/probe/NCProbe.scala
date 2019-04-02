@@ -36,7 +36,6 @@ import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
-import org.nlpcraft.common.nlp.opennlp.NCNlpManager
 import org.nlpcraft.probe.mgrs.cmd.NCCommandManager
 import org.nlpcraft.probe.mgrs.conn.NCConnectionManager
 import org.nlpcraft.probe.mgrs.deploy.NCDeployManager
@@ -54,7 +53,7 @@ import org.nlpcraft.probe.mgrs.nlp.post.{NCPostChecker, NCPostEnrichCollapser, N
 import org.nlpcraft.probe.mgrs.nlp.pre.NCNlpPreChecker
 import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
 import org.nlpcraft.common._
-
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import scala.collection.JavaConverters._
 import scala.compat.Platform.currentTime
 import scala.util.control.Exception._
@@ -245,7 +244,7 @@ object NCProbe extends App with LazyLogging {
     private def startManagers(cfg: Config.type): Unit = {
         // Order is important!
         NCVersionManager.start()
-        NCNlpManager.start()
+        NCNlpCoreManager.start()
         NCNumericManager.start()
         NCDeployManager.startWithConfig(cfg)
         NCModelManager.startWithConfig(cfg)
@@ -291,7 +290,7 @@ object NCProbe extends App with LazyLogging {
         NCModelManager.stop()
         NCDeployManager.stop()
         NCNumericManager.stop()
-        NCNlpManager.stop()
+        NCNlpCoreManager.stop()
         NCVersionManager.stop()
     }
     

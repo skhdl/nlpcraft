@@ -79,6 +79,8 @@ import java.util.function.Supplier;
  *          {@link #isPronoun(NCToken)}<br>
  *          {@link #getPosTag(NCToken)}<br>
  *          {@link #getNormalizedText(NCToken)}<br>
+ *          {@link #getNamedEntityText(NCToken)} <br>
+ *          {@link #getNormalizedNamedEntityText(NCToken)}<br>
  *          {@link #getOriginalText(NCToken)}<br>
  *          {@link #getTokenIndex(NCToken)}<br>
  *          {@link #getCharLength(NCToken)}<br>
@@ -1684,6 +1686,34 @@ public class NCTokenUtils {
         assert tok != null;
 
         return tok.getMetadata().getString("NLP_NORMTEXT");
+    }
+
+    /**
+     * Gets optional named entity text for given token.
+     * <br><br>
+     * Corresponds to {@code NLP_NE} token {@link NCToken#getMetadata() metadata} property.
+     *
+     * @param tok A token.
+     * @return Named entity text or {@code null} if not provided.
+     */
+    static public String getNamedEntityText(NCToken tok) {
+        assert tok != null;
+
+        return tok.getMetadata().getString("NLP_NE");
+    }
+
+    /**
+     * Gets optional normalized named entity text for given token.
+     * <br><br>
+     * Corresponds to {@code NLP_NNE} token {@link NCToken#getMetadata() metadata} property.
+     *
+     * @param tok A token.
+     * @return Normalized named entity text or {@code null} if not provided.
+     */
+    static public String getNormalizedNamedEntityText(NCToken tok) {
+        assert tok != null;
+
+        return tok.getMetadata().getString("NLP_NNE");
     }
 
     /**
