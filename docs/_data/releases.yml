@@ -31,11 +31,11 @@
 
 - version: 0.2.0
   date: Apr 05, 2019
-  zip_url: https://www.dropbox.com/s/4g0i8sepizt9jfo/nlpcraft-0.2.0.zip?dl=1
-  md5_url: https://www.dropbox.com/s/p6a175cuh9vixbe/nlpcraft-0.2.0.zip.md5?dl=1
-  sha1_url: https://www.dropbox.com/s/um6r6c8tikchy9i/nlpcraft-0.2.0.zip.sha1?dl=1
-  sha256_url: https://www.dropbox.com/s/tpcxh0hqx09jhmx/nlpcraft-0.2.0.zip.sha256?dl=1
-  pgp_url: https://www.dropbox.com/s/51e788feoqciaa1/nlpcraft-0.2.0.zip.sig?dl=1
+  zip_url: https://github.com/vic64/nlpcraft/releases/download/0.2.0/nlpcraft-0.2.0.zip
+  md5_url: https://github.com/vic64/nlpcraft/releases/download/0.2.0/nlpcraft-0.2.0.zip.md5
+  sha1_url: https://github.com/vic64/nlpcraft/releases/download/0.2.0/nlpcraft-0.2.0.zip.sha1
+  sha256_url: https://github.com/vic64/nlpcraft/releases/download/0.2.0/nlpcraft-0.2.0.zip.sha256
+  pgp_url: https://github.com/vic64/nlpcraft/releases/download/0.2.0/nlpcraft-0.2.0.zip.sig
   github_link: https://github.com/vic64/nlpcraft/tree/0.2.0
 
 - version: 0.1.0
