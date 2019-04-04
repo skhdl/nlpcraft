@@ -143,6 +143,15 @@ layout: documentation
     </section>
     <section id="elements">
         <span class="section-title">Data Model Elements</span>
+        <ul>
+            <li><a href="#synonyms">Synonyms</a></li>
+            <li><a href="#macros">Macros</a></li>
+            <li><a href="#option-groups">Option Groups</a></li>
+            <li><a href="#regex">Regular Expressions</a></li>
+            <li><a href="#pos-tag">Point-of-Speech Tags</a></li>
+            <li><a href="#values">Element Values</a></li>
+            <li><a href="#groups">Element Groups</a></li>
+        </ul>
         <p>
             One of the most important parts of developing a data model is defining its elements. A data model
             element is the main building block of the semantic data model. A semantic element defines an entity
@@ -216,10 +225,11 @@ layout: documentation
         </p>
         <p>
             NLPCraft provides effective support for a compact synonyms representation. Instead of listing all possible
-            multi-word synonyms one by one you can use <b>macros</b>, <b>option groups</b>, <b>regular expressions</b>,
-            and <b>PoS tags</b> to significantly shorten that list.
+            multi-word synonyms one by one you can use <a href="#macros">macros</a>,
+            <a href="#option-groups">option groups</a>, <a href="#regex">regular expressions</a>,
+            and <a href="#pos-tag">PoS tags</a> to significantly shorten that list.
         </p>
-        <span class="section-sub-title">Synonyms</span>
+        <span id="synonyms" class="section-sub-title">Synonyms</span>
         <p>
             Synonyms are the key building blocks of the data model element and used in the following
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a> methods:
@@ -244,7 +254,7 @@ layout: documentation
             performed on <b>normalized and stemmatized forms</b> of such word and therefore the model
             developer doesn't have to account for this in the synonyms themselves.
         </p>
-        <span class="section-sub-title">Macros</span>
+        <span id="macros" class="section-sub-title">Macros</span>
         <p>
             Listing all possible multi-word synonyms for a given element can be a time-consuming task. Macros
             together with option groups allow for significant simplification of this process.
@@ -276,7 +286,7 @@ layout: documentation
                 }
              ]
         </pre>
-        <span class="section-sub-title">Option Groups</span>
+        <span id="option-groups" class="section-sub-title">Option Groups</span>
         <p>
            Option groups are a simplified form of regular expressions that operates on a single word base. The
            following examples demonstrate how to use option groups.
@@ -308,7 +318,7 @@ layout: documentation
             </tbody>
         </table>
         <p>
-            Then the following option group expansions will occur in the following examples:
+            Then the following option group expansions will occur in these examples:
         </p>
         <table class="gradient-table">
             <thead>
@@ -401,7 +411,7 @@ layout: documentation
             </li>
             <li>Excessive whitespaces are trimmed when expanding option groups.</li>
         </ul>
-        <span class="section-sub-title">Regular Expressions</span>
+        <span id="regex" class="section-sub-title">Regular Expressions</span>
         <p>
             Any individual synonym word that starts and ends with <code>///</code> (three forward slashes) is
             considered to be Java regular expression as defined in <code>java.util.regex.Pattern</code>. Note that
@@ -415,7 +425,15 @@ layout: documentation
             For example, the following synonym <code>{foo|///[bar].+///}}</code> will match word <code>foo</code>
             or any other strings that start with <code>bar</code> as long as this string doesn't contain whitespaces.
         </p>
-        <span class="section-sub-title">Regular Expressions</span>
+        <div class="bq info">
+            <b>Regular Expressions Performance</b>
+            <p>
+                It's important to note that regular expressions can significantly affect the performance of the
+                underlying NLPCraft implementation if used uncontrolled. Use it with caution and test the performance
+                of your model to ensure it meets your expectations.
+            </p>
+        </div>
+        <span id="pos-tag" class="section-sub-title">Part-of-Speech Tags</span>
         <p>
             Any individual synonym word that that starts and ends with <code>```</code> (three back ticks) in a
             form <code>```XXX```</code> is
@@ -427,6 +445,86 @@ layout: documentation
             For example, the following synonym <code>{foo|{```NN```|```NNS```|```NNP```|```NNPS```}}</code> will
             match word <code>foo</code> or any form of a noun.
         </p>
+        <span id="values" class="section-sub-title">Element Values</span>
+        <p>
+            Model element can have an optional set of special synonyms called <em>values</em>. Unlike basic synonyms,
+            each value is a pair of a name and a set of standard synonyms by which that value, and ultimately
+            its element, can be recognized in the user input. Note that the value name itself acts as an
+            implicit synonym even when no additional synonyms added for that value.
+        </p>
+        <p>
+            When a model element is recognized it is made available to the model's matching logic as an instance of
+            the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interface.
+            This interface has a method
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getValue--">getValue()</a> which
+            returns the name of the value, if any, by which
+            that model element was recognized. That value name can be further used in model matching logic or intents.
+        </p>
+        <p>
+            To understand the importance of the values consider the following example. Imagine the model
+            element <code>x:car</code> that tries to describe a car. It could have:
+        </p>
+        <ul>
+            <li>
+            Set of general synonyms encoded as:
+            <code>{transportation|transport|*} {vehicle|car|sedan|auto|automobile|suv|crossover|coupe|truck}</code>
+            </li>
+            <li>Set of values:
+                <ul>
+                    <li><code>mercedes</code> with synonyms <code>mercedes-benz, mb, benz</code></li>
+                    <li><code>bmw</code> with synonyms <code>bimmer</code></li>
+                    <li><code>chevrolet</code> with synonyms <code>chevy</code></li>
+                </ul>
+            </li>
+        </ul>
+        With that setup <code>x:car</code> element will be recognized by any of the following input string:
+        <ul>
+            <li><code>transport car</code></li>
+            <li><code>benz</code> (with value <code>mercedes</code>)</li>
+            <li><code>automobile</code></li>
+            <li><code>transport vehicle</code></li>
+            <li><code>sedan</code></li>
+            <li><code>chevy</code> (with value <code>chevrolet</code>)</li>
+            <li><code>bimmer</code> (with value <code>bmw</code>)</li>
+            <li><code>x:car</code></li>
+        </ul>
+        <span id="groups" class="section-sub-title">Element Groups</span>
+        <p>
+            Each model element belongs to a certain group. By default, all model elements belong to a single
+            (default) group. However, the proper organization of the elements into groups can be an important mechanism
+            in implementing model's <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext)</a> method.
+        </p>
+        <p>
+            More specifically, the proper grouping of the elements is necessary for the correct operation of
+            Short-Term-Memory (STM) in the conversational context when using intent-based matching.
+        </p>
+        <p>
+            Consider a <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> that 
+            represents a previously found model element that is stored in the conversation context. Such token
+            will be overridden in the conversation context by the more <b>recent token</b>
+            from the <b>same group</b> - a critical rule of maintaining the proper conversational context.
+            In other words, the tokens (and their elements) with the same group can be overridden.
+        </p>
+    </section>
+    <section id="metadata">
+        <span class="section-title">Metadata</span>
+        <p>
+            Both <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interfaces have
+            method <code>getMetadata()</code> that return user-defined metadata
+            (a map-based container) that you can optionally attach to the data model and its elements. At runtime,
+            the same metadata is available in <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interfaces (the latter one representing a
+            matched <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>).
+        </p>
+        <p>
+            Metadata provides flexibility to attach any user-defined information to both model and its elements
+            that is not supported by default in their respective interfaces. This allows providing extra configuration
+            to how the model interprets the user input and prepares the answer.
+        </p>
+    </section>
+    <section id="config">
+        <span class="section-title">Configuration</span>
     </section>
 </div>
 <div class="col-md-2 third-column">
@@ -435,6 +533,8 @@ layout: documentation
         <li><a href="#overview">Overview</a></li>
         <li><a href="#lifecycle">Lifecycle</a></li>
         <li><a href="#elements">Elements</a></li>
+        <li><a href="#metadata">Metadata</a></li>
+        <li><a href="#config">Configuration</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
