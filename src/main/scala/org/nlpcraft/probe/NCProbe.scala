@@ -194,7 +194,6 @@ object NCProbe extends App with LazyLogging {
             if (modelDumpPaths.distinct.size != modelDumpPaths.size)
                 abortError("Configuration property 'probe.modelDumpPaths' cannot have duplicates.")
 
-
             if (resultMaxSize <= 0)
                 abortError("Configuration property 'probe.resultMaxSizeBytes' must be positive.")
         }
