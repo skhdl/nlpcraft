@@ -33,16 +33,38 @@ package org.nlpcraft.model.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.gson.*;
-import org.nlpcraft.model.*;
-import org.nlpcraft.model.builder.impl.*;
-import org.nlpcraft.model.builder.parsing.*;
-import org.nlpcraft.model.impl.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import com.google.gson.Gson;
+import org.nlpcraft.model.NCElement;
+import org.nlpcraft.model.NCMetadata;
+import org.nlpcraft.model.NCModel;
+import org.nlpcraft.model.NCModelDescriptor;
+import org.nlpcraft.model.NCProbeContext;
+import org.nlpcraft.model.NCQueryContext;
+import org.nlpcraft.model.NCQueryResult;
+import org.nlpcraft.model.builder.impl.NCElementImpl;
+import org.nlpcraft.model.builder.impl.NCModelImpl;
+import org.nlpcraft.model.builder.impl.NCValueImpl;
+import org.nlpcraft.model.builder.parsing.NCElementItem;
+import org.nlpcraft.model.builder.parsing.NCMacroItem;
+import org.nlpcraft.model.builder.parsing.NCModelItem;
+import org.nlpcraft.model.impl.NCMetadataImpl;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Model builder for {@link NCModel} instances.
@@ -501,62 +523,28 @@ public class NCModelBuilder {
                 if (e.getMetadata() != null)
                     for (Map.Entry<String, Object> entry : e.getMetadata().entrySet())
                         elmMeta.put(entry.getKey(), (Serializable)entry.getValue());
-        
-                addElement(new NCElement() {
-                    private final List<String> syns =
-                        e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms());
-                    private final List<String> exclSyns =
-                        e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms());
-                    private final List<NCValue> values =
-                        e.getValues() == null ?
-                            Collections.emptyList() :
-                            Arrays.stream(e.getValues()).map(
-                                p -> new NCValueImpl(
-                                    p.getName(),
-                                    p.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(p.getSynonyms())
-                                )
-                            ).collect(Collectors.toList());
-                    
-                    @Override
-                    public List<NCValue> getValues() {
-                        return values;
-                    }
-        
-                    @Override
-                    public String getParentId() {
-                        return e.getParentId();
-                    }
-        
-                    @Override
-                    public String getDescription() {
-                        return e.getDescription();
-                    }
-        
-                    @Override
-                    public String getId() {
-                        return e.getId();
-                    }
-        
-                    @Override
-                    public String getGroup() {
-                        return e.getGroup();
-                    }
-        
-                    @Override
-                    public NCMetadata getMetadata() {
-                        return elmMeta;
-                    }
-        
-                    @Override
-                    public List<String> getSynonyms() {
-                        return syns;
-                    }
-        
-                    @Override
-                    public List<String> getExcludedSynonyms() {
-                        return exclSyns;
-                    }
-                });
+    
+                NCElementImpl eImpl = new NCElementImpl();
+    
+                eImpl.setSynonyms(e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms()));
+                eImpl.setExcludedSynonyms(e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms()));
+                eImpl.setValues(e.getValues() == null ?
+                    Collections.emptyList() :
+                    Arrays.stream(e.getValues()).map(
+                        p -> new NCValueImpl(
+                            p.getName(),
+                            p.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(p.getSynonyms())
+                        )
+                    ).collect(Collectors.toList()));
+    
+                eImpl.setParentId(e.getParentId());
+                eImpl.setDescription(e.getDescription());
+                eImpl.setId(e.getId());
+                eImpl.setGroup(e.getGroup());
+                eImpl.setMeta(elmMeta);
+    
+                addElement(eImpl);
+    
         }
     }
 

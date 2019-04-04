@@ -37,6 +37,7 @@ import java.util.jar.{JarInputStream ⇒ JIS}
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model._
+import org.nlpcraft.model.tools.dump.NCDumpReader
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import resource.managed
 
@@ -146,7 +147,8 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with DecorateA
     override def start(): NCLifecycle = {
         // Add model provider classes first.
         providers ++= config.modelProviders.map(makeProvider)
-        
+        providers ++= config.modelDumpPaths.map(NCDumpReader.read)
+
         if (config.jarsFolder != null) {
             val jarsFile = new File(config.jarsFolder)
             

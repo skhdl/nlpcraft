@@ -53,7 +53,7 @@ object NCVersion extends LazyLogging {
         version: String, // Semver.
         date: LocalDate,
         notes: String
-    ) {
+    ) extends java.io.Serializable {
         override def toString = s"Version [version=$version, notes=$notes, date=$date]"
     }
     

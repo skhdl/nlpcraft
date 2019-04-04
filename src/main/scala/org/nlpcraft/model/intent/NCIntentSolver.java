@@ -47,10 +47,12 @@ import org.nlpcraft.model.builder.NCModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -192,7 +194,7 @@ import java.util.stream.Collectors;
  * @see NOR NOR
  * @see TERM TERM
  */
-public class NCIntentSolver {
+public class NCIntentSolver implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(NCIntentSolver.class);
     private static final int[] EMPTY_WEIGHT = {0, 0, 0};
     private static final Pair<Boolean, int[]> EMPTY_PAIR = Pair.of(false, EMPTY_WEIGHT);
@@ -200,7 +202,13 @@ public class NCIntentSolver {
         throw new NCRejection("Request seems unrelated to the data source.");
     };
     private static final String DFLT_NAME = "default";
-
+    
+    // Default not-found callback.
+    private final Supplier<NCQueryResult> notFound;
+    
+    // Added intents.
+    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
+    
     /**
      * Marker type of pattern items. Only built-in {@link OR}, {@link AND}, {@link NAND}, {@link NOR}, {@link XOR},
      * {@link XNOR} or {@link RULE} implementations are supported, i.e. no user-defined implementation are
@@ -214,7 +222,7 @@ public class NCIntentSolver {
      * @see XNOR XNOR
      * @see NOR NOR
      */
-    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>> {}
+    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {}
 
     /**
      * Callback provided by the user for an intent when it is matched. It takes solver
@@ -1103,7 +1111,7 @@ public class NCIntentSolver {
     /**
      * Item is a token predicate plus quantifiers. It is a building block for {@link TERM TERM}.
      */
-    public static final class ITEM {
+    public static final class ITEM implements Serializable {
         final private Predicate ptrn;
         final private int min, max;
 
@@ -1165,7 +1173,7 @@ public class NCIntentSolver {
      * Intent has a list of terms that all have to be found in the user input for the intent to match. Note that
      * order of items is not important for matching the term.
      */
-    public static final class TERM {
+    public static final class TERM implements Serializable {
         final private ITEM[] items;
 
         /**
@@ -1234,7 +1242,7 @@ public class NCIntentSolver {
      * @see CONV_INTENT CONV_INTENT
      * @see NON_CONV_INTENT NON_CONV_INTENT
      */
-    public static class INTENT {
+    public static class INTENT implements Serializable {
         final private String id;
         final private TERM[] terms;
         final private boolean inclConv;
@@ -1417,12 +1425,6 @@ public class NCIntentSolver {
         }
     }
 
-    // Default not-found callback.
-    private final Supplier<NCQueryResult> notFound;
-
-    // Added intents.
-    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
-
     /**
      * Creates new default token solver. Default solver has default {@code null} name, no multi-match and
      * default not-found function that throws {@link NCRejection} exception. This is equivalent to:
@@ -1478,7 +1480,40 @@ public class NCIntentSolver {
 
         return this;
     }
-
+    
+    /**
+     * Gets all intents.
+     *
+     * @return All intents.
+     */
+    public List<INTENT> getIntents() {
+        return intents.stream().map(Pair::getLeft).collect(Collectors.toList());
+    }
+    
+    /**
+     * Removes intent by given ID.
+     *
+     * @param id Intent ID.
+     */
+    public void removeIntent(String id) {
+        for (Iterator<Pair<INTENT, IntentCallback>> iter = intents.iterator(); iter.hasNext(); ) {
+            Pair<INTENT, IntentCallback> p = iter.next();
+            
+            if (p.getLeft().getId().equals(id)) {
+                iter.remove();
+                
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Removes all intents.
+     */
+    public void clear() {
+        intents.clear();
+    }
+    
     /**
      *
      * @param words

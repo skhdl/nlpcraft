@@ -44,7 +44,7 @@ import java.util.concurrent.{ExecutorService, TimeUnit}
 import java.util.jar.JarFile
 import java.util.stream.Collectors
 import java.util.zip.{ZipInputStream, GZIPInputStream ⇒ GIS, GZIPOutputStream ⇒ GOS}
-import java.util.{Locale, Properties, Random, Timer, TimerTask, UUID, Calendar ⇒ C}
+import java.util.{Locale, Properties, Random, Timer, TimerTask, Calendar ⇒ C}
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

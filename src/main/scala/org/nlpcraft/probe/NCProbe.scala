@@ -138,6 +138,17 @@ object NCProbe extends App with LazyLogging {
                     abortError(s"$prop port is invalid in: $ep.")
             }
         }
+
+        /**
+          *
+          * @param name
+          * @return
+          */
+        private def getOptionalList(name: String): List[String] =
+            if (hocon.hasPath(name))
+                hocon.getStringList(name).asScala.toList
+            else
+                List.empty
         
         if (!hocon.hasPath("probe.id"))
             abortError("Configuration property 'probe.id' not found.")
@@ -149,15 +160,16 @@ object NCProbe extends App with LazyLogging {
             abortError("Configuration property 'probe.downLink' not found.")
         if (!hocon.hasPathOrNull("probe.jarsFolder"))
             abortError("Configuration property 'probe.jarsFolder' not found.")
-        if (!hocon.hasPath("probe.modelProviders"))
-            abortError("Configuration property 'probe.modelProviders' not found.")
+        if (!hocon.hasPath("probe.modelProviders") && !hocon.hasPath("probe.modelDumpPaths"))
+            abortError("Configuration properties 'probe.modelProviders', 'probe.modelDumpPaths' not found.")
     
         val id: String = hocon.getString("probe.id")
         val token: String = hocon.getString("probe.token")
         val upLink: String = hocon.getString("probe.upLink") // server-to-probe data pipe (uplink).
         val downLink: String = hocon.getString("probe.downLink") // probe-to-server data pipe (downlink).
         val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
-        val modelProviders: List[String] = hocon.getStringList("probe.modelProviders").asScala.toList
+        val modelProviders: List[String] = getOptionalList("probe.modelProviders")
+        val modelDumpPaths: List[String] = getOptionalList("probe.modelDumpPaths")
         val resultMaxSize: Int = hocon.getInt("probe.resultMaxSizeBytes")
     
         /**
@@ -172,12 +184,16 @@ object NCProbe extends App with LazyLogging {
             checkEndpoint("probe.upLink", upLink)
             checkEndpoint("probe.downLink", downLink)
             
-            if (jarsFolder == null && modelProviders.isEmpty)
-                abortError("Either 'probe.jarsFolder' or 'probe.modelProviders' " +
+            if (jarsFolder == null && modelProviders.isEmpty && modelDumpPaths.isEmpty)
+                abortError("Either 'probe.jarsFolder', 'probe.modelProviders'  or 'probe.modelDumpPaths' " +
                     "configuration property must be provided.")
             
             if (modelProviders.distinct.size != modelProviders.size)
                 abortError("Configuration property 'probe.modelProviders' cannot have duplicates.")
+
+            if (modelDumpPaths.distinct.size != modelDumpPaths.size)
+                abortError("Configuration property 'probe.modelDumpPaths' cannot have duplicates.")
+
 
             if (resultMaxSize <= 0)
                 abortError("Configuration property 'probe.resultMaxSizeBytes' must be positive.")
@@ -222,6 +238,7 @@ object NCProbe extends App with LazyLogging {
         tbl += ("Down-Link", Config.downLink)
         tbl += ("Up-Link", Config.upLink)
         tbl += ("Model providers", Config.modelProviders)
+        tbl += ("Model dump paths", Config.modelDumpPaths)
         tbl += ("JARs Folder", nvl(Config.jarsFolder))
         
         tbl.info(logger, Some("Probe Configuration:"))

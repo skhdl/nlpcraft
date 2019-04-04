@@ -31,12 +31,14 @@
 
 package org.nlpcraft.model;
 
+import java.io.Serializable;
+
 /**
  * Model descriptor.
  *
  * @see NCModel#getDescriptor()
  */
-public interface NCModelDescriptor {
+public interface NCModelDescriptor extends Serializable {
     /**
      * Gets unique, <i>immutable</i> ID of this model.
      * <p>
