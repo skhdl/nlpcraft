@@ -55,14 +55,14 @@ object NCDumpWriter extends LazyLogging {
       */
     @throws[NCE]
     def write(mdl: NCModel, solver: NCIntentSolver, path: String): Unit = {
-        val solver2 = new NCIntentSolver(
-            s"Dump [name=${solver.getName}', version=${NCVersion.getCurrent}]", null
+        val solverFix = new NCIntentSolver(
+            s"Dump [name=${solver.getName}, version=${NCVersion.getCurrent}]", null
         )
 
         val intents = solver.getIntents.asScala
 
         intents.foreach(i ⇒
-            solver2.addIntent(
+            solverFix.addIntent(
                 i,
                 new IntentCallback {
                     override def apply(t: NCIntentSolverContext): NCQueryResult =
@@ -71,7 +71,7 @@ object NCDumpWriter extends LazyLogging {
             )
         )
 
-        val mdl2 =
+        val mdlFix =
             NCDumpModel(
                 description = mdl.getDescription,
                 docsUrl = mdl.getDocsUrl,
@@ -112,12 +112,12 @@ object NCDumpWriter extends LazyLogging {
                 macros = mdl.getMacros,
                 elements = mdl.getElements,
                 descriptor = mdl.getDescriptor,
-                solver2
+                solverFix
             )
 
-        val zip = path.endsWith(".gz")
+        val isZip = path.endsWith(".gz")
 
-        val filePath = if (zip) path.dropRight(3) else path
+        val filePath = if (isZip) path.dropRight(3) else path
 
         @throws[NCE]
         def serialize(objs: Object*): Unit = {
@@ -131,9 +131,9 @@ object NCDumpWriter extends LazyLogging {
             }
         }
 
-        serialize(NCVersion.getCurrent, mdl2)
+        serialize(NCVersion.getCurrent, mdlFix)
 
-        if (zip)
+        if (isZip)
             U.gzipPath(filePath, logger)
 
         logger.info(s"Model serialized " +
