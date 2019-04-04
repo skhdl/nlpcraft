@@ -31,7 +31,7 @@
 
 package org.nlpcraft.model.tools.dump
 
-import java.io.{BufferedInputStream, FileInputStream, IOException, ObjectInputStream}
+import java.io.{BufferedInputStream, FileInputStream, ObjectInputStream}
 import java.util
 import java.util.zip.GZIPInputStream
 
@@ -49,26 +49,48 @@ import scala.collection.JavaConverters._
 object NCDumpReader extends LazyLogging {
     @throws[NCE]
     def read(path: String): NCModelProvider = {
-        val (version, mdl) =
-            try {
-                managed(
-                    if (path.toLowerCase.endsWith(".gz"))
-                        new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(path))))
-                    else
-                        new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))
-                ) acquireAndGet { in ⇒
-                    (
-                        in.readObject().asInstanceOf[NCVersion.Version],
-                        in.readObject().asInstanceOf[NCModel]
-                    )
-                }
-            }
-            catch {
-                case e: IOException ⇒ throw new NCE(s"Error reading file: $path", e)
-            }
+        var version: NCVersion.Version = null
+        var mdl: NCModel = null
+        var err: Exception = null
 
-        if (version != NCVersion.getCurrent)
-            logger.warn(s"Unexpected version [current=${NCVersion.getCurrent}, read=$version]")
+        try {
+            managed(
+                new ObjectInputStream(
+                    new BufferedInputStream(
+                        if (path.toLowerCase.endsWith(".gz"))
+                            new GZIPInputStream(new FileInputStream(path))
+                        else
+                            new FileInputStream(path)
+                    )
+                )
+            ) acquireAndGet { in ⇒
+                version = in.readObject().asInstanceOf[NCVersion.Version]
+                mdl = in.readObject().asInstanceOf[NCModel]
+            }
+        }
+        catch {
+            case e: Exception ⇒ err = e
+        }
+
+        if (err != null) {
+            var msg = s"Error reading file [path=$path"
+
+            if (version != null)
+                msg +=  s", fileVersion=$version, currentVersion=${NCVersion.getCurrent}"
+
+            msg += ']'
+
+            throw new NCE(msg, err)
+        }
+
+        logger.info(s"Model deserialized " +
+            s"[path=$path, " +
+            s", id=${mdl.getDescriptor.getId}" +
+            s", name=${mdl.getDescriptor.getName}" +
+            s", fileVersion=$version" +
+            s", currentVersion=${NCVersion.getCurrent}" +
+            s"]"
+        )
 
         new NCModelProvider() {
             override def makeModel(id: String): NCModel = {

@@ -31,17 +31,17 @@
 
 package org.nlpcraft.model.tools.dump
 
-import java.io.{BufferedOutputStream, FileOutputStream, IOException, ObjectOutputStream}
+import java.io.{BufferedOutputStream, FileOutputStream, ObjectOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.model.{NCModel, NCQueryResult}
-import org.nlpcraft.model.intent.{NCIntentSolver, NCIntentSolverContext}
 import org.nlpcraft.model.intent.NCIntentSolver.IntentCallback
+import org.nlpcraft.model.intent.{NCIntentSolver, NCIntentSolverContext}
+import org.nlpcraft.model.{NCModel, NCQueryResult}
+import resource.managed
 
 import scala.collection.JavaConverters._
-import resource.managed
 
 /**
   * Dump writer.
@@ -54,20 +54,24 @@ object NCDumpWriter extends LazyLogging {
       * @param path
       */
     @throws[NCE]
-    def save(mdl: NCModel, solver: NCIntentSolver, path: String): Unit = {
-        val fixSolver = new NCIntentSolver()
-
-        val intents = fixSolver.getIntents.asScala
-
-        fixSolver.clear()
-
-        intents.foreach(i ⇒
-            fixSolver.addIntent(i, new IntentCallback {
-                override def apply(t: NCIntentSolverContext): NCQueryResult = NCQueryResult.text(s"OK for : ${i.getId}")
-            })
+    def write(mdl: NCModel, solver: NCIntentSolver, path: String): Unit = {
+        val solver2 = new NCIntentSolver(
+            s"Dump [name=${solver.getName}', version=${NCVersion.getCurrent}]", null
         )
 
-        val fixMdl =
+        val intents = solver.getIntents.asScala
+
+        intents.foreach(i ⇒
+            solver2.addIntent(
+                i,
+                new IntentCallback {
+                    override def apply(t: NCIntentSolverContext): NCQueryResult =
+                        NCQueryResult.text(s"OK: ${i.getId}")
+                    }
+            )
+        )
+
+        val mdl2 =
             NCDumpModel(
                 description = mdl.getDescription,
                 docsUrl = mdl.getDocsUrl,
@@ -108,24 +112,37 @@ object NCDumpWriter extends LazyLogging {
                 macros = mdl.getMacros,
                 elements = mdl.getElements,
                 descriptor = mdl.getDescriptor,
-                fixSolver
+                solver2
             )
+
+        val zip = path.endsWith(".gz")
+
+        val filePath = if (zip) path.dropRight(3) else path
+
         @throws[NCE]
         def serialize(objs: Object*): Unit = {
             try {
-                managed(new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(path)))) acquireAndGet { out ⇒
-                    objs.foreach(out.writeObject)
+                managed(new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) acquireAndGet {
+                    out ⇒ objs.foreach(out.writeObject)
                 }
-
-                logger.info(s"File $path is written.")
             }
             catch {
-                case e: IOException ⇒ throw new NCE(s"Error writing file: $path", e)
+                case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
             }
         }
 
-        serialize(NCVersion.getCurrent, fixMdl)
+        serialize(NCVersion.getCurrent, mdl2)
 
-        U.gzipPath(path, logger)
+        if (zip)
+            U.gzipPath(filePath, logger)
+
+        logger.info(s"Model serialized " +
+            s"[path=$path" +
+            s", id=${mdl.getDescriptor.getId}" +
+            s", name=${mdl.getDescriptor.getName}" +
+            s", intentsCount=${intents.size}" +
+            s", intents=${intents.map(p ⇒ s"*** ${p.getId} ****").mkString(" , ")}" +
+            s"]"
+        )
     }
 }

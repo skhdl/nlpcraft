@@ -41,9 +41,9 @@ import org.nlpcraft.model.NCRejection;
 import org.nlpcraft.model.NCSentence;
 import org.nlpcraft.model.NCToken;
 import org.nlpcraft.model.NCVariant;
+import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.intent.impl.NCIntentSolverEngine;
 import org.nlpcraft.model.intent.impl.NCIntentSolverResult;
-import org.nlpcraft.model.builder.NCModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -204,6 +203,7 @@ public class NCIntentSolver implements Serializable {
     private static final String DFLT_NAME = "default";
     
     // Default not-found callback.
+    private final String name;
     private final Supplier<NCQueryResult> notFound;
     
     // Added intents.
@@ -231,7 +231,7 @@ public class NCIntentSolver implements Serializable {
      *
      * @see NCIntentSolver#addIntent(INTENT, IntentCallback)
      */
-    public interface IntentCallback extends Function<NCIntentSolverContext, NCQueryResult> {}
+    public interface IntentCallback extends Function<NCIntentSolverContext, NCQueryResult>, Serializable {}
 
     /**
      * Checks that combinator is one of the built-in implementations.
@@ -1433,7 +1433,7 @@ public class NCIntentSolver implements Serializable {
      * </pre>
      */
     public NCIntentSolver() {
-        this(null, null);
+        this(DFLT_NAME, null);
     }
 
     /**
@@ -1455,6 +1455,7 @@ public class NCIntentSolver implements Serializable {
      *      that throws {@link NCRejection} exception with generic error message.
      */
     public NCIntentSolver(String name, Supplier<NCQueryResult> notFound) {
+        this.name = name;
         this.notFound = notFound;
     }
 
@@ -1476,7 +1477,7 @@ public class NCIntentSolver implements Serializable {
 
         intents.add(Pair.of(intent, fun));
 
-        NCIntentSolverEngine.ackNewIntent(DFLT_NAME, intent);
+        NCIntentSolverEngine.ackNewIntent(name, intent);
 
         return this;
     }
@@ -1491,27 +1492,12 @@ public class NCIntentSolver implements Serializable {
     }
     
     /**
-     * Removes intent by given ID.
+     * Gets solver name.
      *
-     * @param id Intent ID.
+     * @return Solver name.
      */
-    public void removeIntent(String id) {
-        for (Iterator<Pair<INTENT, IntentCallback>> iter = intents.iterator(); iter.hasNext(); ) {
-            Pair<INTENT, IntentCallback> p = iter.next();
-            
-            if (p.getLeft().getId().equals(id)) {
-                iter.remove();
-                
-                break;
-            }
-        }
-    }
-    
-    /**
-     * Removes all intents.
-     */
-    public void clear() {
-        intents.clear();
+    public String getName() {
+        return name;
     }
     
     /**

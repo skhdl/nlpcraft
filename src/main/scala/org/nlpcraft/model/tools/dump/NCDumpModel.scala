@@ -32,7 +32,9 @@
 package org.nlpcraft.model.tools.dump
 
 import java.util
+import java.util.function.Consumer
 
+import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.model.intent.NCIntentSolver
 import org.nlpcraft.model.{NCElement, NCMetadata, NCModel, NCModelDescriptor, NCProbeContext, NCQueryContext, NCQueryResult}
 
@@ -79,8 +81,10 @@ case class NCDumpModel(
     macros: util.Map[String, String],
     elements: util.Set[NCElement],
     descriptor: NCModelDescriptor,
-    solver: NCIntentSolver
-) extends NCModel with java.io.Serializable {
+    solver: NCIntentSolver,
+    var initFun: Consumer[NCProbeContext] = null,
+    var discardFun: Runnable = null
+) extends NCModel with java.io.Serializable with LazyLogging {
     override def getDescription: String = description
     override def getDocsUrl: String = docsUrl
     override def getVendorUrl: String = vendorUrl
@@ -122,9 +126,15 @@ case class NCDumpModel(
     override def getDescriptor: NCModelDescriptor = descriptor
     override def query(ctx: NCQueryContext): NCQueryResult = solver.solve(ctx)
 
-    // TODO:
-    override def discard(): Unit = println("discard")
+    override def discard(): Unit =
+        if (discardFun != null)
+            discardFun.run()
+        else
+            logger.warn(s"'Discard' function is not defined for model: ${descriptor.getId}")
 
-    // TODO:
-    override def initialize(probeCtx: NCProbeContext): Unit = println(s"initialize: $probeCtx")
+    override def initialize(ctx: NCProbeContext): Unit =
+        if (initFun != null)
+            initFun.accept(ctx)
+        else
+            logger.warn(s"'Initialize' function is not defined for model: ${descriptor.getId}")
 }
