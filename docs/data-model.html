@@ -79,6 +79,14 @@ layout: documentation
                 builder class which is a recommended way under the most circumstances.
             </li>
         </ul>
+        <p>
+            There are only two methods on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            interface that you must provide implementation for - while all other methods have reasonable defaults:
+        </p>
+        <ul>
+            <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getDescriptor--">getDescriptor()</a></li> - returning model identification.
+            <li><a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext)</a></li> - accepting parsed user input and returning result.
+        </ul>
         <div class="bq info">
             <b>JSON <span class="amp">&amp;</span> YAML</b>
             <p>
@@ -523,9 +531,6 @@ layout: documentation
             to how the model interprets the user input and prepares the answer.
         </p>
     </section>
-    <section id="config">
-        <span class="section-title">Configuration</span>
-    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
@@ -534,7 +539,6 @@ layout: documentation
         <li><a href="#lifecycle">Lifecycle</a></li>
         <li><a href="#elements">Elements</a></li>
         <li><a href="#metadata">Metadata</a></li>
-        <li><a href="#config">Configuration</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
