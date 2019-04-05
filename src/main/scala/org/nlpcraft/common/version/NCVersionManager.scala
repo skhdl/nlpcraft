@@ -58,11 +58,9 @@ object NCVersionManager extends NCLifecycle("Version manager") {
     // Whether or not version check is disabled.
     private final val enabled = !U.isSysEnvTrue("NLPCRAFT_VERSION_CHECK_DISABLED")
 
-    /**
-      *
-      * @return
-      */
-    def getVersionInfo(): Map[String, Any] = {
+    @volatile private var info: Map[String, Any] = _
+
+    override def start(): NCLifecycle = {
         val tmz = TimeZone.getDefault
         val sysProps = System.getProperties
 
@@ -82,7 +80,7 @@ object NCVersionManager extends NCLifecycle("Version manager") {
 
         val ver = NCVersion.getCurrent
 
-        Map(
+        info = Map(
             "API_DATE" → ver.date,
             "API_VERSION" → ver.version,
             "OS_VER" → sysProps.getProperty("os.version"),
@@ -98,6 +96,18 @@ object NCVersionManager extends NCLifecycle("Version manager") {
             "HOST_NAME" → hostName,
             "HOST_ADDR" → hostAddr
         )
+
+        super.start()
+    }
+
+    /**
+      *
+      * @return
+      */
+    def getVersionInfo: Map[String, Any] = {
+        ensureStarted()
+
+        info
     }
 
     /**
@@ -113,14 +123,12 @@ object NCVersionManager extends NCLifecycle("Version manager") {
         if (!enabled)
             return
 
-        val m = getVersionInfo()
-
         val gson = new Gson()
         val typeResp = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
-        val props = (m ++ params).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
+        val props = (info ++ params).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
 
         val f =
             Future {

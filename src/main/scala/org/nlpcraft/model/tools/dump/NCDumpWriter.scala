@@ -222,27 +222,21 @@ object NCDumpWriter extends LazyLogging {
 
         val filePath = if (isZip) path.dropRight(3) else path
 
-        @throws[NCE]
-        def serialize(objs: Object*): Unit = {
-            try {
-                managed(new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) acquireAndGet {
-                    out ⇒ objs.foreach(out.writeObject)
-                }
-            }
-            catch {
-                case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
+        val info = new util.HashMap[String, String]()
+
+        NCVersionManager.getVersionInfo.foreach { case (k, v) ⇒ info.put(k, if (v != null) v.toString else null) }
+
+        try {
+            managed(new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) acquireAndGet {
+                out ⇒
+                    out.writeObject(NCVersion.getCurrent.version)
+                    out.writeObject(info)
+                    out.writeObject(mdlFix)
             }
         }
-
-        val m = new util.HashMap[String, String]()
-
-        NCVersionManager.getVersionInfo().foreach { case (k, v) ⇒ m.put(k, if (v != null) v.toString else null) }
-
-        serialize(
-            NCVersion.getCurrent.version,
-            m,
-            mdlFix
-        )
+        catch {
+            case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
+        }
 
         if (isZip)
             U.gzipPath(filePath, logger)

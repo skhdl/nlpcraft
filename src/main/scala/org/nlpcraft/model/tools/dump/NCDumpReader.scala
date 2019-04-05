@@ -46,6 +46,10 @@ import scala.collection.JavaConverters._
   * Dump reader.
   */
 object NCDumpReader extends LazyLogging {
+    /**
+      *
+      * @param path
+      */
     @throws[NCE]
     def read(path: String): NCModel = {
         var version: String = null
