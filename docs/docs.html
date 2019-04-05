@@ -119,6 +119,42 @@ layout: documentation
             manage connected data probes, and route user requests to and from requested data probes.
         </p>
     </section>
+    <section id="chatbots-vs-alexa-siri">
+        <span class="section-sub-title">Chatbots vs. Alexa/Siri/NLPCraft</span>
+        <p>
+            There's a subtle yet important difference between chatbot platforms and systems like Alex, Siri or NLPCraft.
+        </p>
+        <p>
+            Many, if not most, of the chatbot systems, are designed for dialog driven conversations.
+            In fact, it is chatbots that heavily promoted the term "conversational". These systems allow to
+            script or otherwise design a long-winded flow of simple questions and answers to determine the
+            user's intent - hence the notion of the conversational interface. For many simple use cases this
+            leads to a relatively straightforward implementation and sometimes a long Q&A is a necessary approach.
+            However, this type of system suffers badly from <em>parasitic dialogs</em> - the condition where long Q&A sessions
+            induced by this design feel contrived, cumbersome and unnatural to the actual users resulting in a
+            significant reduction of chatbot adoption.
+        </p>
+        <p>
+            Alexa, Siri, Goole Assistant or NLPCraft concentrate on the understanding of more complex, nuanced
+            natural language, often referred to as a spoken or free-form natural language. While these systems
+            may not be as simple as basic chatbots they dramatically minimize or even eliminate the parasitic
+            dialogs. These systems enable true natural language command-oriented control where unnecessary
+            dialogs reduced to a minimum and users can get to the desired result in the shortest, the most efficient way.
+        </p>
+        <p>
+            One of the additional unique characteristics of NLPCraft is that it is hardware or software
+            independent. You are not locked in into iOS or Android or Amazon AWS ecosystems.
+        </p>
+    </section>
+    <section id="nlpcraft-vs-opennlp">
+        <span class="section-sub-title">NLPCraft vs OpenNLP/StanfordNLP</span>
+        <p>
+            NLPCraft uses both <a href="https://opennlp.apache.org/">Apache OpenNLP</a> and
+            <a href="https://nlp.stanford.edu/software/">Standford CoreNLP</a> as its basic NLP engine (configurable as either one).
+            Basic NLP engine is responsible for tokenization, lemmatization and optional named entity recognition.
+            NLPCraft uses these in its own processing workflow including advanced semantic modeling and intent-based matching.
+        </p>
+    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
@@ -127,6 +163,7 @@ layout: documentation
         <li><a href="#data-model">Data Model</a></li>
         <li><a href="#data-probe">Data Probe</a></li>
         <li><a href="#server">REST Server</a></li>
+        <li><a href="#chatbots-vs-alexa-siri">Chatbots</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
