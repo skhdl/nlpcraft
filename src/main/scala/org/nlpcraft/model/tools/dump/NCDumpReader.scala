@@ -32,13 +32,12 @@
 package org.nlpcraft.model.tools.dump
 
 import java.io.{BufferedInputStream, FileInputStream, ObjectInputStream}
-import java.util
 import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.version.NCVersion
-import org.nlpcraft.model.{NCModel, NCModelDescriptor, NCModelProvider}
+import org.nlpcraft.model.NCModel
 import resource.managed
 
 import scala.collection.JavaConverters._
@@ -48,8 +47,9 @@ import scala.collection.JavaConverters._
   */
 object NCDumpReader extends LazyLogging {
     @throws[NCE]
-    def read(path: String): NCModelProvider = {
-        var version: NCVersion.Version = null
+    def read(path: String): NCModel = {
+        var version: String = null
+        var info: Map[String, String] = null
         var mdl: NCModel = null
         var err: Exception = null
 
@@ -64,7 +64,8 @@ object NCDumpReader extends LazyLogging {
                     )
                 )
             ) acquireAndGet { in ⇒
-                version = in.readObject().asInstanceOf[NCVersion.Version]
+                version = in.readObject().asInstanceOf[String]
+                info = in.readObject().asInstanceOf[java.util.Map[String, String]].asScala.toMap
                 mdl = in.readObject().asInstanceOf[NCModel]
             }
         }
@@ -85,22 +86,17 @@ object NCDumpReader extends LazyLogging {
 
         logger.info(s"Model deserialized " +
             s"[path=$path, " +
-            s", id=${mdl.getDescriptor.getId}" +
-            s", name=${mdl.getDescriptor.getName}" +
-            s", fileVersion=$version" +
-            s", currentVersion=${NCVersion.getCurrent}" +
+            s", modelId=${mdl.getDescriptor.getId}" +
+            s", modelName=${mdl.getDescriptor.getName}" +
+            s", modelVersion=$version" +
+            s", currentVersion=${NCVersion.getCurrent.version}" +
             s"]"
         )
 
-        new NCModelProvider() {
-            override def makeModel(id: String): NCModel = {
-                if (mdl.getDescriptor.getId != id)
-                    throw new UnsupportedOperationException(s"Model cannot be created: $id")
+        logger.info("Model creation information: ")
 
-                mdl
-            }
+        info.foreach { case (k, v) ⇒ logger.info(s"$k=$v") }
 
-            override def getDescriptors: util.List[NCModelDescriptor] = Seq(mdl.getDescriptor).asJava
-        }
+        mdl
     }
 }
