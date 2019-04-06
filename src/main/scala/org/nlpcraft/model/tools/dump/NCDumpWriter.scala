@@ -31,10 +31,11 @@
 
 package org.nlpcraft.model.tools.dump
 
-import java.io.{BufferedOutputStream, FileOutputStream, ObjectOutputStream}
+import java.io.{BufferedOutputStream, File, FileOutputStream, ObjectOutputStream}
+import java.time.format.DateTimeFormatter
 import java.util
-import java.util.function.Consumer
 
+import com.google.gson.Gson
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
@@ -49,6 +50,8 @@ import scala.collection.JavaConverters._
   * Dump writer.
   */
 object NCDumpWriter extends LazyLogging {
+    private final lazy val GSON = new Gson()
+
     /**
       * Dump model wrapper.
       */
@@ -92,9 +95,7 @@ object NCDumpWriter extends LazyLogging {
         macros: util.Map[String, String],
         elements: util.Set[NCElement],
         descriptor: NCModelDescriptor,
-        solver: NCIntentSolver,
-        var initFun: Consumer[NCProbeContext] = null,
-        var discardFun: Runnable = null
+        solver: NCIntentSolver
     ) extends NCModel with java.io.Serializable with LazyLogging {
         override def getDescription: String = description
         override def getDocsUrl: String = docsUrl
@@ -137,27 +138,28 @@ object NCDumpWriter extends LazyLogging {
         override def getDescriptor: NCModelDescriptor = descriptor
         override def query(ctx: NCQueryContext): NCQueryResult = solver.solve(ctx)
 
-        override def discard(): Unit =
-            if (discardFun != null)
-                discardFun.run()
-            else
-                logger.warn(s"'Discard' function is not defined for model: ${descriptor.getId}")
-
+        override def discard(): Unit = logger.warn(s"'Discard' function is not defined for model: ${descriptor.getId}")
         override def initialize(ctx: NCProbeContext): Unit =
-            if (initFun != null)
-                initFun.accept(ctx)
-            else
-                logger.warn(s"'Initialize' function is not defined for model: ${descriptor.getId}")
+            logger.warn(s"'Initialize' function is not defined for model: ${descriptor.getId}")
     }
 
     /**
       *
       * @param mdl
       * @param solver
-      * @param path
+      * @param dir
       */
     @throws[NCE]
-    def write(mdl: NCModel, solver: NCIntentSolver, path: String): Unit = {
+    def write(mdl: NCModel, solver: NCIntentSolver, dir: String): Unit = {
+        val dirFile = new File(dir)
+
+        if (!dirFile.exists() || !dirFile.isDirectory)
+            throw new NCE(s"$dir is not folder.")
+
+        val file = s"${mdl.getDescriptor.getId}-${U.nowUtc().format(DateTimeFormatter.ISO_INSTANT)}"
+
+        val filePath = s"$dirFile/$file"
+
         val solverFix = new NCIntentSolver(
             s"Dump [name=${solver.getName}, version=${NCVersion.getCurrent}]", null
         )
@@ -169,7 +171,15 @@ object NCDumpWriter extends LazyLogging {
                 i,
                 new IntentCallback {
                     override def apply(t: NCIntentSolverContext): NCQueryResult =
-                        NCQueryResult.text(s"OK: ${i.getId}")
+                        NCQueryResult.json(
+                            GSON.toJson(
+                                Map(
+                                    "modelId" → mdl.getDescriptor.getId,
+                                    "intentId" → i.getId,
+                                    "modelFile" → file
+                                ).asJava
+                            )
+                        )
                     }
             )
         )
@@ -218,10 +228,6 @@ object NCDumpWriter extends LazyLogging {
                 solverFix
             )
 
-        val isZip = path.endsWith(".gz")
-
-        val filePath = if (isZip) path.dropRight(3) else path
-
         val info = new util.HashMap[String, String]()
 
         NCVersionManager.getVersionInfo.foreach { case (k, v) ⇒ info.put(k, if (v != null) v.toString else null) }
@@ -238,11 +244,10 @@ object NCDumpWriter extends LazyLogging {
             case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
         }
 
-        if (isZip)
-            U.gzipPath(filePath, logger)
+        U.gzipPath(filePath, logger)
 
         logger.info(s"Model serialized " +
-            s"[path=$path" +
+            s"[path=$filePath" +
             s", id=${mdl.getDescriptor.getId}" +
             s", name=${mdl.getDescriptor.getName}" +
             s", intentsCount=${intents.size}" +

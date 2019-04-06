@@ -59,14 +59,7 @@ object NCDumpReader extends LazyLogging {
 
         try {
             managed(
-                new ObjectInputStream(
-                    new BufferedInputStream(
-                        if (path.toLowerCase.endsWith(".gz"))
-                            new GZIPInputStream(new FileInputStream(path))
-                        else
-                            new FileInputStream(path)
-                    )
-                )
+                new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(path))))
             ) acquireAndGet { in ⇒
                 version = in.readObject().asInstanceOf[String]
                 info = in.readObject().asInstanceOf[java.util.Map[String, String]].asScala.toMap
