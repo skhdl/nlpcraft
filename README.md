@@ -5,12 +5,11 @@
 </a>
 
 ### Overview
-[NLPCraft](https://nlpcraft.org/) is an open source library for adding Natural Language Interface to any applications.
-It allows you to build Natural Language Interface for any 
-public or private data sources like databases, REST services, IoT devices, 
-voice assistants, and chatbots:
+[NLPCraft](https://nlpcraft.org/) is an open source library for adding a natural language interface to any applications. Think Amazon 
+Alexa that is developer friendly, works with any private data source, has no hardware or software lock-in while 
+giving you more NLP powers:
 
- * Download and Maven/Grape/SBT [instructions](https://nlpcraft.org/download.html)
+ * [Download](https://nlpcraft.org/download.html) and Maven/Grape/Gradle/SBT [instructions](https://nlpcraft.org/download.html)
  * [Documentation](https://nlpcraft.org/docs.html), [Javadoc](https://nlpcraft.org/apis/latest/index.html), and [REST APIs](https://nlpcraft.docs.apiary.io/)
  * [Example](https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples) data models
  * Licensed under [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) with [Commons Clause](https://commonsclause.com/).
