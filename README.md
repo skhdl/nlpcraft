@@ -2,7 +2,8 @@
 <br>
 <a href="https://travis-ci.org/vic64/nlpcraft#">
 <img alt="Build" src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">
-</a>
+</a>&nbsp;
+<a target="javadoc" href="https://javadoc.io/doc/org.nlpcraft/nlpcraft"><img src="https://javadoc.io/badge/org.nlpcraft/nlpcraft.svg" alt="Javadocs"></a>
 
 ### Overview
 [NLPCraft](https://nlpcraft.org/) is an open source library for adding a natural language interface to any applications. Think Amazon 
