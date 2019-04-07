@@ -524,11 +524,11 @@ public class NCModelBuilder {
                     for (Map.Entry<String, Object> entry : e.getMetadata().entrySet())
                         elmMeta.put(entry.getKey(), (Serializable)entry.getValue());
     
-                NCElementImpl eImpl = new NCElementImpl();
+                NCElementImpl elmImpl = new NCElementImpl();
     
-                eImpl.setSynonyms(e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms()));
-                eImpl.setExcludedSynonyms(e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms()));
-                eImpl.setValues(e.getValues() == null ?
+                elmImpl.setSynonyms(e.getSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getSynonyms()));
+                elmImpl.setExcludedSynonyms(e.getExcludedSynonyms() == null ? Collections.emptyList() : Arrays.asList(e.getExcludedSynonyms()));
+                elmImpl.setValues(e.getValues() == null ?
                     Collections.emptyList() :
                     Arrays.stream(e.getValues()).map(
                         p -> new NCValueImpl(
@@ -537,13 +537,13 @@ public class NCModelBuilder {
                         )
                     ).collect(Collectors.toList()));
     
-                eImpl.setParentId(e.getParentId());
-                eImpl.setDescription(e.getDescription());
-                eImpl.setId(e.getId());
-                eImpl.setGroup(e.getGroup());
-                eImpl.setMeta(elmMeta);
+                elmImpl.setParentId(e.getParentId());
+                elmImpl.setDescription(e.getDescription());
+                elmImpl.setId(e.getId());
+                elmImpl.setGroup(e.getGroup());
+                elmImpl.setMeta(elmMeta);
     
-                addElement(eImpl);
+                addElement(elmImpl);
     
         }
     }
