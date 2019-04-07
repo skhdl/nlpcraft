@@ -34,6 +34,7 @@ package org.nlpcraft.model.tools.dump
 import java.io.{BufferedOutputStream, File, FileOutputStream, ObjectOutputStream}
 import java.time.format.DateTimeFormatter
 import java.util
+import java.util.zip.GZIPOutputStream
 
 import com.google.gson.Gson
 import com.typesafe.scalalogging.LazyLogging
@@ -233,7 +234,9 @@ object NCDumpWriter extends LazyLogging {
         NCVersionManager.getVersionInfo.foreach { case (k, v) ⇒ info.put(k, if (v != null) v.toString else null) }
 
         try {
-            managed(new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) acquireAndGet {
+            managed(
+                new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(filePath))))
+            ) acquireAndGet {
                 out ⇒
                     out.writeObject(NCVersion.getCurrent.version)
                     out.writeObject(info)
@@ -244,14 +247,12 @@ object NCDumpWriter extends LazyLogging {
             case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
         }
 
-        U.gzipPath(filePath, logger)
-
         logger.info(s"Model serialized " +
             s"[path=$filePath" +
             s", id=${mdl.getDescriptor.getId}" +
             s", name=${mdl.getDescriptor.getName}" +
             s", intentsCount=${intents.size}" +
-            s", intents=${intents.map(p ⇒ s"*** ${p.getId} ****").mkString(" , ")}" +
+            s", intents=${intents.map(p ⇒ s"*** ${p.getId} ****").mkString(", ")}" +
             s"]"
         )
     }
