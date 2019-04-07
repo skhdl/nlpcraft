@@ -1198,12 +1198,17 @@ public interface NCModel {
      * <br><br>
      * <b>Default</b>
      * <br>
-     * Default implementation is a no-op.
+     * Default implementation stores provided probe context in the metadata under {@code __NC_PROBE_CTX} name:
+     * <pre class="brush: java">
+     * default void initialize(NCProbeContext probeCtx) {
+     *     getMetadata().put("__NC_PROBE_CTX", probeCtx);
+     * }
+     * </pre>
      *
      * @param probeCtx Probe context.
      */
     default void initialize(NCProbeContext probeCtx) {
-        // No-op.
+        getMetadata().put("__NC_PROBE_CTX", probeCtx);
     }
 
     /**

@@ -31,6 +31,7 @@
 
 package org.nlpcraft.model;
 
+import java.io.*;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ import java.util.List;
  *
  * @see NCModel#initialize(NCProbeContext)
  */
-public interface NCProbeContext {
+public interface NCProbeContext extends Serializable {
     /**
      * Gets ID of the probe.
      *
@@ -79,7 +80,7 @@ public interface NCProbeContext {
     /**
      * Gets model provider classes, potentially empty.
      *
-     * @return List of model provider classes, potentially empty, this probe was configured with.
+     * @return List of model provider fully qualified class names, potentially empty, this probe was configured with.
      */
     List<String> getModelProviders();
 }

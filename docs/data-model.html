@@ -531,6 +531,25 @@ layout: documentation
             to how the model interprets the user input and prepares the answer.
         </p>
     </section>
+    <section id="logic">
+        <span class="section-title">Data Model Logic</span>
+        <p>
+            When a user sends its request via REST API it is received by the REST server. Upon receipt,
+            the REST server does the basic NLP processing and enriching. Once finished, the REST server
+            sends the enriched request down to a specific data probe selected based on the requested data model.
+        </p>
+        <p>
+            When the data probe receives the enriched request from the REST server it performs the final
+            pre-processing by detecting data model elements in the user text. When finished the data probe calls
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> instance
+            passing it a fully parsed and enriched user request.
+        </p>
+        <p>
+            At this point, the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method must "understand" the user request and return the result
+            that is sent back to the original REST API caller.
+        </p>
+        <span class="section-sub-title">Method <code>query()</code></span>
+    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
@@ -539,6 +558,7 @@ layout: documentation
         <li><a href="#lifecycle">Lifecycle</a></li>
         <li><a href="#elements">Elements</a></li>
         <li><a href="#metadata">Metadata</a></li>
+        <li><a href="#logic">Logic</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
