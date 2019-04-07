@@ -29,23 +29,22 @@
  *        /_/
  */
 
-package org.nlpcraft.model.tools.dump
+package org.nlpcraft.model.tools.dump.scala
 
-import java.io.{BufferedInputStream, FileInputStream, ObjectInputStream}
+import java.io.{BufferedInputStream, FileInputStream, ObjectInputStream, File}
 import java.util.zip.GZIPInputStream
 
+import scala.collection.JavaConverters._
 import com.typesafe.scalalogging.LazyLogging
-import org.nlpcraft.common._
+import org.nlpcraft.common.NCE
 import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.model.NCModel
 import resource.managed
 
-import scala.collection.JavaConverters._
-
 /**
   * Dump reader.
   */
-object NCDumpReader extends LazyLogging {
+object NCDumpReaderScala extends LazyLogging {
     /**
       *
       * @param path
@@ -74,7 +73,7 @@ object NCDumpReader extends LazyLogging {
             var msg = s"Error reading file [path=$path"
 
             if (version != null)
-                msg +=  s", fileVersion=$version, currentVersion=${NCVersion.getCurrent}"
+                msg += s", fileVersion=$version, currentVersion=${NCVersion.getCurrent}"
 
             msg += ']'
 
@@ -82,7 +81,7 @@ object NCDumpReader extends LazyLogging {
         }
 
         logger.info(s"Model deserialized " +
-            s"[path=$path, " +
+            s"[path=$path" +
             s", modelId=${mdl.getDescriptor.getId}" +
             s", modelName=${mdl.getDescriptor.getName}" +
             s", modelVersion=$version" +
@@ -96,4 +95,11 @@ object NCDumpReader extends LazyLogging {
 
         mdl
     }
+
+    /**
+      *
+      * @param file
+      */
+    @throws[NCE]
+    def read(file: File): NCModel = read(file.getAbsolutePath)
 }

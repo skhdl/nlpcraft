@@ -41,6 +41,7 @@ import org.nlpcraft.model.*;
 import org.nlpcraft.model.builder.*;
 import org.nlpcraft.model.intent.*;
 import org.nlpcraft.model.intent.NCIntentSolver.*;
+import org.nlpcraft.model.tools.dump.NCDumpReader;
 import org.nlpcraft.model.utils.*;
 import java.time.*;
 import java.util.*;
@@ -330,13 +331,6 @@ public class WeatherModel extends NCModelProviderAdapter {
         solver.addIntent(mkIntent("fcast|date?|city?", "wt:fcast"), this::onForecastMatch);
         solver.addIntent(mkIntent("curr|date?|city?", "wt:curr"), this::onCurrentMatch);
 
-        setup(NCModelBuilder.
-            newJsonModel(WeatherModel.class.
-                getClassLoader().
-                getResourceAsStream("org/nlpcraft/examples/weather/weather_model.json")
-            ).
-            setQueryFunction(solver::solve).
-            build()
-        );
+        setup(NCDumpReader.read("/Users/sergeykhisamov/nlpcraft.weather.ex-2019-04-07T19.52.55.gz"));
     }
 }

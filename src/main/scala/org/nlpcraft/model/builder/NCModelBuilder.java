@@ -48,6 +48,7 @@ import org.nlpcraft.model.builder.parsing.NCElementItem;
 import org.nlpcraft.model.builder.parsing.NCMacroItem;
 import org.nlpcraft.model.builder.parsing.NCModelItem;
 import org.nlpcraft.model.impl.NCMetadataImpl;
+import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -385,7 +386,18 @@ public class NCModelBuilder {
 
         return impl;
     }
-
+    
+    /**
+     * TODO:
+     * @param dump Dump file.
+     *
+     * @return New built model.
+     * @throws NCBuilderException Thrown in case of any errors building the model.
+     */
+    public NCModel load(String dump) throws NCBuilderException {
+        return NCDumpReaderScala.read(dump);
+    }
+    
     /**
      * Sets model descriptor.
      *

@@ -37,11 +37,9 @@ import java.util.jar.{JarInputStream ⇒ JIS}
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model._
-import org.nlpcraft.model.tools.dump.NCDumpReader
 import org.nlpcraft.probe.mgrs.NCProbeLifecycle
 import resource.managed
 
-import scala.collection.JavaConverters._
 import scala.collection.convert.DecorateAsScala
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -148,18 +146,6 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with DecorateA
     override def start(): NCLifecycle = {
         // Add model provider classes first.
         providers ++= config.modelProviders.map(makeProvider)
-        providers ++= config.modelDumpPaths.map(NCDumpReader.read).map(mdl ⇒
-            new NCModelProvider() {
-                override def makeModel(id: String): NCModel = {
-                    if (mdl.getDescriptor.getId != id)
-                        throw new UnsupportedOperationException(s"Model cannot be created: $id")
-
-                    mdl
-                }
-
-                override def getDescriptors: java.util.List[NCModelDescriptor] = Seq(mdl.getDescriptor).asJava
-            }
-        )
 
         if (config.jarsFolder != null) {
             val jarsFile = new File(config.jarsFolder)
