@@ -36,7 +36,7 @@ import java.util.Properties
 
 import edu.stanford.nlp.ling.CoreAnnotations.{NormalizedNamedEntityTagAnnotation, SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.ling.CoreLabel
-import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
+import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP, TokenizerAnnotator}
 import edu.stanford.nlp.util.{ArrayCoreMap, CoreMap}
 import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.{NCE, NCLifecycle}
@@ -78,6 +78,10 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
     override def start(): NCLifecycle = {
         val p = new Properties()
 
+//        p.setProperty("customAnnotatorClass.nctokenize" , classOf[TokenizerAnnotator].getName)
+//        p.setProperty("annotators", "nctokenize, ssplit, pos, lemma, ner")
+
+        p.getProperty("tokenize.class", classOf[NCNlpTokenizer].getName)
         p.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
 
         // Created with hardcoded properties just for minimize configuration issues.
