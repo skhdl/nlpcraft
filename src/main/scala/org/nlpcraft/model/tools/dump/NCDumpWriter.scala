@@ -36,7 +36,6 @@ import java.time.format.DateTimeFormatter
 import java.util
 import java.util.zip.GZIPOutputStream
 
-import com.google.gson.Gson
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common._
 import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
@@ -51,7 +50,7 @@ import scala.collection.JavaConverters._
   * Dump writer.
   */
 object NCDumpWriter extends LazyLogging {
-    private final lazy val GSON = new Gson()
+    private final val FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss")
 
     /**
       * Dump model wrapper.
@@ -157,15 +156,18 @@ object NCDumpWriter extends LazyLogging {
         if (!dirFile.exists() || !dirFile.isDirectory)
             throw new NCE(s"$dir is not folder.")
 
-        val file = s"${mdl.getDescriptor.getId}-${U.nowUtc().format(DateTimeFormatter.ISO_INSTANT)}"
+        val file = s"${mdl.getDescriptor.getId}-${U.nowUtc().format(FMT)}.gz"
 
         val filePath = s"$dirFile/$file"
 
+        val ver = NCVersion.getCurrent.version
+
         val solverFix = new NCIntentSolver(
-            s"Dump [name=${solver.getName}, version=${NCVersion.getCurrent}]", null
+            s"Dump [name=${solver.getName}, version=$ver]", null
         )
 
         val intents = solver.getIntents.asScala
+        val mdlId = mdl.getDescriptor.getId
 
         intents.foreach(i ⇒
             solverFix.addIntent(
@@ -173,13 +175,13 @@ object NCDumpWriter extends LazyLogging {
                 new IntentCallback {
                     override def apply(t: NCIntentSolverContext): NCQueryResult =
                         NCQueryResult.json(
-                            GSON.toJson(
-                                Map(
-                                    "modelId" → mdl.getDescriptor.getId,
-                                    "intentId" → i.getId,
-                                    "modelFile" → file
-                                ).asJava
-                            )
+                            s"""
+                            | {
+                            |    "modelId": "$mdlId",
+                            |    "intentId": "${i.getId}",
+                            |    "modelFile": "$file"
+                            | }
+                            """.stripMargin
                         )
                     }
             )
@@ -238,7 +240,7 @@ object NCDumpWriter extends LazyLogging {
                 new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(filePath))))
             ) acquireAndGet {
                 out ⇒
-                    out.writeObject(NCVersion.getCurrent.version)
+                    out.writeObject(ver)
                     out.writeObject(info)
                     out.writeObject(mdlFix)
             }
@@ -249,10 +251,10 @@ object NCDumpWriter extends LazyLogging {
 
         logger.info(s"Model serialized " +
             s"[path=$filePath" +
-            s", id=${mdl.getDescriptor.getId}" +
+            s", id=$mdlId" +
             s", name=${mdl.getDescriptor.getName}" +
             s", intentsCount=${intents.size}" +
-            s", intents=${intents.map(p ⇒ s"*** ${p.getId} ****").mkString(", ")}" +
+            s", intents=${intents.map(_.getId).mkString(", ")}" +
             s"]"
         )
     }
