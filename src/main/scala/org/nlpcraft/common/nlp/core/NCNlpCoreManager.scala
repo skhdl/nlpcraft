@@ -31,12 +31,7 @@
 
 package org.nlpcraft.common.nlp.core
 
-import java.io.BufferedInputStream
-
-import opennlp.tools.stemmer.{PorterStemmer, Stemmer}
-import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
-import org.nlpcraft.common.{NCLifecycle, _}
-import resource.managed
+import org.nlpcraft.common.NCLifecycle
 
 import scala.language.{implicitConversions, postfixOps}
 
@@ -44,23 +39,6 @@ import scala.language.{implicitConversions, postfixOps}
  *  NLP core manager.
  */
 object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
-    @volatile private var tokenizer: Tokenizer = _
-    @volatile private var stemmer: Stemmer = _
-
-    /**
-      * Starts this component.
-      */
-    override def start(): NCLifecycle = {
-        tokenizer =
-            managed(new BufferedInputStream(U.getStream("opennlp/en-token.bin"))) acquireAndGet { in ⇒
-                new TokenizerME(new TokenizerModel(in))
-            }
-
-        stemmer = new PorterStemmer
-
-        super.start()
-    }
-
     /**
       * Stems given word or a sequence of words which will be tokenized before.
       *
@@ -70,15 +48,13 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def stem(words: String): String = {
         ensureStarted()
 
-        val seq = this.synchronized {
-            tokenizer.tokenizePos(words).map(span ⇒ (span, stemmer.stem(span.getCoveredText(words).toString)))
-        }
+        val seq = NCTokenizer.tokenize(words).map(p ⇒ p → NCPorterStemmer.stem(p.token))
 
-        seq.zipWithIndex.map { case ((span, stem), idx) ⇒
+        seq.zipWithIndex.map { case ((tok, stem), idx) ⇒
             idx match {
                 case 0 ⇒ stem
                 // Suppose there aren't multiple spaces.
-                case _ ⇒ if (seq(idx - 1)._1.getEnd <  span.getStart) s" $stem" else stem
+                case _ ⇒ if (seq(idx - 1)._1.to + 1 < tok.from) s" $stem" else stem
             }
         }.mkString("")
     }
@@ -92,9 +68,7 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def stemWord(word: String): String = {
         ensureStarted()
 
-        this.synchronized {
-            stemmer.stem(word).toString
-        }
+        NCPorterStemmer.stem(word)
     }
 
     /**
@@ -106,7 +80,6 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def tokenize(sen: String): Seq[NCNlpCoreToken] = {
         ensureStarted()
 
-        this.synchronized { tokenizer.tokenizePos(sen) }.
-            toSeq.map(s ⇒ NCNlpCoreToken(s.getCoveredText(sen).toString, s.getStart, s.getEnd, s.length()))
+        NCTokenizer.tokenize(sen)
     }
 }
