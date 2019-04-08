@@ -146,7 +146,7 @@ object NCDeployManager extends NCProbeLifecycle("Deploy manager") with DecorateA
     override def start(): NCLifecycle = {
         // Add model provider classes first.
         providers ++= config.modelProviders.map(makeProvider)
-        
+
         if (config.jarsFolder != null) {
             val jarsFile = new File(config.jarsFolder)
             

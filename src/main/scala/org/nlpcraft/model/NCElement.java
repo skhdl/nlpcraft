@@ -31,6 +31,7 @@
 
 package org.nlpcraft.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -195,13 +196,13 @@ import java.util.regex.Pattern;
  * For example, the following synonym <code>{foo|{```NN```|```NNS```|```NNP```|```NNPS```}}</code> will match word {@code foo} or any
  * form of a noun.
  */
-public interface NCElement {
+public interface NCElement extends Serializable {
     /**
      * Element's value.
      *
      * @see NCElement#getValues()
      */
-    interface NCValue {
+    interface NCValue extends Serializable {
         /**
          * Gets value name.
          *

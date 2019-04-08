@@ -81,8 +81,8 @@ public class AlarmModel extends NCModelProviderAdapter {
         solver.addIntent(
             new NON_CONV_INTENT(
                 "x:alarm|num{1+}",
-                new TERM("id == x:alarm", 1, 1),
-                new TERM(
+                new TERM("id == x:alarm", 1, 1), // Term #1 (index=0).
+                new TERM(                        // Term #2 (index=1).
                     new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
                     0,
                     7 // Up to 7 numeric `datetime` units.
@@ -106,7 +106,8 @@ public class AlarmModel extends NCModelProviderAdapter {
     private NCQueryResult onMatch(NCIntentSolverContext ctx) {
         if (!ctx.isExactMatch())
             throw new NCRejection("Not exact match.");
-        
+
+        // Gets tokens for the 2nd term.
         List<NCToken> nums = ctx.getIntentTokens().get(1);
     
         long unitsCnt = nums.stream().map(NCTokenUtils::getNumUnit).distinct().count();

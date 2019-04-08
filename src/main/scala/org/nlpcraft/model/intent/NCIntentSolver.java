@@ -41,12 +41,13 @@ import org.nlpcraft.model.NCRejection;
 import org.nlpcraft.model.NCSentence;
 import org.nlpcraft.model.NCToken;
 import org.nlpcraft.model.NCVariant;
+import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.intent.impl.NCIntentSolverEngine;
 import org.nlpcraft.model.intent.impl.NCIntentSolverResult;
-import org.nlpcraft.model.builder.NCModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,7 +149,7 @@ import java.util.stream.Collectors;
  *         If multiple intents match - the system will pick the one with the most specific match.
  *     </li>
  * </ul>
- * Here's an example of using token solver taken from Time Example:
+ * Here's an example of using token solver taken from <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time</a> example:
  * <pre class="brush: java">
  * NCTokenSolver solver = new NCTokenSolver(
  *      "time-solver",
@@ -192,7 +193,7 @@ import java.util.stream.Collectors;
  * @see NOR NOR
  * @see TERM TERM
  */
-public class NCIntentSolver {
+public class NCIntentSolver implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(NCIntentSolver.class);
     private static final int[] EMPTY_WEIGHT = {0, 0, 0};
     private static final Pair<Boolean, int[]> EMPTY_PAIR = Pair.of(false, EMPTY_WEIGHT);
@@ -200,7 +201,14 @@ public class NCIntentSolver {
         throw new NCRejection("Request seems unrelated to the data source.");
     };
     private static final String DFLT_NAME = "default";
-
+    
+    // Default not-found callback.
+    private final String name;
+    private final Supplier<NCQueryResult> notFound;
+    
+    // Added intents.
+    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
+    
     /**
      * Marker type of pattern items. Only built-in {@link OR}, {@link AND}, {@link NAND}, {@link NOR}, {@link XOR},
      * {@link XNOR} or {@link RULE} implementations are supported, i.e. no user-defined implementation are
@@ -214,7 +222,7 @@ public class NCIntentSolver {
      * @see XNOR XNOR
      * @see NOR NOR
      */
-    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>> {}
+    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {}
 
     /**
      * Callback provided by the user for an intent when it is matched. It takes solver
@@ -223,7 +231,7 @@ public class NCIntentSolver {
      *
      * @see NCIntentSolver#addIntent(INTENT, IntentCallback)
      */
-    public interface IntentCallback extends Function<NCIntentSolverContext, NCQueryResult> {}
+    public interface IntentCallback extends Function<NCIntentSolverContext, NCQueryResult>, Serializable {}
 
     /**
      * Checks that combinator is one of the built-in implementations.
@@ -680,7 +688,7 @@ public class NCIntentSolver {
     }
 
     /**
-     * Binary operator based on declarative condition over {@link NCToken token}.
+     * <b>Binary operator DSL</b> based on declarative condition over {@link NCToken token}.
      *
      * @see OR OR
      * @see AND AND
@@ -722,7 +730,7 @@ public class NCIntentSolver {
          *      new RULE("value", "%%", "^[Ff]oo[Bb]ar$");
          * </pre>
          *
-         * @param param Rule's left-side parameter. Parameter can be one of the following:
+         * @param param Rule's left-side parameter. Parameter can be one of the following (<b>case-sensitive</b>):
          * <table summary="" class="dl-table">
          *     <tr>
          *         <th>Parameter</th>
@@ -770,14 +778,16 @@ public class NCIntentSolver {
          *         <td><code>==</code></td>
          *         <td>
          *             <code>param</code> is equal to <code>value</code>.
-         *             Java {@link Object#equals(Object)} method is used for equality check.
+         *             Java {@link Object#equals(Object)} method is used for equality check. Note that
+         *             string comparison is <b>case-sensitive</b>.
          *         </td>
          *     </tr>
          *     <tr>
          *         <td><code>!=</code></td>
          *         <td>
          *             <code>param</code> is not equal to <code>value</code>.
-         *             Java {@link Object#equals(Object)} method is used for equality check.
+         *             Java {@link Object#equals(Object)} method is used for equality check. Note that
+         *             string comparison is <b>case-sensitive</b>.
          *         </td>
          *     </tr>
          *     <tr>
@@ -832,7 +842,7 @@ public class NCIntentSolver {
         /**
          * Shortcut constructor for use cases where rule expression can be expressed as a
          * whitespace separated string of parameter, its operation and value. Parameter and operation cannot
-         * have whitespaces in them. Value will auto detected as {@code null}, {@code boolean}, {@code Integer} or
+         * have whitespaces in them. Value will be auto detected as {@code null}, {@code boolean}, {@code Integer} or
          * a {@code String} otherwise.
          * <br><br>
          * Here's few examples of the rules:
@@ -1103,7 +1113,7 @@ public class NCIntentSolver {
     /**
      * Item is a token predicate plus quantifiers. It is a building block for {@link TERM TERM}.
      */
-    public static final class ITEM {
+    public static final class ITEM implements Serializable {
         final private Predicate ptrn;
         final private int min, max;
 
@@ -1165,7 +1175,7 @@ public class NCIntentSolver {
      * Intent has a list of terms that all have to be found in the user input for the intent to match. Note that
      * order of items is not important for matching the term.
      */
-    public static final class TERM {
+    public static final class TERM implements Serializable {
         final private ITEM[] items;
 
         /**
@@ -1234,7 +1244,7 @@ public class NCIntentSolver {
      * @see CONV_INTENT CONV_INTENT
      * @see NON_CONV_INTENT NON_CONV_INTENT
      */
-    public static class INTENT {
+    public static class INTENT implements Serializable {
         final private String id;
         final private TERM[] terms;
         final private boolean inclConv;
@@ -1417,12 +1427,6 @@ public class NCIntentSolver {
         }
     }
 
-    // Default not-found callback.
-    private final Supplier<NCQueryResult> notFound;
-
-    // Added intents.
-    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
-
     /**
      * Creates new default token solver. Default solver has default {@code null} name, no multi-match and
      * default not-found function that throws {@link NCRejection} exception. This is equivalent to:
@@ -1431,7 +1435,7 @@ public class NCIntentSolver {
      * </pre>
      */
     public NCIntentSolver() {
-        this(null, null);
+        this(DFLT_NAME, null);
     }
 
     /**
@@ -1453,6 +1457,7 @@ public class NCIntentSolver {
      *      that throws {@link NCRejection} exception with generic error message.
      */
     public NCIntentSolver(String name, Supplier<NCQueryResult> notFound) {
+        this.name = name;
         this.notFound = notFound;
     }
 
@@ -1474,11 +1479,29 @@ public class NCIntentSolver {
 
         intents.add(Pair.of(intent, fun));
 
-        NCIntentSolverEngine.ackNewIntent(DFLT_NAME, intent);
+        NCIntentSolverEngine.ackNewIntent(name, intent);
 
         return this;
     }
-
+    
+    /**
+     * Gets all added intents.
+     *
+     * @return All intents.
+     */
+    public List<INTENT> getIntents() {
+        return intents.stream().map(Pair::getLeft).collect(Collectors.toList());
+    }
+    
+    /**
+     * Gets solver name.
+     *
+     * @return Solver name.
+     */
+    public String getName() {
+        return name;
+    }
+    
     /**
      *
      * @param words
