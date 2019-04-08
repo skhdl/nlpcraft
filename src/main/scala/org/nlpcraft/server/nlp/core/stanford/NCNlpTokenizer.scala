@@ -36,11 +36,12 @@ import edu.stanford.nlp.process.{AbstractTokenizer, CoreLabelTokenFactory}
 import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 
 import NCNlpTokenizer._
+
 /**
   * Custom tokenizer.
   */
 case class NCNlpTokenizer(sen: String) extends AbstractTokenizer[CoreLabel] {
-    private val iter = NCNlpCoreManager.tokenize(sen).map(p ⇒ f.makeToken(p.token, p.from, p.to)).toIterator
+    private val iter = NCNlpCoreManager.tokenize(sen).map(p ⇒ factory.makeToken(p.token, p.from, p.length)).toIterator
 
     override def getNext: CoreLabel = if (iter.hasNext) iter.next() else null
 }
@@ -49,5 +50,5 @@ case class NCNlpTokenizer(sen: String) extends AbstractTokenizer[CoreLabel] {
   * Custom tokenizer helper.
   */
 object NCNlpTokenizer {
-    private val f = new CoreLabelTokenFactory
+    private val factory = new CoreLabelTokenFactory
 }

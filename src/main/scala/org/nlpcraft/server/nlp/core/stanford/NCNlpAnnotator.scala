@@ -39,35 +39,28 @@ import edu.stanford.nlp.pipeline.{Annotation, Annotator}
 import edu.stanford.nlp.process.AbstractTokenizer
 import edu.stanford.nlp.util.TypesafeMap
 
+import scala.language.implicitConversions
 import scala.collection.JavaConversions._
 
 /**
   * Custom annotator.
-  * Implementation is based on edu.stanford.nlp.pipeline.TokenizerAnnotator
+  *
+  * Implementation is copy of edu.stanford.nlp.pipeline.TokenizerAnnotator with NCNlpTokenizer instead of default.
   */
 class NCNlpAnnotator extends Annotator {
     override def annotate(annotation: Annotation): Unit =
         if (annotation.containsKey(classOf[TextAnnotation])) {
             val text = annotation.get(classOf[TextAnnotation])
-            // don't wrap in BufferedReader.  It gives you nothing for in-memory String unless you need the readLine() method!
+
             val tokens = NCNlpTokenizer(text).tokenize
 
-            println("!!!tokens=" + tokens)
-
-            // cdm 2010-05-15: This is now unnecessary, as it is done in CoreLabelTokenFactory
-            // for (CoreLabel token: tokens) {
-            // token.set(CoreAnnotations.TextAnnotation.class, token.get(CoreAnnotations.TextAnnotation.class));
-            // }
-            // label newlines
             setNewlineStatus(tokens)
-            // set indexes into document wide token list
             setTokenBeginTokenEnd(tokens)
-            // add tokens list to annotation
+
             annotation.set(classOf[TokensAnnotation], tokens)
         }
         else
             throw new RuntimeException("Tokenizer unable to find text in annotation: " + annotation)
-
 
     override def requires = new util.HashSet[Class[_ <: CoreAnnotation[_]]]()
 
