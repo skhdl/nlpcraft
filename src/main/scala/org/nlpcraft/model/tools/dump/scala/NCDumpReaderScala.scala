@@ -42,7 +42,7 @@ import org.nlpcraft.model.NCModel
 import resource.managed
 
 /**
-  * Dump reader.
+  * Data model dump reader.
   */
 object NCDumpReaderScala extends LazyLogging {
     /**
@@ -69,13 +69,6 @@ object NCDumpReaderScala extends LazyLogging {
             case e: Exception ⇒ err = e
         }
 
-        def printInfo(): Unit =
-            if (info != null) {
-                logger.info("Model creation information: ")
-
-                info.foreach { case (k, v) ⇒ logger.info(s"$k=$v") }
-            }
-
         if (err != null) {
             var msg = s"Error reading file [path=$path"
 
@@ -84,12 +77,10 @@ object NCDumpReaderScala extends LazyLogging {
 
             msg += ']'
 
-            printInfo()
-
             throw new NCE(msg, err)
         }
 
-        logger.info(s"Model deserialized " +
+        logger.info(s"Data model dump loaded " +
             s"[path=$path" +
             s", modelId=${mdl.getDescriptor.getId}" +
             s", modelName=${mdl.getDescriptor.getName}" +
@@ -97,8 +88,6 @@ object NCDumpReaderScala extends LazyLogging {
             s", currentVersion=${NCVersion.getCurrent.version}" +
             s"]"
         )
-
-        printInfo()
 
         mdl
     }

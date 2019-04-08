@@ -48,6 +48,7 @@ import org.nlpcraft.model.builder.parsing.NCElementItem;
 import org.nlpcraft.model.builder.parsing.NCMacroItem;
 import org.nlpcraft.model.builder.parsing.NCModelItem;
 import org.nlpcraft.model.impl.NCMetadataImpl;
+import org.nlpcraft.model.tools.dump.*;
 import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 
 import java.io.BufferedReader;
@@ -388,14 +389,25 @@ public class NCModelBuilder {
     }
     
     /**
-     * TODO:
-     * @param dump Dump file.
+     * Loads and creates data model proxy from given model dump.
      *
-     * @return New built model.
+     * @param dumpFilePath Dump file path.
+     * @return Newly built model proxy. Proxy will have a no-op callback implementations for intent and will return the
+     *      following JSON response:
+     * <pre class="brush: js">
+     * {
+     *     "modelId": "model-id",
+     *     "intentId": "intent-id",
+     *     "modelFile": "model-id-01:01:01:123.gz"
+     *  }
+     * </pre>
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     *
+     * @see NCDumpReader
+     * @see NCDumpWriter
      */
-    public NCModel load(String dump) throws NCBuilderException {
-        return NCDumpReaderScala.read(dump);
+    public NCModel loadFromDump(String dumpFilePath) throws NCBuilderException {
+        return NCDumpReaderScala.read(dumpFilePath);
     }
     
     /**

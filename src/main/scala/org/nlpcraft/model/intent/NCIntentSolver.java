@@ -1483,7 +1483,7 @@ public class NCIntentSolver implements Serializable {
     }
     
     /**
-     * Gets all intents.
+     * Gets all added intents.
      *
      * @return All intents.
      */

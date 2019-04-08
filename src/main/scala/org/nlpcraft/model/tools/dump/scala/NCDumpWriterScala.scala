@@ -15,7 +15,7 @@ import org.nlpcraft.model.{NCElement, NCMetadata, NCModel, NCModelDescriptor, NC
 import resource.managed
 
 /**
-  * Dump writer.
+  * Data model dump writer.
   */
 object NCDumpWriterScala extends LazyLogging {
     private final val FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss")
@@ -106,23 +106,22 @@ object NCDumpWriterScala extends LazyLogging {
         override def getDescriptor: NCModelDescriptor = descriptor
         override def query(ctx: NCQueryContext): NCQueryResult = solver.solve(ctx)
 
-        override def discard(): Unit = logger.warn(s"'Discard' function is not defined for model: ${descriptor.getId}")
-        override def initialize(ctx: NCProbeContext): Unit =
-            logger.warn(s"'Initialize' function is not defined for model: ${descriptor.getId}")
+        override def discard(): Unit = ()
+        override def initialize(ctx: NCProbeContext): Unit = ()
     }
 
     /**
       *
       * @param mdl
       * @param solver
-      * @param dir
+      * @param dirPath
       */
     @throws[NCE]
-    def write(mdl: NCModel, solver: NCIntentSolver, dir: String): File = {
-        val dirFile = new File(dir)
+    def write(mdl: NCModel, solver: NCIntentSolver, dirPath: String): String = {
+        val dirFile = new File(dirPath)
 
         if (!dirFile.exists() || !dirFile.isDirectory)
-            throw new NCE(s"$dir is not folder.")
+            throw new NCE(s"$dirPath path is not a directory.")
 
         val file = s"${mdl.getDescriptor.getId}-${U.nowUtc().format(FMT)}.gz"
         val filePath = s"$dirFile/$file"
@@ -130,7 +129,7 @@ object NCDumpWriterScala extends LazyLogging {
         val ver = NCVersion.getCurrent.version
 
         val solverFix = new NCIntentSolver(
-            s"Dump [name=${solver.getName}, version=$ver]", null
+            s"Model dump intent solver [name=${solver.getName}, version=$ver]", null
         )
 
         val intents = solver.getIntents.asScala
@@ -216,7 +215,7 @@ object NCDumpWriterScala extends LazyLogging {
             case e: Exception ⇒ throw new NCE(s"Error writing file: $filePath", e)
         }
 
-        logger.info(s"Model serialized " +
+        logger.info(s"Data model dump exported " +
             s"[path=$filePath" +
             s", id=$mdlId" +
             s", name=${mdl.getDescriptor.getName}" +
@@ -225,6 +224,6 @@ object NCDumpWriterScala extends LazyLogging {
             s"]"
         )
 
-        new File(file)
+        file
     }
 }

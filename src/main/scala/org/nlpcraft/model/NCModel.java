@@ -1187,8 +1187,6 @@ public interface NCModel {
      * <b>JSON</b>
      * <br>
      * If using JSON model presentation this method will have no-op implementation.
-     *
-     * @see NCProbeContext#reloadModel(String)
      */
     default void discard() {
         // No-op.

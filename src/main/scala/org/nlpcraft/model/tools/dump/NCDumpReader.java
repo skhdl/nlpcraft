@@ -37,24 +37,47 @@ import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 import java.io.File;
 
 /**
- * Dump reader java adapter.
+ * Data model dump reader.
+ * <br><br>
+ * Data model dump allows to export the model and intent configuration sans the callback implementations. Data
+ * model dumps can be used to safely test model's intent-based matching logic by a 3-rd party.
+ * 
+ * @see NCDumpWriter
  */
 public class NCDumpReader {
     /**
+     * Reads the data model dump and creates data model proxy.
      *
-     * @param path
-     * @return
-     * @throws NCException
+     * @param filePath Data model dump file path to read.
+     * @return Data model proxy. Proxy will have a no-op callback implementations for intent and will return the
+     *      following JSON response:
+     * <pre class="brush: js">
+     * {
+     *     "modelId": "model-id",
+     *     "intentId": "intent-id",
+     *     "modelFile": "model-id-01:01:01:123.gz"
+     *  }
+     * </pre>
+     * @throws NCException Thrown in case of any errors.
      */
-    public static NCModel read(String path) throws NCException {
-        return NCDumpReaderScala.read(path);
+    public static NCModel read(String filePath) throws NCException {
+        return NCDumpReaderScala.read(filePath);
     }
     
     /**
+     * Reads the data model dump and creates data model proxy.
      *
-     * @param file
-     * @return
-     * @throws NCException
+     * @param file Data model dump file to read.
+     * @return Data model proxy. Proxy will have a no-op callback implementations for intent and will return the
+     *      following JSON response:
+     * <pre class="brush: js">
+     * {
+     *     "modelId": "model-id",
+     *     "intentId": "intent-id",
+     *     "modelFile": "model-id-01:01:01:123.gz"
+     *  }
+     * </pre>
+     * @throws NCException Thrown in case of any errors.
      */
     public static NCModel read(File file) throws NCException {
         return NCDumpReaderScala.read(file);
