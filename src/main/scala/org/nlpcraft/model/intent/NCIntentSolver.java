@@ -688,7 +688,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Binary operator based on declarative condition over {@link NCToken token}.
+     * <b>Binary operator DSL</b> based on declarative condition over {@link NCToken token}.
      *
      * @see OR OR
      * @see AND AND
@@ -730,7 +730,7 @@ public class NCIntentSolver implements Serializable {
          *      new RULE("value", "%%", "^[Ff]oo[Bb]ar$");
          * </pre>
          *
-         * @param param Rule's left-side parameter. Parameter can be one of the following:
+         * @param param Rule's left-side parameter. Parameter can be one of the following (<b>case-sensitive</b>):
          * <table summary="" class="dl-table">
          *     <tr>
          *         <th>Parameter</th>
@@ -778,14 +778,16 @@ public class NCIntentSolver implements Serializable {
          *         <td><code>==</code></td>
          *         <td>
          *             <code>param</code> is equal to <code>value</code>.
-         *             Java {@link Object#equals(Object)} method is used for equality check.
+         *             Java {@link Object#equals(Object)} method is used for equality check. Note that
+         *             string comparison is <b>case-sensitive</b>.
          *         </td>
          *     </tr>
          *     <tr>
          *         <td><code>!=</code></td>
          *         <td>
          *             <code>param</code> is not equal to <code>value</code>.
-         *             Java {@link Object#equals(Object)} method is used for equality check.
+         *             Java {@link Object#equals(Object)} method is used for equality check. Note that
+         *             string comparison is <b>case-sensitive</b>.
          *         </td>
          *     </tr>
          *     <tr>
@@ -840,7 +842,7 @@ public class NCIntentSolver implements Serializable {
         /**
          * Shortcut constructor for use cases where rule expression can be expressed as a
          * whitespace separated string of parameter, its operation and value. Parameter and operation cannot
-         * have whitespaces in them. Value will auto detected as {@code null}, {@code boolean}, {@code Integer} or
+         * have whitespaces in them. Value will be auto detected as {@code null}, {@code boolean}, {@code Integer} or
          * a {@code String} otherwise.
          * <br><br>
          * Here's few examples of the rules:
