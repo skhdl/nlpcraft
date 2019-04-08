@@ -69,6 +69,13 @@ object NCDumpReaderScala extends LazyLogging {
             case e: Exception ⇒ err = e
         }
 
+        def printInfo(): Unit =
+            if (info != null) {
+                logger.info("Model creation information: ")
+
+                info.foreach { case (k, v) ⇒ logger.info(s"$k=$v") }
+            }
+
         if (err != null) {
             var msg = s"Error reading file [path=$path"
 
@@ -76,6 +83,8 @@ object NCDumpReaderScala extends LazyLogging {
                 msg += s", fileVersion=$version, currentVersion=${NCVersion.getCurrent}"
 
             msg += ']'
+
+            printInfo()
 
             throw new NCE(msg, err)
         }
@@ -89,9 +98,7 @@ object NCDumpReaderScala extends LazyLogging {
             s"]"
         )
 
-        logger.info("Model creation information: ")
-
-        info.foreach { case (k, v) ⇒ logger.info(s"$k=$v") }
+        printInfo()
 
         mdl
     }
