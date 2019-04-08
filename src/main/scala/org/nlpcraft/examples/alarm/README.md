@@ -1,7 +1,7 @@
 <img src="https://nlpcraft.org/images/nlpcraft_logo_black.gif" height="40px">
 <br>
 <img src="https://travis-ci.org/vic64/nlpcraft.svg?branch=master">&nbsp;
-                                                                  <a target="javadoc" href="https://javadoc.io/doc/org.nlpcraft/nlpcraft"><img src="https://javadoc.io/badge/org.nlpcraft/nlpcraft.svg" alt="Javadocs"></a>
+<a target="javadoc" href="https://javadoc.io/doc/org.nlpcraft/nlpcraft"><img src="https://javadoc.io/badge/org.nlpcraft/nlpcraft.svg" alt="Javadocs"></a>
 
 ### Alarm Example
 This example provides a simple "alarm clock" interface where you can ask to set the timer for a 
