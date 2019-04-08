@@ -149,7 +149,7 @@ import java.util.stream.Collectors;
  *         If multiple intents match - the system will pick the one with the most specific match.
  *     </li>
  * </ul>
- * Here's an example of using token solver taken from Time Example:
+ * Here's an example of using token solver taken from <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time</a> example:
  * <pre class="brush: java">
  * NCTokenSolver solver = new NCTokenSolver(
  *      "time-solver",

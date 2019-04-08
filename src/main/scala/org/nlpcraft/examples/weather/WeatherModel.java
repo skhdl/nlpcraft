@@ -129,6 +129,7 @@ public class WeatherModel extends NCModelProviderAdapter {
      * @return Pair of dates or {@code null} if not found.
      */
     private Pair<LocalDate, LocalDate> prepDate(NCIntentSolverContext ctx) {
+        // Gets tokens for 1st term.
         List<NCToken> toks = ctx.getIntentTokens().get(1);
 
         if (toks.size() > 1)
@@ -151,7 +152,9 @@ public class WeatherModel extends NCModelProviderAdapter {
      * @return Geo location.
      */
     private String prepGeo(NCIntentSolverContext ctx) throws NCRejection {
-        List<NCToken> geoToks = ctx.getIntentTokens().get(2); // Can be empty...
+        // Gets tokens for the 2nd term - can be empty...
+        List<NCToken> geoToks = ctx.getIntentTokens().get(2);
+
         List<NCToken> allToks = ctx.getVariant().getTokens();
     
         Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
@@ -307,9 +310,9 @@ public class WeatherModel extends NCModelProviderAdapter {
     private INTENT mkIntent(String id, String weatherTokId) {
         return new CONV_INTENT(
             id,
-            new TERM("id == " + weatherTokId, 1, 1),     // Index 0: mandatory 'weather' token.
-            new TERM("id == nlp:date", 0, 1),          // Index 1: optional date.
-            new TERM(                                  // Index 2: optional city.
+            new TERM("id == " + weatherTokId, 1, 1),     // Term #1 (index 0): mandatory 'weather' token.
+            new TERM("id == nlp:date", 0, 1),          // Term #2 (index 1): optional date.
+            new TERM(                                  // Term #3 (index 2): optional city.
                 new AND("id == nlp:geo", "~GEO_KIND == CITY"),
                 0, 1
             )

@@ -130,7 +130,11 @@ public interface NCSentence extends Serializable {
     boolean isOwnerOf(NCToken tok);
 
     /**
-     * Gets the list of all parsing variants for this sentence.
+     * Gets the list of all parsing variants for this sentence. Note that a given user input can have one or
+     * more possible different parsing variants (i.e. set of tokens representing that parsed input). In general,
+     * data model {@link NCModel#query(NCQueryContext)} method will need to examine all possible variants when
+     * trying to "understand" the user input. Note that intent-based {@link NCIntentSolver matcher} will check
+     * all variants automatically.
      *
      * @return All parsing variants of this sentence. Always contains at least one variant.
      */
