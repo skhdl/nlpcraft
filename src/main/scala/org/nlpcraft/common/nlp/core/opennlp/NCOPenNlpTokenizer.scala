@@ -29,55 +29,36 @@
  *        /_/
  */
 
-package org.nlpcraft.server.nlp.core
+package org.nlpcraft.common.nlp.core.opennlp
 
-import org.nlpcraft.common.nlp.core.NCNlpCoreManager
-import org.nlpcraft.common.{NCE, NCLifecycle}
+import java.io.BufferedInputStream
 
-import scala.reflect.runtime.universe._
+import opennlp.tools.tokenize.{Tokenizer, TokenizerME, TokenizerModel}
+import org.nlpcraft.common.nlp.core.{NCNlpCoreToken, NCNlpTokenizer}
+import org.nlpcraft.common.{NCLifecycle, _}
+import resource.managed
+
+import scala.language.{implicitConversions, postfixOps}
 
 /**
-  * Server NLP manager.
+  * OpenNLP tokenizer implementation.
   */
-object NCNlpServerManager extends NCLifecycle("Server NLP manager") {
-    @volatile var parser: NCNlpParser = _
+object NCOPenNlpTokenizer extends NCLifecycle("Open NLP tokenizer") with NCNlpTokenizer {
+    @volatile private var tokenizer: Tokenizer = _
 
-    /**
-      * Starts this component.
-      */
     override def start(): NCLifecycle = {
-        val mirror = runtimeMirror(getClass.getClassLoader)
-
-        def mkInstance(name: String): NCNlpParser =
-            try
-                mirror.reflectModule(mirror.staticModule(name)).instance.asInstanceOf[NCNlpParser]
-            catch {
-                case e: Throwable ⇒ throw new NCE(s"Error initializing class: $name", e)
+        tokenizer =
+            managed(new BufferedInputStream(U.getStream("opennlp/en-token.bin"))) acquireAndGet { in ⇒
+                new TokenizerME(new TokenizerModel(in))
             }
-
-        parser =
-            NCNlpCoreManager.getEngine match {
-                case "stanford" ⇒ mkInstance("org.nlpcraft.server.nlp.core.stanford.NCStanfordParser")
-                // NCOpenNlpParser added via reflection just for symmetry.
-                case "opennlp" ⇒ mkInstance("org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser")
-
-                case _ ⇒ throw new AssertionError(s"Unexpected engine: ${NCNlpCoreManager.getEngine}")
-            }
-
-        parser.start()
 
         super.start()
     }
 
-    /**
-      * Parses given sentence.
-      *
-      * @param sen Sentence text.
-      * @return Parsed tokens.
-      */
-    def parse(sen: String): Seq[NCNlpWord] = {
+    override def tokenize(sen: String): Seq[NCNlpCoreToken] = {
         ensureStarted()
 
-        parser.parse(sen)
+        this.synchronized { tokenizer.tokenizePos(sen) }.
+            toSeq.map(s ⇒ NCNlpCoreToken(s.getCoveredText(sen).toString, s.getStart, s.getEnd, s.length()))
     }
 }

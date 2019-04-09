@@ -78,7 +78,8 @@ object NCStanfordParser extends NCLifecycle("Stanford NLP parser") with NCNlpPar
     override def start(): NCLifecycle = {
         val p = new Properties()
 
-        p.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
+        p.setProperty("customAnnotatorClass.nctokenize" , classOf[NCNlpAnnotator].getName)
+        p.setProperty("annotators", "nctokenize, ssplit, pos, lemma, ner")
 
         // Created with hardcoded properties just for minimize configuration issues.
         stanford = new StanfordCoreNLP(p)

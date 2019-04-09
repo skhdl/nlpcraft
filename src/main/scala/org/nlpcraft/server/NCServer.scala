@@ -87,7 +87,7 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         
         logger.info(s)
     }
-    
+
     /**
       * Starts all managers.
       */

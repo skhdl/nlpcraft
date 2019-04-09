@@ -170,7 +170,7 @@ object NCProbe extends App with LazyLogging {
         val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
         val modelProviders: List[String] = getOptionalList("probe.modelProviders")
         val resultMaxSize: Int = hocon.getInt("probe.resultMaxSizeBytes")
-    
+
         /**
           * 
           */

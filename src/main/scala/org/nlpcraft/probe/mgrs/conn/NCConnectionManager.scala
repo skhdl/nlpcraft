@@ -45,6 +45,7 @@ import org.nlpcraft.probe.mgrs.model.NCModelManager
 import org.nlpcraft.common.socket._
 import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.common._
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 
 import scala.collection.mutable
 
@@ -74,8 +75,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
     
     // Control thread.
     private var ctrlThread: Thread = _
-    
-    
+
     /**
       *
       */
@@ -176,11 +176,24 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
     
         sock.write(U.makeSha256Hash(config.token)) // Hash, sent clear text.
     
-        sock.read[NCProbeMessage]().getType match { // Get hash check response.
+        val hashResp = sock.read[NCProbeMessage]()
+
+        hashResp.getType match { // Get hash check response.
             case "S2P_HASH_CHECK_OK" ⇒
                 val ver = NCVersion.getCurrent
                 val tmz = TimeZone.getDefault
     
+                val srvNlpEng =
+                    hashResp.getOrElse(
+                        "NLP_ENGINE",
+                        throw new HandshakeError("NLP engine parameter missed in response.")
+                    )
+
+                val probeNlpEng = NCNlpCoreManager.getEngine
+
+                if (srvNlpEng != probeNlpEng)
+                    logger.warn(s"Invalid NLP engines configuration [server=$srvNlpEng, probe=$probeNlpEng]")
+
                 sock.write(NCProbeMessage( // Handshake.
                     // Type.
                     "INIT_HANDSHAKE",

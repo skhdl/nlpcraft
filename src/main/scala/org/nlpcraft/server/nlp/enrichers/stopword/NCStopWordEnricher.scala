@@ -527,7 +527,7 @@ object NCStopWordEnricher extends NCNlpEnricher("Stopword enricher") {
                                         "end" → last.endCharIndex,
                                         "charLength" → origText.length,
                                         "quoted" → isBodyQuoted,
-                                        "stopWord" → true,
+                                        "stopWord" → false,
                                         "bracketed" → true,
                                         "direct" → buf.forall(_.isDirect)
                                     )

@@ -31,6 +31,8 @@
 
 package org.nlpcraft.model;
 
+import org.nlpcraft.common.NCException;
+import org.nlpcraft.common.util.NCUtils;
 import org.nlpcraft.model.intent.*;
 import java.io.*;
 
@@ -96,6 +98,14 @@ public class NCQueryResult implements Serializable {
      * @return Newly created query result.
      */
     public static NCQueryResult json(String json) {
+        // Validation.
+        try {
+            NCUtils.js2Map(json);
+        }
+        catch (NCException e) {
+            throw new IllegalArgumentException("Invalid JSON value: " + json, e);
+        }
+        
         return new NCQueryResult(json, "json");
     }
     
