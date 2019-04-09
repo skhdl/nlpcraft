@@ -270,7 +270,7 @@ object NCNlpCoreManager extends NCLifecycle(s"Core NLP manager") {
         engine = U.sysEnv("NLPCRAFT_NLP_ENGINE").getOrElse("opennlp").toLowerCase
 
         if (engine != "opennlp" && engine != "stanford")
-            throw new NCE(s"Unsupported engine: $engine")
+            throw new NCE(s"Unsupported NLP engine: $engine")
 
         logger.info(s"NLP engine configured: $engine")
 
