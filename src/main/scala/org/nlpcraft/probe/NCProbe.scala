@@ -170,8 +170,7 @@ object NCProbe extends App with LazyLogging {
         val jarsFolder: String = if (hocon.getIsNull("probe.jarsFolder")) null else hocon.getString("probe.jarsFolder")
         val modelProviders: List[String] = getOptionalList("probe.modelProviders")
         val resultMaxSize: Int = hocon.getInt("probe.resultMaxSizeBytes")
-        val nlpEngine: String = hocon.getString("probe.nlp.engine")
-    
+
         /**
           * 
           */
@@ -193,9 +192,6 @@ object NCProbe extends App with LazyLogging {
 
             if (resultMaxSize <= 0)
                 abortError("Configuration property 'probe.resultMaxSizeBytes' must be positive.")
-
-            if (isEmpty(nlpEngine))
-                abortError("Configuration property 'probe.nlp.engine' cannot be empty.")
         }
     }
     
@@ -265,10 +261,7 @@ object NCProbe extends App with LazyLogging {
     private def startManagers(cfg: Config.type): Unit = {
         // Order is important!
         NCVersionManager.start()
-        // TODO:
-        NCNlpCoreManager.setEngine(Config.nlpEngine)
         NCNlpCoreManager.start()
-
         NCNumericManager.start()
         NCDeployManager.startWithConfig(cfg)
         NCModelManager.startWithConfig(cfg)

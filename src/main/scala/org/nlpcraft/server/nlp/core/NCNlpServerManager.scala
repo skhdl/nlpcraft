@@ -31,8 +31,8 @@
 
 package org.nlpcraft.server.nlp.core
 
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.{NCE, NCLifecycle}
-import org.nlpcraft.server.NCConfigurable
 
 import scala.reflect.runtime.universe._
 
@@ -40,17 +40,6 @@ import scala.reflect.runtime.universe._
   * Server NLP manager.
   */
 object NCNlpServerManager extends NCLifecycle("Server NLP manager") {
-    private object Config extends NCConfigurable {
-        val engine: String = getString("server.nlp.engine")
-    
-        override def check(): Unit = {
-            if (engine != "stanford" && engine != "opennlp")
-                abortError(s"Configuration property 'server.nlp.engine' must be either 'stanford' or 'opennlp'.")
-        }
-    }
-
-    Config.check()
-
     @volatile var parser: NCNlpParser = _
 
     /**
@@ -67,15 +56,13 @@ object NCNlpServerManager extends NCLifecycle("Server NLP manager") {
             }
 
         parser =
-            Config.engine match {
+            NCNlpCoreManager.getEngine match {
                 case "stanford" ⇒ mkInstance("org.nlpcraft.server.nlp.core.stanford.NCStanfordParser")
                 // NCOpenNlpParser added via reflection just for symmetry.
                 case "opennlp" ⇒ mkInstance("org.nlpcraft.server.nlp.core.opennlp.NCOpenNlpParser")
 
-                case _ ⇒ throw new AssertionError(s"Unexpected engine: ${Config.engine}")
+                case _ ⇒ throw new AssertionError(s"Unexpected engine: ${NCNlpCoreManager.getEngine}")
             }
-
-        logger.info(s"NLP engined configured: ${Config.engine}")
 
         parser.start()
 

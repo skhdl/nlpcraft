@@ -31,7 +31,7 @@
 
 package org.nlpcraft.common.nlp.core
 
-import org.nlpcraft.common.{NCE, NCLifecycle}
+import org.nlpcraft.common.{NCE, NCLifecycle, _}
 
 import scala.language.{implicitConversions, postfixOps}
 import scala.reflect.runtime.universe._
@@ -257,18 +257,22 @@ object NCNlpCoreManager extends NCLifecycle(s"Core NLP manager") {
 
     /**
       *
-      * @param engine
-      */
-    def setEngine(engine: String): Unit = this.engine = engine
-
-    /**
-      *
       * @return
       */
-    def getEngine: String = engine
+    def getEngine: String = {
+        ensureStarted()
+
+        engine
+    }
 
     override def start(): NCLifecycle = {
-        require(engine != null)
+        // It's common component. We can't use server or probe configuration.
+        engine = U.sysEnv("NLPCRAFT_NLP_ENGINE").getOrElse("opennlp").toLowerCase
+
+        if (engine != "opennlp" && engine != "stanford")
+            throw new NCE(s"Unsupported engine: $engine")
+
+        logger.info(s"NLP engine configured: $engine")
 
         val mirror = runtimeMirror(getClass.getClassLoader)
 
@@ -287,9 +291,6 @@ object NCNlpCoreManager extends NCLifecycle(s"Core NLP manager") {
 
                 case _ ⇒ throw new AssertionError(s"Unexpected engine: $engine")
             }
-
-        logger.info(s"NLP engined configured: $engine")
-
         tokenizer.start()
 
         super.start()
