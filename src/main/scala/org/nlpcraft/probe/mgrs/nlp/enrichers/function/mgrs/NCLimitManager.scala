@@ -128,7 +128,7 @@ object NCLimitManager {
       * @param number Tokens numeric value. Optional.
       */
     case class Group(tokens: Seq[Token], number: Option[Int]) {
-        def stem: String = number match {
+        def value: String = number match {
             case Some(_) ⇒ CD
             case None ⇒ tokens.map(_.stem).mkString(" ")
         }
@@ -162,7 +162,7 @@ object NCLimitManager {
             }
         }
 
-        def stem: String = groups.map(_.stem).mkString(" ")
+        def value: String = groups.map(_.value).mkString(" ")
     }
 
     /**
@@ -179,7 +179,11 @@ import org.nlpcraft.probe.mgrs.nlp.enrichers.function.mgrs.NCLimitManager._
   * Limit manager.
   */
 case class NCLimitManager(ns: Sentence) {
+    private val nums = NCNumericManager.find(ns).filter(_.unit.isEmpty)
+
     private val map: Map[Seq[Token], GroupsHolder] = {
+        val numsMap = nums.map(n ⇒ n.tokens → n).toMap
+
         // All groups combinations.
         val tks2Nums: Seq[(Token, Option[Int])] = ns.filter(!_.isStopword).map(t ⇒ t → FUZZY_NUMS.get(t.stem))
 
@@ -205,7 +209,18 @@ case class NCLimitManager(ns: Sentence) {
         }.
             // Converts from artificial group to tokens groups (Seq[Token], Option[Int])
             map { case (_, gs) ⇒ gs.map { case (seq, _) ⇒ seq } }.
-            map(seq ⇒ Group(seq.map { case(t, _) ⇒ t }, seq.head._2)).
+            map(seq ⇒ {
+                val toks = seq.map { case (t, _) ⇒ t }
+                var numOpt = seq.head._2
+
+                if (numOpt.isEmpty)
+                    numOpt = numsMap.get(toks) match {
+                        case Some(num) ⇒ Some(num.value.intValue())
+                        case None ⇒ None
+                    }
+
+                Group(toks, numOpt)
+            }).
             // Converts to sequence and sorts.
             toSeq.sortBy(_.index)
 
@@ -214,8 +229,6 @@ case class NCLimitManager(ns: Sentence) {
             map(p ⇒ p.tokens → p).
             toMap
     }
-
-    private val nums = NCNumericManager.find(ns).filter(_.unit.isEmpty)
 
     private def trySimpleNumeric(toks: Seq[Token]): Option[NCLimitData] = {
         val mToks = toks.filter(!_.isStopword)
@@ -238,7 +251,7 @@ case class NCLimitManager(ns: Sentence) {
     def get(toks: Seq[Token]): Option[NCLimitData] =
         map.get(toks) match {
             case Some(g) ⇒
-                if (limits.contains(g.stem))
+                if (limits.contains(g.value))
                     Some(NCLimitData(g.limit, Some(g.asc), false))
                 else
                     trySimpleNumeric(toks)
