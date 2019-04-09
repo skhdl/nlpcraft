@@ -309,7 +309,7 @@ object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
                         if (limitData.asc.isDefined)
                             params ++= Seq("asc" → limitData.asc.get)
 
-                        mark(LIMIT, toks, sumWords(toks), elems, params: _*)
+                        mark(LIMIT, limits, sumWords(toks), elems, params: _*)
 
                         true
                     }

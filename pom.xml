@@ -488,6 +488,10 @@
                             </packages>
                         </group>
                         <group>
+                            <title>Data Model Dump Tool</title>
+                            <packages>org.nlpcraft.model.tools.dump</packages>
+                        </group>
+                        <group>
                             <title>Data Model Test Framework</title>
                             <packages>org.nlpcraft.model.test</packages>
                         </group>

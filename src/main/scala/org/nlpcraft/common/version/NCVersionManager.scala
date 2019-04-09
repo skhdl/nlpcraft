@@ -58,26 +58,16 @@ object NCVersionManager extends NCLifecycle("Version manager") {
     // Whether or not version check is disabled.
     private final val enabled = !U.isSysEnvTrue("NLPCRAFT_VERSION_CHECK_DISABLED")
 
-    /**
-      * Check for version update and prints it.
-      *
-      * @param name Component name.
-      * @param params Additional component related parameters.
-      */
-    @throws[NCE]
-    def checkForUpdates(name: String, params: Map[String, Any]): Unit = {
-        ensureStarted()
-        
-        if (!enabled)
-            return
-        
+    @volatile private var info: Map[String, Any] = _
+
+    override def start(): NCLifecycle = {
         val tmz = TimeZone.getDefault
         val sysProps = System.getProperties
-    
+
         // Collect basic environment data.
         var hostName = ""
         var hostAddr = ""
-        
+
         try {
             val localhost = U.getInternalAddress
 
@@ -87,10 +77,10 @@ object NCVersionManager extends NCLifecycle("Version manager") {
         catch {
             case e: IOException ⇒ logger.warn(s"Error during receiving network info: ${e.getMessage}")
         }
-        
+
         val ver = NCVersion.getCurrent
-        
-        val m = Map(
+
+        info = Map(
             "API_DATE" → ver.date,
             "API_VERSION" → ver.version,
             "OS_VER" → sysProps.getProperty("os.version"),
@@ -107,12 +97,38 @@ object NCVersionManager extends NCLifecycle("Version manager") {
             "HOST_ADDR" → hostAddr
         )
 
+        super.start()
+    }
+
+    /**
+      *
+      * @return
+      */
+    def getVersionInfo: Map[String, Any] = {
+        ensureStarted()
+
+        info
+    }
+
+    /**
+      * Check for version update and prints it.
+      *
+      * @param name Component name.
+      * @param params Additional component related parameters.
+      */
+    @throws[NCE]
+    def checkForUpdates(name: String, params: Map[String, Any]): Unit = {
+        ensureStarted()
+        
+        if (!enabled)
+            return
+
         val gson = new Gson()
         val typeResp = new TypeToken[util.HashMap[String, AnyRef]]() {}.getType
 
         implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
-        val props = (m ++ params).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
+        val props = (info ++ params).map(p ⇒ p._1 → (if (p._2 != null) p._2.toString else null)).asJava
 
         val f =
             Future {
@@ -128,7 +144,7 @@ object NCVersionManager extends NCLifecycle("Version manager") {
                             gson.toJson(
                                 Map(
                                     "name" → name,
-                                    "version" → ver.version,
+                                    "version" → NCVersion.getCurrent.version,
                                     "properties" → props
                                 ).asJava
                             ),

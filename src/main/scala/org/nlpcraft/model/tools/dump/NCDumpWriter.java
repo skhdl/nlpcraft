@@ -29,39 +29,33 @@
  *        /_/
  */
 
-package org.nlpcraft.model;
+package org.nlpcraft.model.tools.dump;
 
-import java.io.Serializable;
+import org.nlpcraft.common.*;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.tools.dump.scala.*;
 
 /**
- * Model descriptor.
+ * Data model dump writer.
+ * <br><br>
+ * Data model dump allows to export the model and intent configuration sans the callback implementations. Data
+ * model dumps can be used to safely test model's intent-based matching logic by a 3-rd party.
  *
- * @see NCModel#getDescriptor()
+ * @see NCDumpReader
  */
-public interface NCModelDescriptor extends Serializable {
+public class NCDumpWriter {
     /**
-     * Gets unique, <i>immutable</i> ID of this model.
-     * <p>
-     * Note that <b>model IDs are immutable</b> while name and version
-     * can be changed freely. Changing model ID is equal to creating a completely new model that will have
-     * to be re-trained and re-learned again. Model IDs (unlike name and version) are not exposed to
-     * the end user and only serve a technical purpose. ID's max length is 32 characters.
+     * Writes data model dump file into specified directory. Dump file will only contain static model configuration
+     * and intent descriptors. It will not serialize any code logic.
      *
-     * @return Unique, <i>immutable</i> ID of this model.
+     * @param mdl Model to dump.
+     * @param solver Intent solver to dump.
+     * @param dirPath Directory path where dump file will be created.
+     * @return Name of the created file. File name contains model ID and the timestamp.
+     * @throws NCException Thrown in case of any errors.
      */
-    String getId();
-
-    /**
-     * Gets descriptive name of this model. Name's max length is 64 characters.
-     *
-     * @return Descriptive name for this model.
-     */
-    String getName();
-
-    /**
-     * Gets the version of this model using semantic versioning. Version's max length is 16 characters.
-     *
-     * @return A version compatible with (<a href="http://www.semver.org">www.semver.org</a>) specification.
-     */
-    String getVersion();
+    public static String write(NCModel mdl, NCIntentSolver solver, String dirPath) throws NCException {
+        return NCDumpWriterScala.write(mdl, solver, dirPath);
+    }
 }

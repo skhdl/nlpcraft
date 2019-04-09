@@ -31,13 +31,9 @@
 
 package org.nlpcraft.model.intent;
 
-import org.nlpcraft.model.NCModel;
-import org.nlpcraft.model.NCQueryContext;
-import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.NCVariant;
-
-import java.io.Serializable;
-import java.util.List;
+import org.nlpcraft.model.*;
+import java.io.*;
+import java.util.*;
 
 /**
  * A context that is passed into {@link NCIntentSolver.IntentCallback callback} of the matched intent.
@@ -63,9 +59,35 @@ public interface NCIntentSolverContext extends Serializable {
     /**
      * Gets a subset of tokens representing matched intent. This subset is grouped by the matched terms
      * where {@code null} sub-list defines an optional term. Order and index of sub-lists corresponds
-     * to the order and index of terms in the matching intent. Note that unlike {@link #getVariant()} method
+     * to the order and index of terms in the matching intent. Number of sub-lists will always be the same
+     * as the number of terms in the matched intent.
+     * <br><br>
+     * Note that unlike {@link #getVariant()} method
      * this method returns only subset of the tokens that were part of the matched intent. Specifically, it will
      * not return tokens for free words, stopwords or unmatched ("dangling") tokens.
+     * <br><br>
+     * For example, consider the following intent from <a target="github" href="https://github.com/vic64/nlpcraft/blob/master/src/main/scala/org/nlpcraft/examples/alarm/AlarmModel.java">Alarm</a> example:
+     * <pre class="brush: java">
+     *     new NON_CONV_INTENT(
+     *          "intent",
+     *          new TERM("id == x:alarm", 1, 1), // Term #1 (index=0).
+     *          new TERM(                        // Term #2 (index=1).
+     *              new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
+     *              0,
+     *              7
+     *          ),
+     *          this::onMatch // On-match callback.
+     *     )
+     * </pre>
+     * Then when this intent is matched the following code can get all the tokens corresponding to the 2nd term:
+     * <pre class="brush: java">
+     * private NCQueryResult onMatch(NCIntentSolverContext ctx) {
+     *      ...
+     *      // Gets tokens for the 2nd term.
+     *      List&lt;NCToken&gt; nums = ctx.getIntentTokens().get(1);
+     *      ...
+     * }
+     * </pre>
      *
      * @return List of list of tokens representing matched intent.
      * @see #getVariant() 
@@ -73,7 +95,8 @@ public interface NCIntentSolverContext extends Serializable {
     List<List<NCToken>> getIntentTokens();
 
     /**
-     * Gets sentence variant that produced the matching for this intent.
+     * Gets sentence variant that produced the matching for this intent. Returned variant is one of the
+     * variants provided by {@link NCSentence#getVariants()} methods.
      * 
      * @return Sentence variant that produced the matching for this intent.
      * @see #getIntentTokens() 
