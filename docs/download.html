@@ -375,11 +375,19 @@ layout: interior
             </p>
             <ul>
                 <li>
+                    Stanford CoreNLP is licensed under
+                    <a target=_ href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3</a> - make sure your usage is
+                    compliant with this license.
+                </li>
+                <li>
+                    Stanford CoreNLP library must be available <b>on both</b> the REST server and the data probe.
+                </li>
+                <li>
                     Make sure to change <code>3.9.2</code> version to the latest or required one.
                 </li>
                 <li>
                     Set system property <code>NLPCRAFT_NLP_ENGINE</code> value to <code>stanford</code>
-                    (from default <code>opennlp</code>) <b>on both</b> REST server and the probe JVMs:
+                    (from default <code>opennlp</code>) <b>on both</b> the REST server and the probe JVMs:
                     <code><nobr>-DNLPCRAFT_NLP_ENGINE=stanford</nobr></code>
                 </li>
                 <li>
