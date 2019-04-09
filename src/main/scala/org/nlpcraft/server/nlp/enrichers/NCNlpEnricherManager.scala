@@ -58,7 +58,7 @@ object NCNlpEnricherManager extends NCLifecycle("Enrichment manager") with NCIgn
     private val HEADERS = Map(
         "nlp:nlp" → (
             1,
-            Seq("origText", "index", "pos", "lemma", "stem", "stopWord", "ne", "nne")
+            Seq("origText", "index", "pos", "lemma", "stem", "bracketed", "quoted", "stopWord", "ne", "nne")
         ),
         "nlp:geo" → (
             2,

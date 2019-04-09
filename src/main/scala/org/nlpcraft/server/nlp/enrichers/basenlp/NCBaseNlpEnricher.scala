@@ -106,7 +106,7 @@ object NCBaseNlpEnricher extends NCNlpEnricher("NLP enricher") {
                 "origText" → processBracket(origTxt),
                 "normText" → processBracket(value),
                 "charLength" → value.length,
-                "stem" → word.stem,
+                "stem" → processBracket(word.stem),
                 "posDesc" → NCPennTreebank.description(pos).getOrElse(pos),
                 "start" → word.start,
                 "end" → word.end,

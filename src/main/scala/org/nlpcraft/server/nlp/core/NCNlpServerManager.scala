@@ -39,7 +39,7 @@ import scala.reflect.runtime.universe._
 /**
   * Server NLP manager.
   */
-object NCNlpServerManager extends NCLifecycle("Server NLP manager") with NCNlpParser {
+object NCNlpServerManager extends NCLifecycle("Server NLP manager") {
     private object Config extends NCConfigurable {
         val engine: String = getString("server.nlp.engine")
     
