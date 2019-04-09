@@ -42,10 +42,10 @@ import scala.collection.JavaConverters._
   * Stanford tokenizer implementation.
   */
 object NCStanfordTokenizer extends NCLifecycle("Stanford NLP tokenizer") with NCNlpTokenizer {
-    override def tokenize(s: String): Seq[NCNlpCoreToken] = {
+    override def tokenize(sen: String): Seq[NCNlpCoreToken] = {
         ensureStarted()
 
-        PTBTokenizer.newPTBTokenizer(new StringReader(s)).
+        PTBTokenizer.newPTBTokenizer(new StringReader(sen)).
             tokenize().
             asScala.
             map(p ⇒ NCNlpCoreToken(p.word(), p.beginPosition(), p.endPosition(), p.endPosition() - p.beginPosition()))

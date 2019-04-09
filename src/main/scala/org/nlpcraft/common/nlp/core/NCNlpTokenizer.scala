@@ -38,9 +38,9 @@ import org.nlpcraft.common.NCLifecycle
   */
 trait NCNlpTokenizer extends NCLifecycle {
     /**
+      * Tokenizes the sentence.
       *
-      * @param s
-      * @return
+      * @param sen Sentence
       */
-    def tokenize(s: String): Seq[NCNlpCoreToken]
+    def tokenize(sen: String): Seq[NCNlpCoreToken]
 }

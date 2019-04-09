@@ -46,9 +46,6 @@ import scala.language.{implicitConversions, postfixOps}
 object NCOPenNlpTokenizer extends NCLifecycle("Open NLP tokenizer") with NCNlpTokenizer {
     @volatile private var tokenizer: Tokenizer = _
 
-    /**
-      * Starts this component.
-      */
     override def start(): NCLifecycle = {
         tokenizer =
             managed(new BufferedInputStream(U.getStream("opennlp/en-token.bin"))) acquireAndGet { in ⇒
