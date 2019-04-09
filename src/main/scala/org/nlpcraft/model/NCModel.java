@@ -31,11 +31,11 @@
 
 package org.nlpcraft.model;
 
-import org.nlpcraft.model.intent.NCIntentSolver;
 import org.nlpcraft.model.builder.NCElementBuilder;
 import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.builder.NCModelDescriptorBuilder;
 import org.nlpcraft.model.impl.NCMetadataImpl;
+import org.nlpcraft.model.intent.NCIntentSolver;
 
 import java.util.Collections;
 import java.util.Map;
@@ -1187,8 +1187,6 @@ public interface NCModel {
      * <b>JSON</b>
      * <br>
      * If using JSON model presentation this method will have no-op implementation.
-     *
-     * @see NCProbeContext#reloadModel(String)
      */
     default void discard() {
         // No-op.

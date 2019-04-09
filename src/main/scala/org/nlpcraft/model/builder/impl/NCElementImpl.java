@@ -48,10 +48,10 @@ public class NCElementImpl implements NCElement {
     private String group;
     private String desc;
     private String parentId;
-    private final List<String> syns = new ArrayList<>();
-    private final List<String> exclSyns = new ArrayList<>();
+    private List<String> syns = new ArrayList<>();
+    private List<String> exclSyns = new ArrayList<>();
     private List<NCValue> values = new ArrayList<>();
-    private final NCMetadata meta = new NCMetadataImpl();
+    private NCMetadata meta = new NCMetadataImpl();
 
     @Override
     public List<NCValue> getValues() {
@@ -178,6 +178,17 @@ public class NCElementImpl implements NCElement {
     
     /**
      *
+     * @param syns
+     */
+    public void setSynonyms(List<String> syns) {
+        assert syns != null;
+        
+        this.syns = syns;
+    }
+    
+    
+    /**
+     *
      * @return
      */
     @Override
@@ -193,5 +204,25 @@ public class NCElementImpl implements NCElement {
         assert syn != null;
 
         exclSyns.add(syn);
+    }
+    
+    /**
+     *
+     * @param exclSyns
+     */
+    public void setExcludedSynonyms(List<String> exclSyns) {
+        assert exclSyns != null;
+    
+        this.exclSyns = exclSyns;
+    }
+    
+    /**
+     *
+     * @param meta
+     */
+    public void setMeta(NCMetadata meta) {
+        assert meta != null;
+        
+        this.meta = meta;
     }
 }

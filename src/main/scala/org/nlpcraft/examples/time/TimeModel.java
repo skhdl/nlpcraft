@@ -139,8 +139,10 @@ public class TimeModel extends NCModelProviderAdapter {
      * @return Query result.
      */
     private NCQueryResult onRemoteMatch(NCIntentSolverContext ctx) {
-        // 'nlp:geo' is mandatory.
-        // Only one 'nlp:geo' token is allowed, so we don't have to check for it.
+        // Get token for the 1st term.
+        // Note:
+        //   - 'nlp:geo' is mandatory.
+        //   - Only one 'nlp:geo' token is allowed, so we don't have to check for it.
         NCToken geoTok = ctx.getIntentTokens().get(1).get(0);
 
         // Country and city are is mandatory metadata of 'nlp:geo' token.
@@ -188,9 +190,9 @@ public class TimeModel extends NCModelProviderAdapter {
         solver.addIntent(
             new CONV_INTENT(
                 "c^time|city",
-                new TERM("id == x:time", 1, 1), // Term idx=0.
+                new TERM("id == x:time", 1, 1), // Term #1 (index=0).
                 new TERM(
-                    new AND(                    // Term idx=1.
+                    new AND(                    // Term #2 (index=1)
                         "id == nlp:geo",
                         // GEO locations can only be city (we can't get time for country or region or continent).
                         "~GEO_KIND == CITY"
