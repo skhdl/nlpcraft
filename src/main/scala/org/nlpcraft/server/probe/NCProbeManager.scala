@@ -39,6 +39,7 @@ import java.util.concurrent.{ExecutorService, Executors}
 
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.common.nlp.NCNlpSentence
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.socket.NCSocket
 import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.common.{NCLifecycle, _}
@@ -512,7 +513,10 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     
         cryptoKey = authPlugin.acquireKey(tokHash) match {
             case Some(key) ⇒
-                respond("S2P_HASH_CHECK_OK")
+                respond(
+                    "S2P_HASH_CHECK_OK",
+                    "NLP_ENGINE" → NCNlpCoreManager.getEngine
+                )
                 
                 key
 

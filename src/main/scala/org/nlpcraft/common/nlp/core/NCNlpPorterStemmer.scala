@@ -21,7 +21,7 @@ import scala.language.{implicitConversions, postfixOps}
  *
  * Implementation is based on work by Evgeny Kotelnikov 'evgeny.kotelnikov@gmail.com'
  */
-object NCPorterStemmer  {
+object NCNlpPorterStemmer  {
     /**
      * Gets a stem for given word.
      * This function wrapped implementation to skip stemmatize 'short' words.

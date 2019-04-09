@@ -31,14 +31,58 @@
 
 package org.nlpcraft.common.nlp.core
 
-import org.nlpcraft.common.NCLifecycle
+import org.nlpcraft.common.{NCE, NCLifecycle}
 
 import scala.language.{implicitConversions, postfixOps}
+import scala.reflect.runtime.universe._
 
 /**
  *  NLP core manager.
  */
-object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
+object NCNlpCoreManager extends NCLifecycle(s"Core NLP manager") {
+    @volatile private var engine: String = _
+    @volatile private var tokenizer: NCNlpTokenizer = _
+
+    /**
+      *
+      * @param engine
+      */
+    def setEngine(engine: String): Unit = this.engine = engine
+
+    /**
+      *
+      * @return
+      */
+    def getEngine: String = engine
+
+    override def start(): NCLifecycle = {
+        require(engine != null)
+
+        val mirror = runtimeMirror(getClass.getClassLoader)
+
+        def mkInstance(name: String): NCNlpTokenizer =
+            try
+                mirror.reflectModule(mirror.staticModule(name)).instance.asInstanceOf[NCNlpTokenizer]
+            catch {
+                case e: Throwable ⇒ throw new NCE(s"Error initializing class: $name", e)
+            }
+
+        tokenizer =
+            engine match {
+                case "stanford" ⇒ mkInstance("org.nlpcraft.common.nlp.core.stanford.NCStanfordTokenizer")
+                // NCOPenNlpTokenizer added via reflection just for symmetry.
+                case "opennlp" ⇒ mkInstance("org.nlpcraft.common.nlp.core.opennlp.NCOPenNlpTokenizer")
+
+                case _ ⇒ throw new AssertionError(s"Unexpected engine: $engine")
+            }
+
+        logger.info(s"NLP engined configured: $engine")
+
+        tokenizer.start()
+
+        super.start()
+    }
+
     /**
       * Stems given word or a sequence of words which will be tokenized before.
       *
@@ -48,7 +92,7 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def stem(words: String): String = {
         ensureStarted()
 
-        val seq = NCTokenizer.tokenize(words).map(p ⇒ p → NCPorterStemmer.stem(p.token))
+        val seq = tokenizer.tokenize(words).map(p ⇒ p → NCNlpPorterStemmer.stem(p.token))
 
         seq.zipWithIndex.map { case ((tok, stem), idx) ⇒
             idx match {
@@ -68,7 +112,7 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def stemWord(word: String): String = {
         ensureStarted()
 
-        NCPorterStemmer.stem(word)
+        NCNlpPorterStemmer.stem(word)
     }
 
     /**
@@ -80,6 +124,6 @@ object NCNlpCoreManager extends NCLifecycle("Core NLP manager") {
     def tokenize(sen: String): Seq[NCNlpCoreToken] = {
         ensureStarted()
 
-        NCTokenizer.tokenize(sen)
+        tokenizer.tokenize(sen)
     }
 }

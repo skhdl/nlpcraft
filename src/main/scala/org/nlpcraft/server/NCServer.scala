@@ -87,13 +87,35 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         
         logger.info(s)
     }
+
+    /**
+      *
+      * @return
+      */
+    private def getServerEngine: String = {
+        object Config extends NCConfigurable {
+            val nlpEngine: String = getString("server.nlp.engine")
+
+            override def check(): Unit = {
+                if (nlpEngine != "stanford" && nlpEngine != "opennlp")
+                    abortError(s"Configuration property 'server.nlp.engine' must be either 'stanford' or 'opennlp'.")
+            }
+        }
+
+        Config.check()
+
+        Config.nlpEngine
+    }
     
     /**
       * Starts all managers.
       */
     private def startManagers(): Unit = {
         NCVersionManager.start()
+
+        NCNlpCoreManager.setEngine(getServerEngine)
         NCNlpCoreManager.start()
+
         NCPluginManager.start()
         NCTxManager.start()
         NCSqlManager.start()
