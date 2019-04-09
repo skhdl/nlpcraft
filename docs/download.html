@@ -378,8 +378,9 @@ layout: interior
                     Make sure to change <code>3.9.2</code> version to the latest or required one.
                 </li>
                 <li>
-                    Update configuration property <code>nlp.engine</code> in file <code>application.conf</code>
-                    to <code>stanford</code> value (from default <code>opennlp</code>).
+                    Set system property <code>NLPCRAFT_NLP_ENGINE</code> value to <code>stanford</code>
+                    (from default <code>opennlp</code>) <b>on both</b> REST server and the probe JVMs:
+                    <code><nobr>-DNLPCRAFT_NLP_ENGINE=stanford</nobr></code>
                 </li>
                 <li>
                     Note that you can also <a target=_ href="https://stanfordnlp.github.io/CoreNLP/">download</a>

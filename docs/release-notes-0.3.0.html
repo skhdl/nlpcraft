@@ -53,21 +53,31 @@ layout: interior2
         <section id="new">
             <span class="section-title">🙌 New</span>
             <ul>
-                <li>Java REST Client</li>
-                <li>Model dump utility.</li>
+                <li>
+                    Model dump utility. Allows safe review and testing of the model's matching logic by a 3rd party.
+                    See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/tools/dump/package-summary.html">org.nlpcraft.model.tools.dump</a> package.
+                </li>
             </ul>
         </section>
         <section id="enhancements">
             <span class="section-title">🤖 Enhancements</span>
             <ul>
-                <li>
-                    Improved documentation,
-                </li>
+                <li>Improved Javadoc and Developer Guide documentation.</li>
+                <li>Improved OpenNLP and Stanford CoreNLP integration.</li>
             </ul>
         </section>
         <section id="fixes">
             <span class="section-title">🧐 Fixes</span>
             <ul>
+                <li>Fixed <a target="github" href="https://github.com/vic64/nlpcraft/issues/3">Issue #3</a>.</li>
+                <li>Fixed <a target="github" href="https://github.com/vic64/nlpcraft/issues/4">Issue #4</a>.</li>
+                <li>
+                    Server configuration property for base NLP engine <code>server.nlp.engine</code> is removed and replaced by
+                    the system property <code>NLPCRAFT_NLP_ENGINE</code>. That system property can have two values:
+                    <code>opennlp</code> for Apache OpenNLP and <code>stanford</code> for Stanford CoreNLP engine. This
+                    system property must be set to the same value on both server and the probe JVMs. If not set
+                    the default NLP engine will be Apache OpenNLP.
+                </li>
             </ul>
         </section>
     </div>

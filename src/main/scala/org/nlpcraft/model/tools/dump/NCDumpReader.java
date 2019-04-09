@@ -33,6 +33,7 @@ package org.nlpcraft.model.tools.dump;
 
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.model.NCModel;
+import org.nlpcraft.model.builder.*;
 import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 import java.io.File;
 
@@ -40,9 +41,10 @@ import java.io.File;
  * Data model dump reader.
  * <br><br>
  * Data model dump allows to export the model and intent configuration sans the callback implementations. Data
- * model dumps can be used to safely test model's intent-based matching logic by a 3-rd party.
+ * model dumps can be used to safely test model's intent-based matching logic by a 3rd party.
  * 
  * @see NCDumpWriter
+ * @see NCModelBuilder#loadFromDump(String)
  */
 public class NCDumpReader {
     /**
@@ -59,6 +61,7 @@ public class NCDumpReader {
      *  }
      * </pre>
      * @throws NCException Thrown in case of any errors.
+     * @see NCModelBuilder#loadFromDump(String)
      */
     public static NCModel read(String filePath) throws NCException {
         return NCDumpReaderScala.read(filePath);
@@ -78,6 +81,7 @@ public class NCDumpReader {
      *  }
      * </pre>
      * @throws NCException Thrown in case of any errors.
+     * @see NCModelBuilder#loadFromDump(String)
      */
     public static NCModel read(File file) throws NCException {
         return NCDumpReaderScala.read(file);

@@ -31,23 +31,25 @@
 
 package org.nlpcraft.model.tools.dump;
 
-import org.nlpcraft.common.*;
-import org.nlpcraft.model.*;
-import org.nlpcraft.model.intent.*;
-import org.nlpcraft.model.tools.dump.scala.*;
+import org.nlpcraft.common.NCException;
+import org.nlpcraft.model.NCModel;
+import org.nlpcraft.model.builder.*;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.tools.dump.scala.NCDumpWriterScala;
 
 /**
  * Data model dump writer.
  * <br><br>
  * Data model dump allows to export the model and intent configuration sans the callback implementations. Data
- * model dumps can be used to safely test model's intent-based matching logic by a 3-rd party.
+ * model dumps can be used to safely test model's intent-based matching logic by a 3rd party.
  *
  * @see NCDumpReader
+ * @see NCModelBuilder#loadFromDump(String)
  */
 public class NCDumpWriter {
     /**
      * Writes data model dump file into specified directory. Dump file will only contain static model configuration
-     * and intent descriptors. It will not serialize any code logic.
+     * and intent descriptors. It will not serialize any code logic such as callbacks.
      *
      * @param mdl Model to dump.
      * @param solver Intent solver to dump.

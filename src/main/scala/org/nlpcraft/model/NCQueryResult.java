@@ -92,10 +92,13 @@ public class NCQueryResult implements Serializable {
     }
     
     /**
-     * Creates {@code json} result.
+     * Creates {@code json} result. Note that this method will test given JSON string
+     * for validness by using <code>com.google.gson.Gson</code> JSON utility. If JSON string is invalid
+     * the {@link IllegalArgumentException} exception will be thrown.
      *
      * @param json Any JSON string to be rendered on the client.
      * @return Newly created query result.
+     * @throws IllegalArgumentException Thrown if given JSON string is invalid.
      */
     public static NCQueryResult json(String json) {
         // Validation.
@@ -103,7 +106,7 @@ public class NCQueryResult implements Serializable {
             NCUtils.js2Map(json);
         }
         catch (NCException e) {
-            throw new IllegalArgumentException("Invalid JSON value: " + json, e);
+            throw new IllegalArgumentException("Invalid JSON value: " + json, e.getCause());
         }
         
         return new NCQueryResult(json, "json");
