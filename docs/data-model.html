@@ -85,7 +85,7 @@ layout: documentation
         </p>
         <ul>
             <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getDescriptor--">getDescriptor()</a></li> - returning model identification.
-            <li><a target="javadoc" href="http://127.0.0.1:4000/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext)</a></li> - accepting parsed user input and returning result.
+            <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext)</a></li> - accepting parsed user input and returning result.
         </ul>
         <div class="bq info">
             <b>JSON <span class="amp">&amp;</span> YAML</b>
@@ -547,9 +547,109 @@ layout: documentation
         </p>
         <p>
             At this point, the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method must "understand" the user request and return the result
-            that is sent back to the original REST API caller.
+            that is sent back to the original REST API caller. Implementing this method is what typically amounts to over 90% of
+            the overall development of the data model.
         </p>
-        <span class="section-sub-title">Method <code>query()</code></span>
+        <span class="section-sub-title">Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></span>
+        <p>
+            Here's the most simplest implementation of the <code>query(...)</code> method:
+        </p>
+        <pre class="brush: java">
+            @Override
+            public NCQueryResult query(NCQueryContext ctx) throws NCRejection {
+                return NCQueryResult.text("no-op");
+            }
+        </pre>
+        Comments:
+        <ul>
+            <li>This implementation return <code>"no-op"</code> text back for any user input.</li>
+            <li>
+                This is obviously pretty useless but it demonstrates how simple the implementation can be in the extreme case.
+            </li>
+            <li>
+                Notice how we use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryResult.html">NCQueryResult</a>
+                class to create result. This class supports various types of results like <code>json, yaml, text,</code>
+                and <code>html</code> and we will be using this class in all our examples.
+            </li>
+        </ul>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a></span>
+        <p>
+            You noticed that <code>query(...)</code> method accepts the instance of <code>NCQueryContext</code> interface as
+            its parameter. This interface provides all available data about the parsed user input and all its supplemental information.
+        </p>
+        <p>
+            Review <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a>
+            interface Javadoc as it a provides large amount of information to the <code>query(...)</code> method:
+        </p>
+        <ul>
+            <li>
+                Server request ID. Server request is defined as a processing of one user input sentence.
+            </li>
+            <li>
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCConversationContext.html">NCConversationContext</a>
+                for controlling STM of conversation manager.
+            </li>
+            <li>
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCDataSource.html">NCDataSource</a>
+                describing the data source that was used to submit user request with.
+            </li>
+            <li>
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> that the
+                <code>query(...)</code> method belongs to.
+            </li>
+            <li>
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> that
+                provides parsing information for the user input.
+            </li>
+        </ul>
+        <div class="bq info">
+            <b>NCProbeContext</b>
+            <p>
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html">NCProbeContext</a>
+                interface provides information about data probe that the current model is hosted in. It provides
+                data probe endpoints, ID of the probe and probe's secure token. 
+            </p>
+            <p>
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html">NCProbeContext</a> reference
+                is passed to data model's
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#initialize-org.nlpcraft.model.NCProbeContext-">initialze(...)</a> method.
+                The default implementation of this method simply stores the probe context in model's metadata from which
+                it can be accessed by the <code>query(...)</code> method.
+            </p>
+        </div>
+        <p>
+            Out of all this information the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a>
+            interface is the most important to review in details.
+        </p>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a></span>
+        <p>
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> interface
+            is one of the main entities in Data Model API that you as a model developer will be working with. You
+            should review its <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">Javadoc</a> but
+            here is an outline of the information it provides:
+        </p>
+        <ul>
+            <li>
+                Information about the user that issued the request.
+            </li>
+            <li>
+                User agent and remote address, if any available, of the user's application that made the initial REST call.
+            </li>
+            <li>
+                Original request text, timestamp of its receipt, and server request ID.
+            </li>
+            <li>
+                One or more parsed variants of the original text.
+            </li>
+        </ul>
+        <p>
+            All the information in the <code>NCSentence</code> interface can be valuable for a specific
+            <code>query(...)</code> method implementation. However, it is the list of
+            parsing <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">variants</a> provided
+            by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html#getVariants--">List&lt;NCVariant&gt; getVariants()</a>
+            method provides the most valuable information for the "understanding" of the user input.
+        </p>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a></span>
     </section>
 </div>
 <div class="col-md-2 third-column">

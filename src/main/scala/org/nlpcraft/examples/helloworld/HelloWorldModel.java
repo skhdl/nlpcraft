@@ -33,7 +33,7 @@ package org.nlpcraft.examples.helloworld;
 
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.model.*;
-import org.nlpcraft.model.builder.NCModelBuilder;
+import org.nlpcraft.model.builder.*;
 
 /**
  * Hello World example data model.
@@ -65,3 +65,4 @@ public class HelloWorldModel extends NCModelProviderAdapter {
         );
     }
 }
+
