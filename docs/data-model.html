@@ -647,9 +647,62 @@ layout: documentation
             <code>query(...)</code> method implementation. However, it is the list of
             parsing <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">variants</a> provided
             by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html#getVariants--">List&lt;NCVariant&gt; getVariants()</a>
-            method provides the most valuable information for the "understanding" of the user input.
+            method that provides the most valuable information for the "understanding" of the user input.
         </p>
         <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a></span>
+        <p>
+            When the user sentence gets parsed into individual tokens (i.e. semantic elements) there is generally
+            more than one way to do it. This ambiguity is perfectly fine because only the data model has all the
+            necessary information to select one parsing variant that fits that model the best. Without the data model
+            there isn't enough context to determine which variant is the best fitting.
+        </p>
+        <p>
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a> interface is a
+            list of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> object, and
+            it represents one possible parsing variant. Note
+            that <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a> interface
+            supports natural order from best to worst.
+        </p>
+        <p>
+            Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html#getVariants--">List&lt;NCVariant&gt; getVariants()</a> on
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> returns list of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">variants</a> for a given user input.
+            Method <code>query(...)</code> should generally analyse all given parsing variants in determining the
+            meaning of the user sentence.
+        </p>
+        <div class="bq info">
+            <b><a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a></b>
+            <p>
+                Intent-matcher <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a></b>
+                automatically checks all variants, from best to worst, when trying to find a match for a given intent.
+            </p>
+        </div>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a></span>
+        <p>
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> object is another
+            key abstraction in Data Model API. A token is a part of a fully parsed user input. Sequence of tokens
+            represents parsed user input.
+            A single token corresponds to a one or more original normalized words, sequential or not, in the
+            user sentence and can be of two types:
+        </p>
+        <ul>
+            <li>
+                <b>System defined</b> token that represents a built-in element whose ID starts with <code>nlp:</code>,
+                e.g. <code>nlp:num</code>, <code>nlp:geo</code>.
+            </li>
+            <li>
+                <b>User defined</b> token that represent one of the data model's elements detected in the user
+                input (see <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">NCModel.getElements()</a> method).
+            </li>
+        </ul>
+        <p>
+            Most of the token's information is stored in map-like metadata accessible via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method.
+            Depending on the ID of the token metadata will contain different properties. Some properties are common
+            across all tokens. Consult <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method
+            for detailed explanation. Note that class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/utils/NCTokenUtils.html">NCTokenUtils</a>
+            provides utility accessors to all metadata properties returned by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method in a convenient
+            type-safe way.
+        </p>
     </section>
 </div>
 <div class="col-md-2 third-column">
