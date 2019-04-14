@@ -73,7 +73,7 @@ public class NCModelItem {
     private boolean isDupSynonymsAllowed = DFLT_IS_DUP_SYNONYMS_ALLOWED;
     private int maxTotalSynonyms = DFLT_MAX_TOTAL_SYNONYMS;
     private boolean isPermutateSynonyms = DFLT_IS_PERMUTATE_SYNONYMS;
-    @SuppressWarnings("unchecked") private Map<String, Object> usrMetadata = null;
+    private Map<String, Object> usrMetadata;
     private NCMacroItem[] macros = null;
     private NCElementItem[] elements = null;
     private String[] additionalStopwords = null;

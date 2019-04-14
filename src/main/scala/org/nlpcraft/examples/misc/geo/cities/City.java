@@ -31,6 +31,8 @@
 
 package org.nlpcraft.examples.misc.geo.cities;
 
+import java.util.Objects;
+
 /**
  * City data object.
  */
@@ -79,8 +81,7 @@ public class City {
 
         City city = (City) o;
 
-        return (name != null ? name.equals(city.name) : city.name == null) &&
-            (country != null ? country.equals(city.country) : city.country == null);
+        return (Objects.equals(name, city.name)) && (Objects.equals(country, city.country));
     }
 
     @Override

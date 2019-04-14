@@ -39,8 +39,8 @@ object NCSynonymType extends Enumeration {
     type NCSynonymType = Value
 
     /** */
-    val WORDNET = Value
+    val WORDNET: Value = Value
 
     /** */
-    val NLPCRAFT = Value
+    val NLPCRAFT: Value = Value
 }

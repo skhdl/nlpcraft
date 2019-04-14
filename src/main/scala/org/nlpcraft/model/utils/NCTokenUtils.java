@@ -266,13 +266,13 @@ public class NCTokenUtils {
                 n = d;
             else {
                 Long l = d.longValue();
-        
-                if (Integer.MAX_VALUE >= l && Integer.MIN_VALUE <= l)
-                    n = l.intValue();
+                
+                if (Byte.MAX_VALUE >= l && Byte.MIN_VALUE <= l)
+                    n = l.byteValue();
                 else if (Short.MAX_VALUE >= l && Short.MIN_VALUE <= l)
                     n = l.shortValue();
-                else if (Byte.MAX_VALUE >= l && Byte.MIN_VALUE <= l)
-                    n = l.byteValue();
+                else if (Integer.MAX_VALUE >= l && Integer.MIN_VALUE <= l)
+                    n = l.intValue();
                 else
                     n = l;
             }

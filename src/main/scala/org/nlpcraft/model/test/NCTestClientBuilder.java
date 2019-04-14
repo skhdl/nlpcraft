@@ -351,7 +351,7 @@ public class NCTestClientBuilder {
         private volatile boolean opened = false;
         private volatile boolean closed = false;
         
-        private Set<String> srvReqIds = ConcurrentHashMap.newKeySet();
+        private final Set<String> srvReqIds = ConcurrentHashMap.newKeySet();
 
         RequestConfig getRequestConfig() {
             return reqCfg;

@@ -122,7 +122,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
       *
       * @param p Scala-side predicate.
       */
-    def clear(p: (NCToken) ⇒ Boolean): Unit =
+    def clear(p: NCToken ⇒ Boolean): Unit =
         clear(new Predicate[NCToken] {
             override def test(t: NCToken): Boolean = p(t)
         })

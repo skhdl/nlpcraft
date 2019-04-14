@@ -31,7 +31,7 @@
 
 package org.nlpcraft.common.blowfish;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -709,14 +709,9 @@ public class NCBlowfishHasher {
         String realSalt = salt.substring(off + 3, off + 25);
 
         byte[] passwdB;
-
-        try {
-            passwdB = (str + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new AssertionError(e.getLocalizedMessage());
-        }
-
+    
+        passwdB = (str + (minor >= 'a' ? "\000" : "")).getBytes(StandardCharsets.UTF_8);
+    
         byte[] saltB = decodeBase64(realSalt, SALT_LEN);
 
         NCBlowfishHasher B = new NCBlowfishHasher();
