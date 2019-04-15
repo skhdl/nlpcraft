@@ -203,35 +203,10 @@ public class NCTestClientBuilder {
     /**
      * JSON helper class.
      */
-    static class NCDsJson {
-        @SerializedName("id") private long dsId;
-        @SerializedName("mdlId") private String mdlId;
-        
-        public long getDataSourceId() {
-            return dsId;
-        }
-
-        public void setDataSourceId(long dsId) {
-            this.dsId = dsId;
-        }
-
-        public String getModelId() {
-            return mdlId;
-        }
-
-        public void setModelId(String mdlId) {
-            this.mdlId = mdlId;
-        }
-    }
-    
-    /**
-     * JSON helper class.
-     */
     static class NCRequestStateJson {
         @SerializedName("srvReqId") private String srvReqId;
         @SerializedName("txt") private String text;
         @SerializedName("usrId") private long userId;
-        @SerializedName("dsId") private long dsId;
         @SerializedName("resType") private String resType;
         @SerializedName("resBody") private Object resBody;
         @SerializedName("status") private String status;
@@ -261,14 +236,6 @@ public class NCTestClientBuilder {
 
         public void setUserId(long userId) {
             this.userId = userId;
-        }
-
-        public long getDataSourceId() {
-            return dsId;
-        }
-
-        public void setDataSourceId(long dsId) {
-            this.dsId = dsId;
         }
 
         public String getStatus() {
@@ -328,7 +295,6 @@ public class NCTestClientBuilder {
 
         private final Type TYPE_RESP = new TypeToken<HashMap<String, Object>>() {}.getType();
         private final Type TYPE_STATES = new TypeToken<ArrayList<NCRequestStateJson>>() {}.getType();
-        private final Type TYPE_DSS = new TypeToken<ArrayList<NCDsJson>>() {}.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         private final Object mux = new Object();
@@ -343,9 +309,7 @@ public class NCTestClientBuilder {
         private RequestConfig reqCfg;
         private Supplier<CloseableHttpClient> cliSup;
         private String acsTok;
-        private long dsId;
         private String mdlId;
-        private boolean isDsCreated = false;
         private HttpServer srv;
 
         private volatile boolean opened = false;
@@ -421,7 +385,6 @@ public class NCTestClientBuilder {
             catch (NCTestClientException e) {
                 return mkResult(
                     txt,
-                    dsId,
                     mdlId,
                     null,
                     null,
@@ -452,7 +415,6 @@ public class NCTestClientBuilder {
                     NCTestResult res =
                         mkResult(
                             js.getText(),
-                            dsId,
                             mdlId,
                             js.getResultType(),
                             body,
@@ -460,19 +422,24 @@ public class NCTestClientBuilder {
                             js.getUpdateTstamp() - js.getCreateTstamp()
                         );
 
-                    if (res.isSuccessful())
+                    if (res.isSuccessful()) {
+                        assert res.getResultType().isPresent() && res.getResult().isPresent();
+                        
                         log.info(
                             "'ask' request '{}' answered successfully with '{}' result:\n{}",
                             txt,
                             res.getResultType().get(),
                             mkPrettyString(res.getResultType().get(), res.getResult().get())
                         );
-                    else
+                    }
+                    else {
+                        assert res.getResultError().isPresent();
+                        
                         log.info("'ask' request '{}' answered unsuccessfully with result:\n{}",
                             txt,
                             res.getResultError().get()
                         );
-                    
+                    }
                     return res;
                 }
 
@@ -507,72 +474,53 @@ public class NCTestClientBuilder {
             }
         }
 
-        /**
-         *
-         * @param dsId
-         * @param mdlId
-         * @throws IOException Thrown in case of IO errors.
-         * @throws NCTestClientException Thrown in case of test client errors.
-         */
-        private void open0(Long dsId, String mdlId) throws NCTestClientException, IOException {
-            assert dsId != null ^ mdlId != null;
-            
+        @Override
+        public void open(String mdlId) throws NCTestClientException, IOException {
+            assert mdlId != null;
+    
             if (opened) throw new IllegalStateException("Client already opened.");
             if (closed) throw new IllegalStateException("Client already closed.");
-            
-            acsTok = restSignin();
-            
-            if (dsId != null) {
-                this.dsId = dsId;
-                isDsCreated = false;
-            }
-            else {
-                this.dsId = restCreateTestDs(mdlId);
-                isDsCreated = true;
-            }
     
-            Optional<NCDsJson> dsOpt = restGetDataSources().stream().filter(p -> p.getDataSourceId() == this.dsId).findAny();
-            
-            if (!dsOpt.isPresent())
-                throw new NCTestClientException(String.format("Data source ID not found: %d", dsId));
-            
-            this.mdlId = dsOpt.get().getModelId();
-            
+            acsTok = restSignin();
+    
+    
+            this.mdlId = mdlId;
+    
             URL url = new URL(endpoint);
-
+    
             restRegisterEndpoint();
-
+    
             srv = HttpServer.create(new InetSocketAddress(url.getHost(), url.getPort()), 0);
-
+    
             srv.createContext(url.getPath(), http -> {
                 try (BufferedInputStream is = new BufferedInputStream(http.getRequestBody())) {
                     byte[] arr = new byte[Integer.parseInt(http.getRequestHeaders().getFirst("Content-length"))];
-
+            
                     int n = 0;
-
+            
                     while (n != arr.length) {
                         int k = is.read(arr, n, arr.length - n);
-
+                
                         if (k == -1)
                             throw new EOFException();
-
+                
                         n = n + k;
                     }
-
+            
                     List<NCRequestStateJson> list =
                         gson.fromJson(new String(arr, StandardCharsets.UTF_8), TYPE_STATES);
-
+            
                     for (NCRequestStateJson p : list)
                         res.put(p.getServerRequestId(), p);
-
+            
                     synchronized (mux) {
                         mux.notifyAll();
                     }
-
+            
                     String resp = "OK";
-
+            
                     http.sendResponseHeaders(200, resp.length());
-
+            
                     try (BufferedOutputStream out = new BufferedOutputStream(http.getResponseBody())) {
                         out.write(resp.getBytes());
                     }
@@ -581,22 +529,12 @@ public class NCTestClientBuilder {
                     log.error("Error processing endpoint message.", e);
                 }
             });
-
+    
             srv.start();
-
+    
             log.info("Endpoint listener started: {}", endpoint);
-
+    
             this.opened = true;
-        }
-        
-        @Override
-        public void openForDataSourceId(long dsId) throws NCTestClientException, IOException {
-            open0(dsId, null);
-        }
-        
-        @Override
-        public void openForModelId(String mdlId) throws NCTestClientException, IOException {
-            open0(null, mdlId);
         }
         
         @Override
@@ -614,8 +552,6 @@ public class NCTestClientBuilder {
                 srvReqIds.clear();
             }
             
-            if (isDsCreated) restDeleteTestDs();
-
             restSignout();
             
             closed = true;
@@ -748,66 +684,18 @@ public class NCTestClientBuilder {
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private void restClearConversation() throws IOException, NCTestClientException {
-            log.info("'clear/conversation' request sent for data source: {}", dsId);
+            log.info("'clear/conversation' request sent for data model: {}", mdlId);
             
             checkStatus(gson.fromJson(
                 post(
                     "clear/conversation",
                     Pair.of("acsTok", acsTok),
-                    Pair.of("dsId", dsId)
+                    Pair.of("mdlId", mdlId)
                 ),
                 TYPE_RESP)
             );
         }
         
-        /**
-         * @param mdlId Model ID.
-         * @return ID of newly created data source.
-         * @throws IOException Thrown in case of IO errors.
-         * @throws NCTestClientException Thrown in case of test client errors.
-         */
-        private long restCreateTestDs(String mdlId) throws IOException, NCTestClientException {
-            log.info("'ds/add' request sent for model ID: {}", mdlId);
-            
-            long id =
-                checkAndExtract(
-                    post(
-                        "ds/add",
-                        Pair.of("acsTok", acsTok),
-                        Pair.of("name", "test"),
-                        Pair.of("shortDesc", "Test data source"),
-                        Pair.of("mdlId", mdlId),
-                        Pair.of("mdlName", "Test model"),
-                        Pair.of("mdlVer", "Test version")
-                    ),
-                    "id",
-                    Long.class
-                );
-            
-            log.info("Temporary test data source created: {}", id);
-            
-            return id;
-        }
-        
-        /**
-         * @throws IOException Thrown in case of IO errors.
-         * @throws NCTestClientException Thrown in case of test client errors.
-         */
-        private void restDeleteTestDs() throws IOException, NCTestClientException {
-            log.info("'ds/delete' request sent for temporary data source ID: {}", dsId);
-            
-            checkStatus(
-                gson.fromJson(
-                    post(
-                        "ds/delete",
-                        Pair.of("acsTok", acsTok),
-                        Pair.of("id", dsId)
-                    ),
-                    TYPE_RESP
-                )
-            );
-        }
-    
         /**
          * @throws IOException Thrown in case of IO errors.
          * @throws NCTestClientException Thrown in case of test client errors.
@@ -867,41 +755,20 @@ public class NCTestClientBuilder {
         }
         
         /**
-         * @return List of data sources for configured user.
-         * @throws IOException Thrown in case of IO errors.
-         * @throws NCTestClientException Thrown in case of test client errors.
-         */
-        private List<NCDsJson> restGetDataSources() throws IOException, NCTestClientException {
-            log.info("'ds/all' request sent for: {}", email);
-            
-            Map<String, Object> m = gson.fromJson(
-                post(
-                    "ds/all",
-                    Pair.of("acsTok", acsTok)
-                ),
-                TYPE_RESP
-            );
-            
-            checkStatus(m);
-            
-            return extract(gson.toJsonTree(getField(m, "dataSources")), TYPE_DSS);
-        }
-        
-        /**
          * @param txt
          * @return
          * @throws IOException Thrown in case of IO errors.
          * @throws NCTestClientException Thrown in case of test client errors.
          */
         private String restAsk(String txt) throws IOException, NCTestClientException {
-            log.info("'ask' request '{}' sent for data source ID: {}", txt, dsId);
+            log.info("'ask' request '{}' sent for data model ID: {}", txt, mdlId);
             
             return checkAndExtract(
                 post(
                     "ask",
                     Pair.of("acsTok", acsTok),
                     Pair.of("txt", txt),
-                    Pair.of("dsId", dsId)
+                    Pair.of("mdlId", mdlId)
                 ),
                 "srvReqId",
                 String.class
@@ -927,7 +794,6 @@ public class NCTestClientBuilder {
         /**
          *
          * @param txt
-         * @param dsId
          * @param mdlId
          * @param resType
          * @param resBody
@@ -937,7 +803,6 @@ public class NCTestClientBuilder {
          */
         private NCTestResult mkResult(
             String txt,
-            long dsId,
             String mdlId,
             String resType,
             String resBody,
@@ -961,11 +826,6 @@ public class NCTestClientBuilder {
                 @Override
                 public long getProcessingTime() {
                     return time;
-                }
-                
-                @Override
-                public long getDataSourceId() {
-                    return dsId;
                 }
                 
                 @Override

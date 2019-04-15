@@ -52,13 +52,6 @@ public interface NCTestResult {
     long getProcessingTime();
     
     /**
-     * Gets data source ID.
-     *
-     * @return Data source ID.
-     */
-    long getDataSourceId();
-    
-    /**
      * Gets model ID.
      *
      * @return Model ID.

@@ -155,24 +155,24 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
       * @param usrId
       * @param srvReqId
       * @param txt
-      * @param dsId
       * @param mdlId
       * @param status
       * @param usrAgent
       * @param rmtAddr
       * @param rcvTstamp
+      * @param data
       */
     @throws[NCE]
     def newEntry(
         usrId: Long,
         srvReqId: String,
         txt: String,
-        dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
         usrAgent: String,
         rmtAddr: String,
-        rcvTstamp: Timestamp
+        rcvTstamp: Timestamp,
+        data: String
     ): Unit = {
         ensureStarted()
         
@@ -182,12 +182,12 @@ object NCProcessLogManager extends NCLifecycle("Process log manager") with NCIgn
                 usrId,
                 srvReqId,
                 txt,
-                dsId,
                 mdlId,
                 status,
                 usrAgent,
                 rmtAddr,
-                rcvTstamp
+                rcvTstamp,
+                data
             )
         }
     }

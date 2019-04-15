@@ -220,7 +220,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                     "PROBE_HOST_NAME" → localHost.getHostName,
                     "PROBE_HOST_ADDR" → localHost.getHostAddress,
                     "PROBE_HW_ADDR" → hwAddrs,
-                    "PROBE_MODELS_DS" → NCDeployManager.getDescriptors.toList.map(d ⇒ (d.getId, d.getName, d.getVersion))
+                    "PROBE_MODELS" → NCDeployManager.getDescriptors.toList.map(d ⇒ (d.getId, d.getName, d.getVersion))
                 ), cryptoKey)
     
                 val resp = sock.read[NCProbeMessage](cryptoKey) // Get handshake response.

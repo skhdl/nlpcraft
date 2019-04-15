@@ -55,7 +55,7 @@ public class HelloWorldTest {
         // Use all defaults.
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.openForModelId("nlpcraft.helloworld.ex");
+        client.open("nlpcraft.helloworld.ex");
     }
     
     @AfterEach

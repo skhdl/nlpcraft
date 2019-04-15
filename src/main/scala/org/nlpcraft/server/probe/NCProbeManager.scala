@@ -45,7 +45,7 @@ import org.nlpcraft.common.version.NCVersion
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.probe.mgrs.NCProbeMessage
 import org.nlpcraft.server.NCConfigurable
-import org.nlpcraft.server.mdo.{NCDataSourceMdo, NCProbeMdo, NCProbeModelMdo, NCUserMdo}
+import org.nlpcraft.server.mdo.{NCProbeMdo, NCProbeModelMdo, NCUserMdo}
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.plugin.NCPluginManager
 import org.nlpcraft.server.plugin.apis.NCProbeAuthenticationPlugin
@@ -554,16 +554,15 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                 respond("S2P_PROBE_VERSION_MISMATCH")
             else {
                 val models =
-                    hsMsg.data[List[(String, String, String)]]("PROBE_MODELS_DS").
-                        map { case (dsId, dsName, dsVer) ⇒
+                    hsMsg.data[List[(String, String, String)]]("PROBE_MODELS").
+                        map { case (mdlId, mdlName, mdlVer) ⇒
                             NCProbeModelMdo(
-                                id = dsId,
-                                name = dsName,
-                                version = dsVer
+                                id = mdlId,
+                                name = mdlName,
+                                version = mdlVer
                             )
                         }.toSet
-    
-
+                
                 val probeApiDate = hsMsg.data[java.time.LocalDate]("PROBE_API_DATE")
                 
                 val holder = ProbeHolder(
@@ -727,24 +726,25 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
       *
       * @param srvReqId
       * @param usr
-      * @param ds
       * @param txt
       * @param nlpSen
       * @param usrAgent
       * @param rmtAddr
+      * @param data
       */
     @throws[NCE]
     def askProbe(
         srvReqId: String,
         usr: NCUserMdo,
-        ds: NCDataSourceMdo,
+        mdlId: String,
         txt: String,
         nlpSen: NCNlpSentence,
         usrAgent: Option[String],
-        rmtAddr: Option[String]
+        rmtAddr: Option[String],
+        data: Option[String]
     ) : Unit = {
         ensureStarted()
-        
+
         val senMeta =
             Map(
                 "NORMTEXT" → nlpSen.text,
@@ -756,10 +756,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                 "EMAIL" → usr.email,
                 "SIGNUP_DATE" → usr.createdOn.getTime,
                 "IS_ADMIN" → usr.isAdmin,
-                "AVATAR_URL" → usr.avatarUrl
-            ).map(p ⇒ p._1 → p._2.asInstanceOf[java.io.Serializable])
+                "AVATAR_URL" → usr.avatarUrl.orNull,
+                "DATA" → data.orNull
+            ).filter(_._2 != null).map(p ⇒ p._1 → p._2.asInstanceOf[java.io.Serializable])
         
-        getProbeForModelId(ds.modelId) match {
+        getProbeForModelId(mdlId) match {
             case Some(holder) ⇒
                 sendToProbe(
                     holder.probeKey,
@@ -769,18 +770,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                         "nlpSen" → nlpSen.asInstanceOf[java.io.Serializable],
                         "senMeta" → senMeta.asInstanceOf[java.io.Serializable],
                         "userId" → usr.id,
-                        "dsId" → ds.id,
-                        "dsModelId" → ds.modelId,
-                        "dsName" → ds.name,
-                        "dsDesc" → ds.shortDesc,
-                        "dsModelCfg" → ds.modelConfig.orNull
+                        "mdlId" → mdlId
                     )
                 )
                 
                 logger.info(s"Sentence sent to probe [" +
                     s"txt=$txt, " +
-                    s"dsName=${ds.name}, " +
-                    s"mdlId=${ds.modelId}, " +
+                    s"mdlId=$mdlId, " +
                     s"probeId=${holder.probeKey.probeId}" +
                     s"]")
 
@@ -789,7 +785,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     holder.probe
                 )
 
-            case None ⇒ throw new NCE(s"Unknown model ID: ${ds.modelId}")
+            case None ⇒ throw new NCE(s"Unknown model ID: $mdlId")
         }
     }
     
@@ -808,15 +804,15 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
     /**
       *
       * @param usrId
-      * @param dsId
+      * @param mdlId
       */
     @throws[NCE]
-    def clearConversation(usrId: Long, dsId: Long): Unit = {
+    def clearConversation(usrId: Long, mdlId: String): Unit = {
         ensureStarted()
         
         val msg = NCProbeMessage("S2P_CLEAR_CONV",
             "usrId" → usrId,
-            "dsId" → dsId
+            "mdlId" → mdlId
         )
     
         // Send to all probes.
@@ -825,7 +821,7 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
         // Notification.
         NCNotificationManager.addEvent("NC_CLEAR_CONV",
             "usrId" → usrId,
-            "dsId" → dsId
+            "mdlId" → mdlId
         )
     }
 }

@@ -46,7 +46,6 @@ CREATE TABLE nc_user (
     avatar_url VARCHAR(2083) NULL, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR2(64) NOT NULL,
     last_name VARCHAR2(64) NOT NULL,
-    last_ds_id NUMBER NULL,
     is_admin NUMBER(1) NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR2(64) NOT NULL,
     created_on DATE DEFAULT sysdate NOT NULL,
@@ -54,7 +53,6 @@ CREATE TABLE nc_user (
 );
 
 CREATE UNIQUE INDEX nc_user_idx_1 ON nc_user(email);
-CREATE INDEX nc_user_idx_2 ON nc_user(last_ds_id);
 
 --
 -- Pool of password hashes.
@@ -65,21 +63,6 @@ CREATE TABLE passwd_pool (
 );
 
 --
--- Instance of data source.
---
-CREATE TABLE ds_instance (
-    id NUMBER PRIMARY KEY,
-    name VARCHAR2(128) NOT NULL, -- User friendly (non-unique) name of the data source.
-    short_desc VARCHAR2(128) NULL, -- Short, optional description additional to the name.
-    model_id VARCHAR2(32) NOT NULL,
-    model_name VARCHAR2(64) NOT NULL,
-    model_ver VARCHAR2(16) NOT NULL,
-    model_cfg CLOB NULL,
-    created_on DATE DEFAULT sysdate NOT NULL,
-    last_modified_on DATE DEFAULT sysdate NOT NULL
-);
-
---
 -- Processing log.
 --
 CREATE TABLE proc_log (
@@ -87,11 +70,11 @@ CREATE TABLE proc_log (
     srv_req_id VARCHAR2(64) NOT NULL,
     txt VARCHAR2(1024) NULL,
     user_id NUMBER NULL,
-    ds_id NUMBER NULL,
     model_id VARCHAR2(64) NULL,
     status VARCHAR2(32) NULL,
     user_agent VARCHAR2(512) NULL,
     rmt_address VARCHAR2(256) NULL,
+    sen_data CLOB NULL,
     -- Ask and result timestamps.
     recv_tstamp DATE NOT NULL, -- Initial receive timestamp.
     resp_tstamp DATE NULL, -- Result or error response timestamp.

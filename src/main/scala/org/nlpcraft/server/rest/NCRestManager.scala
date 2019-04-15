@@ -46,7 +46,6 @@ import org.apache.commons.validator.routines.UrlValidator
 import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.mdo.NCUserMdo
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.probe.NCProbeManager
@@ -72,18 +71,18 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
     private final val GSON = new Gson()
 
-    private val API = "api" / s"v$API_VER"
+    private final val URL_VALIDATOR = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
 
-    private var bindFut: Future[Http.ServerBinding] = _
-
-    private final val urlVal = new UrlValidator(Array("http", "https"), UrlValidator.ALLOW_LOCAL_URLS)
-
-    private final val corsRespHdrs = List(
+    private final val CORS_HDRS = List(
         `Access-Control-Allow-Origin`.*,
         `Access-Control-Allow-Credentials`(true),
         `Access-Control-Allow-Headers`("Authorization", "Content-Type", "X-Requested-With")
     )
-
+    
+    private val API = "api" / s"v$API_VER"
+    
+    private var bindFut: Future[Http.ServerBinding] = _
+    
     private object Config extends NCConfigurable {
         final val prefix = "server.rest"
 
@@ -110,13 +109,11 @@ object NCRestManager extends NCLifecycle("REST manager") {
     case class InvalidOperation(email: String) extends NCE(s"Invalid operation.")
     case class NotImplemented() extends NCE("Not implemented.")
 
-    class ArgsException(msg: String) extends NCE(msg)
-    case class OutOfRangeField(fn: String, max: Int)
-        extends ArgsException(s"API field '$fn' value exceeded max length of $max.")
-    case class InvalidField(fn: String) extends ArgsException(s"API invalid field '$fn'")
-    case class EmptyField(fn: String, max: Int) extends ArgsException(s"API field '$fn' value cannot be empty.")
-    case class XorFields(f1: String, f2: String)
-        extends ArgsException(s"One and only one API field must be defined: '$f1' or '$f2'")
+    class InvalidArguments(msg: String) extends NCE(msg)
+    case class OutOfRangeField(fn: String, max: Int) extends InvalidArguments(s"API field '$fn' value exceeded max length of $max.")
+    case class InvalidField(fn: String) extends InvalidArguments(s"API invalid field '$fn'")
+    case class EmptyField(fn: String) extends InvalidArguments(s"API field '$fn' value cannot be empty.")
+    case class XorFields(f1: String, f2: String) extends InvalidArguments(s"One and only one API field must be defined: '$f1' or '$f2'")
 
     private implicit def handleErrors: ExceptionHandler =
         ExceptionHandler {
@@ -144,7 +141,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 corsHandler(complete(StatusCodes.NotImplemented, mkErrorBody(code, errMsg)))
 
-            case e: ArgsException ⇒
+            case e: InvalidArguments ⇒
                 val errMsg = e.getLocalizedMessage
                 val code = "NC_INVALID_FIELD"
 
@@ -194,7 +191,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
     /**
       *
       */
-    private def addAccessControlHeaders: Directive0 = respondWithHeaders(corsRespHdrs)
+    private def useCorsHeaders: Directive0 = respondWithHeaders(CORS_HDRS)
 
     /**
       *
@@ -208,7 +205,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
       *
       * @param r
       */
-    private def corsHandler(r: Route): Route = addAccessControlHeaders {
+    private def corsHandler(r: Route): Route = useCorsHeaders {
         preflightRequestHandler ~ r
     }
 
@@ -256,14 +253,13 @@ object NCRestManager extends NCLifecycle("REST manager") {
       * @param name Field name.
       * @param v Field value.
       * @param maxLen Maximum length.
-      * @param minLen Minimum length.
       */
     @throws[OutOfRangeField]
-    private def checkLength(name: String, v: String, maxLen: Int, minLen: Int = 1): Unit =
+    private def checkLength(name: String, v: String, maxLen: Int): Unit =
         if (v.length > maxLen)
             throw OutOfRangeField(name, maxLen)
-        else if (v.length < minLen)
-            throw EmptyField(name, minLen)
+        else if (v.length < 1)
+            throw EmptyField(name)
 
     /**
       * Checks length of field value.
@@ -271,12 +267,11 @@ object NCRestManager extends NCLifecycle("REST manager") {
       * @param name Field name.
       * @param v Field value.
       * @param maxLen Maximum length.
-      * @param minLen Minimum length.
       */
     @throws[OutOfRangeField]
-    private def checkLengthOpt(name: String, v: Option[String], maxLen: Int, minLen: Int = 1): Unit =
+    private def checkLengthOpt(name: String, v: Option[String], maxLen: Int): Unit =
         if (v.isDefined)
-            checkLength(name, v.get, maxLen, minLen)
+            checkLength(name, v.get, maxLen)
 
     /**
       * Checks operation permissions and gets user ID.
@@ -306,8 +301,8 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     case class Req(
                         acsTok: String,
                         txt: String,
-                        dsId: Option[Long],
-                        mdlId: Option[String]
+                        mdlId: String,
+                        data: Option[spray.json.JsValue]
                     )
                     case class Res(
                         status: String,
@@ -320,43 +315,34 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     entity(as[Req]) { req ⇒
                         checkLength("acsTok", req.acsTok, 256)
                         checkLength("txt", req.txt, 1024)
-                        checkLengthOpt("mdlId", req.mdlId, 32)
+                        checkLength("mdlId", req.mdlId, 32)
 
-                        if (!(req.dsId.isDefined ^ req.mdlId.isDefined))
-                            throw XorFields("dsId", "mdlId")
+                        val dataJsOpt =
+                            req.data match {
+                                case Some(data) ⇒ Some(data.compactPrint)
+                                case None ⇒ None
+                            }
+
+                        checkLengthOpt("data", dataJsOpt, 512000)
 
                         val userId = authenticate(req.acsTok).id
 
-                        optionalHeaderValueByName("User-Agent") { userAgent ⇒
-                            extractClientIP { remoteAddr ⇒
-                                val tmpDsId =
-                                    req.mdlId match {
-                                        case Some(mdlId) ⇒ Some(NCDsManager.addTempDataSource(mdlId))
+                        optionalHeaderValueByName("User-Agent") { usrAgent ⇒
+                            extractClientIP { rmtAddr ⇒
+                                val newSrvReqId = NCQueryManager.ask(
+                                    userId,
+                                    req.txt,
+                                    req.mdlId,
+                                    usrAgent,
+                                    rmtAddr.toOption match {
+                                        case Some(a) ⇒ Some(a.getHostAddress)
                                         case None ⇒ None
-                                    }
+                                    },
+                                    dataJsOpt
+                                )
 
-                                try {
-                                    val newSrvReqId =
-                                        NCQueryManager.ask(
-                                            userId,
-                                            req.txt,
-                                            tmpDsId.getOrElse(req.dsId.get),
-                                            userAgent,
-                                            remoteAddr.toOption match {
-                                                case Some(a) ⇒ Some(a.getHostAddress)
-                                                case None ⇒ None
-                                            }
-                                        )
-
-                                    complete {
-                                        Res(API_OK, newSrvReqId)
-                                    }
-                                }
-                                finally {
-                                    tmpDsId match {
-                                        case Some(id) ⇒ NCDsManager.deleteDataSource(id)
-                                        case None ⇒ // No-op.
-                                    }
+                                complete {
+                                    Res(API_OK, newSrvReqId)
                                 }
                             }
                         }
@@ -421,7 +407,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                     "srvReqId" → p.srvReqId,
                                     "txt" → p.text,
                                     "usrId" → p.userId,
-                                    "dsId" → p.dsId,
                                     "mdlId" → p.modelId,
                                     "probeId" → p.probeId.orNull,
                                     "status" → p.status,
@@ -431,7 +416,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                                                     p.resultType.isDefined &&
                                                     p.resultType.get == "json"
                                                 )
-                                                    U.js2Map(p.resultBody.get)
+                                                    U.js2Obj(p.resultBody.get)
                                                 else
                                                     p.resultBody.orNull
                                                 ),
@@ -452,7 +437,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 path(API / "clear" / "conversation") {
                     case class Req(
                         acsTok: String,
-                        dsId: Long,
+                        mdlId: String,
                         userId: Option[Long]
                     )
                     case class Res(
@@ -468,7 +453,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         val initiator = authenticate(req.acsTok)
                         val userId = getUserId(initiator, req.userId)
 
-                        NCProbeManager.clearConversation(userId, req.dsId)
+                        NCProbeManager.clearConversation(userId, req.mdlId)
 
                         complete {
                             Res(API_OK)
@@ -727,7 +712,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         firstName: String,
                         lastName: String,
                         avatarUrl: Option[String],
-                        lastDsId: Long,
                         isAdmin: Boolean
                     )
                     case class Res(
@@ -736,7 +720,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                     )
 
                     implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat7(ResUser)
+                    implicit val usrFmt: RootJsonFormat[ResUser] = jsonFormat6(ResUser)
                     implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
 
                     entity(as[Req]) { req ⇒
@@ -750,7 +734,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                             mdo.firstName,
                             mdo.lastName,
                             mdo.avatarUrl,
-                            mdo.lastDsId,
                             mdo.isAdmin
                         ))
 
@@ -776,7 +759,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         checkLength("acsTok", req.acsTok, 256)
                         checkLength("endpoint", req.endpoint, 2083)
 
-                        if (!urlVal.isValid(req.endpoint))
+                        if (!URL_VALIDATOR.isValid(req.endpoint))
                             throw InvalidField(req.endpoint)
 
                         authenticate(req.acsTok)
@@ -832,158 +815,6 @@ object NCRestManager extends NCLifecycle("REST manager") {
                         authenticate(req.acsTok)
 
                         NCUserManager.removeEndpoints(req.acsTok)
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/
-                path(API / "ds" / "add") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-
-                        // Data source.
-                        name: String,
-                        shortDesc: String,
-                        mdlId: String,
-                        mdlName: String,
-                        mdlVer: String,
-                        mdlCfg: Option[String]
-                    )
-                    case class Res(
-                        status: String,
-                        id: Long
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat7(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("name", req.name, 128)
-                        checkLength("shortDesc", req.shortDesc, 128)
-                        checkLength("mdlId", req.mdlId, 32)
-                        checkLength("mdlName", req.mdlName, 64)
-                        checkLength("mdlVer", req.mdlVer, 16)
-                        checkLengthOpt("mdlCfg", req.mdlCfg, 512000)
-
-                        authenticateAsAdmin(req.acsTok)
-
-                        val id = NCDsManager.addDataSource(
-                            req.name,
-                            req.shortDesc,
-                            req.mdlId,
-                            req.mdlName,
-                            req.mdlVer,
-                            req.mdlCfg
-                        )
-
-                        complete {
-                            Res(API_OK, id)
-                        }
-                    }
-                } ~
-                /**/
-                path(API / "ds" / "update") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String,
-
-                        // Update data source.
-                        id: Long,
-                        name: String,
-                        shortDesc: String
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        authenticateAsAdmin(req.acsTok)
-
-                        checkLength("acsTok", req.acsTok, 256)
-                        checkLength("name", req.name, 128)
-                        checkLength("shortDesc", req.shortDesc, 128)
-
-                        NCDsManager.updateDataSource(
-                            req.id,
-                            req.name,
-                            req.shortDesc
-                        )
-
-                        complete {
-                            Res(API_OK)
-                        }
-                    }
-                } ~
-                /**/
-                path(API / "ds" / "all") {
-                    case class Req(
-                        // Caller.
-                        acsTok: String
-                    )
-                    case class ResDs(
-                        id: Long,
-                        name: String,
-                        shortDesc: String,
-                        mdlId: String,
-                        mdlName: String,
-                        mdlVer: String,
-                        mdlCfg: Option[String]
-                    )
-                    case class Res(
-                        status: String,
-                        dataSources: Seq[ResDs]
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat1(Req)
-                    implicit val usrFmt: RootJsonFormat[ResDs] = jsonFormat7(ResDs)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat2(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        authenticate(req.acsTok)
-
-                        val dsLst = NCDsManager.getAllDataSources.map(mdo ⇒ ResDs(
-                            mdo.id,
-                            mdo.name,
-                            mdo.shortDesc,
-                            mdo.modelId,
-                            mdo.modelName,
-                            mdo.modelVersion,
-                            mdo.modelConfig
-                        ))
-
-                        complete {
-                            Res(API_OK, dsLst)
-                        }
-                    }
-                } ~
-                /**/
-                path(API / "ds" / "delete") {
-                    case class Req(
-                        acsTok: String,
-                        id: Long
-                    )
-                    case class Res(
-                        status: String
-                    )
-
-                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat2(Req)
-                    implicit val resFmt: RootJsonFormat[Res] = jsonFormat1(Res)
-
-                    entity(as[Req]) { req ⇒
-                        checkLength("acsTok", req.acsTok, 256)
-
-                        authenticateAsAdmin(req.acsTok)
-
-                        NCDsManager.deleteDataSource(req.id)
 
                         complete {
                             Res(API_OK)

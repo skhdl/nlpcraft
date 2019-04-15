@@ -106,7 +106,6 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
         genNums = NCNumericGenerator.generate(100000).map(p ⇒ p._2 → p._1)
 
         // Data source: https://www.adducation.info/how-to-improve-your-knowledge/units-of-measurement/
-        // Note that this provided data edited.
         case class U(name: String, unitType: String, synonyms: Seq[String]) {
             val extSynonyms: Seq[String] =
                 synonyms ++

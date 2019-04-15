@@ -198,7 +198,7 @@ public class NCIntentSolver implements Serializable {
     private static final int[] EMPTY_WEIGHT = {0, 0, 0};
     private static final Pair<Boolean, int[]> EMPTY_PAIR = Pair.of(false, EMPTY_WEIGHT);
     private static final Supplier<NCQueryResult> DFLT_NOT_FOUND = () -> {
-        throw new NCRejection("Request seems unrelated to the data source.");
+        throw new NCRejection("Request seems unrelated to the data model.");
     };
     private static final String DFLT_NAME = "default";
     

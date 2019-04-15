@@ -83,7 +83,7 @@ public class WeatherTest {
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.openForModelId("nlpcraft.weather.ex");  // See weather_model.json
+        client.open("nlpcraft.weather.ex");  // See weather_model.json
     }
     
     @AfterEach

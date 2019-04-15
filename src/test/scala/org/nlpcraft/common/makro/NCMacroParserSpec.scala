@@ -49,7 +49,7 @@ class NCMacroParserSpec extends FlatSpec {
         "<C>" → "<A> bbb {z|w}"
     )
     
-    // Add macros from GA data source for testing...
+    // Add macros from GA for testing...
     parser.addMacro("<OF>", "{of|for|per}")
     parser.addMacro("<QTY>", "{number|tally|count|quantity|amount}")
     parser.addMacro("<NUM>", "{overall|total|grand total|entire|complete|full|*} <QTY>")

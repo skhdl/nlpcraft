@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Sentence variant is a list of {@link NCToken tokens}. This class is used throughout the
+ * Parsing variant of the user input represented as a list of tokens. This class is used throughout the
  * API as a container of tokens. Note that a given user input can have one or more possible different
  * parsing variants (i.e. set of tokens representing that parsed input). Note also that variants support
  * natural ordering from best to worst fitness.

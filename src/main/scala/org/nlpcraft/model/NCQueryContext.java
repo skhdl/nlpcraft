@@ -63,13 +63,6 @@ public interface NCQueryContext extends Serializable {
     NCModel getModel();
 
     /**
-     * Gets descriptor of data source associated with this context.
-     *
-     * @return Descriptor of data source for the user sentence associated with this context.
-     */
-    NCDataSource getDataSource();
-
-    /**
      * Gets fully parsed, canonical representation of user input.
      *
      * @return Fully parsed, canonical representation of user input.

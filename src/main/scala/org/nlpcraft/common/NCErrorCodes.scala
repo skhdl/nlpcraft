@@ -57,7 +57,7 @@ object NCErrorCodes {
     final val ALLOW_NON_LATIN_CHARSET = 10006
     /** Only english language is supported. */
     final val ALLOW_NON_ENGLISH = 10007
-    /** Sentence seems unrelated to data source. */
+    /** Sentence seems unrelated to data model. */
     final val ALLOW_NO_USER_TOKENS = 10008
     /** Sentence is too short. */
     final val MIN_WORDS = 10009

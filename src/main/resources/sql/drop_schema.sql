@@ -30,5 +30,4 @@
 
 DROP TABLE IF EXISTS nc_user;
 DROP TABLE IF EXISTS passwd_pool;
-DROP TABLE IF EXISTS ds_instance;
 DROP TABLE IF EXISTS proc_log;

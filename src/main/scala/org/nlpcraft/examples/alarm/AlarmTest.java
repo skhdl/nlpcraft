@@ -52,7 +52,7 @@ public class AlarmTest {
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
         
-        client.openForModelId("nlpcraft.alarm.ex"); // See alarm_model.json
+        client.open("nlpcraft.alarm.ex"); // See alarm_model.json
     }
     
     @AfterEach

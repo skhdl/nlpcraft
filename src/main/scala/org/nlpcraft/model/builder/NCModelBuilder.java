@@ -118,7 +118,7 @@ public class NCModelBuilder {
     /**
      * Reads YAML file and creates YAML representation object of given type.
      *
-     * @param filePath File path.
+     * @param filePath File path.`
      * @param claxx YAML representation class.
      * @param <T> Object type.
      * @return Initialized object.

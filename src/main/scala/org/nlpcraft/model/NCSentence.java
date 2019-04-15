@@ -137,6 +137,7 @@ public interface NCSentence extends Serializable {
      * all variants automatically.
      *
      * @return All parsing variants of this sentence. Always contains at least one variant.
+     * @see #getData()
      */
     List<NCVariant> getVariants();
     
@@ -154,4 +155,13 @@ public interface NCSentence extends Serializable {
      * @return User agent string from user client (web browser, REST client, etc.).
      */
     Optional<String> getUserClientAgent();
+    
+    /**
+     * Gets optional JSON data passed in with user input. See '/ask/ REST call documentation
+     * for the details.
+     *
+     * @return Optional user input data.
+     * @see #getVariants()
+     */
+    Optional<String> getData();
 }

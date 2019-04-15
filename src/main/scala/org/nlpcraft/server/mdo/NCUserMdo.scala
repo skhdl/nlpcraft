@@ -48,7 +48,6 @@ case class NCUserMdo(
     @NCMdoField(column = "last_name") lastName: String,
     @NCMdoField(column = "avatar_url") avatarUrl: Option[String],
     @NCMdoField(column = "passwd_salt") passwordSalt: String,
-    @NCMdoField(column = "last_ds_id") lastDsId: Long,
     @NCMdoField(column = "is_admin") isAdmin: Boolean,
     @NCMdoField(column = "created_on") createdOn: Timestamp,
     @NCMdoField(column = "last_modified_on") lastModifiedOn: Timestamp
@@ -74,7 +73,7 @@ object NCUserMdo {
 
         val now = U.nowUtcTs()
 
-        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, now, now)
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, isAdmin, now, now)
     }
 
     def apply(
@@ -93,6 +92,6 @@ object NCUserMdo {
         require(passwordSalt != null, "Password salt cannot be null.")
         require(createdOn != null, "Created date cannot be null.")
 
-        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, -1, isAdmin, createdOn, createdOn)
+        NCUserMdo(id, email, firstName, lastName, avatarUrl, passwordSalt, isAdmin, createdOn, createdOn)
     }
 }

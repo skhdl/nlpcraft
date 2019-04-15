@@ -103,7 +103,7 @@ public class NCQueryResult implements Serializable {
     public static NCQueryResult json(String json) {
         // Validation.
         try {
-            NCUtils.js2Map(json);
+            NCUtils.js2Obj(json);
         }
         catch (NCException e) {
             throw new IllegalArgumentException("Invalid JSON value: " + json, e.getCause());

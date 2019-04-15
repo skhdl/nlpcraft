@@ -34,7 +34,6 @@ package org.nlpcraft.server.query
 import org.apache.ignite.IgniteCache
 import org.nlpcraft.common.{NCLifecycle, _}
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.{NCEndpointCacheKey, NCEndpointManager}
 import org.nlpcraft.server.ignite.NCIgniteHelpers._
 import org.nlpcraft.server.ignite.NCIgniteInstance
@@ -77,43 +76,41 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       *
       * @param usrId
       * @param txt
-      * @param dsId
+      * @param mdlId
       * @param usrAgent
       * @param rmtAddr
+      * @param data
       * @return
       */
     @throws[NCE]
     def ask(
         usrId: Long,
         txt: String,
-        dsId: Long,
+        mdlId: String,
         usrAgent: Option[String],
-        rmtAddr: Option[String]
+        rmtAddr: Option[String],
+        data: Option[String]
     ): String = {
         ensureStarted()
-        
+
         val txt0 = txt.trim()
-        
+
         val rcvTstamp = U.nowUtcTs()
-        
+
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
-    
-        // Check data source.
-        val ds = NCDsManager.getDataSource(dsId).getOrElse(throw new NCE(s"Unknown data source ID: $dsId"))
-        
+
         // Check input length.
         if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
-        
+
         val srvReqId = U.genGuid()
-    
+
         catching(wrapIE) {
             // Enlist for tracking.
             cache += srvReqId → NCQueryStateMdo(
                 srvReqId,
-                dsId = dsId,
-                modelId = ds.modelId,
+                modelId = mdlId,
                 userId = usrId,
                 email = usr.email,
                 status = QRY_ENLISTED, // Initial status.
@@ -130,35 +127,36 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             usrId,
             srvReqId,
             txt0,
-            dsId,
-            ds.modelId,
+            mdlId,
             QRY_ENLISTED,
             usrAgent.orNull,
             rmtAddr.orNull,
-            rcvTstamp
+            rcvTstamp,
+            data.orNull
         )
 
         val fut = Future {
             NCNotificationManager.addEvent("NC_NEW_QRY",
                 "userId" → usrId,
-                "dsId" → dsId,
-                "modelId" → ds.modelId,
+                "modelId" → mdlId,
                 "txt" → txt0,
                 "userAgent" → usrAgent,
-                "rmtAddr" → rmtAddr
+                "rmtAddr" → rmtAddr,
+                "data" → data
             )
-            
+
             logger.info(s"New request received: $txt0")
-    
+
             // Enrich the user input and send it to the probe.
             NCProbeManager.askProbe(
                 srvReqId,
                 usr,
-                ds,
+                mdlId,
                 txt0,
                 NCNlpEnricherManager.enrich(txt0),
                 usrAgent,
-                rmtAddr
+                rmtAddr,
+                data
             )
         }
         

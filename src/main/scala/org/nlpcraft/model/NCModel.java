@@ -47,7 +47,7 @@ import java.util.Set;
  * A model generally defines:
  * <ul>
  *     <li>How to interpret the input from the user.</li>
- *     <li>How to map it to the data source.</li>
+ *     <li>How to map it to a particular data source.</li>
  *     <li>How to format the data source result back to the user.</li>
  * </ul>
  * At a <b>minimum</b> only two methods need to be implemented on this interface:
@@ -1049,7 +1049,7 @@ public interface NCModel {
      * Gets an optional list of example sentences demonstrating what can be asked with this model. These
      * examples may be displayed by the management tools. It is highly recommended to supply a good list of
      * examples for the model as this provides perhaps the best description to the end user on how a particular
-     * model and its data sources can be used.
+     * model can be used.
      * <br><br>
      * <b>JSON</b>
      * <br>
