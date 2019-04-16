@@ -260,8 +260,8 @@ object NCProbe extends App with LazyLogging {
       */
     private def startManagers(cfg: Config.type): Unit = {
         // Order is important!
-        NCVersionManager.start()
         NCNlpCoreManager.start()
+        NCVersionManager.start()
         NCNumericManager.start()
         NCDeployManager.startWithConfig(cfg)
         NCModelManager.startWithConfig(cfg)
@@ -307,8 +307,8 @@ object NCProbe extends App with LazyLogging {
         NCModelManager.stop()
         NCDeployManager.stop()
         NCNumericManager.stop()
-        NCNlpCoreManager.stop()
         NCVersionManager.stop()
+        NCNlpCoreManager.stop()
     }
     
     /**

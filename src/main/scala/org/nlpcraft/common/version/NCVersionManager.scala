@@ -44,6 +44,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.nlpcraft.common._
+import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
@@ -94,7 +95,8 @@ object NCVersionManager extends NCLifecycle("Version manager") {
             "JAVA_VER" → sysProps.getProperty("java.version"),
             "JAVA_VENDOR" → sysProps.getProperty("java.vendor"),
             "HOST_NAME" → hostName,
-            "HOST_ADDR" → hostAddr
+            "HOST_ADDR" → hostAddr,
+            "NLP_ENGINE" → NCNlpCoreManager.getEngine
         )
 
         super.start()

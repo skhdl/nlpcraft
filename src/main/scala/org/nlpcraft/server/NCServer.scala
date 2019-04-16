@@ -91,8 +91,8 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
       * Starts all managers.
       */
     private def startManagers(): Unit = {
-        NCVersionManager.start()
         NCNlpCoreManager.start()
+        NCVersionManager.start()
         NCPluginManager.start()
         NCTxManager.start()
         NCSqlManager.start()
@@ -150,8 +150,8 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             NCSqlManager,
             NCTxManager,
             NCPluginManager,
-            NCNlpCoreManager,
-            NCVersionManager
+            NCVersionManager,
+            NCNlpCoreManager
         ).foreach(p ⇒
             try
                 p.stop()
