@@ -209,7 +209,7 @@ layout: documentation
             </dt>
         </dl>
         <p>
-            Note that STM is maintained per user and per data source.
+            Note that STM is maintained per user and per data model.
             Conversation management implementation is also smart enough to clear STM after certain
             period of time, i.e. it “forgets” the conversational context after few minutes of inactivity.
             Note also that conversational context can also be cleared explicitly
@@ -217,13 +217,12 @@ layout: documentation
         </p>
     </section>
     <section id="model-ds">
-        <span class="section-sub-title">Models <span class="amp">&amp;</span> Data Sources</span>
+        <span class="section-sub-title">Models <span class="amp">&amp;</span> Data Probes</span>
         <p>
-            When working with NLPCraft you’ll be most often dealing with three concepts you have already seen above:
+            When working with NLPCraft you’ll be most often dealing with two concepts you have already seen above:
         </p>
         <ul>
             <li>Data Model</li>
-            <li>Data Source</li>
             <li>Data Probe</li>
         </ul>
         <p>
@@ -232,28 +231,20 @@ layout: documentation
         </p>
         <p>
             <b>Data Model</b> is essentially a small piece of Java/Scala/Groovy (or any other JVM-based language) code that
-            you will need to develop that defines how to translate user input into specific actions for a specific data endpoint.
+            you will need to develop that defines how to translate user input into specific actions for a specific data source.
             Even though it may sounds complex - in reality most models are fairly simple and can be developed rather quickly.
             Data model does not necessarily have to work with only one type of endpoint but it is a
-            good practice to have different types of endpoints handled by different models. The same model however can
-            be used for more than one instance of an endpoint and that’s where the notion of data source comes in play.
-        </p>
-        <p>
-            <b>Data Source</b> is a configured instance of data model. You create, update and delete data sources
-            through <a href="https://nlpcraft.docs.apiary.io" target="apiary">REST API</a>. Data source has name, description and associated data model
-            with its own unique configuration. Data source is used when you ask natural language questions via NLPCraft to
-            point to a specific instance of the data model. Note also that multiple data sources can share the same model
-            (although they will effectively represent different instances of the same model with potentially different configurations).
+            good practice to have different types of endpoints handled by different models.
         </p>
         <p>
             <b>Data Probe</b> is an application whose main purpose is to deploy and host user-defined data models.
             A separate application is required since often NLPCraft will be connected to a private data
-            endpoint (like corporate database, for example) and open connectivity to this database from the
+            source (like corporate database, for example) and open connectivity to this database from the
             outside will not be possible - hence a need for a secure proxy type of application in
             between. Data probe is a secure application that employs end-to-end encryption, HTTP tunneling and router
             ingress-only connectivity. Each data probe can host multiple models, and you can have multiple
             data probes. Data probes can be deployed anywhere as long as there is an outbound connectivity,
-            and are typically deployed in DMZ or close to your private data endpoints. Data probe can be
+            and are typically deployed in DMZ or close to your private data sources. Data probe can be
             launched in-process for easier development and testing or as a command line tool for production usage.
         </p>
     </section>
@@ -263,7 +254,7 @@ layout: documentation
         <li class="side-nav-title">On This Page</li>
         <li><a href="#sem-model">Semantic Modelling</a></li>
         <li><a href="#stm">Conversation <span class="amp">&amp;</span> STM</a></li>
-        <li><a href="#model-ds">Models <span class="amp">&amp;</span> Data Sources</a></li>
+        <li><a href="#model-ds">Models <span class="amp">&amp;</span> Data Probes</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
