@@ -40,16 +40,18 @@ import java.util.function.Predicate;
  * Conversation context.
  * <br><br>
  * Conversation management is based on idea of a short-term-memory (STM). STM can be viewed as a condensed
- * short-term history of the user input for a given user and data source. Every submitted user request that wasn't
+ * short-term history of the user input for a given user and data model - both acting as a compound key for the STM.
+ * Every submitted user request that wasn't
  * rejected is added to the conversation STM as a list of {@link NCToken tokens}. Existing STM tokens with
  * the same {@link NCElement#getGroup() group} will be overridden by the more recent tokens from the same group.
+ * Note also that tokens in STM automatically expire (i.e. context is "forgotten") after a certain period of time.
  *
  * @see NCQueryContext#getConversationContext()
  */
 public interface NCConversationContext {
     /**
      * Gets unordered set of tokens stored in the current conversation STM for current
-     * user and data source. Note that this set excludes free words and stopwords. Note also that specific rules
+     * user and data model. Note that this set excludes free words and stopwords. Note also that specific rules
      * by which STM operates are undefined for the purpose of this function (i.e. callers should not rely on
      * any observed behavior of how STM stores and evicts its content).
      *
@@ -66,7 +68,7 @@ public interface NCConversationContext {
      * <br><br>
      * For example, in some cases the intent logic can assume the user current location as an implicit geo
      * location and therefore all existing {@code nlp:geo} tokens should be removed from the conversation STM
-     * to maintain proper context. 
+     * to maintain correct context.
      *
      * @param filter Token remove filter.
      */

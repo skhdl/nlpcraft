@@ -51,9 +51,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -198,7 +196,7 @@ public class NCIntentSolver implements Serializable {
     private static final int[] EMPTY_WEIGHT = {0, 0, 0};
     private static final Pair<Boolean, int[]> EMPTY_PAIR = Pair.of(false, EMPTY_WEIGHT);
     private static final Supplier<NCQueryResult> DFLT_NOT_FOUND = () -> {
-        throw new NCRejection("Request seems unrelated to the data source.");
+        throw new NCRejection("Request seems unrelated to the data model.");
     };
     private static final String DFLT_NAME = "default";
     
@@ -222,7 +220,17 @@ public class NCIntentSolver implements Serializable {
      * @see XNOR XNOR
      * @see NOR NOR
      */
-    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {}
+    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {
+        /**
+         * 
+         * @param name Combinator name.
+         * @param str Combinator string.
+         */
+        default IllegalArgumentException twoOrMore(String name, String str) {
+            return new IllegalArgumentException(
+                String.format("Intent DSL %s combinator should have at least two elements near: %s", name, str));
+        }
+    }
 
     /**
      * Callback provided by the user for an intent when it is matched. It takes solver
@@ -246,7 +254,7 @@ public class NCIntentSolver implements Serializable {
             !(obj instanceof NOR) &&
             !(obj instanceof NAND) &&
             !(obj instanceof RULE))
-            throw new IllegalArgumentException("Combinators can only combine AND, OR, NAND, XOR, XNOR, NOR or RULE.");
+            throw new IllegalArgumentException("Intent DSL combinators can only combine AND, OR, NAND, XOR, XNOR, NOR or RULE.");
     }
 
     /**
@@ -271,7 +279,7 @@ public class NCIntentSolver implements Serializable {
          */
         public OR(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("OR combinator should have at least two elements.");
+                throw twoOrMore("OR", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -290,7 +298,7 @@ public class NCIntentSolver implements Serializable {
          */
         public OR(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("OR combinator should have at least two elements.");
+                throw twoOrMore("OR", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -338,7 +346,7 @@ public class NCIntentSolver implements Serializable {
          */
         public XOR(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("XOR combinator should have at least two elements.");
+                throw twoOrMore("XOR", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -357,7 +365,7 @@ public class NCIntentSolver implements Serializable {
          */
         public XOR(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("XOR combinator should have at least two elements.");
+                throw twoOrMore("XOR", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -410,7 +418,7 @@ public class NCIntentSolver implements Serializable {
          */
         public NAND(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("NAND combinator should have at least two elements.");
+                throw twoOrMore("NAND", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -429,7 +437,7 @@ public class NCIntentSolver implements Serializable {
          */
         public NAND(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("NAND combinator should have at least two elements.");
+                throw twoOrMore("NAND", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -485,7 +493,7 @@ public class NCIntentSolver implements Serializable {
          */
         public XNOR(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("XNOR combinator should have at least two elements.");
+                throw twoOrMore("XNOR", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -504,7 +512,7 @@ public class NCIntentSolver implements Serializable {
          */
         public XNOR(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("XNOR combinator should have at least two elements.");
+                throw twoOrMore("XNOR", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -561,7 +569,7 @@ public class NCIntentSolver implements Serializable {
          */
         public NOR(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("NOR combinator should have at least two elements.");
+                throw twoOrMore("NOR", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -580,7 +588,7 @@ public class NCIntentSolver implements Serializable {
          */
         public NOR(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("NOR combinator should have at least two elements.");
+                throw twoOrMore("NOR", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -635,7 +643,7 @@ public class NCIntentSolver implements Serializable {
          */
         public AND(Predicate... items) {
             if (items == null || items.length < 2)
-                throw new IllegalArgumentException("AND combinator should have at least two elements.");
+                throw twoOrMore("AND", Arrays.toString(items));
 
             for (Predicate item : items)
                 checkCombinator(item);
@@ -654,7 +662,7 @@ public class NCIntentSolver implements Serializable {
          */
         public AND(String... exprs) {
             if (exprs == null || exprs.length < 2)
-                throw new IllegalArgumentException("AND combinator should have at least two elements.");
+                throw twoOrMore("AND", Arrays.toString(exprs));
 
             addAll(Arrays.stream(exprs).map(RULE::new).collect(Collectors.toList()));
         }
@@ -714,7 +722,6 @@ public class NCIntentSolver implements Serializable {
             "id",
             "parent",
             "group",
-            "type",
             "value"
         );
 
@@ -860,12 +867,12 @@ public class NCIntentSolver implements Serializable {
              String[] parts = expr.trim().split("\\s+");
 
              if (parts.length < 3)
-                 throw new IllegalArgumentException("Invalid rule expression: " + expr);
+                 throw new IllegalArgumentException("Invalid intent DSL rule expression: " + expr);
 
              String param = parts[0];
              String op = parts[1];
              String value = Arrays.stream(parts).skip(2).collect(Collectors.joining(" "));
-
+             
              if (value.equals("null"))
                  init(param, op, null);
              else if (value.equalsIgnoreCase("true"))
@@ -892,18 +899,18 @@ public class NCIntentSolver implements Serializable {
             String op0 = op == null ? null : op.trim();
 
             if (param0 == null || (param0.charAt(0) != '~' && !PARAMS.contains(param0)))
-                throw new IllegalArgumentException("Invalid rule's parameter: " + param0);
+                throw new IllegalArgumentException(String.format("Invalid intent DSL rule parameter in: %s%s%s", param, op, value));
 
             if (!OPS.contains(op0))
-                throw new IllegalArgumentException("Invalid rule's operation: " + op0);
-
+                throw new IllegalArgumentException(String.format("Invalid intent DSL rule operation in: %s%s%s", param, op, value));
+    
             this.param = param0;
             this.op = op0;
             this.value = value;
 
             weight = calcWeight();
         }
-
+    
         /**
          * 
          * @return Rule's weight.
@@ -913,17 +920,16 @@ public class NCIntentSolver implements Serializable {
 
             // Calculation weights.
             switch (param){
-                case "id": w[0] = 6; break;
-                case "value": w[0] = 5; break;
-                case "group": w[0] = 4; break;
-                case "type": w[0] = 2; break;
+                case "id": w[0] = 5; break;
+                case "value": w[0] = 4; break;
+                case "group": w[0] = 3; break;
                 case "parent": w[0] = 1; break;
 
                 default:
                     if (param.charAt(0) == '~')
-                        w[0] = 3;
+                        w[0] = 2;
                     else
-                        throw new AssertionError("Unexpected parameter: " + param);
+                        throw new AssertionError("Unexpected intent DSL parameter: " + param);
             }
 
             switch (op) {
@@ -937,10 +943,10 @@ public class NCIntentSolver implements Serializable {
                 case "!=": w[1] = 1; break;
 
                 default:
-                    throw new AssertionError("Unexpected operation: " + op);
+                    throw new AssertionError("Unexpected intent DSL operation: " + op);
             }
 
-            w[2] = value == null? 2 : 1;
+            w[2] = value == null ? 2 : 1;
 
             return w;
         }
@@ -985,7 +991,7 @@ public class NCIntentSolver implements Serializable {
          *
          */
         private IllegalArgumentException mkOperatorError(Object v1, Object v2) {
-            return new IllegalArgumentException(String.format("Unexpected operator: %s for elements: %s, %s",
+            return new IllegalArgumentException(String.format("Unexpected intent DSL operator: %s for elements: %s, %s",
                 op, v1.toString(), v2.toString()));
         }
 
@@ -1001,7 +1007,7 @@ public class NCIntentSolver implements Serializable {
                 String name = param.substring(1);
 
                 if (name.isEmpty())
-                    throw new IllegalArgumentException("Empty meta parameter name.");
+                    throw new IllegalArgumentException(String.format("Intent DSL empty meta parameter name in: %s%s%s", param, op, value));
 
                 NCMetadata tokMeta = tok.getMetadata();
                 NCMetadata elmMeta = tok.getElementMetadata();
@@ -1018,7 +1024,7 @@ public class NCIntentSolver implements Serializable {
                     case "value":  v1 = tok.getValue().trim(); break;
                     case "parent": v1 = tok.getParentId().trim(); break;
 
-                    default: throw new IllegalArgumentException("Unexpected parameter: " + param);
+                    default: throw new IllegalArgumentException(String.format("Unexpected intent DSL parameter in: %s%s%s", param, op, value));
             }
 
             Object v2 = value;
@@ -1100,7 +1106,7 @@ public class NCIntentSolver implements Serializable {
                         throw mkOperatorError(v1, v2);
 
                 default:
-                    throw new AssertionError("Unexpected operation: " + op);
+                    throw new AssertionError("Unexpected intent DSL operation: " + op);
             }
         }
 
@@ -1128,9 +1134,11 @@ public class NCIntentSolver implements Serializable {
          */
         public ITEM(Predicate pred, int min, int max) {
             if (pred == null)
-                throw new IllegalArgumentException("Item pattern cannot be null.");
-            if (min < 0 || min > max || max < 1)
-                throw new IllegalArgumentException("Invalid item quantifiers (must be min >= 0, min <= max, max > 0).");
+                throw new IllegalArgumentException("Intent DSL item predicate cannot be null.");
+            if (min < 0 || min > max)
+                throw new IllegalArgumentException(String.format("Invalid intent DSL item min-quantifiers: %d (must be min >= 0 && min <= max).", min));
+            if (min > max || max < 1)
+                throw new IllegalArgumentException(String.format("Invalid intent DSL item max-quantifiers: %d (must be min <= max && max > 1).", max));
 
             this.ptrn = pred;
             this.min = min;
@@ -1185,7 +1193,7 @@ public class NCIntentSolver implements Serializable {
          */
         public TERM(ITEM... items) {
             if (items.length == 0)
-                throw new IllegalArgumentException("Term should have at least one item.");
+                throw new IllegalArgumentException("Intent DSL term should have at least one item.");
 
             this.items = items;
         }
@@ -1460,7 +1468,7 @@ public class NCIntentSolver implements Serializable {
         this.name = name;
         this.notFound = notFound;
     }
-
+    
     /**
      * Adds given intent, its ID and its callback function to this solver.
      *
@@ -1515,23 +1523,6 @@ public class NCIntentSolver implements Serializable {
         return list.indexOf(',') == lastIdx ?
             list.replace(", ", " and ") :  // "A, B" ⇒ "A and B"
             list.substring(0, lastIdx) + ", and" + list.substring(lastIdx); // "A, B, C" ⇒ "A, B, and C"
-    }
-    
-    /**
-     *
-     * @param existedMeta
-     * @param res
-     * @return
-     */
-    private static Map<String, Object> cloneMetadata(Map<String, Object> existedMeta, NCIntentSolverResult res) {
-        Map<String, Object> meta = new HashMap<>();
-        
-        meta.put("intentId", res.intentId());
-        
-        if (existedMeta != null)
-            meta.putAll(existedMeta);
-        
-        return meta;
     }
     
     /**

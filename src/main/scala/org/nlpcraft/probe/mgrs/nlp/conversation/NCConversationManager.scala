@@ -39,7 +39,7 @@ import scala.collection._
   * Conversation manager.
   */
 object NCConversationManager extends NCProbeLifecycle("Conversation manager") {
-    case class Key(userId: Long, dsId: Long)
+    case class Key(userId: Long, mdlId: String)
     
     // TODO: add periodic garbage collector for stale conversations.
     private val convs = mutable.HashMap.empty[Key, NCConversation]
@@ -48,12 +48,12 @@ object NCConversationManager extends NCProbeLifecycle("Conversation manager") {
       * Gets conversation for given key.
       *
       * @param usrId User ID.
-      * @param dsId Data source ID.
+      * @param mdlId Model ID.
       * @return New or existing conversation.
       */
-    def get(usrId: Long, dsId: Long): NCConversation = {
+    def get(usrId: Long, mdlId: String): NCConversation = {
         convs.synchronized {
-            convs.getOrElseUpdate(Key(usrId, dsId), NCConversation(usrId, dsId))
+            convs.getOrElseUpdate(Key(usrId, mdlId), NCConversation(usrId, mdlId))
         }
     }
 }

@@ -33,9 +33,9 @@ package org.nlpcraft.probe.mgrs.nlp.impl
 
 import java.util.Optional
 
+import org.nlpcraft.common.nlp._
 import org.nlpcraft.model._
 import org.nlpcraft.model.impl._
-import org.nlpcraft.common.nlp._
 import org.nlpcraft.probe.mgrs.NCModelDecorator
 
 import scala.collection.JavaConverters._
@@ -71,6 +71,7 @@ class NCSentenceImpl(
     override lazy val getUserSignupDate: Long = meta.getLong("SIGNUP_DATE")
     override lazy val getUserClientAgent: Optional[String] = meta.getStringOpt("USER_AGENT")
     override lazy val getRemoteAddress: Optional[String] = meta.getStringOpt("REMOTE_ADDR")
+    override lazy val getData: Optional[String] = meta.getStringOpt("DATA")
 
     /**
       * Converts NLP sentence into sequence of model tokens.

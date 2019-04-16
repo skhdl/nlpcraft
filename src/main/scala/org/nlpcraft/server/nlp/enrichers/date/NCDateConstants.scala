@@ -185,7 +185,7 @@ private[date] object NCDateConstants {
     ).flatMap(parser.expand)
 
     // https://www.compart.com/en/unicode/category/Pd
-    val DASHES = Seq(
+    val DASHES: Seq[Char] = Seq(
         '\u002D',
         '\u058A',
         '\u05BE',
@@ -212,5 +212,5 @@ private[date] object NCDateConstants {
         '\uFF0D'
     )
 
-    val DASHES_LIKE = Seq('/', ':', '~')
+    val DASHES_LIKE: Seq[Char] = Seq('/', ':', '~')
 }

@@ -76,11 +76,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
-      * @param dsId Data source ID.
-      * @param dsModelId Model ID.
-      * @param dsName Data source name.
-      * @param dsDesc Data source description.
-      * @param dsModelCfg Data source model config.
+      * @param mdlId Model ID.
       */
     @throws[NCE]
     def ask(
@@ -89,11 +85,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
-        dsId: Long,
-        dsModelId: String,
-        dsName: String,
-        dsDesc: String,
-        dsModelCfg: String
+        mdlId: String
     ): Unit = {
         ensureStarted()
 
@@ -104,11 +96,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 nlpSen,
                 usrId,
                 senMeta,
-                dsId,
-                dsModelId,
-                dsName,
-                dsDesc,
-                dsModelCfg
+                mdlId
             )
         catch {
             case e: Throwable ⇒
@@ -118,8 +106,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                     "srvReqId" → srvReqId,
                     "error" → "Processing failed due to a system error.",
                     "errorCode" → UNEXPECTED_ERROR,
-                    "dsId" → dsId,
-                    "dsModelId" → dsModelId,
+                    "mdlId" → mdlId,
                     "txt" → txt
                 )
                 
@@ -146,11 +133,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
       * @param nlpSen NLP sentence.
       * @param usrId User ID.
       * @param senMeta Sentence meta data.
-      * @param dsId Data source ID.
-      * @param dsModelId Model ID.
-      * @param dsName Data source name.
-      * @param dsDesc Data source description.
-      * @param dsModelCfg Data source model config.
+      * @param mdlId Model ID.
       */
     @throws[NCE]
     private def ask0(
@@ -159,11 +142,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         nlpSen: NCNlpSentence,
         usrId: Long,
         senMeta: Map[String, Serializable],
-        dsId: Long,
-        dsModelId: String,
-        dsName: String,
-        dsDesc: String,
-        dsModelCfg: String
+        mdlId: String
     ): Unit = {
         logger.info(s"Sentence received: ${nlpSen.text}")
     
@@ -180,7 +159,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 case "ALLOW_NO_NOUNS" ⇒ "Sentence contains no nouns." → ALLOW_NO_NOUNS
                 case "ALLOW_NON_LATIN_CHARSET" ⇒ "Only latin charset is supported." → ALLOW_NON_LATIN_CHARSET
                 case "ALLOW_NON_ENGLISH" ⇒ "Only english language is supported." → ALLOW_NON_ENGLISH
-                case "ALLOW_NO_USER_TOKENS" ⇒ "Sentence seems unrelated to data source." → ALLOW_NO_USER_TOKENS
+                case "ALLOW_NO_USER_TOKENS" ⇒ "Sentence seems unrelated to the data model." → ALLOW_NO_USER_TOKENS
                 case "MIN_WORDS" ⇒ "Sentence is too short." → MIN_WORDS
                 case "MIN_NON_STOPWORDS" ⇒ "Sentence is ambiguous." → MIN_NON_STOPWORDS
                 case "MIN_TOKENS" ⇒ "Sentence is too short." → MIN_TOKENS
@@ -217,8 +196,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             val msg = NCProbeMessage(msgName)
 
             msg += "srvReqId" → srvReqId
-            msg += "dsId" → dsId
-            msg += "dsModelId" → dsModelId
+            msg += "mdlId" → mdlId
             msg += "txt" → txt
 
             if (resBody.isDefined && resBody.get.length > config.resultMaxSize) {
@@ -240,7 +218,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 logger.info(s"REJECT response $msgName sent [srvReqId=$srvReqId, response=${errMsg.get}]")
         }
 
-        val mdl = NCModelManager.getModel(dsModelId).getOrElse(throw new NCE(s"Model not found: $dsModelId"))
+        val mdl = NCModelManager.getModel(mdlId).getOrElse(throw new NCE(s"Model not found: $mdlId"))
         
         try
             NCNlpPreChecker.validate(mdl, nlpSen)
@@ -310,7 +288,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 return
         }
 
-        val conv = NCConversationManager.get(usrId, dsId)
+        val conv = NCConversationManager.get(usrId, mdlId)
 
         // Update STM and recalculate context.
         conv.update()
@@ -324,12 +302,6 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
 
         // Create model query context.
         val qryCtx: NCQueryContext = new NCQueryContext {
-            override val getDataSource: NCDataSource = new NCDataSource {
-                override lazy val getDescription: String = dsDesc
-                override lazy val getName: String = dsName
-                override lazy val getConfig: String = dsModelCfg
-            }
-
             override lazy val getSentence: NCSentence = unitedSen
             override lazy val getModel: NCModel = mdl.model
             override lazy val getServerRequestId: String = srvReqId

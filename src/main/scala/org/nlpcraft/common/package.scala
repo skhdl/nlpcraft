@@ -63,7 +63,7 @@ package object common {
       * @tparam B
       * @return
       */
-    implicit def toJavaFunction[A, B](f: (A) ⇒ B): JFunction[A, B] = new JFunction[A, B] {
+    implicit def toJavaFunction[A, B](f: A ⇒ B): JFunction[A, B] = new JFunction[A, B] {
         override def apply(a: A): B = f(a)
     }
     
@@ -73,7 +73,7 @@ package object common {
       * @tparam A
       * @return
       */
-    implicit def toJavaPredicate[A](f: (A) ⇒ Boolean): JPredicate[A] = new JPredicate[A] {
+    implicit def toJavaPredicate[A](f: A ⇒ Boolean): JPredicate[A] = new JPredicate[A] {
         override def test(a: A): Boolean = f(a)
     }
     
@@ -85,7 +85,7 @@ package object common {
       * @return
       */
     implicit def toJavaBiPredicate[A, B](predicate: (A, B) ⇒ Boolean): BiPredicate[A, B] = new BiPredicate[A, B] {
-        override def test(a: A, b: B) = predicate(a, b)
+        override def test(a: A, b: B): Boolean = predicate(a, b)
     }
     
     /**

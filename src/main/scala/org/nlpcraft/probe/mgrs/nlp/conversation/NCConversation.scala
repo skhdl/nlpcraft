@@ -47,7 +47,7 @@ import scala.concurrent.duration._
 /**
   * Conversation as an ordered set of utterances.
   */
-case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
+case class NCConversation(usrId: Long, mdlId: String) extends LazyLogging {
     // After 10 mins pause between questions we clear the STM.
     private final val CONV_CLEAR_DELAY = 10.minutes.toMillis
     
@@ -84,7 +84,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
         if (now - lastUpdateTstamp > CONV_CLEAR_DELAY) {
             logger.trace(s"Conversation reset by timeout [" +
                 s"usrId=$usrId, " +
-                s"dsId=$dsId" +
+                s"mdlId=$mdlId" +
             s"]")
         
             stm.clear()
@@ -122,7 +122,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
       *
       * @param p Scala-side predicate.
       */
-    def clear(p: (NCToken) ⇒ Boolean): Unit =
+    def clear(p: NCToken ⇒ Boolean): Unit =
         clear(new Predicate[NCToken] {
             override def test(t: NCToken): Boolean = p(t)
         })
@@ -143,7 +143,7 @@ case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
     
         logger.trace(s"Added new sentence to the conversation [" +
             s"usrId=$usrId, " +
-            s"dsId=$dsId, " +
+            s"mdlId=$mdlId, " +
             s"text=${sen.getNormalizedText}" +
         s"]")
     }
@@ -170,8 +170,8 @@ case class NCConversation(usrId: Long, dsId: Long) extends LazyLogging {
             tok.getServerRequestId
         ))
     
-        logger.trace(s"Conversation history [usrId=$usrId, dsId=$dsId]:\n${stmTbl.toString}")
-        logger.trace(s"Conversation tokens [usrId=$usrId, dsId=$dsId]:\n${ctxTbl.toString}")
+        logger.trace(s"Conversation history [usrId=$usrId, mdlId=$mdlId]:\n${stmTbl.toString}")
+        logger.trace(s"Conversation tokens [usrId=$usrId, mdlId=$mdlId]:\n${ctxTbl.toString}")
     }
     
     /**

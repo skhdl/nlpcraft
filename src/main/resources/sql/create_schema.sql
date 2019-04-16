@@ -35,7 +35,6 @@ CREATE TABLE nc_user (
     avatar_url VARCHAR NULL, -- URL or encoding of avatar for this user, if any.
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
-    last_ds_id LONG NULL ,
     is_admin BOOL NOT NULL, -- Whether or not created with admin token.
     passwd_salt VARCHAR NOT NULL,
     created_on TIMESTAMP NOT NULL,
@@ -43,25 +42,11 @@ CREATE TABLE nc_user (
 ) WITH "template=replicated, atomicity=transactional";
 
 CREATE INDEX nc_user_idx_1 ON nc_user(email);
-CREATE INDEX nc_user_idx_2 ON nc_user(last_ds_id);
 
 DROP TABLE IF EXISTS passwd_pool;
 CREATE TABLE passwd_pool (
     id LONG PRIMARY KEY,
     passwd_hash VARCHAR NOT NULL
-) WITH "template=replicated, atomicity=transactional";
-
-DROP TABLE IF EXISTS ds_instance;
-CREATE TABLE ds_instance (
-    id LONG PRIMARY KEY,
-    name VARCHAR NOT NULL, -- User friendly (non-unique) name of the data source.
-    short_desc VARCHAR, -- Short, optional description additional to the name.
-    model_id VARCHAR NOT NULL,
-    model_name VARCHAR NOT NULL,
-    model_ver VARCHAR NOT NULL,
-    model_cfg VARCHAR NULL,
-    created_on TIMESTAMP NOT NULL,
-    last_modified_on TIMESTAMP NOT NULL
 ) WITH "template=replicated, atomicity=transactional";
 
 DROP TABLE IF EXISTS proc_log;
@@ -70,11 +55,11 @@ CREATE TABLE proc_log (
     srv_req_id VARCHAR,
     txt VARCHAR NULL,
     user_id LONG NULL,
-    ds_id LONG NULL,
     model_id VARCHAR NULL,
     status VARCHAR NULL,
     user_agent VARCHAR NULL,
     rmt_address VARCHAR NULL,
+    sen_data VARCHAR NULL,
     -- Ask and result timestamps.
     recv_tstamp TIMESTAMP NOT NULL, -- Initial receive timestamp.
     resp_tstamp TIMESTAMP NULL, -- Result or error response timestamp.

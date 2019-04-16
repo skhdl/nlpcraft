@@ -15,9 +15,6 @@ tags:
   - name: Authentication
     description: >-
       User signing in (getting access token), singing out and password reset.
-  - name: Data Sources
-    description: >-
-      Adding, removing and managing data sources.
   - name: Users
     description: >-
       Adding, removing and managing users.
@@ -34,7 +31,7 @@ paths:
       tags:
         - Asking
       summary: Clears conversation context.
-      description: Clears conversation context for given user and data source.
+      description: Clears conversation context for given user and data model.
       operationId: clearConversation
       parameters:
         - in: body
@@ -45,16 +42,16 @@ paths:
             type: object
             required:
               - acsTok
-              - dsId
+              - mdlId
             properties:
               acsTok:
                 type: string
                 description: Access token obtain via '/api/signin' call
                 maxLength: 256
-              dsId:
-                type: integer
-                format: int64
-                description: Data source ID for which to clear conversation context
+              mdlId:
+                type: string
+                maxLength: 32
+                description: Data model ID for which to clear conversation context
               userId:
                 type: integer
                 format: int64
@@ -122,7 +119,6 @@ paths:
                     - srvReqId
                     - txt
                     - userId
-                    - dsId
                     - mdlId
                     - status
                     - error
@@ -140,10 +136,6 @@ paths:
                       type: integer
                       format: int64
                       description: ID of the user that submitted the request
-                    dsId:
-                      type: integer
-                      format: int64
-                      description: ID of the data source for this request
                     mdlId:
                       type: string
                       description: ID of the model
@@ -249,6 +241,7 @@ paths:
             required:
               - acsTok
               - txt
+              - mdlId
             properties:
               acsTok:
                 type: string
@@ -258,22 +251,15 @@ paths:
                 type: string
                 description: Text of the question
                 maxLength: 1024
-              dsId:
-                type: integer
-                format: int64
-                description: >-
-                  Data source ID. Cannot be used together with `mdlId`
-                  parameter.
               mdlId:
                 type: string
                 description: >-
-                  Model ID. Temporary data source for given model ID will be
-                  created and deleted. Cannot be used together with `dsId`
-                  parameter. Note also that when model ID is used instead of data source ID
-                  the conversational context cannot be maintained (as it is maintained based
-                  on data source ID which gets created and destroyed with every request in
-                  such case). In most cases you should use non-temporary data source ID.
+                  Model ID.
                 maxLength: 32
+              data:
+                type: object
+                description: >-
+                  Additional sentence JSON data with maximum JSON length of 512000 bytes
       responses:
         '200':
           description: Successful operation.
@@ -341,7 +327,6 @@ paths:
                     - firstName
                     - lastName
                     - avatarUrl
-                    - lastDsId
                     - isAdmin
                   properties:
                     id:
@@ -360,10 +345,6 @@ paths:
                     avatarUrl:
                       description: User avatar URL
                       type: string
-                    lastDsId:
-                      description: ID of the last used data source
-                      type: integer
-                      format: int64
                     isAdmin:
                       description: Whether or not user has admin privileges
                       type: boolean
@@ -866,7 +847,7 @@ paths:
                 description: Status code of this operation
                 enum:
                   - API_OK
-              dataSources:
+              probes:
                 type: array
                 items:
                   type: object
@@ -965,232 +946,6 @@ paths:
                           version:
                             description: Model version
                             type: string
-        '400':
-          description: Failed operation.
-          schema:
-            $ref: '#/definitions/Error'
-  /ds/all:
-    post:
-      tags:
-        - Data Sources
-      summary: Gets all data sources.
-      description: Gets all data sources. Admin privileges required.
-      operationId: getAllDataSources
-      parameters:
-        - in: body
-          name: Payload body
-          description: JSON request.
-          required: true
-          schema:
-            type: object
-            required:
-              - acsTok
-            properties:
-              acsTok:
-                maxLength: 256
-                description: Access token obtain via '/api/signin' call
-                type: string
-      responses:
-        '200':
-          description: Successful operation.
-          schema:
-            type: object
-            required:
-              - status
-              - dataSources
-            properties:
-              status:
-                type: string
-                description: Status code of this operation
-                enum:
-                  - API_OK
-              dataSources:
-                type: array
-                items:
-                  type: object
-                  required:
-                    - id
-                    - name
-                    - shortDesc
-                    - mdlId
-                    - mdlName
-                    - mdlVer
-                    - mdlCfg
-                  properties:
-                    id:
-                      description: Data source ID
-                      type: integer
-                      format: int64
-                    name:
-                      description: Data source name
-                      type: string
-                    shortDesc:
-                      description: Short data source description
-                      type: string
-                    mdlId:
-                      description: Model ID (unique, immutable ID)
-                      type: string
-                    mdlName:
-                      description: Model name (descriptive name of this model)
-                      type: string
-                    mdlVer:
-                      description: Model version
-                      type: string
-                    mdlCfg:
-                      description: Model config (optional arbitrary string)
-                      type: string
-        '400':
-          description: Failed operation.
-          schema:
-            $ref: '#/definitions/Error'
-  /ds/delete:
-    post:
-      tags:
-        - Data Sources
-      summary: Deletes data source.
-      description: Deletes data source with given ID. Admin privileges required.
-      operationId: deleteDataSource
-      parameters:
-        - in: body
-          name: Payload body
-          description: JSON request.
-          required: true
-          schema:
-            type: object
-            required:
-              - acsTok
-              - id
-            properties:
-              acsTok:
-                maxLength: 256
-                description: Access token obtain via '/api/signin' call
-                type: string
-              id:
-                description: ID of the data source to delete
-                type: integer
-                format: int64
-      responses:
-        '200':
-          description: Successful operation.
-          schema:
-            $ref: '#/definitions/Ok'
-        '400':
-          description: Failed operation.
-          schema:
-            $ref: '#/definitions/Error'
-  /ds/update:
-    post:
-      tags:
-        - Data Sources
-      summary: Updates data source.
-      description: Updates data source with given parameters. Admin privileges required.
-      operationId: updateDataSource
-      parameters:
-        - in: body
-          name: Payload body
-          description: JSON request.
-          required: true
-          schema:
-            type: object
-            required:
-              - acsTok
-              - id
-              - name
-              - shortDesc
-            properties:
-              acsTok:
-                type: string
-                description: Access token obtain via '/api/signin' call
-                maxLength: 256
-              id:
-                type: integer
-                format: int64
-                description: ID of the data source to update
-              name:
-                type: string
-                description: Data source name to update
-                maxLength: 128
-              shortDesc:
-                type: string
-                description: Short data source description to update
-                maxLength: 128
-      responses:
-        '200':
-          description: Successful operation.
-          schema:
-            $ref: '#/definitions/Ok'
-        '400':
-          description: Failed operation.
-          schema:
-            $ref: '#/definitions/Error'
-  /ds/add:
-    post:
-      tags:
-        - Data Sources
-      summary: Adds new data source.
-      description: Adds new data source with given parameters. Admin privileges required.
-      operationId: addDataSource
-      parameters:
-        - in: body
-          name: Payload body
-          description: JSON request.
-          required: true
-          schema:
-            type: object
-            required:
-              - acsTok
-              - name
-              - shortDesc
-              - mdlId
-              - mdlName
-              - mdlVer
-            properties:
-              acsTok:
-                type: string
-                description: Access token obtain via '/api/signin' call
-                maxLength: 256
-              name:
-                type: string
-                description: Data source name
-                maxLength: 128
-              shortDesc:
-                type: string
-                description: Short data source description
-                maxLength: 128
-              mdlId:
-                type: string
-                description: Model ID
-                maxLength: 32
-              mdlName:
-                type: string
-                description: Model name
-                maxLength: 64
-              mdlVer:
-                type: string
-                description: Model version
-                maxLength: 16
-              mdlCfg:
-                type: string
-                description: Optional model configuration string
-                maxLength: 5120
-      responses:
-        '200':
-          description: Successful operation.
-          schema:
-            type: object
-            required:
-              - status
-              - dsId
-            properties:
-              status:
-                type: string
-                description: Status code of this operation
-                enum:
-                  - API_OK
-              dsId:
-                type: integer
-                format: int64
-                description: ID of the newly created data source
         '400':
           description: Failed operation.
           schema:

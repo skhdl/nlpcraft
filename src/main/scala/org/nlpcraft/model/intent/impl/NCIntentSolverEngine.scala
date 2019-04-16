@@ -215,7 +215,14 @@ object NCIntentSolverEngine extends LazyLogging {
                             case x2 ⇒
                                 require(x2 == 0)
 
-                                true
+                                def calcHash(m: MatchHolder): Int =
+                                    m.variant.getTokens.map(t ⇒
+                                        s"${t.getId}${t.getGroup}${t.getValue}${t.getMetadata.getString("NLP_NORMTEXT")}"
+                                    ).mkString("").hashCode
+
+                                // Order doesn't make sense here.
+                                // It is just to provide deterministic result for the matches with the same weight.
+                                calcHash(m1) > calcHash(m2)
                         }
                 }
             )

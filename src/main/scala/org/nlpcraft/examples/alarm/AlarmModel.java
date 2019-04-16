@@ -91,9 +91,12 @@ public class AlarmModel extends NCModelProviderAdapter {
             this::onMatch
         );
     
-        setup(NCModelBuilder.newJsonModel(
-            AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/alarm/alarm_model.json")).
-            setQueryFunction(solver::solve).build()
+        setup(
+            NCModelBuilder.newJsonModel(
+                AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/alarm/alarm_model.json")
+            ).
+            setSolver(solver).
+            build()
         );
     }
     

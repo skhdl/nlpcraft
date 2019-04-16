@@ -52,7 +52,7 @@ public class EchoTest {
     void setUp() throws NCException, IOException {
         client = new NCTestClientBuilder().newBuilder().build();
     
-        client.openForModelId("nlpcraft.echo.ex"); // See EchoProvider#MODEL_ID
+        client.open("nlpcraft.echo.ex"); // See EchoProvider#MODEL_ID
     }
     
     @AfterEach

@@ -42,7 +42,6 @@ import org.nlpcraft.server.mdo.impl._
 @NCMdoEntity(sql = false)
 case class NCQueryStateMdo(
     @NCMdoField srvReqId: String,
-    @NCMdoField dsId: Long,
     @NCMdoField modelId: String,
     @NCMdoField var probeId: Option[String] = None, // Optional probe ID.
     @NCMdoField userId: Long,

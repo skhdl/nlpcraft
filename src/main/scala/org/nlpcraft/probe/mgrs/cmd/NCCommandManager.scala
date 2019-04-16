@@ -61,7 +61,7 @@ object NCCommandManager extends NCProbeLifecycle("Commands manager") {
                 case "S2P_CLEAR_CONV" ⇒
                     NCConversationManager.get(
                         msg.data[Long]("usrId"),
-                        msg.data[Long]("dsId")
+                        msg.data[String]("mdlId")
                     ).clear((_: NCToken) ⇒ true)
                 
                 case "S2P_ASK" ⇒
@@ -71,11 +71,7 @@ object NCCommandManager extends NCProbeLifecycle("Commands manager") {
                         nlpSen = msg.data[NCNlpSentence]("nlpSen"),
                         usrId = msg.data[Long]("userId"),
                         senMeta = msg.data[Map[String, Serializable]]("senMeta"),
-                        dsId = msg.data[Long]("dsId"),
-                        dsModelId = msg.data[String]("dsModelId"),
-                        dsName = msg.data[String]("dsName"),
-                        dsDesc = msg.data[String]("dsDesc"),
-                        dsModelCfg = msg.dataOpt[String]("dsModelCfg").orNull
+                        mdlId = msg.data[String]("mdlId")
                     )
 
                 case _ ⇒

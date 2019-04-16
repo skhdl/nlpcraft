@@ -95,7 +95,6 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
         srvReqId: String,
         txt: String,
         usrId: Long,
-        dsId: Long,
         mdlId: String,
         probeId: String,
         status: String,
@@ -321,13 +320,12 @@ object NCEndpointManager extends NCLifecycle("Endpoints manager") with NCIgniteI
                     s.srvReqId,
                     s.text,
                     s.userId,
-                    s.dsId,
                     s.modelId,
                     s.probeId.orNull,
                     s.status,
                     s.resultType.orNull,
                     if (s.resultBody.isDefined && s.resultType.isDefined && s.resultType.get == "json")
-                        U.js2Map(s.resultBody.get)
+                        U.js2Obj(s.resultBody.get)
                     else
                         s.resultBody.orNull,
                     s.error.orNull,

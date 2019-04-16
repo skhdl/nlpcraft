@@ -41,7 +41,6 @@ import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
 import org.nlpcraft.common.version._
 import org.nlpcraft.server.sql.NCSqlManager
-import org.nlpcraft.server.ds.NCDsManager
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.geo.NCGeoManager
 import org.nlpcraft.server.ignite.{NCIgniteInstance, NCIgniteRunner}
@@ -109,7 +108,6 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
         NCNlpEnricherManager.start()
         NCNotificationManager.start()
         NCUserManager.start()
-        NCDsManager.start()
         NCProbeManager.start()
         NCQueryManager.start()
         NCEndpointManager.start()
@@ -137,7 +135,6 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             NCRestManager,
             NCEndpointManager,
             NCQueryManager,
-            NCDsManager,
             NCUserManager,
             NCNotificationManager,
             NCNlpEnricherManager,

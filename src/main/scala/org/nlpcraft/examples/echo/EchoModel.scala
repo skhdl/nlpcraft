@@ -129,29 +129,10 @@ class EchoModel extends NCModelProviderAdapter {
             sortBy(_._1).map(t ⇒ s""""${t._1}": ${mkJsonVal(t._2)}""").mkString("{", ",", "}")
     
     /**
-      * Makes JSON presentation of data source from given query context.
-      *
-      * @param ctx Query context.
-      * @return JSON presentation of data source.
-      */
-    private def mkDataSourceJson(ctx: NCQueryContext): String = {
-        val ds = ctx.getDataSource
-    
-        // Hand-rolled JSON for simplicity...
-        s"""
-           | {
-           |    "name": ${mkJsonVal(ds.getName)},
-           |    "description": ${mkJsonVal(ds.getDescription)},
-           |    "config": ${mkJsonVal(ds.getConfig)}
-           | }
-         """.stripMargin
-    }
-    
-    /**
       * Makes JSON presentation of the given token.
       *
       * @param tok A token.
-      * @return JSON presentation of data source.
+      * @return JSON presentation of the given token.
       */
     private def mkTokenJson(tok: NCToken): String =
         // Hand-rolled JSON for simplicity...
@@ -216,7 +197,6 @@ class EchoModel extends NCModelProviderAdapter {
                     s"""
                        |{
                        |    "srvReqId": ${mkJsonVal(ctx.getServerRequestId)},
-                       |    "dataSource": ${mkDataSourceJson(ctx)},
                        |    "sentence": ${mkSentenceJson(ctx)}
                        |}
                      """.stripMargin

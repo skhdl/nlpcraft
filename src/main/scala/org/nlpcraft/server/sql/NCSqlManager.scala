@@ -47,7 +47,7 @@ import scala.util.control.Exception.catching
   * Note that all functions in this class expect outside `NCSql.sql()` block.
   */
 object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstance {
-    private final val DB_TABLES = Seq("nc_user", "passwd_pool", "ds_instance", "proc_log")
+    private final val DB_TABLES = Seq("nc_user", "passwd_pool", "proc_log")
 
     /**
       * Starts manager.
@@ -57,7 +57,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         ensureStopped()
 
         if (NCSql.isIgniteDb)
-            prepareSchema()
+            prepareIgniteSchema()
 
         super.start()
     }
@@ -141,18 +141,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     }
 
     /**
-      * Deletes data source with given ID.
-      *
-      * @param dsId Data source ID.
-      */
-    @throws[NCE]
-    def deleteDataSource(dsId: Long): Unit = {
-        ensureStarted()
-
-        NCSql.delete("DELETE FROM ds_instance WHERE id = ?", dsId)
-    }
-
-    /**
       * Updates user.
       *
       * @param usrId ID of the user to update.
@@ -212,37 +200,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     }
 
     /**
-      * Updates data source.
-      *
-      * @param dsId ID of the data source to update.
-      * @param name Data source name.
-      * @param shortDesc Short data source description.
-      */
-    @throws[NCE]
-    def updateDataSource(
-        dsId: Long,
-        name: String,
-        shortDesc: String
-    ): Int = {
-        ensureStarted()
-
-        NCSql.update(
-            s"""
-               |UPDATE ds_instance
-               |SET
-               |    name = ?,
-               |    short_desc = ?,
-               |    last_modified_on = ?
-               |WHERE id = ?
-                """.stripMargin,
-            name,
-            shortDesc,
-            U.nowUtcTs(),
-            dsId
-        )
-    }
-
-    /**
       * Gets user for given ID.
       *
       * @param usrId User ID.
@@ -259,26 +216,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
                |WHERE id = ?
             """.stripMargin,
             usrId)
-    }
-
-    /**
-      * Gets data source for given ID.
-      *
-      * @param dsId Data source ID.
-      * @return Data source MDO.
-      */
-    @throws[NCE]
-    def getDataSource(dsId: Long): Option[NCDataSourceMdo] = {
-        ensureStarted()
-
-        NCSql.selectSingle[NCDataSourceMdo](
-            s"""
-            |SELECT *
-            |FROM ds_instance
-            |WHERE id = ?
-            """.stripMargin,
-            dsId
-        )
     }
 
     /**
@@ -304,18 +241,6 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         ensureStarted()
 
         NCSql.exists("nc_user WHERE id <> ? AND is_admin = ?", usrId, true)
-    }
-
-    /**
-      * Gets all data sources.
-      *
-      * @return Data source MDOs.
-      */
-    @throws[NCE]
-    def getAllDataSources: List[NCDataSourceMdo] = {
-        ensureStarted()
-
-        NCSql.select[NCDataSourceMdo]("SELECT * FROM ds_instance")
     }
 
     /**
@@ -355,12 +280,11 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
               |    email,
               |    passwd_salt,
               |    avatar_url,
-              |    last_ds_id,
               |    is_admin,
               |    created_on,
               |    last_modified_on
               | )
-              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
             id,
             firstName,
@@ -368,59 +292,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             email,
             passwdSalt,
             avatarUrl.orNull,
-            -1, // No data source yet.
             isAdmin,
-            now,
-            now
-        )
-    }
-
-    /**
-      * Adds new data source instance.
-      *
-      * @param id ID.
-      * @param name Name.
-      * @param desc Description.
-      * @param mdlId Model ID.
-      * @param mdlName Model name.
-      * @param mdlVer Model version.
-      * @param mdlCfg Model config.
-      */
-    @throws[NCE]
-    def addDataSource(
-        id: Long,
-        name: String,
-        desc: String,
-        mdlId: String,
-        mdlName: String,
-        mdlVer: String,
-        mdlCfg: Option[String]
-    ): Long = {
-        ensureStarted()
-
-        val now = U.nowUtcTs()
-
-        NCSql.insert(
-            """
-              |INSERT INTO ds_instance(
-              |     id,
-              |     name,
-              |     short_desc,
-              |     model_id,
-              |     model_name,
-              |     model_ver,
-              |     model_cfg,
-              |     created_on,
-              |     last_modified_on
-              |) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-              """.stripMargin,
-            id,
-            name,
-            desc,
-            mdlId,
-            mdlName,
-            mdlVer,
-            mdlCfg.orNull,
             now,
             now
         )
@@ -433,11 +305,11 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       * @param usrId User Id.
       * @param srvReqId Server request ID.
       * @param txt Original text.
-      * @param dsId Data source ID.
-      * @param mdlId Data source model ID.
+      * @param mdlId Data model ID.
       * @param usrAgent User agent string.
       * @param rmtAddr Remote user address.
       * @param rcvTstamp Receive timestamp.
+      * @param data Optional sentence additional data.
       */
     @throws[NCE]
     def newProcessingLog(
@@ -445,12 +317,12 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
         usrId: Long,
         srvReqId: String,
         txt: String,
-        dsId: Long,
         mdlId: String,
         status: NCApiStatusCode,
         usrAgent: String,
         rmtAddr: String,
-        rcvTstamp: Timestamp
+        rcvTstamp: Timestamp,
+        data: String
     ): Unit = {
         ensureStarted()
 
@@ -461,12 +333,12 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
               |     user_id,
               |     srv_req_id,
               |     txt,
-              |     ds_id,
               |     model_id,
               |     status,
               |     user_agent,
               |     rmt_address,
-              |     recv_tstamp
+              |     recv_tstamp,
+              |     sen_data
               | )
               | VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               """.stripMargin,
@@ -474,12 +346,12 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
             usrId,
             srvReqId,
             txt,
-            dsId,
             mdlId,
             status.toString,
             usrAgent,
             rmtAddr,
-            rcvTstamp
+            rcvTstamp,
+            data
         )
     }
 
@@ -672,7 +544,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
       *
       */
     @throws[NCE]
-    def prepareSchema(): Unit = {
+    def prepareIgniteSchema(): Unit = {
         def safeClear(): Unit =
             try
                 executeScript("sql/drop_schema.sql")

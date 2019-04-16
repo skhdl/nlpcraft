@@ -36,7 +36,7 @@ package org.nlpcraft.model;
  * <p>
  * This exception typically indicates that user has not provided enough information in the input string
  * to have it processed automatically. In most cases this means that the user's input is either too short
- * or too simple, too long or too complex, missing required context, or unrelated to selected data source.
+ * or too simple, too long or too complex, missing required context, or unrelated to selected data model.
  *
  * @see NCModel#query(NCQueryContext)
  */
