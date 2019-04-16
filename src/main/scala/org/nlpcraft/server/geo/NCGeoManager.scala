@@ -138,8 +138,12 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
                 case _ ⇒ assert(assertion = false)
             }
         }
-        
+
+        // Country name -> country.
         val cntrMap = mutable.HashMap.empty[String, NCGeoCountry]
+
+        // Subcontinent name -> continent.
+        val subCont2ContMap = mutable.HashMap.empty[String, NCGeoContinent]
         
         // +====================+
         // | 1. Process metros. |
@@ -163,6 +167,8 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
             
             for ((subName, ctryList) ← subMap) {
                 val gSub = NCGeoSubContinent(subName, gCont)
+
+                subCont2ContMap += subName → gCont
                 
                 addEntry(subName, gSub, lowerCase = true)
                 
@@ -240,10 +246,14 @@ object NCGeoManager extends NCLifecycle("Geo manager") {
                 case NCGeoSynonym(None, None, None, None, None, None, Some(cont), None, syns) ⇒
                     add(syns, NCGeoContinent(cont))
                 
-                // Sub-continent.
+                // Sub-continent (full representation).
                 case NCGeoSynonym(None, None, None, None, None, Some(sub), Some(cont), None, syns) ⇒
                     add(syns, NCGeoSubContinent(sub, NCGeoContinent(cont)))
-                
+
+                // Sub-continent (short representation).
+                case NCGeoSynonym(None, None, None, None, None, Some(sub), None, None, syns) ⇒
+                    add(syns, NCGeoSubContinent(sub, subCont2ContMap(sub)))
+
                 // Country (full representation).
                 case NCGeoSynonym(None, None, None, None, Some(ctry), Some(sub), Some(cont), None, syns) ⇒
                     add(syns, NCGeoCountry(ctry, NCGeoSubContinent(sub, NCGeoContinent(cont))))

@@ -283,5 +283,53 @@
         "country": "United States",
         "region": "Wyoming",
         "synonyms": ["Cowboy State", "Equality State", "Park State"]
+    },
+    {
+        "subcontinent": "Eastern Africa",
+        "synonyms": ["East Africa"]
+    },
+    {
+        "subcontinent": "Northern Africa",
+        "synonyms": ["North Africa"]
+    },
+    {
+        "subcontinent": "Southern Africa",
+        "synonyms": ["South Africa"]
+    },
+    {
+        "subcontinent": "Western Africa",
+        "synonyms": ["West Africa"]
+    },
+    {
+        "subcontinent": "Northern America",
+        "synonyms": ["North America"]
+    },
+    {
+        "subcontinent": "Eastern Asia",
+        "synonyms": ["East Asia"]
+    },
+    {
+        "subcontinent": "Southern Asia",
+        "synonyms": ["South Asia"]
+    },
+    {
+        "subcontinent": "Western Asia",
+        "synonyms": ["West Asia"]
+    },
+    {
+        "subcontinent": "Eastern Europe",
+        "synonyms": ["East Europe"]
+    },
+    {
+        "subcontinent": "Northern Europe",
+        "synonyms": ["North Europe"]
+    },
+    {
+        "subcontinent": "Southern Europe",
+        "synonyms": ["South Europe"]
+    },
+    {
+        "subcontinent": "Western Europe",
+        "synonyms": ["West Europe"]
     }
 ]
