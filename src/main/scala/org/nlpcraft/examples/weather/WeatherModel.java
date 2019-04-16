@@ -338,7 +338,9 @@ public class WeatherModel extends NCModelProviderAdapter {
                 getClassLoader().
                 getResourceAsStream("org/nlpcraft/examples/weather/weather_model.json")
             ).
-            setQueryFunction(solver::solve).
+            // Set entire solver (instead of just query function) to make sure the
+            // intent validation will be turned on.
+            setSolver(solver).
             build()
         );
     }

@@ -1654,7 +1654,7 @@ public class NCTokenUtils {
      * @param tok A token.
      * @return Character length of the given token.
      */
-    int getCharLength(NCToken tok) {
+    static int getCharLength(NCToken tok) {
         assert tok != null;
 
         return tok.getMetadata().getInteger("NLP_CHARLENGTH");

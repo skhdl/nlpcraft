@@ -34,6 +34,7 @@ package org.nlpcraft.model.builder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.tuple.Pair;
 import org.nlpcraft.model.NCElement;
 import org.nlpcraft.model.NCMetadata;
 import org.nlpcraft.model.NCModel;
@@ -48,7 +49,9 @@ import org.nlpcraft.model.builder.parsing.NCElementItem;
 import org.nlpcraft.model.builder.parsing.NCMacroItem;
 import org.nlpcraft.model.builder.parsing.NCModelItem;
 import org.nlpcraft.model.impl.NCMetadataImpl;
-import org.nlpcraft.model.tools.dump.*;
+import org.nlpcraft.model.intent.NCIntentSolver;
+import org.nlpcraft.model.tools.dump.NCDumpReader;
+import org.nlpcraft.model.tools.dump.NCDumpWriter;
 import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 
 import java.io.BufferedReader;
@@ -60,13 +63,21 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.nlpcraft.model.NCElement.NCValue;
+import static org.nlpcraft.model.intent.NCIntentSolver.*;
 
 /**
  * Model builder for {@link NCModel} instances.
@@ -93,10 +104,178 @@ import java.util.stream.Collectors;
 public class NCModelBuilder {
     /** */
     private final NCModelImpl impl;
-
+    
     /** */
-    protected static final Gson gson = new Gson();
-
+    private NCIntentSolver solver;
+    
+    /** */
+    private static final Gson gson = new Gson();
+    
+    /** */
+    private enum Type { STRING, NUM, BOOL, LIST, VALUE }
+    
+    /** */
+    private static final Map<Type, Set<String>> TYPES_OPS =
+        Stream.of(
+            // Sublists of OPS.
+            Pair.of(Type.STRING, Arrays.asList("==", "!=", "%%", "!%")),
+            Pair.of(Type.NUM, Arrays.asList("==", "!=", ">=", "<=", ">", "<")),
+            Pair.of(Type.BOOL, Arrays.asList("==", "!=")),
+            Pair.of(Type.LIST, Arrays.asList("==", "!=")),
+            Pair.of(Type.VALUE, Arrays.asList("==", "!="))
+        ).collect(Collectors.toMap(Pair::getLeft, p -> new HashSet<>(p.getRight())));
+    
+    /** */
+    private static final Set<String> NC_IDS =
+        new HashSet<>(
+            Arrays.asList(
+                "nlp:date",
+                "nlp:function",
+                "nlp:coordinate",
+                "nlp:geo",
+                "nlp:num"
+            )
+        );
+    
+    /** */
+    private static final Map<String, Type> NC_META =
+        Stream.of(
+            Pair.of("~DATE_FROM", Type.NUM),
+            Pair.of("~DATE_TO", Type.NUM),
+            
+            Pair.of("~FUNCTION_TYPE", Type.VALUE),
+            Pair.of("~FUNCTION_ASC", Type.BOOL),
+            Pair.of("~FUNCTION_INDEXES", Type.LIST),
+            
+            Pair.of("~COORDINATE_LATITUDE", Type.NUM),
+            Pair.of("~COORDINATE_LONGITUDE", Type.NUM),
+            
+            Pair.of("~GEO_KIND", Type.VALUE),
+            Pair.of("~GEO_CONTINENT", Type.STRING),
+            Pair.of("~GEO_SUBCONTINENT", Type.STRING),
+            Pair.of("~GEO_COUNTRY", Type.STRING),
+            Pair.of("~GEO_REGION", Type.STRING),
+            Pair.of("~GEO_CITY", Type.STRING),
+            Pair.of("~GEO_METRO", Type.STRING),
+            
+            Pair.of("~NUM_FROM", Type.NUM),
+            Pair.of("~NUM_FROMINCL", Type.NUM),
+            Pair.of("~NUM_TO", Type.NUM),
+            Pair.of("~NUM_TOINCL", Type.NUM),
+            Pair.of("~NUM_ISFRACTIONAL", Type.BOOL),
+            Pair.of("~NUM_ISRANGECONDITION", Type.BOOL),
+            Pair.of("~NUM_ISEQUALCONDITION", Type.BOOL),
+            Pair.of("~NUM_ISNOTEQUALCONDITION", Type.BOOL),
+            Pair.of("~NUM_ISFROMNEGATIVEINFINITY", Type.BOOL),
+            Pair.of("~NUM_ISTOPOSITIVEINFINITY", Type.BOOL),
+            Pair.of("~NUM_UNIT", Type.STRING),
+            Pair.of("~NUM_UNITTYPE", Type.STRING)
+        ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    
+    /** */
+    private static final Map<String, Set<String>> NC_VALUES =
+        Stream.of(
+            Pair.of("~FUNCTION_TYPE",
+                new HashSet<>(
+                    Arrays.asList(
+                        "SUM", "MAX", "MIN", "AVG", "SORT", "LIMIT", "GROUP", "CORRELATION", "COMPARE")
+                )
+            ),
+            Pair.of(
+                "~GEO_KIND",
+                new HashSet<>(Arrays.asList("CONTINENT", "SUBCONTINENT", "COUNTRY", "REGION", "CITY", "METRO"))
+            )
+        ).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    
+    /**
+     *
+     * @param op
+     */
+    private static void validateStrOperation(String op) {
+        if (!TYPES_OPS.get(Type.STRING).contains(op))
+            throw new IllegalArgumentException(String.format("Invalid intent DSL rule operation: %s", op));
+    }
+    
+    /**
+     *
+     * @param param
+     * @param op
+     * @param v
+     * @param nullable
+     * @param allVals
+     */
+    private static void validateRef(String param, String op, Object v, boolean nullable, Set<String> allVals) {
+        assert param != null;
+        assert op != null;
+        assert allVals != null;
+        
+        if (v == null && !nullable)
+            throw new IllegalArgumentException(String.format("Invalid intent DSL rule null value: %s", param));
+        
+        validateStrOperation(op);
+        
+        if (v != null) {
+            String vs = v.toString();
+            
+            if (!allVals.contains(vs))
+                throw new IllegalArgumentException(
+                    String.format("Unknown intent DSL rule value in: %s%s%s", param, op, vs)
+                );
+        }
+    }
+    
+    /**
+     *
+     * @param param Metadata name to validate.
+     * @param allParams All possible metadata names.
+     */
+    private static void validateMetaUser(String param, Set<String> allParams) {
+        assert param != null;
+        assert allParams != null;
+    
+        if (!allParams.contains(param))
+            throw new IllegalArgumentException(String.format("Invalid intent DSL metadata name: %s", param));
+    }
+    
+    /**
+     *
+     * @param param
+     * @param op
+     * @param v
+     */
+    private static void validateMetaSystem(String param, String op, Type type, Object v) {
+        assert param != null;
+        assert op != null;
+        assert type != null;
+    
+        Set<String> typeOps = TYPES_OPS.get(type);
+        
+        assert typeOps != null;
+        
+        if (!typeOps.contains(op))
+            throw new IllegalArgumentException(
+                String.format("Invalid intent DSL rule operation in: %s%s%s", param, op, v)
+            );
+        
+        if (v != null) {
+            String vs = v.toString();
+            
+            if (type == Type.VALUE) {
+                Set<String> enums = NC_VALUES.get(param);
+                
+                assert enums != null;
+                
+                if (!enums.contains(vs))
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Invalid intent DSL rule operation value in: %s%s%s",
+                            param, op, vs
+                        )
+                    );
+            }
+        }
+    }
+    
     /**
      * Reads JSON file and creates JSON representation object of given type.
      *
@@ -368,7 +547,39 @@ public class NCModelBuilder {
         
         return bldr;
     }
-
+    
+    /**
+     *
+     * @param rules
+     * @param p
+     */
+    private static void fillRules(List<RULE> rules, Predicate p) {
+        // Complex rule.
+        if (p instanceof List)
+            ((List<Predicate>)p).forEach(x -> fillRules(rules, x) );
+        // Plain rule.
+        else
+            rules.add((RULE)p);
+    }
+    
+    /**
+     * Sets intent solver to be used for this model's {@link NCModel#query(NCQueryContext)} method
+     * implementation. Note that this method ensures that model builder will check and validate the
+     * intents against this model when {@link #build()} method is called.
+     * <br><br>
+     * Note also that you can use {@link #setQueryFunction(Function)} method to set intent solver
+     * for this model. However, since model builder wouldn't have access to the actual intent solver
+     * it won't be able to check and validate the intents. It is highly recommended to use this
+     * method when using {@link NCIntentSolver}.
+     *
+     * @param solver Intent solver to set.
+     */
+    public NCModelBuilder setSolver(NCIntentSolver solver) {
+        this.solver = solver;
+        
+        return this;
+    }
+    
     /**
      * Returns newly built model. Note that at the minimum the
      * {@link #setDescriptor(NCModelDescriptor) descriptor} and
@@ -379,11 +590,82 @@ public class NCModelBuilder {
      * @throws NCBuilderException Thrown in case of any errors building the model.
      */
     public NCModel build() throws NCBuilderException {
-        if (impl.getQueryFunction() == null)
-            throw new NCBuilderException("Query function is not.");
-
         if (impl.getDescriptor() == null)
             throw new NCBuilderException("Model descriptor is not set.");
+    
+        if (solver != null) {
+            if (impl.getQueryFunction() != null)
+                throw new NCBuilderException("Query function and solver cannot be set together.");
+    
+            Set<String> allIds = new HashSet<>(NC_IDS);
+            Set<String> userVals = new HashSet<>();
+            Set<String> userMetaNames = new HashSet<>();
+            Set<String> userGroups = new HashSet<>();
+            
+            for (NCElement e : impl.getElements()) {
+                String g = e.getGroup();
+        
+                if (g != null)
+                    userGroups.add(g);
+        
+                String id = e.getId();
+        
+                if (id != null)
+                    allIds.add(id);
+        
+                NCMetadata md = e.getMetadata();
+        
+                if (md != null)
+                    userMetaNames.addAll(md.keySet().stream().map(p -> '~' + p).collect(Collectors.toSet()));
+        
+                List<NCValue> vals = e.getValues();
+        
+                if (vals != null)
+                    userVals.addAll(vals.stream().map(NCValue::getName).collect(Collectors.toSet()));
+            }
+    
+            Consumer<RULE> validate = (rule) -> {
+                String param = rule.getParameter();
+                String op = rule.getOp();
+                Object v = rule.getValue();
+                
+                if (param.charAt(0) == '~') {
+                    Type type = NC_META.get(param);
+    
+                    if (type != null)
+                        validateMetaSystem(param, op, type, v);
+                    else
+                        validateMetaUser(param, userMetaNames);
+                }
+                else if (param.equals("id"))  // Cannot be null.
+                    validateRef(param, op, v, false, allIds);
+                else if (param.equals("parent"))  // Can be null.
+                    validateRef(param, op, v, true, allIds);
+                else if (param.equals("group"))  // Can be null.
+                    validateRef(param, op, v, true, userGroups);
+                else if (param.equals("value")) // Can be null.
+                    validateRef(param, op, v, true, userVals);
+                else
+                    assert false;
+            };
+    
+            List<RULE> rules = new ArrayList<>();
+    
+            solver.
+                getIntents().
+                stream().
+                flatMap(p -> Arrays.stream(p.getTerms())).
+                flatMap(x -> Arrays.stream(x.getItems())).
+                map(ITEM::getPattern).
+                collect(Collectors.toList()).
+                forEach(p -> fillRules(rules, p));
+    
+            rules.forEach(validate);
+    
+            impl.setQueryFunction(solver::solve);
+        }
+        else if (impl.getQueryFunction() == null)
+            throw new NCBuilderException("Query function is not set.");
 
         return impl;
     }
