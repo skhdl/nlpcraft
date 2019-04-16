@@ -559,7 +559,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
                     flatMap(p ⇒ if (p.startsWith("sql_")) Some(p.drop(4)) else None)
             }.toSet
 
-        val dbInitParam = "NLPCRAFT_DB_INITIALIZE"
+        val dbInitParam = "NLPCRAFT_IGNITE_DB_INITIALIZE"
 
         var initFlag = U.isSysEnvTrue(dbInitParam)
 
