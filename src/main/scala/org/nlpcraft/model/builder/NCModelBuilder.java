@@ -567,7 +567,7 @@ public class NCModelBuilder {
      * implementation. Note that this method ensures that model builder will check and validate the
      * intents against this model when {@link #build()} method is called.
      * <br><br>
-     * Note also that you can use {@link #setQueryFunction(Function)} method to set intent solver
+     * Note also that you can technically use {@link #setQueryFunction(Function)} method to set intent solver
      * for this model. However, since model builder wouldn't have access to the actual intent solver
      * it won't be able to check and validate the intents. It is highly recommended to use this
      * method when using {@link NCIntentSolver}.
