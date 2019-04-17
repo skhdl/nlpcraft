@@ -541,6 +541,20 @@ layout: documentation
             sends the enriched request down to a specific data probe selected based on the requested data model.
         </p>
         <p>
+            Below we will quickly discuss the key API elements that are essential for developing a data model logic.
+            Note that this does now replace a more detailed Javadoc documentation that you are encouraged to
+            read through as well:
+        </p>
+        <ul>
+            <li>Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html"><code>NCQueryContext</code></a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a></li>
+            <li>Class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryResult.html">NCQueryResult</a></li>
+        </ul>
+        <span class="section-sub-title">Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></span>
+        <p>
             When the data probe receives the enriched request from the REST server it performs the final
             pre-processing by detecting data model elements in the user text. When finished the data probe calls
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> instance
@@ -551,19 +565,6 @@ layout: documentation
             that is sent back to the original REST API caller. Implementing this method is what typically amounts to over 90% of
             the overall development of the data model.
         </p>
-        <p>
-            Below we will quickly discuss the key API elements that are essential for developing a data model.
-            Note that this does now replace a more detailed Javadoc documentation that you are encouraged to
-            read through as well:
-        </p>
-        <ul>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html"><code>NCQueryContext</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a></li>
-            <li>Class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryResult.html">NCQueryResult</a></li>
-        </ul>
-        <span class="section-sub-title">Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></span>
         <p>
             Here's the most simplest implementation of the <code>query(...)</code> method:
         </p>
@@ -722,14 +723,6 @@ layout: documentation
         <p>
             Here's the list of all built-in elements:
         </p>
-        <!--
-        "nlp:nlp",
-        "nlp:geo",
-        "nlp:date",
-        "nlp:num",
-        "nlp:function",
-        "nlp:coordinate"
-        -->
         <table class="gradient-table">
             <thead>
             <tr>
