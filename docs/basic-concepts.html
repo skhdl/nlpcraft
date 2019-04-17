@@ -237,7 +237,7 @@ layout: documentation
         </p>
         <p>
             <b>Data Model</b> is essentially a small piece of Java/Scala/Groovy (or any other JVM-based language) code that
-            you will need to develop that defines how to translate user input into specific actions for a specific data endpoint.
+            you will need to develop that defines how to translate user input into specific actions for a specific data source.
             Even though it may sounds complex - in reality most models are fairly simple and can be developed rather quickly.
             Data model does not necessarily have to work with only one type of endpoint but it is a
             good practice to have different types of endpoints handled by different models. The same model however can
@@ -258,7 +258,7 @@ layout: documentation
             between. Data probe is a secure application that employs end-to-end encryption, HTTP tunneling and router
             ingress-only connectivity. Each data probe can host multiple models, and you can have multiple
             data probes. Data probes can be deployed anywhere as long as there is an outbound connectivity,
-            and are typically deployed in DMZ or close to your private data endpoints. Data probe can be
+            and are typically deployed in DMZ or close to your private data sources. Data probe can be
             launched in-process for easier development and testing or as a command line tool for production usage.
         </p>
     </section>
