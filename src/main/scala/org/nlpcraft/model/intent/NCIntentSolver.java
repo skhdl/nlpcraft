@@ -1573,6 +1573,8 @@ public class NCIntentSolver implements Serializable {
                         qryRes.setVariant(sen.getVariants().get(0));
                 }
                 
+                log.info(String.format("Intent '%s' for variant #%d selected as the best match.", res.intentId(), res.variantIdx()));
+
                 return qryRes;
             }
             catch (NCIntentSkip e) {
@@ -1580,7 +1582,7 @@ public class NCIntentSolver implements Serializable {
                 String msg = e.getLocalizedMessage();
 
                 if (msg != null)
-                    log.trace("Selected intent skipped due to: " + msg);
+                    log.trace(String.format("Selected intent '%s' skipped due to: %s", res.intentId(), msg));
             }
             catch (NCRejection e) {
                 errRej = e;

@@ -238,7 +238,7 @@ object NCIntentSolverEngine extends LazyLogging {
                 )
             )
 
-            tbl.info(logger, Some(s"Found matching intents:"))
+            tbl.info(logger, Some(s"Found matching intents (sorted from best to worst match):"))
         }
         else
             logger.info("No matching intent found.")
@@ -249,7 +249,8 @@ object NCIntentSolverEngine extends LazyLogging {
                 m.callback,
                 new JArrayList(m.intentMatch.tokGrps.map(lst ⇒ new JArrayList(lst.map(_.tok)))),
                 m.intentMatch.exactMatch,
-                m.variant
+                m.variant,
+                m.variantIdx
             )
         )
     }
@@ -333,20 +334,22 @@ object NCIntentSolverEngine extends LazyLogging {
             }
         }
         
+        val intentId = intent.getId
+        
         if (abort) {
-            logger.info(s"Intent didn't match because of missing term (variant #$varIdx): $intent")
+            logger.info(s"Intent '$intentId' didn't match because of missing term (variant #$varIdx).")
     
             // 1. Match was aborted.
             None
         }
         else if (senToks.exists(tok ⇒ !tok.used && tok.tok.isUserDefined)) {
-            logger.info(s"Intent didn't match because of not exact match (variant #$varIdx): $intent")
+            logger.info(s"Intent '$intentId' didn't match because of not exact match (variant #$varIdx).")
 
             // 2. Not an exact match with user tokens.
             None
         }
         else if (!senToks.exists(tok ⇒ tok.used && !tok.conv)) {
-            logger.info(s"Intent didn't match because all tokens came from conversation (variant #$varIdx): $intent")
+            logger.info(s"Intent '$intentId' didn't match because all tokens came from conversation (variant #$varIdx).")
 
             // 3. All tokens came from history.
             None

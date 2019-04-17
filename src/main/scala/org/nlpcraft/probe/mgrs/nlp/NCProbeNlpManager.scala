@@ -266,7 +266,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         // Print here because validation can change sentence.
         senSeq.zipWithIndex.foreach(p ⇒
             NCNlpAsciiLogger.prepareTable(p._1).info(logger,
-                Some(s"Sentence variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
+                Some(s"Sentence parsing variant (#${p._2 + 1} of $sz) for: ${p._1.text}")))
 
         // Final validation before execution.
         try
