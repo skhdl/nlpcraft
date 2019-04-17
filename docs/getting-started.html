@@ -45,8 +45,10 @@ layout: documentation
             We'll also assume Mac OS/Linux environment and that NLPCraft was downloaded and installed as a ZIP archive.
         </p>
         <div class="bq info">
-            We'll take a deeper look at these components in <a href="/setting-up.html">Setting Up</a> chapter where we'll setup a
-            Java IDE project and develop and test our own first data model.
+            <p>
+                We'll take a deeper look at these components in <a href="/setting-up.html">Setting Up</a> chapter where we'll setup a
+                Java IDE project and develop and test our own first data model.
+            </p>
         </div>
     </section>
     <section id="probe-server">
@@ -170,7 +172,7 @@ layout: documentation
         </p>
     </section>
     <section id="querying">
-        <span class="section-title">Using REST API</span>
+        <span class="section-title">Weather Forecast - Using REST API</span>
         <p>
             There are <a target=_ href="https://medium.com/@alicealdaine/top-10-api-testing-tools-rest-soap-services-5395cb03cfa9">many ways</a> to issue and test REST calls - but for our examples we'll use standard
             <a target="wiki" href="https://en.wikipedia.org/wiki/CURL">cURL</a> utility which you can simply use from the
@@ -183,7 +185,7 @@ layout: documentation
             <p>
                 We'll go over the full REST API
                 <a href="https://nlpcraft.docs.apiary.io" target="apiary">functionality</a> as well as the
-                detailed explanation of data model and data sources later in <a href="/basic-concepts.html">Developer Guide</a>.
+                detailed explanation of Data Model API later in <a href="/basic-concepts.html">Developer Guide</a>.
             </p>
         </div>
         <p>
@@ -208,36 +210,12 @@ layout: documentation
             Note the returned access token <code>KMGWMQJ44</code> which we'll use in subsequent operations. Keep in mind that you
             will get different access tokens and IDs when you are performing these steps by yourself.
         </p>
-        <span class="section-sub-title"><b><code>/ds/add</code></b></span>
-        <p>
-            In NLPCraft data models define a class of models, while data sources define a particular
-            instance of that model (i.e. a data model can have multiple data sources each with different configurations).
-            We'll be using
-            <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>
-            to ask questions about weather forecast. Lets add a new data source for the model from this example using
-            <code>ds/add</code> REST call:
-        </p>
-        <pre class="brush: js; highlight: [2, 3, 4, 5]">
-            nccurl.sh ds/add '{"acsTok": "KMGWMQJ44", "name": "weather", "shortDesc": "example", "mdlId": "nlpcraft.weather.ex", "mdlName": "Weather Example Model", "mdlVer": "1.0"}' | python -m json.tool
-            {
-                "id": 8003,
-                "status": "API_OK"
-            }
-        </pre>
-        <p>
-            Note the new data source ID <code>8003</code>. As before, the actual value will be different
-            when you are performing these steps yourself.
-        </p>
-        <div class="bq info">
-            <p>
-                Note that adding new data source is done only once. User doesn't have to do it on each sign in.
-            </p>
-        </div>
-
         <span class="section-sub-title"><b><code>/ask</code></b>, <b><code>/check</code></b> <span class="amp">&amp;</span> <b><code>/cancel</code></b></span>
         <p>
-            Now that we have signed in (access token <code>KMGWMQJ44</code>) and added a new data source (ID <code>8003</code>) we can go ahead and start asking natural language questions against
-            this data source. We'll be using three REST calls to accomplish that: <code>/ask</code> to submit the request,
+            Now that we have signed in (access token <code>KMGWMQJ44</code>) we can go ahead and start asking natural language questions against
+            our data model. We'll be testing <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/weather">Weather Example</a>
+            to ask questions about weather forecast.
+            We'll use three REST calls to accomplish that: <code>/ask</code> to submit the request,
             <code>/check</code> to check the status and get the result, and <code>/cancel</code> to clear the result
             from server once we obtained it. 
         </p>
@@ -263,7 +241,7 @@ layout: documentation
             <b>Q: What is the current forecast for Chicago?</b>
         </p>
         <pre class="brush: js highlight: [2, 3, 4, 5]">
-            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "What is the current forecast for Chicago?", "dsId": 8003}' | python -m json.tool
+            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "What is the current forecast for Chicago?", "mdlId": "nlpcraft.weather.ex"}' | python -m json.tool
             {
                 "srvReqId": "gJ0OJ0qXp",
                 "status": "API_OK"
@@ -278,7 +256,6 @@ layout: documentation
                 "states": [
                     {
                         "createTstamp": 1552527883277,
-                        "dsId": 12001,
                         "mdlId": "nlpcraft.weather.ex",
                         "resBody": {
                             "intentId": "fcast|date?|city?",
@@ -348,7 +325,6 @@ layout: documentation
                 "states": [
                     {
                         "createTstamp": 1552529034568,
-                        "dsId": 12001,
                         "mdlId": "nlpcraft.weather.ex",
                         "resBody": {
                             "intentId": "curr|date?|city?",

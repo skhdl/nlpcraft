@@ -344,6 +344,12 @@ $bq-success-border-color: $brand-success;
     }
 }
 
+a[target=javadoc] {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 87.5%;
+    word-break: break-word;
+}
+
 pre.console {
     border: 1px solid #dedede;
     border-radius: 4px;

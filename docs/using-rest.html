@@ -40,7 +40,7 @@ layout: documentation
         <p>
             REST API provides a universal integration path for any type of user application to connect to and use NLPCraft.
             By using REST API these applications can ask natural language questions, get results and perform
-            many supporting operations such as user and data source management.
+            many supporting operations such as user management.
         </p>
         <p>
             REST server accepts the REST call,
@@ -108,7 +108,6 @@ layout: documentation
             <li><a href="#auth">Authentication</a></li>
             <li><a href="#asking">Asking</a></li>
             <li><a href="#user">User Management</a></li>
-            <li><a href="#data_source">Data Source Management</a></li>
             <li><a href="#data_probe">Data Probe Management</a></li>
         </ul>
         <div class="bq info">
@@ -199,7 +198,7 @@ layout: documentation
             <tr>
                 <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/asking"><nobr><code>/clear/conversation</code></nobr></a></td>
                 <td>
-                    Clear the conversation context for current user and data source.
+                    Clear the conversation context for current user and data model.
                 </td>
             </tr>
             <tr>
@@ -275,39 +274,6 @@ layout: documentation
             </tbody>
         </table>
     </section>
-    <section id="data_source">
-        <span class="section-sub-title">Data Source Management</span>
-        <p>
-            This group of operations allows to add, update and remove data sources in the systems. As we discussed above
-            a data source represents an instance of the deployed data model with its configuration:
-        </p>
-        <table class="gradient-table">
-            <thead>
-            <tr>
-                <th>REST call</th>
-                <th>Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/all</code></nobr></a></td>
-                <td>Get all data sources.</td>
-            </tr>
-            <tr>
-                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/add</code></nobr></a></td>
-                <td>Add new data source.</td>
-            </tr>
-            <tr>
-                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/update</code></nobr></a></td>
-                <td>Update data source information.</td>
-            </tr>
-            <tr>
-                <td><a target=apiary href="https://nlpcraft.docs.apiary.io/#reference/data-sources"><nobr><code>/ds/delete</code></nobr></a></td>
-                <td>Delete data source.</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
     <section id="data_probe">
         <span class="section-sub-title">Data Probe Management</span>
         <p>
@@ -337,7 +303,6 @@ layout: documentation
         <li><a href="#asking">Asking</a></li>
         <li><a href="#user">Users</a></li>
         <li><a href="#data_probe">Data Probes</a></li>
-        <li><a href="#data_source">Data Sources</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
