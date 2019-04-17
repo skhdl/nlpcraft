@@ -310,7 +310,7 @@ layout: documentation
             <b>Q: Any chance of snow today in Moscow?</b>
         </p>
         <pre class="brush: js highlight: [2, 3, 4, 5]">
-            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "Any chance of snow today in Moscow?", "dsId": 8003}' | python -m json.tool
+            $ nccurl.sh ask '{"acsTok": "KMGWMQJ44", "txt": "Any chance of snow today in Moscow?", "mdlId": "nlpcraft.weather.ex"}' | python -m json.tool
             {
                 "srvReqId": "bgp299kX0",
                 "status": "API_OK"
