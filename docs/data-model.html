@@ -80,12 +80,13 @@ layout: documentation
             </li>
         </ul>
         <p>
-            There are only two methods on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            There are only three methods on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
             interface that you must provide implementation for - while all other methods have reasonable defaults:
         </p>
         <ul>
-            <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getDescriptor--">getDescriptor()</a></li> - returning model identification.
+            <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getDescriptor--">getDescriptor()</a></li> - returning model descriptor.
             <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext)</a></li> - accepting parsed user input and returning result.
+            <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">getElements()</a></li> - getting a set of model elements (technically this method can return an empty set - a default behavior - but the model without any user-defined elements is rarely useful).
         </ul>
         <div class="bq info">
             <b>JSON <span class="amp">&amp;</span> YAML</b>
