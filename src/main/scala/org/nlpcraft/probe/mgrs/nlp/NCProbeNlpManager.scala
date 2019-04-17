@@ -32,11 +32,12 @@
 package org.nlpcraft.probe.mgrs.nlp
 
 import java.io.Serializable
+import java.util.Objects
 import java.util.concurrent.Executors
 import java.util.function.Predicate
 
-import org.nlpcraft.common._
 import org.nlpcraft.common.NCErrorCodes._
+import org.nlpcraft.common._
 import org.nlpcraft.common.nlp.NCNlpSentence
 import org.nlpcraft.common.nlp.log.NCNlpAsciiLogger
 import org.nlpcraft.model._
@@ -259,9 +260,24 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         })
 
         // Collapse again.
-        senSeq = senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p))
+        senSeq =
+            senSeq.flatMap(p ⇒ NCPostEnrichCollapser.collapse(mdl, p)).
+            // Sorted just for support deterministic logs.
+            sortBy(p ⇒
+                p.map(p ⇒ {
+                    val data = p.
+                        notes.
+                        filter(!_._2.isNlp).
+                        flatMap(_._2.values.map(p ⇒ Objects.toString(p._2))).
+                        toSeq.
+                        sorted.
+                        mkString("|")
 
-        val sz = senSeq.size
+                    s"${p.origText} $data"
+                }).mkString("-")
+            )
+
+            val sz = senSeq.size
 
         // Print here because validation can change sentence.
         senSeq.zipWithIndex.foreach(p ⇒
