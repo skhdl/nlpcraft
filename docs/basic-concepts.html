@@ -130,8 +130,13 @@ layout: documentation
     <section id="stm">
         <span class="section-sub-title">Conversation <span class="amp">&amp;</span> STM</span>
         <p>
-            NLPCraft provides automatic conversation context management right out of the box. It has
-            sophisticated short-term-memory (STM) implementation that is also conveniently integrated
+            NLPCraft provides automatic conversation context management right out of the box.
+
+
+            Conversation management is based on the idea of short-term-memory (STM). STM is automatically
+            maintained by NLPCraft per each user and data model. Essentially, NLPCraft "remembers"
+            the context of the conversation and can supply the currently missing elements from its memory (i.e. from STM).
+            STM implementation is also conveniently integrated
             with intent-based <a href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html" target=javadoc>intent solver</a>
             utility class.
         </p>

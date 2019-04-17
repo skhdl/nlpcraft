@@ -1,5 +1,5 @@
 ---
-active_crumb: Data Model API
+active_crumb: Data Model
 layout: documentation
 ---
 
@@ -703,6 +703,97 @@ layout: documentation
             provides utility accessors to all metadata properties returned by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method in a convenient
             type-safe way.
         </p>
+        <span class="section-sub-title">System Built-In Elements</span>
+        <p>
+            Additionally to the user defined model element - the ones you actually define in your model elements -
+            NLPCraft provides number of system or built-in elements that are detected <b>automatically</b> in the
+            user input. You don't have to explicitly define them or provide synonyms for them - you can simply
+            use them in your logic or intents as if they were defined already.
+        </p>
+        <p>
+            Here's the list of all built-in elements:
+        </p>
+        <!--
+        "nlp:nlp",
+        "nlp:geo",
+        "nlp:date",
+        "nlp:num",
+        "nlp:function",
+        "nlp:coordinate"
+        -->
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>Element ID</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:geo</nobr></code></a></td>
+                <td>Geographical location (continents, country, region, city or metro area).</td>
+                <td>
+                    <code>London</code><br>
+                    <code>California</code><br>
+                    <code>Palo Alto, CA</code><br>
+                    <code>USA</code>
+                </td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:coordinate</nobr></code></a></td>
+                <td>Latitude and longitude coordinates.</td>
+                <td>
+                    <code>41.25 and -120.9762</code>
+                </td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:date</nobr></code></a></td>
+                <td>Date and time range.</td>
+                <td>
+                    <code>June 27, 2016</code><br>
+                    <code>Last week</code><br>
+                    <code>From 3/4/2016 to today</code>
+                </td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:num</nobr></code></a></td>
+                <td>Numeric, units and numeric conditional expression.</td>
+                <td>
+                    <code>less than or equal to 50</code><br>
+                    <code>&gt;= 5</code><br>
+                    <code>5 ms</code><br>
+                    <code>equal to 10 cm</code>
+                </td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>nlp:function</code></a></td>
+                <td>
+                    One of the supported functions:
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>MAX</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>MIN</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>SUM</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>SORT</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>LIMIT</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>AVG</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>GROUP</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>CORRELATION</code></a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>COMPARE</code></a>.
+                </td>
+                <td>
+                    <code>correlation between date of close and deal size</code><br>
+                    <code>sort descending by product</code><br>
+                    <code>top 5 items</code>
+                </td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>nlp:nlp</code></a></td>
+                <td>Neither user defined nor any of the above ones.</td>
+                <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </section>
 </div>
 <div class="col-md-2 third-column">

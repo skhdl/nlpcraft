@@ -72,23 +72,21 @@ import java.util.stream.Collectors;
  * Each intent defines a pattern of the user input and associated action to take when that pattern is detected.
  * While selecting the best matching intent the solver uses sophisticated NLP analysis, resolves anaphores via
  * conversational context and can ask user for missing terms. If more than one intent is registered the solver
- * tries to find the most specific intent that matches user input.
+ * tries to find the <em>most specific</em> intent that matches user input.
  * <br><br>
  * The basic usage of token solver consists of three steps:
  * <ul>
  *     <li>Create new token solver instance.</li>
  *     <li>Add one or more intents to the solver.</li>
  *     <li>
- *         Use {@link NCIntentSolver#solve(NCQueryContext)} method as implementation
- *         for {@link NCModel#query(NCQueryContext)} method on your model. For example, if you use
- *         {@link NCModelBuilder} class you can use its {@link NCModelBuilder#setQueryFunction(Function)}
- *         method to set this up.
+ *         Provide instance of the intent solver to the data model via
+ *         {@link NCModelBuilder#setSolver(NCIntentSolver)} method.
  *     </li>
  * </ul>
  * This solver setup is typically done in {@link NCModelProvider} interface implementation. Once configured
  * the model is deployed and it will use the set token solver for resolving user input and converting it into actions.
  * <p>
- * To add an intent you will need to use simple DSL based on the following classes and interfaces:
+ * To add an intent you will need to use <b>simple DSL</b> based on the following classes and interfaces:
  * <pre>
  * +---------------+    +-------------------+
  * |  {@link CONV_INTENT CONV_INTENT}  |    |  {@link NON_CONV_INTENT NON_CONV_INTENT}  |
