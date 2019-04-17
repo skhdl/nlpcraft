@@ -34,6 +34,7 @@ package org.nlpcraft.model.builder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nlpcraft.model.NCElement;
 import org.nlpcraft.model.NCMetadata;
@@ -109,10 +110,13 @@ public class NCModelBuilder {
     private NCIntentSolver solver;
     
     /** */
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
     
     /** */
-    private enum Type { STRING, NUM, BOOL, LIST, VALUE }
+    private static final java.lang.reflect.Type TYPE_LIST_IDXS = new TypeToken<ArrayList<Integer>>() {}.getType();
+    
+    /** */
+    private enum Type { STRING, NUM, BOOL, LIST_INDEXES, VALUE }
     
     /** */
     private static final Map<Type, Set<String>> TYPES_OPS =
@@ -121,7 +125,7 @@ public class NCModelBuilder {
             Pair.of(Type.STRING, Arrays.asList("==", "!=", "%%", "!%")),
             Pair.of(Type.NUM, Arrays.asList("==", "!=", ">=", "<=", ">", "<")),
             Pair.of(Type.BOOL, Arrays.asList("==", "!=")),
-            Pair.of(Type.LIST, Arrays.asList("==", "!=")),
+            Pair.of(Type.LIST_INDEXES, Arrays.asList("==", "!=")),
             Pair.of(Type.VALUE, Arrays.asList("==", "!="))
         ).collect(Collectors.toMap(Pair::getLeft, p -> new HashSet<>(p.getRight())));
     
@@ -145,7 +149,7 @@ public class NCModelBuilder {
             
             Pair.of("~FUNCTION_TYPE", Type.VALUE),
             Pair.of("~FUNCTION_ASC", Type.BOOL),
-            Pair.of("~FUNCTION_INDEXES", Type.LIST),
+            Pair.of("~FUNCTION_INDEXES", Type.LIST_INDEXES),
             
             Pair.of("~COORDINATE_LATITUDE", Type.NUM),
             Pair.of("~COORDINATE_LONGITUDE", Type.NUM),
@@ -260,18 +264,72 @@ public class NCModelBuilder {
         if (v != null) {
             String vs = v.toString();
             
-            if (type == Type.VALUE) {
-                Set<String> enums = NC_VALUES.get(param);
+            switch (type) {
+                case STRING: break;
+    
+                case NUM: {
+                    try {
+                        Double.parseDouble(vs);
+                    }
+                    catch (NumberFormatException e) {
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Invalid intent DSL rule numeric value in: %s%s%s",
+                                param, op, vs
+                            ),
+                            e
+                        );
+                    }
+                    
+                    break;
+                }
+                case BOOL: {
+                    if (!vs.equalsIgnoreCase("true") && !vs.equalsIgnoreCase("false"))
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Invalid intent DSL rule boolean value in: %s%s%s",
+                                param, op, vs
+                            )
+                        );
+                        
+                    break;
+                }
                 
-                assert enums != null;
+                case VALUE: {
+                    Set<String> enums = NC_VALUES.get(param);
+    
+                    assert enums != null;
+    
+                    if (!enums.contains(vs))
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Invalid intent DSL rule operation value in: %s%s%s",
+                                param, op, vs
+                            )
+                        );
+                    
+                    break;
+                }
                 
-                if (!enums.contains(vs))
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Invalid intent DSL rule operation value in: %s%s%s",
-                            param, op, vs
-                        )
-                    );
+                case LIST_INDEXES: {
+                    try {
+                        GSON.fromJson(vs, TYPE_LIST_IDXS);
+                    }
+                    catch (Exception e) {
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Invalid intent DSL rule indexes list value in: %s%s%s",
+                                param, op, vs
+                            ),
+                            e
+                        );
+                    }
+                    
+                    break;
+                }
+                
+                default:
+                    assert false;
             }
         }
     }
@@ -287,7 +345,7 @@ public class NCModelBuilder {
      */
     static private <T> T readFileJson(String filePath, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new FileReader(filePath))) {
-            return gson.fromJson(reader, claxx);
+            return GSON.fromJson(reader, claxx);
         }
         catch (Exception e) {
             throw new NCBuilderException("Failed to load JSON from: " + filePath, e);
@@ -325,7 +383,7 @@ public class NCModelBuilder {
      */
     static private <T> T readFileJson(InputStream in, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new InputStreamReader(in))) {
-            return gson.fromJson(reader, claxx);
+            return GSON.fromJson(reader, claxx);
         }
         catch (Exception e) {
             throw new NCBuilderException("Failed to load JSON from stream.", e);
@@ -363,7 +421,7 @@ public class NCModelBuilder {
      */
     static private <T> T readStringJson(String jsonStr, Class<T> claxx) throws NCBuilderException {
         try (Reader reader = new BufferedReader(new StringReader(jsonStr))) {
-            return gson.fromJson(reader, claxx);
+            return GSON.fromJson(reader, claxx);
         }
         catch (Exception e) {
             throw new NCBuilderException("Failed to load JSON from string.", e);
