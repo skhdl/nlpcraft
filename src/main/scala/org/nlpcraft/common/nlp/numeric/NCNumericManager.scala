@@ -64,7 +64,9 @@ object NCNumericManager extends NCLifecycle("Numeric manager") {
 
     private def toNumeric(s: String): Option[Double] =
         try
-            Some(NUM_FMT.parse(s).doubleValue())
+            Some(
+                NUM_FMT.synchronized { NUM_FMT.parse(s) }.doubleValue()
+            )
         catch {
             case _: ParseException ⇒ None
         }
