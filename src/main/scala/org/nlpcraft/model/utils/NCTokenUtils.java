@@ -448,13 +448,16 @@ public class NCTokenUtils {
     }
 
     /**
-     * Whether given {@code nlp:num} token represents a equality condition.
+     * Whether given {@code nlp:num} token represents a equality condition. Note that <b>single numeric values</b> (when
+     * both {@link #getNumFrom(NCToken)} and {@link #getNumTo(NCToken)} methods return the same value) also default to
+     * equality condition and this method will return {@code true}.
      * <br><br>
      * Corresponds to {@code NUM_ISEQUALCONDITION} token {@link NCToken#getMetadata() metadata} property.
      *
      * @param tok A token.
      * @throws IllegalArgumentException Thrown if given token doesn't have {@code nlp:num} ID.
      * @return Whether given {@code nlp:num} token represents a equality condition.
+     * @see #isNumSingleValue(NCToken)
      */
     static public boolean isNumEqualCondition(NCToken tok) {
         assert tok != null;

@@ -70,16 +70,16 @@ import java.util.stream.Collectors;
  * Although this method can be implemented "manually" by manually parsing query context and its list of
  * parsing variants - it is often more complex and error-prone than necessary.
  * <br><br>
- * Intent solver is based on a well known idea of registering one or more formal user input template, also
+ * Intent solver is based on an idea of registering one or more formal user input template, also
  * known as an {@link INTENT intent}, and let this solver select the best matching intent for a given the user input.
  * Each intent defines a pattern of the user input and associated action to take when that pattern is detected.
- * While selecting the best matching intent the solver uses sophisticated NLP analysis, resolves anaphores via
- * conversational context and can ask user for missing terms. If more than one intent is registered the solver
- * tries to find the <em>most specific</em> intent that matches user input.
+ * While selecting the best matching intent the solver uses sophisticated NLP analysis, resolves anaphoras via
+ * conversational context. If more than one intent is registered the solver
+ * will find the <em>most specific</em> one that matches user input.
  * <br><br>
- * The basic usage of token solver consists of three steps:
+ * The basic usage of intent solver consists of three steps:
  * <ul>
- *     <li>Create new token solver instance.</li>
+ *     <li>Create new intent solver instance.</li>
  *     <li>Add one or more intents to the solver.</li>
  *     <li>
  *         Provide instance of the intent solver to the data model via
@@ -87,7 +87,7 @@ import java.util.stream.Collectors;
  *     </li>
  * </ul>
  * This solver setup is typically done in {@link NCModelProvider} interface implementation. Once configured
- * the model is deployed and it will use the set token solver for resolving user input and converting it into actions.
+ * the model is deployed and it will use the set intent solver for resolving user input and converting it into actions.
  * <p>
  * To add an intent you will need to use <b>simple DSL</b> based on the following classes and interfaces:
  * <pre>
@@ -148,7 +148,7 @@ import java.util.stream.Collectors;
  *         If multiple intents match - the system will pick the one with the most specific match.
  *     </li>
  * </ul>
- * Here's an example of using token solver taken from <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time</a> example:
+ * Here's an example of using intent solver taken from <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time</a> example:
  * <pre class="brush: java">
  * NCTokenSolver solver = new NCTokenSolver(
  *      "time-solver",
@@ -1264,7 +1264,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Token solver intent.
+     * An intent - a formal template for user input.
      * <br><br>
      * Intent is similar in idea to a regular expressions. Just like regular expression defines a search
      * pattern for text, the intent defines a search pattern for the list of tokens. Intent has hierarchical
@@ -1458,7 +1458,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Creates new default token solver. Default solver has default {@code null} name, no multi-match and
+     * Creates new default intent solver. Default solver has default {@code null} name, no multi-match and
      * default not-found function that throws {@link NCRejection} exception. This is equivalent to:
      * <pre class="brush: java">
      *      this(null, false, null);
@@ -1469,7 +1469,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Creates new named token solver with given parameters and default not-found function. Default not-found
+     * Creates new named intent solver with given parameters and default not-found function. Default not-found
      * function throws {@link NCRejection} exception with generic error message.
      *
      * @param name Name of the solver (for informational purpose only).
@@ -1479,7 +1479,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Creates new named token solver with given parameters.
+     * Creates new named intent solver with given parameters.
      *
      * @param name Name of the solver (for informational purpose only).
      * @param notFound Custom not-found function. This function will be called when no matching intent can

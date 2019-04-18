@@ -197,7 +197,7 @@ public class WeatherModel extends NCModelProviderAdapter {
     /**
      * Makes query result for given date range.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @param from Default from date.
      * @param to Default to date.
      * @return Query result.
@@ -234,7 +234,7 @@ public class WeatherModel extends NCModelProviderAdapter {
     /**
      * Callback on forecast intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onForecastMatch(NCIntentSolverContext ctx) {
@@ -255,7 +255,7 @@ public class WeatherModel extends NCModelProviderAdapter {
     /**
      * Callback on history intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onHistoryMatch(NCIntentSolverContext ctx) {
@@ -276,7 +276,7 @@ public class WeatherModel extends NCModelProviderAdapter {
     /**
      * Callback on current date intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onCurrentMatch(NCIntentSolverContext ctx) {

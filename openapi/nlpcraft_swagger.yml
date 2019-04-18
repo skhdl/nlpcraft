@@ -31,7 +31,10 @@ paths:
       tags:
         - Asking
       summary: Clears conversation context.
-      description: Clears conversation context for given user and data model.
+      description: >-
+        Clears conversation context for given user and data model. Essentially makes NLPCraft forget
+        about previously stored sentences and the next request will be processed as if at the start of the
+        new conversation.
       operationId: clearConversation
       parameters:
         - in: body
@@ -55,7 +58,9 @@ paths:
               userId:
                 type: integer
                 format: int64
-                description: User ID for which to clear conversation context. Optional, initiator ID used by default
+                description: >-
+                  User ID for which to clear conversation context. Optional, initiator ID used by default.
+                  Clearing conversation context for other users require administrative privileges.
 
       responses:
         '200':

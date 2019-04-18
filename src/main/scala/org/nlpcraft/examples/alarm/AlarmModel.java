@@ -103,7 +103,7 @@ public class AlarmModel extends NCModelProviderAdapter {
     /**
      * Callback on intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onMatch(NCIntentSolverContext ctx) {

@@ -36,7 +36,75 @@ layout: documentation
 
 <div class="col-md-8 second-column">
     <section>
-        <span class="section-title">This Section Is Under Development...</span>
+        <span class="section-title">Overview</span>
+        <p>
+            As we discussed in <a href="/data-model.html#logic">Data Model</a> section the logic of the data model is encoded in
+            its <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a>
+            method in <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface.
+            This method receives the fully parsed user input with all the additional information via
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a> interface. The goal of
+            the <code>query(...)</code> method is to understand the user input,
+            interact with the actual data source and return the appropriate result back.
+        </p>
+        <p>
+            In most cases implementing this method in a manual straight-forward way by parsing query context
+            and all its parsing variants can be an unnecessarily complicated task. Intent-based matching allows to
+            dramatically simplify this task.
+        </p>
+        <span class="section-title">Class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a></span>
+        <p>
+            The intent solver is based on an idea of defining one or more templates for user input and let the
+            algorithm choose the best matching one given the current query context.
+        </p>
+        <p>
+            Such a template is called an intent. Each intent defines a pattern of the user input and associated
+            action to take when that pattern is detected and selected as a best match. While selecting the best
+            matching intent the solver uses sophisticated NLP analysis and resolves anaphoras via conversational
+            context. If more than one intent matches the user input - the solver is smart enough to
+            select the <em>most specific</em> one.
+        </p>
+        <p>
+            The basic usage of intent solver consists of three steps (from
+            <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example):
+        </p>
+        <ol>
+            <li>
+                Create new intent solver instance:
+                <pre class="brush: java">
+                    NCIntentSolver solver = new NCIntentSolver();
+                </pre>
+            </li>
+            <li>
+                Add one or more intents to the solver:
+                <pre class="brush: java">
+                    solver.addIntent(
+                        new NON_CONV_INTENT(
+                            "x:alarm|num{1+}",
+                            new TERM("id == x:alarm", 1, 1),
+                            new TERM(
+                                new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
+                                0,
+                                7
+                            )
+                        ),
+                        this::onMatch
+                    );
+                </pre>
+            </li>
+            <li>
+                Provide instance of the intent solver to the data model via
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html#setSolver-org.nlpcraft.model.intent.NCIntentSolver-">setSolver(NCIntentSolver)</a> method
+                on class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>:
+                <pre class="brush: java, highlight: [4]">
+                    NCModelBuilder.newJsonModel(
+                        AlarmModel.class.getClassLoader().getResourceAsStream("org/nlpcraft/examples/alarm/alarm_model.json")
+                    ).
+                    setSolver(solver).
+                    build()
+                </pre>
+            </li>
+        </ol>
+        <span class="section-sub-title">Intent DSL</span>
     </section>
 </div>
 <div class="col-md-2 third-column">

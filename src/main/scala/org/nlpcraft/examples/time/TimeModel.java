@@ -110,7 +110,7 @@ public class TimeModel extends NCModelProviderAdapter {
     /**
      * Callback on local time intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onLocalMatch(NCIntentSolverContext ctx) {
@@ -135,7 +135,7 @@ public class TimeModel extends NCModelProviderAdapter {
     /**
      * Callback on remote time intent match.
      *
-     * @param ctx Token solver context.
+     * @param ctx Intent solver context.
      * @return Query result.
      */
     private NCQueryResult onRemoteMatch(NCIntentSolverContext ctx) {
