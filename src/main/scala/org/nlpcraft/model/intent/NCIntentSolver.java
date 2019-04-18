@@ -31,6 +31,8 @@
 
 package org.nlpcraft.model.intent;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nlpcraft.model.NCMetadata;
 import org.nlpcraft.model.NCModel;
@@ -47,6 +49,7 @@ import org.nlpcraft.model.intent.impl.NCIntentSolverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -197,6 +200,12 @@ public class NCIntentSolver implements Serializable {
         throw new NCRejection("Request seems unrelated to the data model.");
     };
     private static final String DFLT_NAME = "default";
+    
+    /** */
+    private static final Gson GSON = new Gson();
+    
+    /** */
+    private static final Type TYPE_LIST_IDXS = new TypeToken<ArrayList<Integer>>() {}.getType();
     
     // Default not-found callback.
     private final String name;
@@ -878,11 +887,19 @@ public class NCIntentSolver implements Serializable {
              else if (value.equalsIgnoreCase("false"))
                  init(param, op, false);
              else
+                 // Tries numeric.
                  try {
-                     init(param, op, Integer.parseInt(value));
+                     init(param, op, Double.parseDouble(value));
                  }
                  catch (NumberFormatException e) {
-                     init(param, op, value);
+                     // Tries integers list.
+                     try {
+                         init(param, op, GSON.fromJson(value, TYPE_LIST_IDXS));
+                     }
+                     catch (Exception e1) {
+                         // String by default.
+                         init(param, op, value);
+                     }
                  }
         }
 
@@ -1028,9 +1045,16 @@ public class NCIntentSolver implements Serializable {
             Object v2 = value;
 
             switch (op) {
-                case "==": return Objects.equals(v1, v2);
+                case "==":
+                    return
+                        v1 instanceof Number && v2 instanceof Number ?
+                            Double.compare(((Number)v1).doubleValue(), ((Number)v2).doubleValue()) == 0 :
+                            Objects.equals(v1, v2);
 
-                case "!=": return !(Objects.equals(v1, v2));
+                case "!=": return
+                    v1 instanceof Number && v2 instanceof Number ?
+                        Double.compare(((Number)v1).doubleValue(), ((Number)v2).doubleValue()) != 0 :
+                        !Objects.equals(v1, v2);
 
                 case "!%":
                     if (v2 == null || !(v1 instanceof String))
@@ -1135,8 +1159,8 @@ public class NCIntentSolver implements Serializable {
                 throw new IllegalArgumentException("Intent DSL item predicate cannot be null.");
             if (min < 0 || min > max)
                 throw new IllegalArgumentException(String.format("Invalid intent DSL item min-quantifiers: %d (must be min >= 0 && min <= max).", min));
-            if (min > max || max < 1)
-                throw new IllegalArgumentException(String.format("Invalid intent DSL item max-quantifiers: %d (must be min <= max && max > 1).", max));
+            if (max < 1)
+                throw new IllegalArgumentException(String.format("Invalid intent DSL item max-quantifiers: %d (must be max > 1).", max));
 
             this.ptrn = pred;
             this.min = min;
