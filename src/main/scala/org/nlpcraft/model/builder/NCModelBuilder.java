@@ -87,7 +87,7 @@ import static org.nlpcraft.model.intent.NCIntentSolver.*;
  * <ul>
  *     <li>{@link #newModel()}</li>
  * </ul>
- * or by loading static model definition in JSON or YAML:
+ * or by loading static model definition in JSON or YAML (c):
  * <ul>
  *     <li>{@link #newJsonModel(InputStream)}</li>
  *     <li>{@link #newJsonModel(String)}</li>
@@ -500,10 +500,12 @@ public class NCModelBuilder {
 
     /**
      * Creates new model builder and loads model definition from JSON file.
+     * See {@link NCModel} for JSON example.
      * 
      * @param filePath JSON file path to load from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newJsonModel(String filePath) throws NCBuilderException {
         if (filePath == null)
@@ -518,10 +520,12 @@ public class NCModelBuilder {
     
     /**
      * Creates new model builder and loads model definition from YAML file.
+     * See {@link NCModel} for JSON example.
      *
      * @param filePath YAML file path to load from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newYamlModel(String filePath) throws NCBuilderException {
         if (filePath == null)
@@ -536,10 +540,12 @@ public class NCModelBuilder {
     
     /**
      * Creates new model builder and loads JSON model definition from input stream.
+     * See {@link NCModel} for JSON example.
      *
      * @param in Input stream to load JSON model from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newJsonModel(InputStream in) throws NCBuilderException {
         if (in == null)
@@ -554,10 +560,12 @@ public class NCModelBuilder {
     
     /**
      * Creates new model builder and loads YAML model definition from input stream.
+     * See {@link NCModel} for JSON example.
      *
      * @param in Input stream to load YAML model from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newYamlModel(InputStream in) throws NCBuilderException {
         if (in == null)
@@ -572,10 +580,12 @@ public class NCModelBuilder {
 
     /**
      * Creates new model builder and loads JSON model definition from given JSON string.
+     * See {@link NCModel} for JSON example.
      * 
      * @param jsonStr JSON string to load model from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newJsonStringModel(String jsonStr) throws NCBuilderException {
         if (jsonStr == null)
@@ -590,10 +600,12 @@ public class NCModelBuilder {
     
     /**
      * Creates new model builder and loads YAML model definition from given YAML string.
+     * See {@link NCModel} for JSON example.
      *
      * @param yamlStr YAML string to load model from.
      * @return New model builder.
      * @throws NCBuilderException Thrown in case of any errors building the model.
+     * @see NCModel
      */
     public static NCModelBuilder newYamlStringModel(String yamlStr) throws NCBuilderException {
         if (yamlStr == null)

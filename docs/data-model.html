@@ -43,7 +43,7 @@ layout: documentation
         </p>
         <p>
             NLPCraft employs model-as-a-code approach where data model is simply an implementation of
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a>  interface that can be developed using any JVM programming
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>  interface that can be developed using any JVM programming
             language like Java, Scala, Kotlin, or Groovy. Generally, a data model implementation defines:
         </p>
         <ul>
@@ -67,21 +67,22 @@ layout: documentation
     <section id="lifecycle">
         <span class="section-title">Data Model Lifecycle</span>
         <p>
-            Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a>
-            interface. To create data model you can either:
+            Data model is an implementation of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
+            interface. To create data model you should either:
         </p>
         <ul>
             <li>
-                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> interface directly
+                Implement <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface directly
             </li>
             <li>
-                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html"><code>NCModelBuilder</code></a>
+                Use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
                 builder class which is a recommended way under the most circumstances.
             </li>
         </ul>
         <p>
-            There are only three methods on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a>
-            interface that you must provide implementation for - while all other methods have reasonable defaults:
+            If you decide to implement
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface directly
+            there are only three methods that you must provide implementation for - with all other methods having reasonable defaults:
         </p>
         <ul>
             <li><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getDescriptor--">getDescriptor()</a></li> - returning model descriptor.
@@ -92,17 +93,18 @@ layout: documentation
             <b>JSON <span class="amp">&amp;</span> YAML</b>
             <p>
                 When using
-                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html"><code>NCModelBuilder</code></a>
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a>
                 model builder you can abstract most of the static model definition into an external JSON or YAML file -
-                which is a recommended approach in most cases. See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a>
+                which is a recommended approach in most cases. See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a>
                 interface for details.
             </p>
         </div>
+        <span class="section-sub-title">Model Deployment</span>
         <p>
             To deploy a data model you need to provide an implementation of
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModelProvider.html">NCModelProvider</a> - a simple
-            interface that acts as a factory or a builder for one or more
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> instances. This separation is
+            interface that acts as a factory for one or more
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> instances. This separation is
             important as it enables data probes to query data model provider about which models it supports
             without necessarily instantiating an actual data model which could be expensive, not idempotent
             and time-consuming operation.
@@ -143,7 +145,7 @@ layout: documentation
         <span class="section-sub-title">Lifecycle Events</span>
         <p>
             There are two data model lifecycle callbacks on
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> interface
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface
             that you can optionally override:
         </p>
         <ul>
@@ -169,6 +171,14 @@ layout: documentation
             directly by its ID. These tokens in turn will be used by the data model in its matching logic.
         </p>
         <div class="bq info">
+            <b>User Elements vs Built-In Elements</b>
+            <p>
+                Additionally to the user-defined model elements NLPCraft provides a list of built-in
+                system elements that are supported out-of-the-box. We'll cover them later in their own
+                <a href="#built-in-elements">section</a>.
+            </p>
+        </div>
+        <div class="bq info">
             <b>Named Entity Resolution <span class="amp">&amp;</span> Semantic Model</b>
             <p>
                 An astute reader can notice the similarities between classic Named Entity Resolution (NER) and
@@ -190,7 +200,7 @@ layout: documentation
                     command oriented interfaces.
                 </li>
                 <li>
-                    Because of previous limitations standard NER is not suitable for domain-specific knowledge
+                    Because of these limitations standard NER is not suitable for domain-specific knowledge
                     areas where no large pre-existing data corpus exists.
                 </li>
             </ul>
@@ -210,7 +220,7 @@ layout: documentation
         <p>
             Data model element is defined by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>
             interface.
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> defines
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> defines
             its elements via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getElements--">getElements()</a> method. To create model element
             you can either:
         </p>
@@ -271,7 +281,7 @@ layout: documentation
             Macros let you give a name to an often used set of words or option groups and reuse it without
             repeating those words or option groups again and again. A model provides a list of macros via
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getMacros--">getMacros()</a> method on
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> interface. Each macro
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> interface. Each macro
             has a name in a form of <code>&lt;X&gt;</code> where <code>X</code>
             is just any string, and a string value. Note that macros can be nested, i.e. macro value can include
             references to other macros. When macro name <code>X</code> is encountered in the synonym it gets recursively
@@ -464,7 +474,7 @@ layout: documentation
         </p>
         <p>
             When a model element is recognized it is made available to the model's matching logic as an instance of
-            the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> interface.
+            the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interface.
             This interface has a method
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getValue--">getValue()</a> which
             returns the name of the value, if any, by which
@@ -509,7 +519,7 @@ layout: documentation
             Short-Term-Memory (STM) in the conversational context when using intent-based matching.
         </p>
         <p>
-            Consider a <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> that 
+            Consider a <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> that 
             represents a previously found model element that is stored in the conversation context. Such token
             will be overridden in the conversation context by the more <b>recent token</b>
             from the <b>same group</b> - a critical rule of maintaining the proper conversational context.
@@ -519,12 +529,12 @@ layout: documentation
     <section id="metadata">
         <span class="section-title">Metadata</span>
         <p>
-            Both <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> and
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> interfaces have
+            Both <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interfaces have
             method <code>getMetadata()</code> that return user-defined metadata
             (a map-based container) that you can optionally attach to the data model and its elements. At runtime,
-            the same metadata is available in <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> and
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> interfaces (the latter one representing a
+            the same metadata is available in <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interfaces (the latter one representing a
             matched <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCElement.html">NCElement</a>).
         </p>
         <p>
@@ -547,17 +557,17 @@ layout: documentation
         </p>
         <ul>
             <li>Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html"><code>NCQueryContext</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a></li>
-            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a></li>
+            <li>Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a></li>
             <li>Class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryResult.html">NCQueryResult</a></li>
         </ul>
         <span class="section-sub-title">Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a></span>
         <p>
             When the data probe receives the enriched request from the REST server it performs the final
             pre-processing by detecting data model elements in the user text. When finished the data probe calls
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> instance
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#query-org.nlpcraft.model.NCQueryContext-">query(NCQueryContext ctx)</a> method on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> instance
             passing it a fully parsed and enriched user request.
         </p>
         <p>
@@ -586,13 +596,13 @@ layout: documentation
                 and <code>html</code> and we will be using this class in all our examples.
             </li>
         </ul>
-        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html"><code>NCQueryContext</code></a></span>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a></span>
         <p>
             You noticed that <code>query(...)</code> method accepts the instance of <code>NCQueryContext</code> interface as
             its parameter. This interface provides all available data about the parsed user input and all its supplemental information.
         </p>
         <p>
-            Review <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html"><code>NCQueryContext</code></a>
+            Review <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCQueryContext.html">NCQueryContext</a>
             interface Javadoc as it a provides large amount of information to the <code>query(...)</code> method:
         </p>
         <ul>
@@ -604,23 +614,23 @@ layout: documentation
                 for controlling STM of conversation manager.
             </li>
             <li>
-                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html"><code>NCModel</code></a> that the
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html">NCModel</a> that the
                 <code>query(...)</code> method belongs to.
             </li>
             <li>
-                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a> that
+                Reference to <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> that
                 provides parsing information for the user input.
             </li>
         </ul>
         <div class="bq info">
             <b>NCProbeContext</b>
             <p>
-                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html"><code>NCProbeContext</code></a>
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html">NCProbeContext</a>
                 interface provides information about data probe that the current model is hosted in. It provides
                 data probe endpoints, ID of the probe and probe's secure token. 
             </p>
             <p>
-                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html"><code>NCProbeContext</code></a> reference
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCProbeContext.html">NCProbeContext</a> reference
                 is passed to data model's
                 <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#initialize-org.nlpcraft.model.NCProbeContext-">initialze(...)</a> method.
                 The default implementation of this method simply stores the probe context in model's metadata from which
@@ -628,12 +638,12 @@ layout: documentation
             </p>
         </div>
         <p>
-            Out of all this information the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a>
+            Out of all this information the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a>
             interface is the most important to review in details.
         </p>
-        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a></span>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a></span>
         <p>
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a> interface
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> interface
             is one of the main entities in Data Model API that you as a model developer will be working with. You
             should review its <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">Javadoc</a> but
             here is an outline of the information it provides:
@@ -659,7 +669,7 @@ layout: documentation
             by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html#getVariants--">List&lt;NCVariant&gt; getVariants()</a>
             method that provides the most valuable information for the "understanding" of the user input.
         </p>
-        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a></span>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a></span>
         <p>
             When the user sentence gets parsed into individual tokens (i.e. semantic elements) there is generally
             more than one way to do it. This ambiguity is perfectly fine because only the data model has all the
@@ -667,29 +677,29 @@ layout: documentation
             there isn't enough context to determine which variant is the best fitting.
         </p>
         <p>
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a> interface is a
-            list of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> object, and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a> interface is a
+            list of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> object, and
             it represents one possible parsing variant. Note
-            that <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html"><code>NCVariant</code></a> interface
+            that <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">NCVariant</a> interface
             supports natural order from best to worst.
         </p>
         <p>
             Method <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html#getVariants--">List&lt;NCVariant&gt; getVariants()</a> on
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html"><code>NCSentence</code></a> returns list of
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCSentence.html">NCSentence</a> returns list of
             <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCVariant.html">variants</a> for a given user input.
             Method <code>query(...)</code> should generally analyse all given parsing variants in determining the
             meaning of the user sentence.
         </p>
         <div class="bq info">
-            <b><a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html"><code>NCIntentSolver</code></a></b>
+            <b><a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a></b>
             <p>
                 Intent-matcher <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html"><code>NCIntentSolver</code></a></b>
                 automatically checks all variants, from best to worst, when trying to find a match for a given intent.
             </p>
         </div>
-        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a></span>
+        <span class="section-sub-title">Interface <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a></span>
         <p>
-            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>NCToken</code></a> object is another
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> object is another
             key abstraction in Data Model API. A token is a part of a fully parsed user input. Sequence of tokens
             represents parsed user input.
             A single token corresponds to a one or more original normalized words, sequential or not, in the
@@ -713,12 +723,16 @@ layout: documentation
             provides utility accessors to all metadata properties returned by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method in a convenient
             type-safe way.
         </p>
-        <span class="section-sub-title">System Built-In Elements</span>
+        <span id="built-in-elements" class="section-sub-title">System Built-In Elements</span>
         <p>
             Additionally to the user defined model element - the ones you actually define in your model elements -
             NLPCraft provides number of system or built-in elements that are detected <b>automatically</b> in the
             user input. You don't have to explicitly define them or provide synonyms for them - you can simply
             use them in your logic or intents as if they were defined already.
+        </p>
+        <p>
+            Built-in elements IDs have specific naming starting with <code>nlp:</code> prefix. Note that user-defined
+            model elements IDs cannot start with <code>nlp:</code>.
         </p>
         <p>
             Here's the list of all built-in elements:
