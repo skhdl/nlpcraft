@@ -31,16 +31,11 @@
 
 package org.nlpcraft.model.utils;
 
-import org.nlpcraft.model.NCMetadata;
-import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.impl.NCSqlAdapterImpl;
-
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.impl.*;
+import java.sql.*;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * Convenient API for {@link NCToken} {@link NCToken#getMetadata() metadata}. Most of the methods in
@@ -134,7 +129,6 @@ import java.util.function.Supplier;
  *          {@link #isNumFromNegativeInfCondition(NCToken)}<br>
  *          {@link #isNumNotEqualCondition(NCToken)}<br>
  *          {@link #isNumRangeCondition(NCToken)}<br>
- *          {@link #isNumSingleValue(NCToken)}<br>
  *          {@link #isNumToPositiveInfCondition(NCToken)}<br>
  *          {@link #isNumToInclusive(NCToken)}<br>
  *          {@link #testNum(NCToken, int)}<br>
@@ -428,36 +422,13 @@ public class NCTokenUtils {
     }
 
     /**
-     * Whether given {@code nlp:num} token represents a single numeric value vs. a numeric range.
-     * If this method return {@code true} you can use either {@link #getNumTo(NCToken)} or {@link #getNumFrom(NCToken)}
-     * methods (since both will return the same value). Note also that in this case {@link #isNumEqualCondition(NCToken)}
-     * will return {@code true}.
-     *
-     * @param tok A token.
-     * @throws IllegalArgumentException Thrown if given token doesn't have {@code nlp:num} ID.
-     * @return Whether given {@code nlp:num} token represents a single numeric value vs. a numeric range.
-     */
-    static public boolean isNumSingleValue(NCToken tok) {
-        assert tok != null;
-
-        checkId(tok, "nlp:num");
-
-        NCMetadata meta = tok.getMetadata();
-
-        return meta.getDouble("NUM_TO") == meta.getDouble("NUM_FROM") && meta.getBoolean("NUM_ISEQUALCONDITION");
-    }
-
-    /**
-     * Whether given {@code nlp:num} token represents a equality condition. Note that <b>single numeric values</b> (when
-     * both {@link #getNumFrom(NCToken)} and {@link #getNumTo(NCToken)} methods return the same value) also default to
-     * equality condition and this method will return {@code true}.
+     * Whether given {@code nlp:num} token represents a equality condition or single numeric value.
      * <br><br>
      * Corresponds to {@code NUM_ISEQUALCONDITION} token {@link NCToken#getMetadata() metadata} property.
      *
      * @param tok A token.
      * @throws IllegalArgumentException Thrown if given token doesn't have {@code nlp:num} ID.
      * @return Whether given {@code nlp:num} token represents a equality condition.
-     * @see #isNumSingleValue(NCToken)
      */
     static public boolean isNumEqualCondition(NCToken tok) {
         assert tok != null;

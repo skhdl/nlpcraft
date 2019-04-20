@@ -482,9 +482,10 @@ public interface NCToken extends Serializable {
      *     <tr>
      *         <td>NUM_ISEQUALCONDITION</td>
      *         <td>
-     *             Whether this is an equality condition. Note that <b>single numeric values</b> (when
-     *             <code>NUM_FROM</code> and <code>NUM_TO</code> are the same) also default
-     *             to equality condition and this property will be {@code true}.
+     *             Whether this is an equality condition. Note that <b>single numeric values</b>
+     *             also default to equality condition and this property will be {@code true}. Indeed,
+     *             the following <code>when A is equal to 2</code> and <code>when A is 2</code> have
+     *             the same meaning.
      *         </td>
      *         <td>{@link Boolean}</td>
      *         <td>No</td>
