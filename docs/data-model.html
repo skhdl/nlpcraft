@@ -830,7 +830,7 @@ layout: documentation
         <table class="gradient-table">
             <thead>
             <tr>
-                <th><nobr>Common Metadata</nobr></th>
+                <th><nobr>Name <sub>(Map Key)</sub></nobr></th>
                 <th>Description</th>
                 <th><nobr>Java Type</nobr></th>
             </tr>
@@ -1182,6 +1182,135 @@ layout: documentation
                 <td>
                     <code>Boolean</code>
                 </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            Following additional metadata properties available for <code>nlp:geo</code> tokens.
+            <code>nlp:geo</code> system tokens represent geographical locations such as continents, countries,
+            regions, cities, and metro areas:
+        </p>
+        <table class="gradient-table" summary="">
+            <thead>
+            <tr>
+                <th>Name <sub>(Map Key)</sub></th>
+                <th>Description</th>
+                <th>Java Type</th>
+                <th>Optional</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_KIND</a></td>
+                <td>
+                     Kind of geographical location:
+                     <ul>
+                         <li><code>CONTINENT</code></li>
+                         <li><code>SUBCONTINENT</code></li>
+                         <li><code>COUNTRY</code></li>
+                         <li><code>METRO</code></li>
+                         <li><code>REGION</code></li>
+                         <li><code>CITY</code></li>
+                     </ul>
+                </td>
+                <td><code>String</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_CONTINENT</a></td>
+                <td>
+                     Name of the continent.
+                </td>
+                <td><code>String</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_SUBCONTINENT</a></td>
+                <td>
+                     Name of the subcontinent.
+                </td>
+                <td><code>String</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_COUNTRY</a></td>
+                <td>
+                     Name of the continent.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_REGION</a></td>
+                <td>
+                     Name of the region.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_CITY</a></td>
+                <td>
+                     Name of the city.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_METRO</a></td>
+                <td>
+                     Name of the metro area.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_LATITUDE</a></td>
+                <td>
+                     Latitude of the location.
+                </td>
+                <td><code>Double</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">GEO_LONGITUDE</a></td>
+                <td>
+                     Longitude of the location.
+                </td>
+                <td><code>Double</code></td>
+                <td>Yes</td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            Following additional metadata properties available for <code>nlp:date</code> tokens.
+            <code>nlp:date</code> tokens represent a datetime range:
+        </p>
+        <table class="gradient-table" summary="">
+            <thead>
+            <tr>
+                <th>Name <sub>(Map Key)</sub></th>
+                <th>Description</th>
+                <th>Java Type</th>
+                <th>Optional</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">DATE_FROM</a></td>
+                <td>
+                     Start timestamp of the datetime range.
+                </td>
+                <td><code>Long</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">DATE_TO</a></td>
+                <td>
+                     End timestamp of the datetime range.
+                </td>
+                <td><code>Long</code></td>
+                <td>No</td>
             </tr>
             </tbody>
         </table>

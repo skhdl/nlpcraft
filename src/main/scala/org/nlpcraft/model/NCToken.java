@@ -387,7 +387,7 @@ public interface NCToken extends Serializable {
      *     <tr>
      *         <td>GEO_LATITUDE</td>
      *         <td>
-     *              Optional latitude of the location.
+     *              Latitude of the location.
      *         </td>
      *         <td>{@link Double}</td>
      *         <td>Yes</td>
@@ -395,7 +395,7 @@ public interface NCToken extends Serializable {
      *     <tr>
      *         <td>GEO_LONGITUDE</td>
      *         <td>
-     *              Optional longitude of the location.
+     *              Longitude of the location.
      *         </td>
      *         <td>{@link Double}</td>
      *         <td>Yes</td>
@@ -403,7 +403,7 @@ public interface NCToken extends Serializable {
      * </table>
      * <br><br>
      * <b>Properties For <tt>nlp:date</tt> Tokens</b><br>
-     * <tt>nlp:date</tt> tokens represent a datetime range, i.e. two datetime points. The following
+     * <tt>nlp:date</tt> tokens represent a datetime range. The following
      * metadata properties are specifically provided for <tt>nlp:date</tt> tokens:
      * <table class="dl-table" summary="">
      *     <tr>
