@@ -791,7 +791,7 @@ public interface NCToken extends Serializable {
      * </table>
      * <br><br>
      * <b>Properties For <tt>nlp:coordinate</tt> Tokens</b><br>
-     * <tt>nlp:coordinate</tt> tokens geographical latitude and longitude coordinates.
+     * <tt>nlp:coordinate</tt> tokens represent geographical latitude and longitude coordinates.
      * The following metadata properties are specifically provided for <tt>nlp:coordinate</tt> tokens:
      * <table class="dl-table" summary="">
      *     <tr>

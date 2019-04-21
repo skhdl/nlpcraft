@@ -1314,6 +1314,234 @@ layout: documentation
             </tr>
             </tbody>
         </table>
+        <p>
+            Following additional metadata properties available for <code>nlp:num</code> tokens.
+            <code>nlp:num</code> tokens represent a single numeric value, a numeric range, or a numeric condition.
+            All numeric values can have optional units:
+        </p>
+        <table class="gradient-table" summary="">
+            <thead>
+            <tr>
+                <th>Name <sub>(Map Key)</sub></th>
+                <th>Description</th>
+                <th>Java Type</th>
+                <th>Optional</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_FROM</a></td>
+                <td>
+                    Start of numeric range that satisfies the condition (exclusive).
+                    Note that if <code>NUM_FROM</code> and <code>NUM_TO</code> are the same this
+                    token represent a single value (whole or fractional) in which case
+                    <code>NUM_ISEQUALCONDITION</code> will be <code>true</code>.
+                </td>
+                <td><code>Double</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_FROMINCL</a></td>
+                <td>
+                    Whether or not start of the numeric range is inclusive.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_TO</a></td>
+                <td>
+                    End of numeric range that satisfies the condition (exclusive).
+                    Note that if <code>NUM_FROM</code> and <code>NUM_TO</code> are the same this
+                    token represent a single value (whole or fractional) in which case
+                    <code>NUM_ISEQUALCONDITION</code> will be <code>true</code>.
+                </td>
+                <td><code>Double</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_TOINCL</a></td>
+                <td>
+                    Whether or not end of the numeric range is inclusive.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISEQUALCONDITION</a></td>
+                <td>
+                    Whether this is an equality condition. Note that <b>single numeric values</b>
+                    also default to equality condition and this property will be {@code true}. Indeed,
+                    the following <code>when A is equal to 2</code> and <code>when A is 2</code> have
+                    the same meaning.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISNOTEQUALCONDITION</a></td>
+                <td>
+                    Whether this is a not-equality condition.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISFROMNEGATIVEINFINITY</a></td>
+                <td>
+                    Whether this range is from negative infinity.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISRANGECONDITION</a></td>
+                <td>
+                    Whether this is a range condition.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISTOPOSITIVEINFINITY</a></td>
+                <td>
+                    Whether this range is to positive infinity.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_ISFRACTIONAL</a></td>
+                <td>
+                    Whether this token's value (single numeric value of a range) is a
+                    whole or a fractional number.
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_INDEX</a></td>
+                <td>
+                    Index of another token in the sentence that this numeric condition is referring to.
+                    If index could not be determined this token refers to a free word or a stopword.
+                </td>
+                <td><code>Integer</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_UNIT</a></td>
+                <td>
+                    Optional numeric value unit (e.g. "mm", "cm", "ft"). See <code>NUM_UNITTYPE</code>
+                    for specific values of units and unit types.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NUM_UNITTYPE</a></td>
+                <td>
+                    Optional type of the numeric value unit (e.g. "length", "force", "mass"). See
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interface
+                    for details.
+                </td>
+                <td><code>String</code></td>
+                <td>Yes</td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            Following additional metadata properties available for <code>nlp:function</code> tokens.
+            <code>nlp:function</code> tokens represent a function in relation to another token or tokens:
+        </p>
+        <table class="gradient-table" summary="">
+            <thead>
+            <tr>
+                <th>Name <sub>(Map Key)</sub></th>
+                <th>Description</th>
+                <th>Java Type</th>
+                <th>Optional</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">FUNCTION_TYPE</a></td>
+                <td>
+                    Type of the function detected. One of the following:
+                    <ul>
+                        <li><code>SUM</code> - sum of some elements.</li>
+                        <li><code>MAX</code> - maximum of some elements.</li>
+                        <li><code>MIN</code> - minimum of some elements.</li>
+                        <li><code>AVG</code> - average of some elements.</li>
+                        <li><code>SORT</code> - sorting or ordering instruction over some elements.</li>
+                        <li><code>LIMIT</code> - range limit over some elements.</li>
+                        <li><code>GROUP</code> - grouping over some elements.</li>
+                        <li><code>CORRELATION</code> - correlation between two elements.</li>
+                        <li><code>COMPARE</code> - comparison between some elements.</li>
+                    </ul>
+                </td>
+                <td><code>String</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">FUNCTION_INDEXES</a></td>
+                <td>
+                    Indexes of the element(s) this token is referencing. Can be empty.
+                </td>
+                <td><code>java.util.List</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">FUNCTION_LIMIT</a></td>
+                <td>
+                    <b>Applicable only for <tt>LIMIT</tt> type.</b>
+                    Limit value.
+                </td>
+                <td><code>Integer</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">FUNCTION_ASC</a></td>
+                <td>
+                    <b>Applicable only for <tt>LIMIT</tt> and <tt>SORT</tt> types.</b>
+                    Whether limit or sort direction is ascending (bottom to top) or descending (top to bottom).
+                </td>
+                <td><code>Boolean</code></td>
+                <td>No</td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            Following additional metadata properties available for <code>nlp:coordinate</code> tokens.
+            <code>nlp:coordinate</code> tokens represent geographical latitude and longitude coordinates:
+        </p>
+        <table class="gradient-table" summary="">
+            <thead>
+            <tr>
+                <th>Name <sub>(Map Key)</sub></th>
+                <th>Description</th>
+                <th>Java Type</th>
+                <th>Optional</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">COORDINATE_LATITUDE</a></td>
+                <td>
+                    Coordinate latitude.
+                </td>
+                <td><code>Double</code></td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">COORDINATE_LONGITUDE</a></td>
+                <td>
+                    Coordinate longitude.
+                </td>
+                <td><code>Double</code></td>
+                <td>No</td>
+            </tr>
+            </tbody>
+        </table>
     </section>
 </div>
 <div class="col-md-2 third-column">
