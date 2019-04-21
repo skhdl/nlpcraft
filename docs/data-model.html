@@ -716,13 +716,21 @@ layout: documentation
             </li>
         </ul>
         <p>
-            Most of the token's information is stored in map-like metadata accessible via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method.
+            Most of the token's information is stored in map-like metadata accessible via
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method.
             Depending on the ID of the token metadata will contain different properties. Some properties are common
             across all tokens. Consult <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method
             for detailed explanation. Note that class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/utils/NCTokenUtils.html">NCTokenUtils</a>
             provides utility accessors to all metadata properties returned by <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method in a convenient
             type-safe way.
         </p>
+        <div class="bq info">
+            <b>Common Metadata</b>
+            <p>
+                Note that both system built-in tokens and user-defined tokens (i.e. detected model elements) provide common metadata
+                properties (see tables below).
+            </p>
+        </div>
         <span id="built-in-elements" class="section-sub-title">System Built-In Elements</span>
         <p>
             Additionally to the user defined model element - the ones you actually define in your model elements -
@@ -747,65 +755,432 @@ layout: documentation
             </thead>
             <tbody>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:geo</nobr></code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:geo</a></td>
                 <td>Geographical location (continents, country, region, city or metro area).</td>
                 <td>
-                    <code>London</code><br>
-                    <code>California</code><br>
-                    <code>Palo Alto, CA</code><br>
-                    <code>USA</code>
+                    <code>Current weather in <i>London</i></code><br>
+                    <code><i>California</i> forecast</code><br>
+                    <code>Chance of rain in <i>Palo Alto, CA</i></code><br>
+                    <code>What is <i>USA</i> population</code>
                 </td>
             </tr>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:coordinate</nobr></code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:coordinate</a></td>
                 <td>Latitude and longitude coordinates.</td>
                 <td>
-                    <code>41.25 and -120.9762</code>
+                    <code>Elevation at <i>41.25 and -120.9762</i> point</code>
                 </td>
             </tr>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:date</nobr></code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:date</a></td>
                 <td>Date and time range.</td>
                 <td>
-                    <code>June 27, 2016</code><br>
-                    <code>Last week</code><br>
-                    <code>From 3/4/2016 to today</code>
+                    <code>Day of the week on <i>June 27, 2016</i></code><br>
+                    <code>Average temperature <i>last week</i></code><br>
+                    <code>Number of days <i>from 3/4/2016 to today</i></code>
                 </td>
             </tr>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code><nobr>nlp:num</nobr></code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:num</a></td>
                 <td>Numeric, units and numeric conditional expression.</td>
                 <td>
-                    <code>less than or equal to 50</code><br>
-                    <code>&gt;= 5</code><br>
-                    <code>5 ms</code><br>
-                    <code>equal to 10 cm</code>
+                    <code>Items with <i>less than or equal to 50</i> sold quantity</code><br>
+                    <code>Products with <i>&gt;= 5</i> of shelf days</code><br>
+                    <code>Transactions with <i>5 ms</i> latency</code><br>
+                    <code>Average wiring <i>equal to 10 cm</i></code>
                 </td>
             </tr>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>nlp:function</code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:function</a></td>
                 <td>
                     One of the supported functions:
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>MAX</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>MIN</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>SUM</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>SORT</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>LIMIT</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>AVG</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>GROUP</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>CORRELATION</code></a>,
-                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--"><code>COMPARE</code></a>.
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">MAX</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">MIN</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">SUM</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">SORT</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">LIMIT</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">AVG</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">GROUP</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">CORRELATION</a>,
+                    <a target="javadoc" href="https://www.datalingvo.com/client/src/javadoc/com/datalingvo/mdllib/DLToken.html#getMetadata--">COMPARE</a>.
                 </td>
                 <td>
-                    <code>correlation between date of close and deal size</code><br>
-                    <code>sort descending by product</code><br>
-                    <code>top 5 items</code>
+                    <code>Columns <i>sorted descending by</i> product</code><br>
+                    <code>Show <i>top 5</i> items</code>
                 </td>
             </tr>
             <tr>
-                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html"><code>nlp:nlp</code></a></td>
+                <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">nlp:nlp</a></td>
                 <td>Neither user defined nor any of the above ones.</td>
                 <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <span class="section-sub-title"><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> Metadata</span>
+        <p>
+            As mentioned above a token stores most of its information in a map-based metadata accessible
+            via <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a> method
+            on <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NCToken</a> interface.
+            Tables below provides information on what metadata available for each type of built-in tokens.
+        </p>
+        <p>
+            Following common metadata properties available for <b>all built-in and user defined</b> tokens:
+        </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th><nobr>Common Metadata</nobr></th>
+                <th>Description</th>
+                <th><nobr>Java Type</nobr></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_UNID</a>
+                </td>
+                <td>
+                    Internal globally unique system ID of the token.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_BRACKETED</a>
+                </td>
+                <td>
+                    Whether or not this token is surrounded by any of '[', ']', '{', '}', '(', ')' brackets.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_FREEWORD</a>
+                </td>
+                <td>
+                    Whether or not this token represents a free word. A free word is a token that was detected
+                    neither as a part of user defined or system tokens, i.e. it has token ID <code>nlp:nlp</code>.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_DIRECT</a>
+                </td>
+                <td>
+                    Whether or not this token was matched on direct (nor permutated) synonym.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_ENGLISH</a>
+                </td>
+                <td>
+                    Whether this token represents an English word. Note that this only checks that token's text
+                    consists of characters of English alphabet, i.e. the text doesn't have to be necessary a known
+                    valid English word. See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#isNonEnglishAllowed--">NCModel.isNonEnglishAllowed()</a> for
+                    corresponding model configuration method.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_LEMMA</a>
+                </td>
+                <td>
+                    Lemma of this token, i.e. a canonical form of this word. Note that stemming and lemmatization
+                    allow to reduce inflectional forms and sometimes derivationally related forms of a word to a
+                    common base form. Lemmatization refers to the use of a vocabulary and morphological analysis
+                    of words, normally aiming to remove inflectional endings only and to return the base or
+                    dictionary form of a word, which is known as the lemma. Learn more
+                    at <a target=_ href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html</a>
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_STEM</a>
+                </td>
+                <td>
+                    Stem of this token. Note that stemming and lemmatization allow to reduce inflectional forms and
+                    sometimes derivationally related forms of a word to a common base form. Unlike lemma, stemming
+                    is a basic heuristic process that chops off the ends of words in the hope of achieving this goal
+                    correctly most of the time, and often includes the removal of derivational affixes. Learn more
+                    at <a target=_ href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html</a>
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_POS</a>
+                </td>
+                <td>
+                    Penn Treebank POS tag for this token. Note that additionally to standard Penn Treebank POS tags
+                    NLPCraft introduced '-&#45;&#45;' synthetic tag to indicate a POS tag for multiword tokens.
+                    Learn more at <a target=_ href="http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html</a>
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_POSDESC</a>
+                </td>
+                <td>
+                    Description of Penn Treebank POS tag.
+                    Learn more at <a target=_ href="http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html</a>
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_SWEAR</a>
+                </td>
+                <td>
+                    Whether or not this token is a swear word. NLPCraft has built-in list of common English swear
+                    words. See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#isSwearWordsAllowed--">NCModel.isSwearWordsAllowed()</a> for
+                    corresponding model configuration method.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_SWEAR</a>
+                </td>
+                <td>
+                    Whether or not this token is a swear word. NLPCraft has built-in list of common English swear
+                    words. See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#isSwearWordsAllowed--">NCModel.isSwearWordsAllowed()</a> for
+                    corresponding model configuration method.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_ORIGTEXT</a>
+                </td>
+                <td>
+                    Original user input text for this token.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_NORMTEXT</a>
+                </td>
+                <td>
+                    Normalized user input text for this token.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_NE</a>
+                </td>
+                <td>
+                    Optional (nullable) named entity.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_NNE</a>
+                </td>
+                <td>
+                    Optional (nullable) normalized named entity. Currently provided only by 'stanford' NLP engine.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_SPARSITY</a>
+                </td>
+                <td>
+                    Numeric value of how sparse the token is. Sparsity zero means that all individual words in the
+                    token follow each other.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_MININDEX</a>
+                </td>
+                <td>
+                    Index of the first word in this token. Note that token may not be contiguous.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_MAXINDEX</a>
+                </td>
+                <td>
+                    Index of the last word in this token. Note that token may not be contiguous.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_WORDINDEXES</a>
+                </td>
+                <td>
+                    List of original word indexes in this token. Note that a token can have words that are not
+                    contiguous in the original sentence. Always has at least one element in it.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_WORDLENGTH</a>
+                </td>
+                <td>
+                    Number of individual words in this token. Equal to the size of <code>NLP_WORDINDEXES</code> list.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_CONTIGUOUS</a>
+                </td>
+                <td>
+                    Whether or not this token has zero sparsity, i.e. consists of contiguous words.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_START</a>
+                </td>
+                <td>
+                    Start character index of this token.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_END</a>
+                </td>
+                <td>
+                    End character index of this token.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_INDEX</a>
+                </td>
+                <td>
+                    Index of this token in the sentence.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_CHARLENGTH</a>
+                </td>
+                <td>
+                    Character length of this token.
+                </td>
+                <td>
+                    <code>Integer</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_QUOTED</a>
+                </td>
+                <td>
+                    Whether or not this token is surrounded by single or double quotes.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_STOPWORD</a>
+                </td>
+                <td>
+                    Whether or not this token is a stopword. Stopwords are some extremely common words which
+                    add little value in helping understanding user input and are excluded from the processing entirely.
+                    For example, words like <code>a, the, can, of, about, over,</code> etc. are typical stopwords in
+                    English. NLPCraft has built-in set of stopwords.
+                    See <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getAdditionalStopWords--">NCModel.getAdditionalStopWords()</a> and
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCModel.html#getExcludedStopWords--">NCModel.getExcludedStopWords()</a> methods for
+                    corresponding model configuration methods.
+                </td>
+                <td>
+                    <code>Boolean</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_NOTETYPE</a>
+                </td>
+                <td>
+                    System type name of the token.
+                </td>
+                <td>
+                    <code>String</code>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">NLP_DICT</a>
+                </td>
+                <td>
+                    Whether or not this token is found in Princeton WordNet database.
+                </td>
+                <td>
+                    <code>Boolean</code>
                 </td>
             </tr>
             </tbody>

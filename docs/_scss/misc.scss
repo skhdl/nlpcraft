@@ -347,7 +347,8 @@ $bq-success-border-color: $brand-success;
 a[target=javadoc] {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 87.5%;
-    word-break: break-word;
+    word-break: keep-all;
+    white-space: nowrap !important;
 }
 
 pre.console {
@@ -358,6 +359,15 @@ pre.console {
 
 code {
     white-space: nowrap !important;
+    color: #C0392B;
+
+    i {
+        font-style: normal;
+        border: 1px solid $color-sunflower;
+        padding: 0 2px;
+        color: #000;
+        background: $color-sunflower;
+    }
 }
 
 
