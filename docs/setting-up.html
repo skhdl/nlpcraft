@@ -47,8 +47,10 @@ layout: documentation
             <li>We'll use <a target=_ href="https://www.jetbrains.com/idea/">JetBrains IDEA</a> as our Java IDE</li>
         </ul>
         <div class="bq info">
-            Note that following instructions will work for most OS, JVM languages or
-            IDE/text editors with minimal, if any, modifications.
+            <p>
+                Note that following instructions will work for most OS, JVM languages or
+                IDE/text editors with minimal, if any, modifications.
+            </p>
         </div>
     </section>
     <section id="new_project">
@@ -293,7 +295,7 @@ public class AlarmModel extends NCModelProviderAdapter {
 }
         </pre>
         <p>
-            Chapter <a href="/data-model.html">Data Model API</a> will provide detailed explanation on how
+            Chapter <a href="/data-model.html">Data Model</a> will provide detailed explanation on how
             data models work. Here are few comments as to what this code does and how it is organized:
         </p>
         <ul>
@@ -441,9 +443,9 @@ public class AlarmModel extends NCModelProviderAdapter {
     <section>
         <span class="section-sub-title">Testing</span>
         <p>
-            NLPCraft comes with easy to use <a href="/testing-data-model.html">test framework</a> for data models that can be used with
+            NLPCraft comes with easy to use <a target="javadoc" href="/apis/latest/org/nlpcraft/model/test/package-summary.html">test framework</a> for data models that can be used with
             any unit testing framework like JUnit or ScalaTest. It is essentially a simplified
-            version of <a href="/rest-clients.html">Java REST client</a> that is custom designed for data model testing.
+            version of Java REST client that is custom designed for data model testing.
         </p>
         <p>
             Let's create new Java class <code>AlarmTest.java</code> in <code>src/<b>test</b>/java/examples</code>
