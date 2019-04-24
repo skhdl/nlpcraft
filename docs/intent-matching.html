@@ -53,14 +53,14 @@ layout: documentation
         </p>
         <span class="section-title">Class <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a></span>
         <p>
-            The intent solver is based on an idea of defining one or more templates for user input and let the
+            The intent solver <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a> is based on an idea of defining one or more templates for user input and let the
             algorithm choose the best matching one given the current query context.
         </p>
         <p>
-            Such a template is called an intent. Each intent defines a pattern of the user input and associated
+            Such a template is called an <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a>. Each intent defines a pattern of the user input and associated
             action to take when that pattern is detected and selected as a best match. While selecting the best
-            matching intent the solver uses sophisticated NLP analysis and resolves anaphoras via conversational
-            context. If more than one intent matches the user input - the solver is smart enough to
+            matching <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> the solver uses sophisticated NLP analysis and resolves anaphoras via conversational
+            context. If more than one <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> matches the user input - the solver is smart enough to
             select the <em>most specific</em> one.
         </p>
         <p>
@@ -69,17 +69,24 @@ layout: documentation
         </p>
         <ol>
             <li>
-                Create new intent solver instance:
+                Create new <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.html">NCIntentSolver</a> instance:
                 <pre class="brush: java">
+                    import org.nlpcraft.model.*;
+                    import org.nlpcraft.model.builder.*;
+                    import org.nlpcraft.model.intent.*;
+                    import org.nlpcraft.model.intent.NCIntentSolver.*;
+
+                    ...
+                    
                     NCIntentSolver solver = new NCIntentSolver();
                 </pre>
             </li>
             <li>
-                Add one or more intents to the solver:
+                Add one or more <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a>s to the solver:
                 <pre class="brush: java">
                     solver.addIntent(
                         new NON_CONV_INTENT(
-                            "x:alarm|num{1+}",
+                            "intent-1",
                             new TERM("id == x:alarm", 1, 1),
                             new TERM(
                                 new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
@@ -104,12 +111,437 @@ layout: documentation
                 </pre>
             </li>
         </ol>
-        <span class="section-sub-title">Intent DSL</span>
+        <span id="dsl" class="section-sub-title">Intent DSL</span>
+        <p>
+            Intent DSL (Domain Specific Language) is a collection of classes that allows you to easily
+            encode the intent matching pattern.
+        </p>
+        <p>
+            Intent patterns are similar to regular expressions. An <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> is a collection of one or more
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s plus a
+            callback for when that intent is selected. Intents can be ordered or unordered, conversational and
+            non-conversational (more on that later). For the intent to match all of its
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s have
+            to be found in the user input. Note that if multiple intents match - the system will pick the
+            one with the most specific match.
+        </p>
+        <p>
+            Each <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> is
+            a set of one or more
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a>s where
+            each <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a> is a
+            token-based <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.PREDICATE.html">PREDICATE</a>
+            with min and max quantifiers indicating how many times the given predicate has to be found in the user input
+            for the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a> to
+            match. <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a> is
+            optional if its min quantifier is zero.
+        </p>
+        <p>
+            For the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> to
+            be found all of its non-optional <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a>s have to be found (order is not important).
+            There are convenient shortcut constructors for
+            token-based predicates as well as various combinators (<a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.AND.html">AND</a>,
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.OR.html">OR</a>,
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NOR.html">NOR</a>,
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NAND.html">NAND</a>,
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.XOR.html">XOR</a>,
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.XNOR.html">XNOR</a>) to
+            logically
+            combine two or more predicates.
+        </p>
+        <p>
+            Following diagram shows class structure that describes all individual classes in DSL:
+        </p>
+        <pre class="console">
+        +---------------+    +-------------------+
+        |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.CONV_INTENT.html">CONV_INTENT</a>  |    |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NON_CONV_INTENT.html">NON_CONV_INTENT</a>  |
+        +-------+-------+    +----------+--------+
+                |                       |
+                |                       |
+                |    +----------+       |
+                +---^+  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a>  +^------+
+                     +----+-----+
+                          |
+                          |
+                      +---o----+
+                      |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>  |
+                      +---+----+
+                          |
+                          |
+                      +---0----+
+                      |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a>  |
+                      +---+----+
+                          |
+                          |
+                    +-----0-------+
+              +----^+ /<a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.PREDICATE.html">PREDICATE</a>/ |^---+-----------+------------+------------+-----------+----------+
+              |     +-----^-------+    |           |            |            |           |          |
+              |                        |           |            |            |           |          |
+              |                        |           |            |            |           |          |
+         +----+---+                +---+---+   +---+---+   +--------+   +--------+   +-------+  +------+
+         |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a>  |                |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.AND.html">AND</a>  |   |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NOR.html">NOR</a>  |   |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.XNOR.html">XNOR</a>  |   |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NAND.html">NAND</a>  |   |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.XOR.html">XOR</a>  |  |  <a target=_ href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.OR.html">OR</a>  |
+         +--------+                +-------+   +-------+   +--------+   +--------+   +-------+  +------+
+        </pre>
+        <div class="bq info">
+            <b>INTENTs &#8715; TERMs &#8715; ITEMs &#8715; RULEs</b>
+            <p>
+                An <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> is a
+                list (ordered or not) of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s where each <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> is a set of <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a>s.
+                An <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a> can be either a single token based <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a> or a logical combinator.
+            </p>
+            <p>
+                All <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.ITEM.html">ITEM</a>s have to be
+                found for the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> to be
+                found, and all <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s have to be found
+                for the <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> to match. If
+                more than one <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.INTENT.html">INTENT</a> matches - the most specific match wins.
+            </p>
+        </div>
+        <span id="intents" class="section-sub-title">Intents</span>
+        <p>
+            Intents can be ordered and unordered, conversational or not.
+        </p>
+        <p>
+            If the intent is unordered its <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s can be found anywhere in the string and in any order.
+            Ordered intent requires that all its <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a>s be found in the same order they appear in the intent.
+            In most natural language scenario, you should use unordered intents unless the predefined strict order is required.
+        </p>
+        <p>
+            Conversational intent will maintain conversational context and will attempt to use tokens from the
+            previous user input (i.e. conversational context) to find a matching intent. Non-conversational intent
+            will ignore previously seen tokens and will rely only on the tokens present in the current user input
+            for its matching resolution. Note that intents matched with the help of conversational context are
+            less specific than the ones that were matched only with the tokens from the current user input. If
+            there is more than one matching intent the intent solver will always pick the most specific one.
+        </p>
+        <p>
+            There are two convenient shortcut classes for conversational and non-conversational unordered
+            intents: <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.CONV_INTENT.html">CONV_INTENT</a> and
+            <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.NON_CONV_INTENT.html">NON_CONV_INTENT</a>.
+        </p>
+        <span id="predicates" class="section-sub-title">Token Predicates</span>
+        <p>
+            As mentioned above a token predicate is either a <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a> or a
+            logical combinator (which can be nested). The <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a>
+            class defines the actual predicate as a binary operation on an <b>individual token's properties</b> in
+            a form of: <code>"left-operand operator right-value"</code> (as a single string or three separate strings).
+        </p>
+        <p>
+            The left operand of the binary operation can one of the following:
+        </p>
+        <table class="gradient-table">
+            <thead>
+                <tr>
+                    <th>Operand <sub>case sensitive</sub></th>
+                    <th>Description</th>
+                    <th><code style="color: #fff">NCToken</code> Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>
+                        Token ID
+                    </td>
+                    <td>
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getId--">getId()</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>group</code></td>
+                    <td>
+                        Token group
+                    </td>
+                    <td>
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getGroup--">getGroup()</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>parent</code></td>
+                    <td>
+                        Token parent ID
+                    </td>
+                    <td>
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getParentId--">getParentId()</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>value</code></td>
+                    <td>
+                        Token value
+                    </td>
+                    <td>
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getValue--">getValue()</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>~META</code></td>
+                    <td>
+                        Token metadata or element metadata property <code>META</code>.
+                    </td>
+                    <td>
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getMetadata--">getMetadata()</a>
+                        and
+                        <a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html#getElementMetadata--">getElementMetadata()</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            The binary operator can be one of the following:
+        </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>Operator</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>==</code></td>
+                <td>
+                    Left operand is equal to the right value. Java <code>Object.equals(Object)</code> method is
+                    used for equality check. Note that string comparison is <b>case-sensitive</b>.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("id", "==", "x:time");
+                        new RULE("parent == x:parent");
+                        new RULE("~GEO_KIND == CITY");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>!=</code></td>
+                <td>
+                    Left operand is NOT equal to the right value. Java <code>Object.equals(Object)</code> method is
+                    used for equality check. Note that string comparison is <b>case-sensitive</b>.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("id", "!=", "x:time");
+                        new RULE("~NLP_CONTIGUOUS == true");
+                        new RULE("~NLP_SPARSITY != 0");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>&gt;=</code></td>
+                <td>
+                    Left operand is greater or equal than right value.
+                    Applicable to <code>java.lang.Number</code> and <code>java.time.ZonedDateTime</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("~NLP_SPARSITY >= 0");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>&gt;</code></td>
+                <td>
+                    Left operand is greater than right value.
+                    Applicable to <code>java.lang.Number</code> and <code>java.time.ZonedDateTime</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("~NLP_SPARSITY > 0");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>&lt;</code></td>
+                <td>
+                    Left operand is less than right value.
+                    Applicable to <code>java.lang.Number</code> and <code>java.time.ZonedDateTime</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("~NLP_WORDLENGTH < 3");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>&lt;=</code></td>
+                <td>
+                    Left operand is less or equal than right value.
+                    Applicable to <code>java.lang.Number</code> and <code>java.time.ZonedDateTime</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("~NLP_WORDLENGTH <= 3");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>%%</code></td>
+                <td>
+                    Left operand matches the regular expression in right value.
+                    Applicable to <code>java.lang.String</code> and <code>java.util.regex.Pattern</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("value", "%%", "^[Ff]oo[Bb]ar$");
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td><code>!%</code></td>
+                <td>
+                    Left operand DOES NOT match the regular expression in right value.
+                    Applicable to <code>java.lang.String</code> and <code>java.util.regex.Pattern</code> values only.
+                </td>
+                <td>
+                    <pre class="brush: java">
+                        new RULE("value !% ^[Ff]oo[Bb]ar$");
+                    </pre>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <span id="examples" class="section-title">Intent Examples</span>
+        <p>
+            Here is a couple of examples for intent definitions from
+            built-in <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">examples</a> of data models.
+        </p>
+        <p>
+            <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time Clock</a> example:
+        </p>
+        <pre class="brush: java">
+            new CONV_INTENT(
+                "c^time|city",
+                new TERM("id == x:time", 1, 1),
+                new TERM(
+                    new AND(                   
+                        "id == nlp:geo",
+                        "~GEO_KIND == CITY"
+                    ), 1, 1
+                )
+            ),
+        </pre>
+        <p>
+            <b>NOTES:</b>
+        </p>
+        <ul>
+            <li>
+                This example defines a conversational intent with two terms both of which have to found for the
+                intent to match.
+            </li>
+            <li>
+                Note the intent ID <code>c^time|city</code>. Although intent ID can be any arbitrary string it is
+                recommended to give intents meaningful IDs to simplify testing and debugging, especially when model
+                has many intents with similar templates.
+            </li>
+            <li>
+                First term is defined as a single mandatory (<code>min=1, max=1</code>) user token with ID <code>x:time</code> whose element is defined in the
+                model's YAML definition:
+                <pre class="brush: plain, highlight: 9">
+                    macros:
+                      - name: "&lt;OF&gt;"
+                        macro: "{of|for|per}"
+                      - name: "&lt;CUR&gt;"
+                        macro: "{current|present|now|local}"
+                      - name: "&lt;TIME&gt;"
+                        macro: "{time &lt;OF&gt; day|day time|date|time|moment|datetime|hour|o'clock|clock|date time|date and time|time and date}"
+                    elements:
+                      - id: "x:time"
+                        description: "Date and/or time token indicator."
+                        synonyms:
+                          - "{&lt;CUR&gt;|*} &lt;TIME&gt;"
+                          - "what &lt;TIME&gt; {is it now|now|is it|*}"
+                </pre>
+            </li>
+            <li>
+                Second term is defined as a single mandatory (<code>min=1, max=1</code>) built-in token that should be a city name.
+            </li>
+            <li>
+                Notice how this example uses shortcut <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> and
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.AND.html">AND</a> constructors
+                bypassing the creation of intermediate <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a>
+                instances.
+            </li>
+            <li>
+                This intent will match the following sentences:
+                <ul>
+                    <li><code>What time is it now in New York City?</code></li>
+                    <li><code>What's the time in Moscow?</code></li>
+                    <li><code>Show me time of the day in London</code></li>
+                    <li><code>Give me San Francisco's current date and time</code></li>
+                    <li><code>What's the local time?</code></li>
+                </ul>
+            </li>
+
+        </ul>
+        <br>
+        <p>
+            <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a> example:
+        </p>
+        <pre class="brush: java">
+            new NON_CONV_INTENT(
+                "intent-1",
+                new TERM("id == x:alarm", 1, 1),
+                new TERM(
+                    new AND("id == nlp:num", "~NUM_UNITTYPE == datetime", "~NUM_ISEQUALCONDITION == true"),
+                    0,
+                    7
+                )
+            )
+        </pre>
+        <p>
+            <b>NOTES:</b>
+        </p>
+        <ul>
+            <li>
+                This example defines a non-conversational intent with two terms both of which have to found for the
+                intent to match.
+            </li>
+            <li>
+                First term is defined as a single mandatory (<code>min=1, max=1</code>) user token with ID <code>x:alarm</code> whose element is defined in the
+                model's JSON definition:
+                <pre class="brush: js, highlight: 2">
+                    {
+                        "id": "x:alarm",
+                        "description": "Alarm token indicator.",
+                        "synonyms": [
+                            "{ping|buzz|wake|call|hit} {me|up|me up|*}",
+                            "{set|*} {my|*} {wake|wake up|*} {alarm|timer|clock|buzzer|call} {up|*}"
+                        ]
+                    }
+                </pre>
+            </li>
+            <li>
+                Second term is defined as a zero or up to seven numeric built-in tokens that have unit type of <code>datetime</code> and
+                are single numbers. Note that <a target="github" href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/alarm">Alarm Clock</a>
+                model allows zero tokens in this term which means current timestamp.
+            </li>
+            <li>
+                Notice how this example uses shortcut <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.TERM.html">TERM</a> and
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.AND.html">AND</a> constructors
+                bypassing the creation of intermediate <a target="javadoc" href="/apis/latest/org/nlpcraft/model/intent/NCIntentSolver.RULE.html">RULE</a>
+                instances.
+            </li>
+            <li>
+                This intent will match the following sentences:
+                <ul>
+                    <li><code>Ping me in 3 minutes</code></li>
+                    <li><code>Buzz me in an hour and 15mins</code></li>
+                    <li><code>Set my alarm for 30s</code></li>
+                </ul>
+            </li>
+        </ul>
     </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
         <li class="side-nav-title">On This Page</li>
+        <li><a href="#dsl">Intent DSL</a></li>
+        <li><a href="#intents">Intents</a></li>
+        <li><a href="#predicates">Token Predicates</a></li>
+        <li><a href="#examples">Intent Examples</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a

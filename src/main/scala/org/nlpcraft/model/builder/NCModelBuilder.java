@@ -623,10 +623,10 @@ public class NCModelBuilder {
      * @param rules
      * @param p
      */
-    private static void fillRules(List<RULE> rules, Predicate p) {
+    private static void fillRules(List<RULE> rules, PREDICATE p) {
         // Complex rule.
         if (p instanceof List)
-            ((List<Predicate>)p).forEach(x -> fillRules(rules, x) );
+            ((List<PREDICATE>)p).forEach(x -> fillRules(rules, x) );
         // Plain rule.
         else
             rules.add((RULE)p);

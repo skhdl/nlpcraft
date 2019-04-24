@@ -112,7 +112,7 @@ import java.util.stream.Collectors;
  *                   |
  *                   |
  *             +-----0-------+
- *       +----^+ /predicate/ |^---+-----------+------------+------------+-----------+----------+
+ *       +----^+ /PREDICATE/ |^---+-----------+------------+------------+-----------+----------+
  *       |     +-----^-------+    |           |            |            |           |          |
  *       |                        |           |            |            |           |          |
  *       |                        |           |            |            |           |          |
@@ -227,7 +227,7 @@ public class NCIntentSolver implements Serializable {
      * @see XNOR XNOR
      * @see NOR NOR
      */
-    public interface Predicate extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {
+    public interface PREDICATE extends Function<NCToken, Pair<Boolean/*Pass or no-pass*/, int[]/*Weight*/>>, Serializable {
         /**
          * 
          * @param name Combinator name.
@@ -253,7 +253,7 @@ public class NCIntentSolver implements Serializable {
      * 
      * @param obj Combinator to check.
      */
-    private static void checkCombinator(Predicate obj) {
+    private static void checkCombinator(PREDICATE obj) {
         if (!(obj instanceof AND) &&
             !(obj instanceof OR) &&
             !(obj instanceof XOR) &&
@@ -276,7 +276,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class OR extends ArrayList<Predicate> implements Predicate {
+    public static final class OR extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new OR-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -284,11 +284,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to OR combine.
          */
-        public OR(Predicate... items) {
+        public OR(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("OR", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -312,7 +312,7 @@ public class NCIntentSolver implements Serializable {
 
         @Override
         public Pair<Boolean, int[]> apply(NCToken tok) {
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -343,7 +343,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class XOR extends ArrayList<Predicate> implements Predicate {
+    public static final class XOR extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new XOR-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -351,11 +351,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to XOR combine.
          */
-        public XOR(Predicate... items) {
+        public XOR(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("XOR", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -381,7 +381,7 @@ public class NCIntentSolver implements Serializable {
         public Pair<Boolean, int[]> apply(NCToken tok) {
             Pair<Boolean, int[]> xorPair = null;
 
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -415,7 +415,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class NAND extends ArrayList<Predicate> implements Predicate {
+    public static final class NAND extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new NAND-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -423,11 +423,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to NAND combine.
          */
-        public NAND(Predicate... items) {
+        public NAND(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("NAND", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -455,7 +455,7 @@ public class NCIntentSolver implements Serializable {
 
             boolean foundFalse = false;
 
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -490,7 +490,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class XNOR extends ArrayList<Predicate> implements Predicate {
+    public static final class XNOR extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new XNOR-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -498,11 +498,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to XNOR combine.
          */
-        public XNOR(Predicate... items) {
+        public XNOR(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("XNOR", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -530,7 +530,7 @@ public class NCIntentSolver implements Serializable {
 
             int[] w = {0, 0, 0};
 
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -566,7 +566,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class NOR extends ArrayList<Predicate> implements Predicate {
+    public static final class NOR extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new NOR-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -574,11 +574,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to NOR combine.
          */
-        public NOR(Predicate... items) {
+        public NOR(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("NOR", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -604,7 +604,7 @@ public class NCIntentSolver implements Serializable {
         public Pair<Boolean, int[]> apply(NCToken tok) {
             int[] w = {0, 0, 0};
 
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -640,7 +640,7 @@ public class NCIntentSolver implements Serializable {
      * @see NOR NOR
      * @see RULE RULE
      */
-    public static final class AND extends ArrayList<Predicate> implements Predicate {
+    public static final class AND extends ArrayList<PREDICATE> implements PREDICATE {
         /**
          * Creates new AND-combinator with given items.
          * Note that only built-in {@link OR OR}, {@link AND AND}, {@link NAND NAND},
@@ -648,11 +648,11 @@ public class NCIntentSolver implements Serializable {
          *
          * @param items Items to AND combine.
          */
-        public AND(Predicate... items) {
+        public AND(PREDICATE... items) {
             if (items == null || items.length < 2)
                 throw twoOrMore("AND", Arrays.toString(items));
 
-            for (Predicate item : items)
+            for (PREDICATE item : items)
                 checkCombinator(item);
 
             addAll(Arrays.asList(items));
@@ -678,7 +678,7 @@ public class NCIntentSolver implements Serializable {
         public Pair<Boolean, int[]> apply(NCToken tok) {
             int[] w = {0, 0, 0};
 
-            for (Predicate tp : this) {
+            for (PREDICATE tp : this) {
                 Pair<Boolean, int[]> pair = tp.apply(tok);
 
                 boolean pass = pair.getLeft();
@@ -712,7 +712,7 @@ public class NCIntentSolver implements Serializable {
      * @see XNOR XNOR
      * @see NOR NOR
      */
-    public static final class RULE implements Predicate {
+    public static final class RULE implements PREDICATE {
         private static final List<String> OPS = Arrays.asList(
             // Order is important!
             "==",
@@ -847,6 +847,16 @@ public class NCIntentSolver implements Serializable {
          *         </td>
          *     </tr>
          * </table>
+         * <br><br>
+         * Here's few examples of the rules:
+         * <pre class="brush: java">
+         *      new RULE("id", "==", "x:time"); // Value is converted to string.
+         *      new RULE("~GEO_KIND", "==", "CITY");  // Value is converted to string.
+         *      new RULE("value", "%%", "^[Ff]oo[Bb]ar$"); // Value is converted to string.
+         *      new RULE("~NUM_INDEX", "!=", "null"); // Value is converted to 'null'.
+         *      new RULE("~NUM_VALUE", "&gt;=", "100"); // Value is converted to integer.
+         * </pre>
+         *
          * @param value Rule's right-side string value. It's processing depends on {@code param} and {@code op}.
          */
         public RULE(String param, String op, Object value) {
@@ -1142,7 +1152,7 @@ public class NCIntentSolver implements Serializable {
      * Item is a token predicate plus quantifiers. It is a building block for {@link TERM TERM}.
      */
     public static final class ITEM implements Serializable {
-        final private Predicate ptrn;
+        final private PREDICATE ptrn;
         final private int min, max;
 
         /**
@@ -1154,7 +1164,7 @@ public class NCIntentSolver implements Serializable {
          * @param max Maximum (inclusive) number of times the token predicate {@code pred} should find a match in
          *      the user input for this item to match.
          */
-        public ITEM(Predicate pred, int min, int max) {
+        public ITEM(PREDICATE pred, int min, int max) {
             if (pred == null)
                 throw new IllegalArgumentException("Intent DSL item predicate cannot be null.");
             if (min < 0 || min > max)
@@ -1172,7 +1182,7 @@ public class NCIntentSolver implements Serializable {
          *
          * @return Token predicate for this item.
          */
-        public Predicate getPattern() {
+        public PREDICATE getPattern() {
             return ptrn;
         }
 
@@ -1227,10 +1237,10 @@ public class NCIntentSolver implements Serializable {
          * </pre>
          *
          * @param pred Built-in token predicate: either one of the logical combinators or {@link RULE RULE}.
-         * @param min Minimum quantifier for this predicate.
-         * @param max Maximum quantifier for this predicate.
+         * @param min Minimum quantifier for the predicate.
+         * @param max Maximum quantifier for the predicate.
          */
-        public TERM(Predicate pred, int min, int max) {
+        public TERM(PREDICATE pred, int min, int max) {
             this(new ITEM(pred, min, max));
         }
 
@@ -1241,8 +1251,8 @@ public class NCIntentSolver implements Serializable {
          * </pre>
          *
          * @param expr Whitespace separated string of parameter, its operation and value for the {@link RULE RULE}.
-         * @param min Minimum quantifier for this predicate.
-         * @param max Maximum quantifier for this predicate.
+         * @param min Minimum quantifier for the predicate.
+         * @param max Maximum quantifier for the predicate.
          */
         public TERM(String expr, int min, int max) {
             this(new ITEM(new RULE(expr), min, max));
@@ -1346,7 +1356,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Convenient adapter for conversational intent.
+     * Convenient adapter for conversational unordered intent.
      */
     public static class CONV_INTENT extends INTENT {
         /**
@@ -1379,7 +1389,7 @@ public class NCIntentSolver implements Serializable {
          * @param min Minimum quantifier for this predicate.
          * @param max Maximum quantifier for this predicate.
          */
-        public CONV_INTENT(String id, Predicate pred, int min, int max) {
+        public CONV_INTENT(String id, PREDICATE pred, int min, int max) {
             this(id, new TERM(pred, min, max));
         }
 
@@ -1402,7 +1412,7 @@ public class NCIntentSolver implements Serializable {
     }
 
     /**
-     * Convenient adapter for non-conversational intent.
+     * Convenient adapter for non-conversational unordered intent.
      */
     public static class NON_CONV_INTENT extends INTENT {
         /**
@@ -1435,7 +1445,7 @@ public class NCIntentSolver implements Serializable {
          * @param min Minimum quantifier for this predicate.
          * @param max Maximum quantifier for this predicate.
          */
-        public NON_CONV_INTENT(String id, Predicate pred, int min, int max) {
+        public NON_CONV_INTENT(String id, PREDICATE pred, int min, int max) {
             this(id, new TERM(pred, min, max));
         }
 

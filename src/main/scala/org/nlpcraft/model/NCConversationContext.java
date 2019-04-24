@@ -44,7 +44,9 @@ import java.util.function.Predicate;
  * Every submitted user request that wasn't
  * rejected is added to the conversation STM as a list of {@link NCToken tokens}. Existing STM tokens with
  * the same {@link NCElement#getGroup() group} will be overridden by the more recent tokens from the same group.
- * Note also that tokens in STM automatically expire (i.e. context is "forgotten") after a certain period of time.
+ * Note also that tokens in STM automatically expire (i.e. context is "forgotten") after a certain period of time
+ * or based on other internal logic. Note that you should not rely on a specific expiration behavior as its logic
+ * is not deterministic.
  *
  * @see NCQueryContext#getConversationContext()
  */

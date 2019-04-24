@@ -31,28 +31,17 @@
 
 package org.nlpcraft.examples.alarm;
 
-import org.nlpcraft.model.NCModelProviderAdapter;
-import org.nlpcraft.model.NCQueryResult;
-import org.nlpcraft.model.NCRejection;
-import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.builder.NCModelBuilder;
-import org.nlpcraft.model.intent.NCIntentSolver;
-import org.nlpcraft.model.intent.NCIntentSolver.AND;
-import org.nlpcraft.model.intent.NCIntentSolver.NON_CONV_INTENT;
-import org.nlpcraft.model.intent.NCIntentSolver.TERM;
-import org.nlpcraft.model.intent.NCIntentSolverContext;
-import org.nlpcraft.model.utils.NCTokenUtils;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.intent.NCIntentSolver.*;
+import org.nlpcraft.model.utils.*;
+import java.time.*;
+import java.time.format.*;
+import java.util.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static java.time.temporal.ChronoUnit.MILLIS;
-import static org.nlpcraft.model.utils.NCTokenUtils.getNumFrom;
-import static org.nlpcraft.model.utils.NCTokenUtils.getNumUnit;
+import static java.time.temporal.ChronoUnit.*;
+import static org.nlpcraft.model.utils.NCTokenUtils.*;
 
 /**
  * Alarm example model provider.
