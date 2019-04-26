@@ -249,6 +249,19 @@ layout: documentation
             <a href="#option-groups">option groups</a>, <a href="#regex">regular expressions</a>,
             and <a href="#pos-tag">PoS tags</a> to significantly shorten that list.
         </p>
+        <div class="bq info">
+            <p><b>Static vs Dynamic Configuration</b></p>
+            <p>
+                While in many cases all model configuration can be defined statically (in the code or in the external
+                JSON/YAML model definitions) there are times when certain configuration properties are easier to add
+                dynamically - for example, load model elements and their synonyms from a database. In these
+                cases, you can combine a static data model definition with dynamic configuration using
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCModelBuilder.html">NCModelBuilder</a> and
+                <a target="javadoc" href="/apis/latest/org/nlpcraft/model/builder/NCElementBuilder.html">NCElementBuilder</a> factory classes.
+                These factory classes allow you to load the bulk of the model configuration from a
+                static JSON/YAML file and then add necessary configuration parameters (i.e. elements, etc) dynamically.
+            </p>
+        </div>
         <span id="synonyms" class="section-sub-title">Synonyms</span>
         <p>
             Synonyms are the key building blocks of the data model element and used in the following
@@ -1298,7 +1311,7 @@ layout: documentation
             <tr>
                 <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">DATE_FROM</a></td>
                 <td>
-                     Start timestamp of the datetime range.
+                     Start of the datetime range.
                 </td>
                 <td><code>Long</code></td>
                 <td>No</td>
@@ -1306,7 +1319,7 @@ layout: documentation
             <tr>
                 <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">DATE_TO</a></td>
                 <td>
-                     End timestamp of the datetime range.
+                     End of the datetime range.
                 </td>
                 <td><code>Long</code></td>
                 <td>No</td>
@@ -1484,7 +1497,8 @@ layout: documentation
             <tr>
                 <td><a target="javadoc" href="/apis/latest/org/nlpcraft/model/NCToken.html">FUNCTION_INDEXES</a></td>
                 <td>
-                    Indexes of the element(s) this token is referencing. Can be empty.
+                    Indexes of the other token(s) this token is referencing. Can be empty. The indexes in this list
+                    refer to <code>NLP_INDEX</code> token property.
                 </td>
                 <td><code>java.util.List</code></td>
                 <td>No</td>
