@@ -29,12 +29,14 @@
  *        /_/
  */
 
-.download-sigs > a {
-    border: 1px solid #bfe1ff;
-    padding: 1px 2px;
-}
+#downloads {
+    .download-sigs > a {
+        border: 1px solid #bfe1ff;
+        padding: 1px 2px;
+    }
 
-td.links {
-    width: 30%;
-    font-size: 90%;
+    td.links {
+        width: 30%;
+        font-size: 90%;
+    }
 }
