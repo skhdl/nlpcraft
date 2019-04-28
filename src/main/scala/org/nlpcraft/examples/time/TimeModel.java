@@ -181,7 +181,7 @@ public class TimeModel extends NCModelProviderAdapter {
         // Check for exactly one 'x:time' token **without** looking into conversation context.
         // That's an indication of asking for local time only.
         solver.addIntent(
-            new NON_CONV_INTENT("time", "id == x:time", 1, 1), // Term idx=0.
+            new NON_CONV_INTENT("intent#1", "id == x:time", 1, 1), // Term idx=0.
             this::onLocalMatch
         );
 
@@ -189,7 +189,7 @@ public class TimeModel extends NCModelProviderAdapter {
         // context. This is always remote time.
         solver.addIntent(
             new CONV_INTENT(
-                "c^time|city",
+                "intent#2",
                 new TERM("id == x:time", 1, 1), // Term #1 (index=0).
                 new TERM(
                     new AND(                    // Term #2 (index=1)

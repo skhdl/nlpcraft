@@ -329,9 +329,9 @@ public class WeatherModel extends NCModelProviderAdapter {
         });
 
         // Match exactly one of weather tokens and optional 'nlp:geo' and 'nlp:date' tokens.
-        solver.addIntent(mkIntent("hist|date?|city?", "wt:hist"), this::onHistoryMatch);
-        solver.addIntent(mkIntent("fcast|date?|city?", "wt:fcast"), this::onForecastMatch);
-        solver.addIntent(mkIntent("curr|date?|city?", "wt:curr"), this::onCurrentMatch);
+        solver.addIntent(mkIntent("hist", "wt:hist"), this::onHistoryMatch);
+        solver.addIntent(mkIntent("fcast", "wt:fcast"), this::onForecastMatch);
+        solver.addIntent(mkIntent("curr", "wt:curr"), this::onCurrentMatch);
 
         setup(NCModelBuilder.
             newJsonModel(WeatherModel.class.
