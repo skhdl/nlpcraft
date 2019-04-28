@@ -157,7 +157,7 @@ public class ApixuWeatherService {
      *
      * @param geo Geo location.
      * @param range Date range.
-     * @throws ApixuPeriodException TODO:
+     * @throws ApixuPeriodException Thrown in case of wrong input parameters.
      */
     public RangeResponse getWeather(String geo, Pair<LocalDate, LocalDate> range) throws ApixuPeriodException {
         LocalDate from = range.getLeft();

@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Convenient model provider adapter. This provider takes one or more pre-created data models and will
+ * Convenient data model provider adapter. This provider takes one or more pre-created data models and will
  * return them from {@link #makeModel(String)} method. Sub-classes or client classes should call one of the following
  * methods to pass data model instances this adapter will return:
  * <ul>

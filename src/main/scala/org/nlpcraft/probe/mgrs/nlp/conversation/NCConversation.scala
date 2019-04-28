@@ -31,7 +31,9 @@
 
 package org.nlpcraft.probe.mgrs.nlp.conversation
 
-import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, ZoneId}
+import java.util
 import java.util.function.Predicate
 
 import com.typesafe.scalalogging.LazyLogging
@@ -48,76 +50,114 @@ import scala.concurrent.duration._
   * Conversation as an ordered set of utterances.
   */
 case class NCConversation(usrId: Long, mdlId: String) extends LazyLogging {
-    // After 10 mins pause between questions we clear the STM.
-    private final val CONV_CLEAR_DELAY = 10.minutes.toMillis
-    
+    // After 5 mins pause between questions we clear the STM.
+    private final val CONV_CLEAR_DELAY = 5.minutes.toMillis
+
+    // If token is not used in last 3 requests, it is removed from conversation context.
+    private final val MAX_DEPTH = 3
+
     // Timestamp format.
-    private final val TSTAMP_FMT = new SimpleDateFormat("hh:mm:ss a")
-    
+    private final val TSTAMP_FMT = DateTimeFormatter.ofPattern("hh:mm:ss a")
+
+    private final val UTC = ZoneId.of("UTC")
+
     // Short-Term-Memory.
-    private val stm = mutable.TreeSet.empty[NCConversationItem]
-    private var ctx = new java.util.HashSet[NCToken]()
+    private val stm = mutable.ArrayBuffer.empty[ConversationItem]
+    private val lastUsedToks = mutable.ArrayBuffer.empty[Iterable[NCToken]]
+
+    private var ctx = new util.ArrayList[NCToken]()
     private var lastUpdateTstamp = U.nowUtcMs()
-    
+    private var attempt = 0
+
     /**
       *
-      * @param tokens
-      * @param text
-      * @param srvReqId
-      * @param tstamp
+      * @param token
+      * @param tokenTypeUsageTime
       */
-    case class NCConversationItem(
-        tokens: java.util.List[NCToken],
-        text: String,
-        srvReqId: String,
-        tstamp: Long
-    ) extends Ordered[NCConversationItem] {
-        override def compare(that: NCConversationItem): Int = this.tstamp.compareTo(that.tstamp)
+    case class TokenHolder(token: NCToken, var tokenTypeUsageTime: Long = 0)
+
+    /**
+      *
+      * @param holders Tokens holders.
+      * @param text Sentence text. Used just for logging.
+      * @param srvReqId Server request ID. Used just for logging.
+      * @param tstamp Request timestamp. Used just for logging.
+      */
+    case class ConversationItem(holders: mutable.ArrayBuffer[TokenHolder], text: String, srvReqId: String, tstamp: Long)
+
+    /**
+      *
+      */
+    private def squeeze(): Unit = {
+        require(Thread.holdsLock(stm))
+
+        stm --= stm.filter(_.holders.isEmpty)
     }
-    
+
     /**
       *
       */
-    def update(): Unit = stm.synchronized {
+    def update(): Unit = {
         val now = U.nowUtcMs()
-    
-        if (now - lastUpdateTstamp > CONV_CLEAR_DELAY) {
-            logger.trace(s"Conversation reset by timeout [" +
-                s"usrId=$usrId, " +
-                s"mdlId=$mdlId" +
-            s"]")
-        
-            stm.clear()
+
+        stm.synchronized {
+            attempt += 1
+
+            // Conversation cleared by timeout or when there are too much unsuccessful requests.
+            if (now - lastUpdateTstamp > CONV_CLEAR_DELAY || attempt > MAX_DEPTH) {
+                stm.clear()
+
+                logger.trace(s"Conversation reset [usrId=$usrId, mdlId=$mdlId]")
+            }
+            else {
+                val minUsageTime = now - CONV_CLEAR_DELAY
+                val lastToks = lastUsedToks.flatten
+
+                for (item ← stm) {
+                    val delHs =
+                        // Deleted by timeout for tokens type or when token type used too many requests ago.
+                        item.holders.filter(h ⇒ h.tokenTypeUsageTime < minUsageTime || !lastToks.contains(h.token))
+
+                    if (delHs.nonEmpty) {
+                        item.holders --= delHs
+
+                        logger.trace(
+                            s"Conversation tokens deleted [" +
+                                s"usrId=$usrId, " +
+                                s"mdlId=$mdlId, " +
+                                s"srvReqId=${item.srvReqId}, " +
+                                s"sentence=${item.text}, " +
+                                s"tokens=${delHs.map(_.token).mkString(", ")}" +
+                            s"]"
+                        )
+                    }
+                }
+
+                squeeze()
+            }
+
+            lastUpdateTstamp = now
+
+            ctx = new util.ArrayList[NCToken](stm.flatMap(_.holders.map(_.token)).asJava)
         }
-    
-        lastUpdateTstamp = now
-    
-        val map = mutable.HashMap.empty[String/*Token group.*/, mutable.Buffer[NCToken]]
-    
-        // Recalculate the context based on new STM.
-        for (item ← stm)
-            // NOTE:
-            // (1) STM is a red-black tree and traversed in ascending time order (older first).
-            // (2) Map update ensure that only the youngest tokens per each group are retained in the context.
-            map ++= item.tokens.asScala.filter(t ⇒ !isFreeWord(t) && !isStopWord(t)).groupBy(
-                tok ⇒ if (tok.getGroup == null) "" else tok.getGroup
-            )
-    
-        ctx = new java.util.HashSet[NCToken](map.values.flatten.asJavaCollection)
     }
-    
+
     /**
       * Clears all tokens from this conversation satisfying given predicate.
       *
       * @param p Java-side predicate.
       */
-    def clear(p: Predicate[NCToken]): Unit = stm.synchronized {
-        for (item ← stm)
-            item.tokens.removeIf(p)
-    
+    def clear(p: Predicate[NCToken]): Unit = {
+        stm.synchronized {
+            for (item ← stm)
+                item.holders --= item.holders.filter(h ⇒ p.test(h.token))
+
+            squeeze()
+        }
+
         logger.trace(s"Manually cleared conversation for some tokens.")
     }
-    
+
     /**
       *
       * @param p Scala-side predicate.
@@ -126,59 +166,114 @@ case class NCConversation(usrId: Long, mdlId: String) extends LazyLogging {
         clear(new Predicate[NCToken] {
             override def test(t: NCToken): Boolean = p(t)
         })
-    
+
     /**
       * Adds new item to the conversation.
       *
-      * @param sen Sentence.
-      * @param v Sentence's specific variant.
+      * @param srvReqId Server request ID.
+      * @param txt Text.
+      * @param usedToks Used tokens, including conversation tokens.
       */
-    def addItem(sen: NCSentence, v: NCVariant): Unit = stm.synchronized {
-        stm += NCConversationItem(
-            v.getTokens,
-            sen.getNormalizedText,
-            sen.getServerRequestId,
-            lastUpdateTstamp
+    def addItem(srvReqId: String, txt: String, usedToks: Seq[NCToken]): Unit = {
+        stm.synchronized {
+            attempt = 0
+
+            // Last used tokens processing.
+            lastUsedToks += usedToks
+
+            val delCnt = lastUsedToks.length - MAX_DEPTH
+
+            if (delCnt > 0)
+                lastUsedToks.remove(0, delCnt)
+
+            val senToks = usedToks.filter(_.getServerRequestId == srvReqId).filter(t ⇒ !isFreeWord(t) && !isStopWord(t))
+
+            if (senToks.nonEmpty) {
+                // Adds new conversation element.
+                stm += ConversationItem(
+                    mutable.ArrayBuffer.empty[TokenHolder] ++ senToks.map(TokenHolder(_)),
+                    txt,
+                    srvReqId,
+                    lastUpdateTstamp
+                )
+
+                val groups = mutable.HashSet.empty[String]
+
+                for (
+                    item ← stm.reverse;
+                    (group, hs) ← item.holders.groupBy(t ⇒ if (t.token.getGroup != null) t.token.getGroup else "")
+                ) {
+                    // Deletes if tokens with this group already exists. First added tokens from last conversation items.
+                    if (!groups.add(group))
+                        item.holders --= hs
+
+                    // Updates tokens usage time.
+                    item.holders.filter(h ⇒ usedToks.contains(h.token)).foreach(_.tokenTypeUsageTime = lastUpdateTstamp)
+                }
+
+                squeeze()
+            }
+        }
+
+        logger.trace(
+            s"Added new sentence to the conversation [" +
+                s"usrId=$usrId, " +
+                s"mdlId=$mdlId, " +
+                s"text=$txt, " +
+                s"usedTokens=${usedToks.mkString(", ")}" +
+            s"]"
         )
-    
-        logger.trace(s"Added new sentence to the conversation [" +
-            s"usrId=$usrId, " +
-            s"mdlId=$mdlId, " +
-            s"text=${sen.getNormalizedText}" +
-        s"]")
     }
-    
+
     /**
       * Prints out ASCII table for current STM.
       */
-    def ack(): Unit = stm.synchronized {
-        val stmTbl = NCAsciiTable("Time", "Sentence", "Server Request ID")
-        
-        stm.foreach(item ⇒ stmTbl += (
-            TSTAMP_FMT.format(new java.util.Date(item.tstamp)),
-            item.text,
-            item.srvReqId
-        ))
-    
-        val ctxTbl = NCAsciiTable("Token ID", "Group", "Text", "Value", "From request")
-    
-        ctx.asScala.foreach(tok ⇒ ctxTbl += (
-            tok.getId,
-            tok.getGroup,
-            getNormalizedText(tok),
-            tok.getValue,
-            tok.getServerRequestId
-        ))
-    
-        logger.trace(s"Conversation history [usrId=$usrId, mdlId=$mdlId]:\n${stmTbl.toString}")
-        logger.trace(s"Conversation tokens [usrId=$usrId, mdlId=$mdlId]:\n${ctxTbl.toString}")
+    def ack(): Unit = {
+        def mkHistoryTable(): String = {
+            val t = NCAsciiTable("Time", "Sentence", "Server Request ID")
+
+            stm.synchronized {
+                stm.foreach(item ⇒
+                    t += (
+                        TSTAMP_FMT.format(Instant.ofEpochMilli(item.tstamp).atZone(UTC)),
+                        item.text,
+                        item.srvReqId
+                    )
+                )
+            }
+
+            t.toString
+        }
+
+        def mkTokensTable(): String = {
+            val t = NCAsciiTable("Token ID", "Group", "Text", "Value", "From request")
+
+            stm.synchronized {
+                ctx.asScala.foreach(tok ⇒ t += (
+                    tok.getId,
+                    tok.getGroup,
+                    getNormalizedText(tok),
+                    tok.getValue,
+                    tok.getServerRequestId
+                ))
+            }
+
+            t.toString
+        }
+
+        logger.trace(s"Conversation history [usrId=$usrId, mdlId=$mdlId]:\n${mkHistoryTable()}")
+        logger.trace(s"Conversation tokens [usrId=$usrId, mdlId=$mdlId]:\n${mkTokensTable()}")
     }
-    
+
     /**
-      * 
+      *
+      *
       * @return
       */
-    def tokens: java.util.HashSet[NCToken] = stm.synchronized {
-        ctx
+    def tokens: util.List[NCToken] = stm.synchronized {
+        val srvReqIds = ctx.asScala.map(_.getServerRequestId).distinct.zipWithIndex.toMap
+        val toks = ctx.asScala.groupBy(_.getServerRequestId).toSeq.sortBy(p ⇒ srvReqIds(p._1)).reverse.flatMap(_._2)
+
+        new util.ArrayList[NCToken](toks.asJava)
     }
 }

@@ -31,7 +31,7 @@
 
 package org.nlpcraft.model.intent.impl
 
-import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList, Set ⇒ JSet}
+import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.lang3.tuple.Pair
@@ -39,7 +39,7 @@ import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model.intent.NCIntentSolver._
 import org.nlpcraft.model.utils.NCTokenUtils._
-import org.nlpcraft.model.{NCSentence, NCToken, NCVariant}
+import org.nlpcraft.model.{NCSentence, NCToken}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -50,7 +50,7 @@ import scala.collection.mutable
 object NCIntentSolverEngine extends LazyLogging {
     private class Weight extends Ordered[Weight] {
         private val weights: Array[Int] = new Array(5)
-    
+
         /**
           *
           * @param w0
@@ -68,7 +68,7 @@ object NCIntentSolverEngine extends LazyLogging {
             weights(3) = w3
             weights(4) = w4
         }
-    
+
         /**
           * Sets specific weight at a given index.
           *
@@ -84,12 +84,10 @@ object NCIntentSolverEngine extends LazyLogging {
           * @return
           */
         def ++=(that: Weight): Weight = {
-            val newW = new Weight()
-    
             for (i ← 0 until 5)
-                newW.setWeight(i, this.weights(i) + that.weights(i))
+                this.setWeight(i, this.weights(i) + that.weights(i))
             
-            newW
+            this
         }
     
         /**
@@ -106,9 +104,8 @@ object NCIntentSolverEngine extends LazyLogging {
             res
         }
     
-        override def toString: String = {
+        override def toString: String =
             s"Weight (${weights(0)}, ${weights(1)}, ${weights(2)}, ${weights(3)}, ${weights(4)})"
-        }
     }
     
     /**
@@ -148,6 +145,13 @@ object NCIntentSolverEngine extends LazyLogging {
         intent: INTENT,
         exactMatch: Boolean
     )
+
+    /**
+      *
+      * @param t
+      * @return
+      */
+    private def getGroup(t: NCToken): String = if (t.getGroup != null) t.getGroup else ""
     
     /**
       * Main entry point for intent engine.
@@ -160,12 +164,12 @@ object NCIntentSolverEngine extends LazyLogging {
     @throws[NCE]
     def solve(
         sen: NCSentence,
-        conv: JSet[NCToken],
+        conv: JList[NCToken],
         intents: JList[Pair[INTENT, IntentCallback]]): JList[NCIntentSolverResult] = {
         case class MatchHolder(
             intentMatch: IntentMatch, // Match.
             callback: IntentCallback, // Callback function.
-            variant: NCVariant, // Variant used for the match.
+            variant: NCIntentSolverVariant, // Variant used for the match.
             variantIdx: Int // Variant index.
         )
         
@@ -173,7 +177,7 @@ object NCIntentSolverEngine extends LazyLogging {
 
         // Find all matches across all intents and sentence variants.
         for ((vrn, vrnIdx) ← sen.getVariants.zipWithIndex) {
-            val availToks = vrn.getTokens.filter(!isStopWord(_))
+            val availToks = vrn.filter(!isStopWord(_))
             
             matches.appendAll(
                 intents.flatMap(pair ⇒ {
@@ -182,16 +186,20 @@ object NCIntentSolverEngine extends LazyLogging {
                     
                     // Isolated sentence tokens.
                     val senToks = Seq.empty[UseToken] ++ availToks.map(UseToken(false, false, _))
+                    val senTokGroups = availToks.map(getGroup).toSet
+
                     // Isolated conversation tokens.
                     val convToks =
                         if (intent.isIncludeConversation)
-                            Set.empty[UseToken] ++ conv.map(UseToken(false, true, _))
+                            Seq.empty[UseToken] ++
+                                // We shouldn't mix tokens with same group from conversation history and processed sentence.
+                                conv.filter(t ⇒ !senTokGroups.contains(getGroup(t))).map(UseToken(false, true, _))
                         else
-                            Set.empty[UseToken]
+                            Seq.empty[UseToken]
     
                     // Solve intent in isolation.
                     solveIntent(intent, senToks, convToks, vrnIdx) match {
-                        case Some(intentMatch) ⇒ Some(MatchHolder(intentMatch, callback, vrn, vrnIdx + 1))
+                        case Some(intentMatch) ⇒ Some(MatchHolder(intentMatch, callback, NCIntentSolverVariant(vrn), vrnIdx + 1))
                         case None ⇒ None
                     }
                 })
@@ -201,6 +209,7 @@ object NCIntentSolverEngine extends LazyLogging {
         val sorted =
             matches.sortWith((m1: MatchHolder, m2: MatchHolder) ⇒
                 // 1. First with maximum weight.
+
                 m1.intentMatch.weight.compare(m2.intentMatch.weight) match {
                     case x1 if x1 < 0 ⇒ false
                     case x1 if x1 > 0 ⇒ true
@@ -216,7 +225,7 @@ object NCIntentSolverEngine extends LazyLogging {
                                 require(x2 == 0)
 
                                 def calcHash(m: MatchHolder): Int =
-                                    m.variant.getTokens.map(t ⇒
+                                    m.variant.tokens.map(t ⇒
                                         s"${t.getId}${t.getGroup}${t.getValue}${t.getMetadata.getString("NLP_NORMTEXT")}"
                                     ).mkString("").hashCode
 
@@ -300,7 +309,7 @@ object NCIntentSolverEngine extends LazyLogging {
     private def solveIntent(
         intent: INTENT,
         senToks: Seq[UseToken],
-        convToks: Set[UseToken],
+        convToks: Seq[UseToken],
         varIdx: Int): Option[IntentMatch] = {
         val intentW = new Weight()
         val intentGrps = mutable.ListBuffer.empty[List[UseToken]]
@@ -381,7 +390,7 @@ object NCIntentSolverEngine extends LazyLogging {
     private def solveTerm(
         term: TERM,
         senToks: Seq[UseToken],
-        convToks: Set[UseToken]): Option[TermMatch] = {
+        convToks: Seq[UseToken]): Option[TermMatch] = {
         var termToks = List.empty[UseToken]
         var termWeight = new Weight()
         var abort = false
@@ -391,7 +400,6 @@ object NCIntentSolverEngine extends LazyLogging {
                 case Some(t) ⇒
                     termToks = termToks ::: t._1
                     termWeight ++= t._2
-                    
                 case None ⇒
                     abort = true
             }
@@ -413,7 +421,8 @@ object NCIntentSolverEngine extends LazyLogging {
     private def solveItem(
         item: ITEM,
         senToks: Seq[UseToken],
-        convToks: Set[UseToken]): Option[(List[UseToken], Weight)] = {
+        convToks: Seq[UseToken]
+    ): Option[(List[UseToken], Weight)] = {
         // Algorithm is "hungry", i.e. it will fetch all tokens satisfying item's predicate
         // in entire sentence even if these tokens are separated by other already used tokens
         // and conversation will be used only to get to the 'max' number of the item.
@@ -422,15 +431,13 @@ object NCIntentSolverEngine extends LazyLogging {
         val min = item.getMin
         val max = item.getMax
         val itemW = Array(0, 0, 0) // Total 3-part items weight.
-    
+
         /**
           *
           * @param from Collection to collect tokens from.
           * @param maxLen Maximum number of tokens to collect.
           */
-        def collect(from: Iterable[UseToken], maxLen: Int): Boolean = {
-            var found = false
-            
+        def collect(from: Iterable[UseToken], maxLen: Int): Unit =
             for (tok ← from.filter(!_.used) if itemToks.lengthCompare(maxLen) < 0)
                 item.getPattern.apply(tok.tok) match {
                     case p if p.getLeft ⇒ // Item satisfying given token found.
@@ -441,21 +448,14 @@ object NCIntentSolverEngine extends LazyLogging {
                         itemW(0) += w(0)
                         itemW(1) += w(1)
                         itemW(2) += w(2)
-                        
-                        found = true
-                        
                     case _ ⇒
                 }
-            
-            found
-        }
-    
+
         // Collect to the 'max', if possible.
         collect(senToks, max)
         
-        // Specificity weight ('0' if conversation was used, '1' if not).
-        val specW = if (collect(convToks, max)) 0 else 1
-        
+        collect(convToks, max)
+
         if (itemToks.lengthCompare(min) < 0) // We couldn't collect even 'min' tokens.
             None
         else if (itemToks.isEmpty) { // Item is optional and no tokens collected (valid result).
@@ -464,8 +464,15 @@ object NCIntentSolverEngine extends LazyLogging {
             Some(itemToks → new Weight())
         }
         else { // We've collected some tokens.
+            // Youngest first.
+            val convSrvReqIds = convToks.map(_.tok.getServerRequestId).distinct
+
+            // Specificity weight ('1' if conversation wasn't used, -'index of conversation depth' if wasn't).
+            // (It is better to be not from conversation or be youngest tokens from conversation)
+            val specW = -itemToks.map(t ⇒ convSrvReqIds.indexOf(t.tok.getServerRequestId)).sum
+
             itemToks.foreach(_.used = true) // Mark tokens as used.
-    
+
             Some(itemToks → new Weight(0/* set later */, specW, itemW(0), itemW(1), itemW(2)))
         }
     }

@@ -32,7 +32,7 @@
 package org.nlpcraft.model.tools.dump;
 
 import org.nlpcraft.common.NCException;
-import org.nlpcraft.model.NCModel;
+import org.nlpcraft.model.*;
 import org.nlpcraft.model.builder.*;
 import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
 import java.io.File;
@@ -51,8 +51,8 @@ public class NCDumpReader {
      * Reads the data model dump and creates data model proxy.
      *
      * @param filePath Data model dump file path to read.
-     * @return Data model proxy. Proxy will have a no-op callback implementations for intent and will return the
-     *      following JSON response:
+     * @return Newly built model proxy. Proxy model will have a no-op callback implementations for intent and will return the
+     *      following JSON response from its {@link NCModel#query(NCQueryContext)} method:
      * <pre class="brush: js">
      * {
      *     "modelId": "model-id",
@@ -71,8 +71,8 @@ public class NCDumpReader {
      * Reads the data model dump and creates data model proxy.
      *
      * @param file Data model dump file to read.
-     * @return Data model proxy. Proxy will have a no-op callback implementations for intent and will return the
-     *      following JSON response:
+     * @return Newly built model proxy. Proxy model will have a no-op callback implementations for intent and will return the
+     *      following JSON response from its {@link NCModel#query(NCQueryContext)} method:
      * <pre class="brush: js">
      * {
      *     "modelId": "model-id",

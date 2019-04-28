@@ -33,11 +33,12 @@ package org.nlpcraft.model;
 
 import org.nlpcraft.common.NCException;
 import org.nlpcraft.common.util.NCUtils;
-import org.nlpcraft.model.intent.*;
-import java.io.*;
+
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
- * Model query result returned from {@link NCModel#query(NCQueryContext)} method. Query result consists of the
+ * Data model query result returned from {@link NCModel#query(NCQueryContext)} method. Query result consists of the
  * text body and the type. The type is similar in notion to MIME types. The following is the list of supported
  * result types:
  * <table summary="" class="dl-table">
@@ -69,7 +70,7 @@ import java.io.*;
 public class NCQueryResult implements Serializable {
     private String body;
     private String type;
-    private NCVariant var;
+    private Collection<NCToken> tokens;
     
     /**
      * Creates {@code text} result.
@@ -127,7 +128,7 @@ public class NCQueryResult implements Serializable {
      *
      * @param body Result body.
      * @param type Result type.
-     * @throws IllegalArgumentException Thrown if type of invalid.
+     * @throws IllegalArgumentException Thrown if type is invalid.
      */
     private NCQueryResult(String body, String type) {
         assert body != null;
@@ -140,7 +141,7 @@ public class NCQueryResult implements Serializable {
     /**
      *
      * @param type Type to check.
-     * @throws IllegalArgumentException Thrown if type of invalid.
+     * @throws IllegalArgumentException Thrown if type is invalid.
      */
     private String checkType(String type) {
         String typeLc = type.toLowerCase();
@@ -165,58 +166,46 @@ public class NCQueryResult implements Serializable {
      * Sets result body.
      *
      * @param body Result body.
-     * @return This instance of chaining calls.
      */
-    public NCQueryResult setBody(String body) {
+    public void setBody(String body) {
         this.body = body;
-
-        return this;
     }
 
     /**
      * Set result type.
      *
      * @param type Result type.
-     * @throws IllegalArgumentException Thrown if type of invalid.
-     * @return This instance of chaining calls.
+     * @throws IllegalArgumentException Thrown if type is invalid.
      */
-    public NCQueryResult setType(String type) {
+    public void setType(String type) {
         this.type = checkType(type);
+    }
 
-        return this;
-    }
-    
     /**
-     * Gets optional sentence variant associated with this result.
-     * <br><br>
-     * Note that in general a user input can have one or more possible
-     * parsing {@link NCSentence#getVariants() variants}. Setting the specific variant that was the origin of
-     * this result is required for proper conversation context maintenance. Note also that
-     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
+     * Gets tokens that were used to produce this query result. Note that the
+     * returned tokens can come from the current request as well as from conversation context (i.e. from
+     * previous requests). Order of tokens is not important.
      *
-     * @return Sentence variant associated with this result or {@code null}.
-     * @see NCSentence#getVariants()
+     * @return Gets tokens that were used to produce this query result.
+     * @see #setTokens(Collection) 
      */
-    public NCVariant getVariant() {
-        return var;
+    public Collection<NCToken> getTokens() {
+        return tokens;
     }
-    
+
     /**
-     * Sets optional sentence variant this result originated from.
+     * Sets a collection of tokens that was used to produce this query result. Note that the
+     * returned tokens can come from the current request as well as from conversation context (i.e. from
+     * previous requests). Order of tokens is not important.
      * <br><br>
-     * Note that in general a user input can have one or more possible
-     * parsing {@link NCSentence#getVariants() variants}. Setting the specific variant that was the origin of
-     * this result is required for proper conversation context maintenance. Note also that
-     * sub-systems like {@link NCIntentSolver intent-based solver} will set the proper variant automatically.
+     * Providing these tokens is necessary for proper STM operation. If conversational support isn't used
+     * setting these tokens is not required.
      *
-     * @param var Sentence variant to set.
-     * @return This instance of chaining calls.
-     * @see NCSentence#getVariants()
+     * @param tokens Collection of tokens that was used to produce this query result.
+     * @see #getTokens()
      */
-    public NCQueryResult setVariant(NCVariant var) {
-        this.var = var;
-        
-        return this;
+    public void setTokens(Collection<NCToken> tokens) {
+        this.tokens = tokens;
     }
     
     /**

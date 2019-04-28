@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <b>Main interface</b> for user-defined semantic data model.
+ * <b>Main interface</b> for user-defined data model.
  * <br><br>
  * A model generally defines:
  * <ul>

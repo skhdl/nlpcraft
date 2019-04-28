@@ -70,9 +70,8 @@ public interface NCToken extends Serializable {
      * <br><br>
      * <b>Intent DSL</b>
      * <br>
-     * All token properties documented in this method can be used in {@link NCIntentSolver.RULE} DSL.
-     * Using token properties in intent definition may allow for better accuracy and deeper matching
-     * semantics for intents. For example:
+     * Note that all token properties documented in this method can be used in {@link NCIntentSolver.RULE} DSL,
+     * for example:
      * <pre class="brush: java">
      *      new RULE("~GEO_KIND == CITY"); // Match only cities.
      *      new RULE("~NUM_INDEX != null"); // Avoid "dangling" numeric conditions.
@@ -900,10 +899,11 @@ public interface NCToken extends Serializable {
     String getValue();
 
     /**
-     * Gets optional group this token's element belongs to. Only applicable for user-defined model elements
-     * (system built-in tokens will return {@code null}).
+     * Gets the name of the group this token's belongs to. For the built-in system tokens the group
+     * is token's ID. For the user-defined tokens the group is either the data model element's ID or, if defined,
+     * the provided element's group.
      *
-     * @return Element group or {@code null} if group is not available.
+     * @return Token group.
      * @see NCElement#getGroup()
      */
     String getGroup();

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Semantic model element.
+ * Data model element.
  * <br><br>
  * An element is the main building block of the semantic model. A semantic element defines an entity
  * that will be automatically recognized in the user input either by one of its synonyms or values, or directly by
@@ -243,16 +243,19 @@ public interface NCElement extends Serializable {
     String getId();
 
     /**
-     * Gets optional group name this element belongs to.
+     * Gets the name of the group this element belongs to.
      * <br><br>
-     * Elements groups is an important mechanism in implementing {@link NCModel#query(NCQueryContext)} method.
-     * Defining proper group for an element is important for proper operation of Short-Term-Memory (STM) in
+     * Note that by default the element group is equal to its ID (see {@link #getId()}). The proper
+     * grouping of the model elements is important for operation of Short-Term-Memory (STM) in
      * {@link NCConversationContext conversation context}. Specifically, a user token (i.e. found model element)
-     * with a given group name will be overridden in the conversation by the more recent token from the same group.
+     * with a given group name will be overridden in the conversation by the more recent token <b>from the same group</b>.
+     * In other words, if model elements aren't organized into proper groups the STM will operate incorrectly.
+     * <br><br>
+     * If conversation support isn't used the element groups can be ignored.
      *
-     * @return Optional group name, or {@code null} if not specified. Note that {@code null} group logically
-     *      defines a default group.
+     * @return Optional group name, or {@link #getId() ID} by default.
      * @see NCConversationContext
+     * @see #getId() 
      */
     String getGroup();
 

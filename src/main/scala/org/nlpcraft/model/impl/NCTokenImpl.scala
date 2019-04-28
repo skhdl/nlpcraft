@@ -36,8 +36,8 @@ import org.nlpcraft.model.{NCMetadata, NCToken}
 /**
   *
   * @param srvReqId
-  * @param elmId
-  * @param elmGrp
+  * @param id
+  * @param grp
   * @param parentId
   * @param value
   * @param tokMeta
@@ -45,8 +45,8 @@ import org.nlpcraft.model.{NCMetadata, NCToken}
   */
 private[nlpcraft] class NCTokenImpl(
     srvReqId: String,
-    elmId: String,
-    elmGrp: String,
+    id: String,
+    grp: String,
     parentId: String,
     value: String,
     tokMeta: NCMetadata,
@@ -55,19 +55,19 @@ private[nlpcraft] class NCTokenImpl(
     override def getMetadata: NCMetadata = tokMeta
     override def getElementMetadata: NCMetadata = elmMeta
     override def getServerRequestId: String = srvReqId
-    override def getId: String = elmId
-    override def getGroup: String = elmGrp
+    override def getId: String = id
+    override def getGroup: String = grp
     override def getParentId: String = parentId
-    override def isUserDefined: Boolean = !elmId.startsWith("nlp:")
-    override def isSystemDefined: Boolean = elmId.startsWith("nlp:")
+    override def isUserDefined: Boolean = !id.startsWith("nlp:")
+    override def isSystemDefined: Boolean = id.startsWith("nlp:")
     override def getValue: String = value
 
     override def toString: String =
         // NOTE: we don't print type and free words status on purpose.
         s"Token [" +
-            s"id=$elmId, " +
+            s"id=$id, " +
             s"text=${tokMeta.getString("NLP_NORMTEXT")}, " +
-            s"group=$elmGrp, " +
+            s"group=$grp, " +
             s"value=$value" +
         s"]"
 }

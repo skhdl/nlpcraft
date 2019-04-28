@@ -50,6 +50,20 @@ import java.util.Collection;
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
  * method to get properly constructed {@link NCElement} instance. Note that at the minimum the element
  * {@link #setId(String) ID} must be set.
+ * <br><br>
+ * Here's an example of the typical element builder usage:
+ * <pre class="brush: java">
+ * NCElementBuilder.newElement("ELM1")
+ *      .setDescription("Element 1 description.")
+ *      .addSynonyms(
+ *          "element {number|*} {&lt;OF&gt;|*} {one|1}",
+ *          "{some|*} {elm|elem} {n.|num|*} {one|1}",
+ *          "foo {bar|*}",
+ *          "{fool|/[ab].+/}", // 'fool' or regex matching.
+ *          "worked" // Stem 'work'.
+ *      )
+ *      .build()
+ * </pre>
  */
 public class NCElementBuilder {
     private final NCElementImpl impl;

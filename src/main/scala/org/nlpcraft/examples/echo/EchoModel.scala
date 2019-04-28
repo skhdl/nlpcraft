@@ -38,7 +38,7 @@ import org.nlpcraft.common._
 import org.nlpcraft.model.builder.NCModelBuilder
 
 import scala.collection.JavaConverters._
-import scala.collection.Seq
+//import scala.collection.{Iterable, Seq}
 
 /**
   * Echo example model provider.
@@ -114,7 +114,7 @@ class EchoModel extends NCModelProviderAdapter {
       * @param jss JSON values.
       * @return JSON array.
       */
-    private def mkJsonVals(jss: Seq[String]): String = s"[${jss.mkString(",")}]"
+    private def mkJsonVals(jss: Iterable[String]): String = s"[${jss.mkString(",")}]"
 
     /**
       * Converts Java map into JSON value.
@@ -169,7 +169,7 @@ class EchoModel extends NCModelProviderAdapter {
            |    "isUserAdmin": ${mkJsonVal(sen.isUserAdmin)},
            |    "userSignupDate": ${mkJsonVal(sen.getUserSignupDate)},
            |    "variants":
-           |        ${mkJsonVals(sen.getVariants.asScala.map(p ⇒ mkJsonVals(p.getTokens.asScala.map(mkTokenJson))))}
+           |        ${mkJsonVals(sen.getVariants.asScala.map(p ⇒ mkJsonVals(p.asScala.map(mkTokenJson))))}
            | }
          """.stripMargin
     }

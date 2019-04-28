@@ -31,53 +31,25 @@
 
 package org.nlpcraft.model.builder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.tuple.Pair;
-import org.nlpcraft.model.NCElement;
-import org.nlpcraft.model.NCMetadata;
-import org.nlpcraft.model.NCModel;
-import org.nlpcraft.model.NCModelDescriptor;
-import org.nlpcraft.model.NCProbeContext;
-import org.nlpcraft.model.NCQueryContext;
-import org.nlpcraft.model.NCQueryResult;
-import org.nlpcraft.model.builder.impl.NCElementImpl;
-import org.nlpcraft.model.builder.impl.NCModelImpl;
-import org.nlpcraft.model.builder.impl.NCValueImpl;
-import org.nlpcraft.model.builder.parsing.NCElementItem;
-import org.nlpcraft.model.builder.parsing.NCMacroItem;
-import org.nlpcraft.model.builder.parsing.NCModelItem;
-import org.nlpcraft.model.impl.NCMetadataImpl;
-import org.nlpcraft.model.intent.NCIntentSolver;
-import org.nlpcraft.model.tools.dump.NCDumpReader;
-import org.nlpcraft.model.tools.dump.NCDumpWriter;
-import org.nlpcraft.model.tools.dump.scala.NCDumpReaderScala;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.dataformat.yaml.*;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import org.apache.commons.lang3.tuple.*;
+import org.nlpcraft.model.*;
+import org.nlpcraft.model.builder.impl.*;
+import org.nlpcraft.model.builder.parsing.*;
+import org.nlpcraft.model.impl.*;
+import org.nlpcraft.model.intent.*;
+import org.nlpcraft.model.tools.dump.*;
+import org.nlpcraft.model.tools.dump.scala.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.nlpcraft.model.NCElement.NCValue;
+import static org.nlpcraft.model.NCElement.*;
 import static org.nlpcraft.model.intent.NCIntentSolver.*;
 
 /**
@@ -87,7 +59,7 @@ import static org.nlpcraft.model.intent.NCIntentSolver.*;
  * <ul>
  *     <li>{@link #newModel()}</li>
  * </ul>
- * or by loading static model definition in JSON or YAML (c):
+ * or by loading static model definition in JSON or YAML:
  * <ul>
  *     <li>{@link #newJsonModel(InputStream)}</li>
  *     <li>{@link #newJsonModel(String)}</li>
@@ -98,9 +70,19 @@ import static org.nlpcraft.model.intent.NCIntentSolver.*;
  * </ul>
  * Once you have the builder instance you can set all necessary properties and finally call {@link #build()}
  * method to get properly constructed {@link NCModel} instance. Note that at the minimum the
- * {@link #setDescriptor(NCModelDescriptor) descriptor} and
- * the {@link #setQueryFunction(Function) query function}
+ * {@link #setDescriptor(NCModelDescriptor) descriptor} and the {@link #setQueryFunction(Function) query function}
  * must be set.
+ * <br><br>
+ * Here's an example of the typical model builder usage (from <a target=_ href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples/time">Time Example</a>):
+ * <pre class="brush: java">
+ * NCModelBuilder.
+ *      newYamlModel(TimeModel.class.
+ *          getClassLoader().
+ *          getResourceAsStream("org/nlpcraft/examples/time/time_model.yaml")
+ *      )
+ *      .setSolver(solver)
+ *      .build()
+ * </pre>
  */
 public class NCModelBuilder {
     /** */
@@ -741,11 +723,11 @@ public class NCModelBuilder {
     }
     
     /**
-     * Loads and creates data model proxy from given model dump.
+     * Loads and creates data model proxy from given data model dump.
      *
      * @param dumpFilePath Dump file path.
-     * @return Newly built model proxy. Proxy will have a no-op callback implementations for intent and will return the
-     *      following JSON response:
+     * @return Newly built model proxy. Proxy model will have a no-op callback implementations for intent and will return the
+     *      following JSON response from its {@link NCModel#query(NCQueryContext)} method:
      * <pre class="brush: js">
      * {
      *     "modelId": "model-id",

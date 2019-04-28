@@ -34,7 +34,7 @@ package org.nlpcraft.model;
 import java.io.Serializable;
 
 /**
- * Model descriptor.
+ * Data model descriptor.
  *
  * @see NCModel#getDescriptor()
  */

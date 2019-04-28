@@ -32,6 +32,7 @@
 package org.nlpcraft.probe.mgrs.nlp
 
 import java.io.Serializable
+import java.util
 import java.util.Objects
 import java.util.concurrent.Executors
 import java.util.function.Predicate
@@ -314,7 +315,10 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         val unitedSen =
             new NCSentenceImpl(
                 mdl,
-                new NCMetadataImpl(senMeta.asJava), srvReqId, senSeq.map(_.toSeq))
+                new NCMetadataImpl(senMeta.asJava),
+                srvReqId,
+                senSeq.map(_.toSeq)
+            )
 
         // Create model query context.
         val qryCtx: NCQueryContext = new NCQueryContext {
@@ -323,7 +327,7 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
             override lazy val getServerRequestId: String = srvReqId
 
             override lazy val getConversationContext: NCConversationContext = new NCConversationContext {
-                override def getTokens: java.util.HashSet[NCToken] = conv.tokens
+                override def getTokens: util.List[NCToken] = conv.tokens
                 override def clear(filter: Predicate[NCToken]): Unit = conv.clear(filter)
             }
         }
@@ -340,12 +344,10 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
                 if (res.getType == null)
                     throw new IllegalStateException("Result type cannot be null.")
 
-                val v = res.getVariant
-
                 // Adds input sentence to the ongoing conversation if *some* result
                 // was returned. Do not add if result is invalid.
-                if (v != null)
-                    conv.addItem(unitedSen, v)
+                if (res.getTokens != null)
+                    conv.addItem(srvReqId, unitedSen.getNormalizedText, res.getTokens.asScala.toSeq)
 
                 res
             },

@@ -57,10 +57,8 @@ class NCSentenceImpl(
     private val allToks = combToks.flatten.distinct
 
     override def isOwnerOf(tok: NCToken): Boolean = allToks.contains(tok)
-    
     override lazy val getServerRequestId: String = srvReqId
-    override lazy val getVariants: java.util.List[NCVariant] =
-        combToks.map(toks ⇒ new NCVariantImpl(toks.asJava).asInstanceOf[NCVariant]).asJava
+    override lazy val getVariants: java.util.Collection[java.util.List[NCToken]] = combToks.map(_.asJava).asJava
     override lazy val getNormalizedText: String = meta.getString("NORMTEXT")
     override lazy val getReceiveTimestamp: Long = meta.getLong("RECEIVE_TSTAMP") // UTC.
     override lazy val getUserFirstName: String = meta.getString("FIRST_NAME")
@@ -131,7 +129,7 @@ class NCSentenceImpl(
                     new NCTokenImpl(
                         srvReqId,
                         elm.getId,
-                        elm.getGroup,
+                        if (elm.getGroup != null) elm.getGroup else elm.getId,
                         elm.getParentId,
                         usrNote.dataOpt("value").orNull,
                         tokMeta,

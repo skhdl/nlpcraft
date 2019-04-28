@@ -34,7 +34,7 @@ package org.nlpcraft.model;
 import org.nlpcraft.model.intent.NCIntentSolver;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
 
 /**
@@ -130,16 +130,17 @@ public interface NCSentence extends Serializable {
     boolean isOwnerOf(NCToken tok);
 
     /**
-     * Gets the list of all parsing variants for this sentence. Note that a given user input can have one or
-     * more possible different parsing variants (i.e. set of tokens representing that parsed input). In general,
-     * data model {@link NCModel#query(NCQueryContext)} method will need to examine all possible variants when
-     * trying to "understand" the user input. Note that intent-based {@link NCIntentSolver matcher} will check
-     * all variants automatically.
+     * Gets collection of all parsing variants for this sentence. Each parsing variant is a list of tokens.
+     * Tokens appear in the order they are found in the user input.
+     * <br><br>
+     * Note that a given user input can have one or more possible different parsing variants. In general,
+     * data model {@link NCModel#query(NCQueryContext)} method will need
+     * to examine all possible variants when trying to "understand" the user input. Note that
+     * intent-based {@link NCIntentSolver matcher} will check all variants automatically.
      *
-     * @return All parsing variants of this sentence. Always contains at least one variant.
-     * @see #getData()
+     * @return All parsing variants of this sentence. Always contains at least one variant. 
      */
-    List<NCVariant> getVariants();
+    Collection<List<NCToken>> getVariants();
     
     /**
      * Gets optional address of the remote client.

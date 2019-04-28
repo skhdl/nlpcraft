@@ -37,7 +37,7 @@ import org.nlpcraft.model.intent.NCIntentSolverContext;
 import java.io.Serializable;
 
 /**
- * Model query context. This context defines fully processed user input and its associated data that the model
+ * Data model query context. This context defines fully processed user input and its associated data that the model
  * needs to process and return the result in {@link NCModel#query(NCQueryContext)} method.
  * <br><br>
  * See {@link NCIntentSolver} for intent base matching utility.

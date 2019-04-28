@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Model provider. Model provider is a deployment unit and acts as a factory for models.
+ * Data model provider. Model provider is a deployment unit and acts as a factory for models.
  * Note that single provider can support one or more different models, and multiple providers can
  * be deployed into the probe.
  * <p>

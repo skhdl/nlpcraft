@@ -42,18 +42,18 @@ import org.nlpcraft.model.NCQueryResult;
 import org.nlpcraft.model.NCRejection;
 import org.nlpcraft.model.NCSentence;
 import org.nlpcraft.model.NCToken;
-import org.nlpcraft.model.NCVariant;
 import org.nlpcraft.model.builder.NCModelBuilder;
 import org.nlpcraft.model.intent.impl.NCIntentSolverEngine;
 import org.nlpcraft.model.intent.impl.NCIntentSolverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -1593,21 +1593,20 @@ public class NCIntentSolver implements Serializable {
                     res.fn().apply(new NCIntentSolverContext() {
                         @Override public NCQueryContext getQueryContext() { return ctx; }
                         @Override public List<List<NCToken>> getIntentTokens() { return res.toks(); }
-                        @Override public NCVariant getVariant() { return res.variant(); }
+                        @Override public List<NCToken> getTokens() { return res.variant().tokens(); }
                         @Override public boolean isExactMatch() { return res.isExactMatch(); }
                         @Override public String getIntentId() { return res.intentId(); }
                     });
     
                 // Don't override if user already set it.
-                if (qryRes.getVariant() == null) {
-                    if (res.variant() != null)
-                        qryRes.setVariant(res.variant());
-                    else if (sen.getVariants().size() == 1)
-                        // If there's only one variant - use it implicitly.
-                        qryRes.setVariant(sen.getVariants().get(0));
-                }
+                if (qryRes.getTokens() == null)
+                    qryRes.setTokens(res.toks().stream().flatMap(Collection::stream).collect(Collectors.toList()));
                 
-                log.info(String.format("Intent '%s' for variant #%d selected as the best match.", res.intentId(), res.variantIdx()));
+                log.info(
+                    String.format(
+                        "Intent '%s' for variant #%d selected as the best match.", res.intentId(), res.variantIdx()
+                    )
+                );
 
                 return qryRes;
             }
