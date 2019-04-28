@@ -177,124 +177,6 @@ layout: documentation
             </p>
         </div>
     </section>
-    <section id="probe_server">
-        <span class="section-title">Data Probe <span class="amp">&amp;</span> Server</span>
-        <p>
-            For this section we assume that NLPCraft was downloaded as a ZIP archive and unzipped in the
-            current directory:
-        </p>
-        <pre class="console">
-├── LICENSE
-├── bin
-├── sql
-├── build
-│   └── nlpcraft-{{site.latest_version}}
-│       ├── application.conf
-│       ├── ignite.xml
-│       ├── log4j2.xml
-│       ├── probe.conf
-│       └── <b>nlpcraft-{{site.latest_version}}-all-deps.jar</b>
-├── javadoc
-├── openapi
-└── src
-        </pre>
-        <p>
-            NLPCraft ZIP archive comes with a single executable JAR file that includes all necessary dependencies (file
-            <code>build/nlpcraft-{{site.latest_version}}/<b>nlpcraft-{{site.latest_version}}-all-deps.jar</b></code> above).
-            This JAR file includes binaries for data probe, data model APIs and the REST server. All default configuration
-            files are also located in the same directory.
-        </p>
-        <b>Data Probe</b>
-        <p>
-            Data probe can be started from either the command line or IDE such as Eclipse or IntelliJ IDEA:
-        </p>
-        <nav>
-            <div class="nav nav-tabs" role="tablist">
-                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-probe-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#nav-probe-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
-            </div>
-        </nav>
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="nav-probe-cmd" role="tabpanel">
-                <pre class="brush: plain">
-                    $ cd build/nlpcraft-{{site.latest_version}}
-                    $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -probe
-                </pre>
-            </div>
-            <div class="tab-pane fade show" id="nav-probe-ide" role="tabpanel">
-                <p style="padding-top: 10px">
-                    Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
-                </p>
-            </div>
-        </div>
-        Parameters:
-        <dl>
-            <dt>
-                <code>-probe</code>
-            </dt>
-            <dd>
-                Mandatory parameter to indicate that you are starting a data probe.
-            </dd>
-            <dt><code>-config=path</code></dt>
-            <dd>
-                Optional parameter to provide probe configuration file path.
-                Data probe will automatically look for <code>probe.conf</code> configuration file in the same directory
-                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
-                file has different name or in different location use <code>-config=path</code> parameter
-                where <code>path</code> is an absolute path to the data probe configuration file
-            </dd>
-        </dl>
-        <b>REST Server</b>
-        <p>
-            Just like data probe the REST server can be stared from either the command line or
-            IDE such as Eclipse or IntelliJ IDEA:
-        </p>
-        <nav>
-            <div class="nav nav-tabs" role="tablist">
-                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-srv-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#nav-srv-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
-            </div>
-        </nav>
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="nav-srv-cmd" role="tabpanel">
-                <pre class="brush: plain">
-                    $ cd build/nlpcraft-{{site.latest_version}}
-                    $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server
-                </pre>
-            </div>
-            <div class="tab-pane fade show" id="nav-srv-ide" role="tabpanel">
-                <p style="padding-top: 10px">
-                    Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
-                </p>
-            </div>
-        </div>
-        Parameters:
-        <dl>
-            <dt>
-                <code>-server</code>
-            </dt>
-            <dd>
-                Mandatory parameter to indicate that you are starting the REST server.
-            </dd>
-            <dt><code>-config=path</code></dt>
-            <dd>
-                Optional parameter to provide server configuration file path.
-                Server will automatically look for <code>application.conf</code> configuration file in the same directory
-                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
-                file has different name or in different location use <code>-config=path</code> parameter
-                where <code>path</code> is an absolute path to the server configuration file.
-            </dd>
-            <dt><code>-igniteConfig=path</code></dt>
-            <dd>
-                Optional parameter to provide <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> configuration file path.
-                Note that Apache Ignite is used as a cluster computing plane and a default distributed storage.
-                Server will automatically look for <code>ignite.xml</code>
-                configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
-                If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter
-                where <code>path</code> is an absolute path to the Ignite configuration file.
-            </dd>
-        </dl>
-    </section>
 </div>
 <div class="col-md-2 third-column">
     <ul class="side-nav">
@@ -303,7 +185,6 @@ layout: documentation
         <li><a href="#verify-sigs">Verify Signatures</a></li>
         <li><a href="#tools">Java/Git/Maven</a></li>
         <li><a href="#ignite">Apache Ignite</a></li>
-        <li><a href="#probe_server">Data Probe <span class="amp">&amp;</span> Server</a></li>
         <li class="side-nav-title">Quick Links</li>
         <li>
             <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
