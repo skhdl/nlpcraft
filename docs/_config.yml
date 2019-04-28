@@ -44,6 +44,8 @@ latest_version: 0.4.0
 java_client_latest_version: 0.4.0
 # ===================
 
+github: [metadata]
+
 # SASS settings.
 sass:
   sass_dir: _scss
