@@ -34,8 +34,8 @@ package org.nlpcraft.server.nlp.enrichers.date.tools
 import java.text.{DateFormat, SimpleDateFormat}
 import java.util.{Date, Locale, Calendar ⇒ C}
 
-
-import com.datalingvo.nlp.numeric.DLNumericsGenerator
+import org.nlpcraft.common._
+import org.nlpcraft.common.nlp.numeric.NCNumericGenerator
 import org.nlpcraft.server.nlp.enrichers.date.NCDateConstants._
 
 import scala.collection._
@@ -182,7 +182,7 @@ object DLDateGenerator {
         "day after tomorrow" → "d+2"
     )
 
-    private val DIGITS = LHM() ++ NCNumericsGenerator.generate(365)
+    private val DIGITS = LHM() ++ NCNumericGenerator.generate(365)
 
     // Generators.
     private def mkMonths(y: Int, m: String) = {
@@ -841,15 +841,15 @@ object DLDateGeneratorRunner extends App {
     private val PARTS_FILE = mkPath("date/parts.txt")
 
     private def mkPath(path: String) =
-        G.mkPath(s"modules/nlpsrv/src/main/resources/$path")
+        U.mkPath(s"src/main/resources/$path")
 
     private def convert(entry: (String, String)) = s"${entry._1} | ${entry._2}"
 
     import DLDateGenerator._
 
-    G.mkTextFile(FULL_FILE, generateFull().map(convert))
-    G.mkTextFile(PARTS_FILE, generateParts().map(convert))
+    U.mkTextFile(FULL_FILE, generateFull().map(convert))
+    U.mkTextFile(PARTS_FILE, generateParts().map(convert))
 
-    G.gzipPath(FULL_FILE)
-    G.gzipPath(PARTS_FILE)
+    U.gzipPath(FULL_FILE)
+    U.gzipPath(PARTS_FILE)
 }
