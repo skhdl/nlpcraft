@@ -219,6 +219,18 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     }
 
     /**
+      * Gets proc_log table records count.
+      *
+      * @return Records count.
+      */
+    @throws[NCE]
+    def getLogsCount: Int = {
+        ensureStarted()
+
+        NCSql.selectSingle[Int]("SELECT count(*) FROM proc_log").getOrElse(0)
+    }
+
+    /**
       * Gets all users.
       *
       * @return User MDOs.
