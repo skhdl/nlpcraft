@@ -219,7 +219,7 @@ object NCSqlManager extends NCLifecycle("Database manager") with NCIgniteInstanc
     }
 
     /**
-      * Gets proc_log table records count.
+      * Gets `proc_log` table records count.
       *
       * @return Records count.
       */
