@@ -208,7 +208,9 @@ public class TimeModel extends NCModelProviderAdapter {
                 newYamlModel(TimeModel.class.
                     getClassLoader().
                     getResourceAsStream("org/nlpcraft/examples/time/time_model.yaml")
-                ).setSolver(solver).build()
+                )
+                .setSolver(solver)
+                .build()
         );
     }
 }

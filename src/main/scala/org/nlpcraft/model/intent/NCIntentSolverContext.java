@@ -62,11 +62,12 @@ public interface NCIntentSolverContext extends Serializable {
      * to the order and index of terms in the matching intent. Number of sub-lists will always be the same
      * as the number of terms in the matched intent.
      * <br><br>
-     * Note that unlike {@link #getVariant()} method
+     * Note that unlike {@link #getTokens()} method
      * this method returns only subset of the tokens that were part of the matched intent. Specifically, it will
      * not return tokens for free words, stopwords or unmatched ("dangling") tokens.
      * <br><br>
-     * For example, consider the following intent from <a target="github" href="https://github.com/vic64/nlpcraft/blob/master/src/main/scala/org/nlpcraft/examples/alarm/AlarmModel.java">Alarm</a> example:
+     * For example, consider the following intent from
+     * <a target="github" href="https://github.com/vic64/nlpcraft/blob/master/src/main/scala/org/nlpcraft/examples/alarm/AlarmModel.java">Alarm Clock</a> example:
      * <pre class="brush: java">
      *     new NON_CONV_INTENT(
      *          "intent",
@@ -90,7 +91,7 @@ public interface NCIntentSolverContext extends Serializable {
      * </pre>
      *
      * @return List of list of tokens representing matched intent.
-     * @see #getVariant() 
+     * @see #getTokens()
      */
     List<List<NCToken>> getIntentTokens();
 
@@ -101,7 +102,7 @@ public interface NCIntentSolverContext extends Serializable {
      * @return Sentence variant that produced the matching for this intent.
      * @see #getIntentTokens() 
      */
-    NCVariant getVariant();
+    List<NCToken> getTokens();
 
     /**
      * Indicates whether or not the intent match was exact.

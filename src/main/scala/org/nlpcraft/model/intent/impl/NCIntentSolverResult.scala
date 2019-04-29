@@ -44,6 +44,6 @@ case class NCIntentSolverResult(
     fn: IntentCallback, // For Java interop.
     toks: JList[JList[NCToken]], // For Java interop.
     isExactMatch: Boolean,
-    variant: NCVariant,
+    variant: NCIntentSolverVariant,
     variantIdx: Int
 )

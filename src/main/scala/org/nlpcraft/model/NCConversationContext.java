@@ -33,7 +33,7 @@ package org.nlpcraft.model;
 
 import org.nlpcraft.model.intent.NCIntentSolver;
 
-import java.util.Set;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -45,28 +45,32 @@ import java.util.function.Predicate;
  * rejected is added to the conversation STM as a list of {@link NCToken tokens}. Existing STM tokens with
  * the same {@link NCElement#getGroup() group} will be overridden by the more recent tokens from the same group.
  * Note also that tokens in STM automatically expire (i.e. context is "forgotten") after a certain period of time
- * or based on other internal logic. Note that you should not rely on a specific expiration behavior as its logic
- * is not deterministic.
+ * and other internal logic. Note that you should not rely on a specific expiration behavior as its logic
+ * is not deterministic and may be changed in the future.
  *
  * @see NCQueryContext#getConversationContext()
  */
 public interface NCConversationContext {
     /**
-     * Gets unordered set of tokens stored in the current conversation STM for current
-     * user and data model. Note that this set excludes free words and stopwords. Note also that specific rules
+     * Gets an ordered list of tokens stored in the current conversation STM for current
+     * user and data model. Tokens in the returned list are ordered by their conversational depth, i.e.
+     * the tokens from more recent requests appear before tokens from older requests.
+     * <br><br>
+     * Note that this list excludes free words and stopwords. Note also that specific rules
      * by which STM operates are undefined for the purpose of this function (i.e. callers should not rely on
      * any observed behavior of how STM stores and evicts its content).
      *
-     * @return Unordered list of tokens for this conversation's STM.
+     * @return List of tokens for this conversation's STM.
      * @see NCIntentSolver
      */
-    Set<NCToken> getTokens();
+    List<NCToken> getTokens();
 
     /**
      * Removes all tokens satisfying given predicate from the current conversation STM.
      * This is particularly useful when the logic processing the user input makes an implicit
-     * assumption not present in the user input itself. Such assumption may alter the conversation context and
-     * therefore this method can be used to remove "stale" tokens from conversation STM.
+     * assumption not present in the user input itself. Such assumption may alter the conversation context (without
+     * having an explicit token responsible for it) and therefore this method can be used to remove "stale" tokens
+     * from conversation STM.
      * <br><br>
      * For example, in some cases the intent logic can assume the user current location as an implicit geo
      * location and therefore all existing {@code nlp:geo} tokens should be removed from the conversation STM

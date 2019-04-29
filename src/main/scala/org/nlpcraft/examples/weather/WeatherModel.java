@@ -155,7 +155,7 @@ public class WeatherModel extends NCModelProviderAdapter {
         // Gets tokens for the 2nd term - can be empty...
         List<NCToken> geoToks = ctx.getIntentTokens().get(2);
 
-        List<NCToken> allToks = ctx.getVariant().getTokens();
+        List<NCToken> allToks = ctx.getTokens();
     
         Optional<GeoDataBean> geoOpt = geoMrg.get(ctx.getQueryContext().getSentence());
         
@@ -227,7 +227,7 @@ public class WeatherModel extends NCModelProviderAdapter {
      */
     private void checkMatch(NCIntentSolverContext ctx) {
         // Reject if intent match is not exact ("dangling" tokens remain) or too many free words left unmatched.
-        if (!ctx.isExactMatch() || ctx.getVariant().getTokens().stream().filter(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
+        if (!ctx.isExactMatch() || ctx.getTokens().stream().filter(NCTokenUtils::isFreeWord).count() > MAX_FREE_WORDS)
             throw new NCRejection("Please simplify your request.");
     }
 

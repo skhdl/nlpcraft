@@ -1,0 +1,591 @@
+---
+active_crumb: Server <span class="amp">&amp;</span> Probe
+layout: documentation
+---
+
+<!--
+   “Commons Clause” License, https://commonsclause.com/
+
+   The Software is provided to you by the Licensor under the License,
+   as defined below, subject to the following condition.
+
+   Without limiting other conditions in the License, the grant of rights
+   under the License will not include, and the License does not grant to
+   you, the right to Sell the Software.
+
+   For purposes of the foregoing, “Sell” means practicing any or all of
+   the rights granted to you under the License to provide to third parties,
+   for a fee or other consideration (including without limitation fees for
+   hosting or consulting/support services related to the Software), a
+   product or service whose value derives, entirely or substantially, from
+   the functionality of the Software. Any license notice or attribution
+   required by the License must also include this Commons Clause License
+   Condition notice.
+
+   Software:    NLPCraft
+   License:     Apache 2.0, https://www.apache.org/licenses/LICENSE-2.0
+   Licensor:    Copyright (C) 2018 DataLingvo, Inc. https://www.datalingvo.com
+
+       _   ____      ______           ______
+      / | / / /___  / ____/________ _/ __/ /_
+     /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+    / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+   /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+          /_/
+-->
+
+<div class="col-md-8 second-column">
+    <section>
+        <span class="section-title">Overview</span>
+        <p>
+            As mentioned in <a href="/docs.html">overview</a> section the REST server and data probe are the two
+            runtime components that you need to run when using NLPCraft.
+            Data probes are used to deploy and host data model, while REST server (or a cluster of servers) is used
+            to accept client REST call and route them to the data models via data probes.
+        </p>
+        <div class="bq info">
+            <b>REST Server vs. Data Probe</b>
+            <p>
+                It's important to remember why REST server is a separate component from a data probe. While a
+                typical deployment would have only one REST server (or a cluster of REST servers behind a single
+                load balancer), there are maybe multiple data probes hosting different data models deployed in
+                different physical locations, managed through different life cycles and requiring different
+                security and network configurations.
+            </p>
+            <p>
+                Moreover, REST server is a heavy and resource consuming component that is built around Apache
+                Ignite distributing in-memory computing capabilities - while the data probe is a lightweight
+                data model container. During the development and testing of data models, the developers need to
+                frequently redeploy data models by restarting the data probe. If the REST server and the data probe
+                would be one component - this process would be very inefficient.
+            </p>
+        </div>
+        <p>
+            Fro the rest of this section we assume that NLPCraft was <a href="/download.html">downloaded</a> and
+            <a href="/installation.html">installed</a> via ZIP archive. However, all instructions below are fully
+            applicable to any type of installation.
+        </p>
+        <p>
+            Once NLPCraft is downloaded as a ZIP archive and unzipped, the current directory will look like this:
+        </p>
+        <pre class="console">
+├── LICENSE
+├── bin
+├── sql
+├── build
+│   └── nlpcraft-{{site.latest_version}}
+│       ├── application.conf
+│       ├── ignite.xml
+│       ├── log4j2.xml
+│       ├── probe.conf
+│       └── <b>nlpcraft-{{site.latest_version}}-all-deps.jar</b>
+├── javadoc
+├── openapi
+└── src
+        </pre>
+        <p>
+            Regardless of how NLPCraft was installed it comes with a single executable JAR file that includes all
+            necessary dependencies (file <code>build/nlpcraft-{{site.latest_version}}/<b>nlpcraft-{{site.latest_version}}-all-deps.jar</b></code> if installed
+            via ZIP archive). This JAR file includes binaries for data probe, data model APIs and the REST server.
+        </p>
+    </section>
+    <section id="server">
+        <span class="section-title">REST Server</span>
+        <p>
+            As mentioned above REST server (or a cluster of servers) is used to accept client REST call and
+            route them to the data model via data probes. Note that both data probe and the REST server start the same way.
+        </p>
+        <p>
+            REST server can be stared from either the command line or IDE such as Eclipse or IntelliJ IDEA:
+        </p>
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-srv-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-srv-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="nav-srv-cmd" role="tabpanel">
+                <pre class="brush: plain">
+                    $ cd build/nlpcraft-{{site.latest_version}}
+                    $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -server
+                </pre>
+            </div>
+            <div class="tab-pane fade show" id="nav-srv-ide" role="tabpanel">
+                <p style="padding-top: 10px">
+                    Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
+                </p>
+                <div class="bq info">
+                    <b>Class <code>org.nlpcraft.NCStart</code></b>
+                    <p>
+                    Note that <code>org.nlpcraft.NCStart</code> class starts both the REST server and the data probe and is the
+                    class that is configured as <code>Main-Class</code> in <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code>
+                    JAR file manifest.
+                    </p>
+                </div>
+            </div>
+        </div>
+        Parameters:
+        <dl>
+            <dt>
+                <code>-server</code>
+            </dt>
+            <dd>
+                <em>Mandatory</em> parameter to indicate that you are starting the REST server.
+            </dd>
+            <dt><code>-config=path</code></dt>
+            <dd>
+                <em>Optional</em> parameter to provide server configuration file path.
+                Server will automatically look for <code>application.conf</code> configuration file in the same directory
+                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                file has different name or in different location use <code>-config=path</code> parameter
+                where <code>path</code> is an absolute path to the server configuration file.
+            </dd>
+            <dt><code>-igniteConfig=path</code></dt>
+            <dd>
+                <em>Optional</em> parameter to provide <a target=_ href="https://ignite.apache.org/">Apache Ignite</a> configuration file path.
+                Note that Apache Ignite is used as a cluster computing plane and a default distributed storage.
+                Server will automatically look for <code>ignite.xml</code>
+                configuration file in the same directory as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file.
+                If the configuration file has different name or in different location use <code>-igniteConfig=path</code> parameter
+                where <code>path</code> is an absolute path to the Ignite configuration file.
+            </dd>
+        </dl>
+        <p>
+            When the REST server started you should see the log output similar to this:
+        </p>
+        <pre class="brush: plain">
+                _   ____      ______           ______
+               / | / / /___  / ____/________ _/ __/ /_
+              /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+             / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+            /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+                   /_/
+
+            Server
+            Version: {{site.latest_version}}
+            Copyright (C) DataLingvo, Inc.
+
+            ...
+
+            +-------------------------+
+            | Server started [19.35s] |
+            +-------------------------+
+
+
+            Mar-11 23:21:04 [INFO ] REST server is listening on 'localhost:8081'.
+        </pre>
+        <span class="section-sub-title">REST Server Configuration</span>
+        <p>
+            By default, when REST server starts it looks for <code>application.conf</code> configuration file in the same directory
+            as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. You can change this behavior with
+            <code>-config=path</code> parameter.
+        </p>
+        <p>
+            The REST server configuration (e.g. <code>application.conf</code> file) is using <a target=_ href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
+            file format from <a target=_ href="https://lightbend.github.io/config/">Typesafe Config</a> project. Here is
+            the default <code>application.conf</code> file:
+        </p>
+        <pre class="brush: js, highlight: [8, 9, 26, 27, 48, 56, 57]">
+# NLPCraft server configuration root.
+server {
+    database {
+        jdbc {
+            # Ignite JDBC URL and driver.
+            url = "jdbc:ignite:thin://127.0.0.1/nlpcraft"
+            driver = org.apache.ignite.IgniteJdbcThinDriver
+            # username =
+            # password =
+        }
+
+        c3p0 {
+            maxStatements = 180
+
+            pool {
+                initSize = 10
+                minSize = 1
+                maxSize = 50
+                acquireIncrement = 2
+            }
+        }
+    }
+
+    # REST server configuration.
+    rest {
+        host = localhost
+        port = 8081
+    }
+
+    # User manager configuration.
+    user {
+        pwdPoolBlowup = 3
+        timeoutScannerFreqMins = 1
+        accessTokenExpireTimeoutMins = 60
+    }
+
+    # Plugin manager configuration.
+    plugins {
+        notification = "org.nlpcraft.server.notification.plugins.noop.NCNoopNotificationPlugin"
+        probe {
+            auth = "org.nlpcraft.server.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin"
+        }
+    }
+
+    # 'NCBasicProbeAuthenticationPlugin' configuration.
+    org.nlpcraft.server.probe.plugins.auth.basic.NCBasicProbeAuthenticationPlugin {
+        # NOTE: this probe token should match the probe token in the probe.
+        probe.token = "3141592653589793" # This is a default probe token (should be same in probe.conf files by default).
+    }
+
+    # Probe manager configuration.
+    probe {
+        links {
+            # Default endpoints.
+            # If changed - they need to be changed on both server and probes.
+            upLink = "localhost:8201" # Server to probe data pipe.
+            downLink = "localhost:8202" # Probe to server data pipe.
+        }
+
+        pingTimeoutMs = 2000
+        soTimeoutMs = 5000
+        reconnectTimeoutMs = 5000
+        poolSize = 100
+    }
+
+    # Endpoint manager configuration.
+    endpoint {
+        queue {
+            # Maximum queue size for all users.
+            maxSize = 100000
+            # Maximum queue size configuration for each user.
+            maxPerUserSize = 1000
+            # Period for queue size limit check.
+            checkPeriodMins = 5
+        }
+
+        # Sending delays (attempt by attempt) if previous sending was not successful.
+        # Fibonacci numbers. Last delay used until `lifetimeMins` expired.
+        delaysSecs = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]
+
+        # Life time. Time which message is trying to be sent (1 day).
+        lifetimeMins = 1440
+    }
+}
+
+# Akka configuration.
+akka.http.server.remote-address-header=on
+        </pre>
+        <p>
+            Default configuration works out-of-the-box when running REST server on the <code>localhost</code> during
+            evaluation, development and testing. However, when running in a different environment there are several
+            configuration properties that you may want to change:
+        </p>
+        <ul>
+            <li><code>Line 8-9</code>: you can add authentication to the default Ignite datastore.</li>
+            <li><code>Line 26-27</code>: you can specify on which local IP address and port REST server will be listening.</li>
+            <li>
+                <code>Line 48</code>: probe token provides means for authentication between data probes and the REST server.
+                You need to make sure that this token is secure and is the same between data probe and REST server
+                configurations.
+            </li>
+            <li>
+                <code>Lines 56-57</code>: this allows you configure the local endpoints for the communication between
+                data probes and the REST server. Note that if changed - they have to be changed on both data probe and
+                the REST server. 
+            </li>
+        </ul>
+    </section>
+    <section id="probe">
+        <span class="section-title">Data Probe</span>
+        <p>
+            Just like the REST server the data probe can be started from either the command line or IDE such as Eclipse or IntelliJ IDEA:
+        </p>
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-probe-cmd" role="tab" aria-controls="nav-home" aria-selected="true">Command Line</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-probe-ide" role="tab" aria-controls="nav-home" aria-selected="true">IDE</a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="nav-probe-cmd" role="tabpanel">
+                <pre class="brush: plain">
+                    $ cd build/nlpcraft-{{site.latest_version}}
+                    $ java -jar nlpcraft-{{site.latest_version}}-all-deps.jar -probe
+                </pre>
+            </div>
+            <div class="tab-pane fade show" id="nav-probe-ide" role="tabpanel">
+                <p style="padding-top: 10px">
+                    Configure run configuration with the main class <code>org.nlpcraft.NCStart</code>.
+                </p>
+                <div class="bq info">
+                    <b>Class <code>org.nlpcraft.NCStart</code></b>
+                    <p>
+                        Note that <code>org.nlpcraft.NCStart</code> class starts both the REST server and the data probe and is the
+                        class that is configured as <code>Main-Class</code> in <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code>
+                        JAR file manifest.
+                    </p>
+                </div>
+            </div>
+        </div>
+        Parameters:
+        <dl>
+            <dt>
+                <code>-probe</code>
+            </dt>
+            <dd>
+                <em>Mandatory</em> parameter to indicate that you are starting a data probe.
+            </dd>
+            <dt><code>-config=path</code></dt>
+            <dd>
+                <em>Optional</em> parameter to provide probe configuration file path.
+                Data probe will automatically look for <code>probe.conf</code> configuration file in the same directory
+                as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. If the configuration
+                file has different name or in different location use <code>-config=path</code> parameter
+                where <code>path</code> is an absolute path to the data probe configuration file.
+                <b>Note:</b> in most
+                cases when developing your own models (and not running examples) this parameter will have to be
+                provided as your own <code>probe.conf</code> file will likely be placed in a different location (e.g.
+                resources folder in your Java project).
+            </dd>
+        </dl>
+        <p>
+            When the data probe started you should see the log output similar to this (for the default
+            <code>probe.conf</code> configuration):
+        </p>
+        <pre class="brush: plain">
+            _   ____      ______           ______
+           / | / / /___  / ____/________ _/ __/ /_
+          /  |/ / / __ \/ /   / ___/ __ `/ /_/ __/
+         / /|  / / /_/ / /___/ /  / /_/ / __/ /_
+        /_/ |_/_/ .___/\____/_/   \__,_/_/  \__/
+               /_/
+
+        Data Probe
+        Version: {{site.latest_version}}
+        Copyright (C) DataLingvo, Inc.
+
+        Mar-11 23:25:52 [INFO ] Probe Configuration:
+        +--------------------------------------------------------------------+
+        | Probe ID        | all.examples                                     |
+        | Probe Token     | 3141592653589793                                 |
+        | API Version     | {{site.latest_version}}, 2019-03-01                                |
+        | Down-Link       | localhost:8202                                   |
+        | Up-Link         | localhost:8201                                   |
+        +-----------------+--------------------------------------------------+
+        | Model providers | org.nlpcraft.examples.alarm.AlarmModel           |
+        |                 | org.nlpcraft.examples.echo.EchoModel             |
+        |                 | org.nlpcraft.examples.helloworld.HelloWorldModel |
+        |                 | org.nlpcraft.examples.time.TimeModel             |
+        |                 | org.nlpcraft.examples.weather.WeatherModel       |
+        +-----------------+--------------------------------------------------+
+        | JARs Folder     |                                                  |
+        +--------------------------------------------------------------------+
+
+        ...
+
+        Mar-11 23:25:56 [INFO ] Models deployed: 5
+
+        +================================================================================+
+        |        Model ID        |           Name           | Ver. | Elements | Synonyms |
+        +================================================================================+
+        | nlpcraft.alarm.ex      | Alarm Example Model      | 1.0  | 1        | 419      |
+        | nlpcraft.weather.ex    | Weather Example Model    | 1.0  | 3        | 9045     |
+        | nlpcraft.helloworld.ex | HelloWorld Example Model | 1.0  | 0        | 0        |
+        | nlpcraft.time.ex       | Time Example Model       | 1.0  | 1        | 432      |
+        | nlpcraft.echo.ex       | Echo Example Model       | 1.0  | 0        | 0        |
+        +--------------------------------------------------------------------------------+
+
+        ...
+
+        +--------------------------+
+        | Probe started [5.12 sec] |
+        +--------------------------+
+
+        ...
+
+        Mar-11 23:25:58 [INFO ] Server connection established.
+        </pre>
+        <span class="section-sub-title">Data Probe Configuration</span>
+        <p>
+            By default, when data probe starts it looks for <code>probe.conf</code> configuration file in the same directory
+            as <code>nlpcraft-{{site.latest_version}}-all-deps.jar</code> file. You can change this behavior with
+            <code>-config=path</code> parameter.
+        </p>
+        <p>
+            Just like the REST server the data probe configuration (e.g. <code>probe.conf</code> file) is using
+            <a target=_ href="https://github.com/lightbend/config/blob/master/HOCON.md">HOCON</a>
+            file format from <a target=_ href="https://lightbend.github.io/config/">Typesafe Config</a> project. Here is
+            the default <code>probe.conf</code> file:
+        </p>
+        <pre class="brush: js, highlight: [3, 8, 12, 13, 17, 25]">
+        probe {
+            # Any arbitrary descriptive name.
+            id = "all.examples"
+
+            # This is the same default token as in server configuration.
+            # Note that this token must match on probe and server for them to connect.
+            # If changed, this token must be kept secure.
+            token = "3141592653589793"
+
+            # These are default up-link and down-link endpoints for both probe and server.
+            # If changed - they need to be changed on both server and probe.
+            upLink = "localhost:8201"   # Server to probe data pipe.
+            downLink = "localhost:8202" # Probe to server data pipe.
+
+            # All JARs in this folder will be scanned for model providers.
+            # Safely ignored if 'null' - but then 'modelProviders' should have at least one element.
+            jarsFolder = null
+
+            # Fully qualified class names for model providers that will be instantiated.
+            # Must be on the active class path for the probe.
+            # Can be empty but then 'jarsFolder' must be provided.
+            #
+            # NOTE: These are ALL examples.
+            #       Start data probe with this configuration file to deploy all example data models.
+            modelProviders = [
+                "org.nlpcraft.examples.alarm.AlarmModel",
+                "org.nlpcraft.examples.echo.EchoModel"
+                "org.nlpcraft.examples.helloworld.HelloWorldModel"
+                "org.nlpcraft.examples.time.TimeModel"
+                "org.nlpcraft.examples.weather.WeatherModel"
+            ]
+
+            # Maximum execution result size in bytes. Default value is 1M.
+            resultMaxSizeBytes = 1048576
+        }
+        </pre>
+        <p>
+            Default configuration works out-of-the-box when running supplied examples. However, for your own
+            models you will need to provide your own <code>probe.conf</code> file where several
+            configuration properties will may need to be changed:
+        </p>
+        <ul>
+            <li><code>Line 3</code>: any arbitrary descriptive name for this data probe.</li>
+            <li>
+                <code>Line 8</code>: this token allows REST server and this probe to authenticate each other when communicating.
+                The same value should be configured for both the REST server and the data probe.
+            </li>
+            <li>
+                <code>Lines 12-13</code>: these are the communication endpoints for the communication between
+                the REST server and the data probes. If changed - they need to be changed on both the REST server
+                and the data probe configurations.
+            </li>
+            <li>
+                <code>Lines 17, 25</code>: properties <code>jarsFolder</code> and <code>modelProviders</code> allow to
+                specify what data models should be deployed by this data probe. At least one should be provided. During
+                the development you will most likely use <code>modelProviders</code> property where you can specify a
+                class name for your data model provider as long as it is on the classpath.
+            </li>
+        </ul>
+    </section>
+    <section id="props">
+        <span class="section-title">JVM Properties</span>
+        <p>
+            There are number of JVM system properties that affect the operations of the REST server and the data probes.
+            Note that these system properties can be set as JVM parameters via standard <code>-Dname=value</code> syntax
+            as well as OS environment variables. The table below provides information on all such system properties:
+        </p>
+        <table class="gradient-table">
+            <thead>
+            <tr>
+                <th>System property</th>
+                <th>Default</th>
+                <th>JVM</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <code>NLPCRAFT_VERSION_CHECK_DISABLED</code>
+                        <br>
+                        <span style="font-size: 80%">Possible values: <code>true</code> or <code>false</code></span>
+                    </td>
+                    <td><code>false</code></td>
+                    <td><nobr>REST server</nobr></td>
+                    <td>
+                        Allows to disable version check on REST server start.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>NLPCRAFT_IGNITE_DB_INITIALIZE</code>
+                        <br>
+                        <span style="font-size: 80%">Possible values: <code>true</code> or <code>false</code></span>
+                    </td>
+                    <td><code>false</code></td>
+                    <td><nobr>REST server</nobr></td>
+                    <td>
+                        Allows to force DB reset. Should be used only in development when upgrading to a new major version.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>NLPCRAFT_NLP_ENGINE</code>
+                        <br>
+                        <span style="font-size: 80%">Possible values: <code>opennlp</code> or <code>stanford</code></span>
+                    </td>
+                    <td><code>opennlp</code></td>
+                    <td>
+                        <nobr>REST server</nobr>
+                        <br>
+                        <nobr>Data probe</nobr>
+                    </td>
+                    <td>
+                        Allows to select which basic NLP toolkit is used by NLPCraft: <a target=_ href="https://opennlp.apache.org/">Apache OpenNLP</a> or
+                        <a target=_ href="https://stanfordnlp.github.io/CoreNLP/">Stanford CoreNLP</a>. Note that Stanford CoreNLP is an
+                        optional package - consult the <a href="/download.html#optional">installation</a>
+                        guide for details.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+<div class="col-md-2 third-column">
+    <ul class="side-nav">
+        <li class="side-nav-title">On This Page</li>
+        <li><a href="#server">REST Server</a></li>
+        <li><a href="#probe">Data Probe</a></li>
+        <li><a href="#props">JVM Properties</a></li>
+        <li class="side-nav-title">Quick Links</li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/github_logo.png"><a
+            target="github"
+            href="https://github.com/vic64/nlpcraft/tree/master/src/main/scala/org/nlpcraft/examples">Examples</a>
+        </li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/java.png"><a
+            target=_
+            href="/apis/latest/index.html">Javadoc</a>
+        </li>
+        <li>
+            <img class="quick-link-img mr-2" src="/images/apiary.svg"><a
+            href="https://nlpcraft.docs.apiary.io"
+            target="apiary">REST API</a>
+        </li>
+        <li>
+            <i class="fas fa-download mr-2"></i><a href="/download">Download</a>
+        </li>
+        <li class="side-nav-title">Support</li>
+        <li>
+            <nobr>
+                <i class="far fa-fw fa-envelope mr-2"></i><a href="mailto:support@nlpcraft.org">Email</a>
+            </nobr>
+        </li>
+        <li>
+            <nobr>
+                <i class="fab fa-fw fa-stack-overflow mr-2"></i><a target="so" href="https://stackoverflow.com/questions/ask">Stack Overflow</a>
+            </nobr>
+        </li>
+        <li>
+            <nobr>
+                <i class="fab fa-fw fa-github mr-2"></i><a target="github" href="https://github.com/vic64/nlpcraft/issues">GitHub</a>
+            </nobr>
+        </li>
+    </ul>
+</div>
+
+
+
+

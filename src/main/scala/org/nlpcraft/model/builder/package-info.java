@@ -30,6 +30,6 @@
  */
 
 /**
- * Contains model builder.
+ * Contains model builders.
  */
 package org.nlpcraft.model.builder;

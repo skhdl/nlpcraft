@@ -103,11 +103,11 @@ public class WeatherTest {
         checkIntent("LA weather", "INVALID-INTENT-ID", false);
         
         // Should be passed.
-        checkIntent("What's the local weather forecast?", "fcast|date?|city?", true);
-        checkIntent("What's the weather in Moscow?", "curr|date?|city?", true);
+        checkIntent("What's the local weather forecast?", "fcast", true);
+        checkIntent("What's the weather in Moscow?", "curr", true);
     
         // Can be answered with conversation.
-        checkIntent("Moscow", "curr|date?|city?", true);
+        checkIntent("Moscow", "curr", true);
         
         client.clearConversation();
     
