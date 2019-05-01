@@ -98,7 +98,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         // This stage must not be 1st enrichment stage.
         assume(ns.nonEmpty)
 
-        for (toks ← ns.tokenMix(withQuoted = true)) {
+        for (toks ← ns.tokenMixWithStopWords(withQuoted = true)) {
             val len = toks.map(_.words).sum
 
             def mkNote(kind: NCGeoLocationKind, seq: (String, Any)*): NCNlpSentenceNote =
