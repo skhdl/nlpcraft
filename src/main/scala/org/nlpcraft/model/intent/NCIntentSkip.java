@@ -33,7 +33,7 @@ package org.nlpcraft.model.intent;
 
 /**
  * Control flow exception to skip current intent. This exception can be thrown by the intent
- * {@link NCIntentSolver.IntentCallback callback} to indicate that current intent should be skipped (even though
+ * callback to indicate that current intent should be skipped (even though
  * it was matched and its callback was called). If there's more than one intent matched the next best matching intent
  * will be selected and its callback will be called.
  * <br><br>

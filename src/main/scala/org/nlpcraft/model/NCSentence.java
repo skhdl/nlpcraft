@@ -131,7 +131,7 @@ public interface NCSentence extends Serializable {
 
     /**
      * Gets collection of all parsing variants for this sentence. Each parsing variant is a list of tokens.
-     * Tokens appear in the order they are found in the user input.
+     * Tokens in the list appear in the order they were found in the user input.
      * <br><br>
      * Note that a given user input can have one or more possible different parsing variants. In general,
      * data model {@link NCModel#query(NCQueryContext)} method will need

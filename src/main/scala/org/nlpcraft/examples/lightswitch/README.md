@@ -5,7 +5,7 @@
 <a target=_ href="https://search.maven.org/search?q=org.nlpcraft"><img src="https://maven-badges.herokuapp.com/maven-central/org.nlpcraft/nlpcraft/badge.svg" alt="Maven"></a>
 
 ### Light Switch Example
-This example provides very simple implementation for NLI-powered light switch. You can something like `turn the lights off in
+This example provides very simple implementation for NLI-powered light switch. You can say something like `turn the lights off in
 the entire house` or `switch on the illumination in the master bedroom closet`. 
 You can easily modify intent callbacks to perform the actual light switching using HomeKit or Arduino-based
 controllers.

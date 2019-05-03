@@ -34,12 +34,12 @@ package org.nlpcraft.model.intent;
 import org.nlpcraft.model.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 /**
- * A context that is passed into {@link NCIntentSolver.IntentCallback callback} of the matched intent.
- *
- * @see NCIntentSolver.IntentCallback
- * @see NCIntentSolver#addIntent(NCIntentSolver.INTENT, NCIntentSolver.IntentCallback)
+ * A context that is passed into intent callback of the matched intent.
+ * 
+ * @see NCIntentSolver#addIntent(NCIntentSolver.INTENT, Function)
  */
 public interface NCIntentSolverContext extends Serializable {
     /**
@@ -58,7 +58,7 @@ public interface NCIntentSolverContext extends Serializable {
 
     /**
      * Gets a subset of tokens representing matched intent. This subset is grouped by the matched terms
-     * where {@code null} sub-list defines an optional term. Order and index of sub-lists corresponds
+     * where a {@code null} sub-list defines an optional term. Order and index of sub-lists corresponds
      * to the order and index of terms in the matching intent. Number of sub-lists will always be the same
      * as the number of terms in the matched intent.
      * <br><br>
@@ -96,10 +96,12 @@ public interface NCIntentSolverContext extends Serializable {
     List<List<NCToken>> getIntentTokens();
 
     /**
-     * Gets sentence variant that produced the matching for this intent. Returned variant is one of the
-     * variants provided by {@link NCSentence#getVariants()} methods.
+     * Gets sentence parsing variant that produced the matching for this intent. Returned variant is one of the
+     * variants provided by {@link NCSentence#getVariants()} methods. Note that tokens returned by this method are
+     * a superset of the tokens returned by {@link #getIntentTokens()} method, i.e. not all tokens
+     * from this variant may have been used in matching by the winning intent.
      * 
-     * @return Sentence variant that produced the matching for this intent.
+     * @return Sentence parsing variant that produced the matching for this intent.
      * @see #getIntentTokens() 
      */
     List<NCToken> getTokens();

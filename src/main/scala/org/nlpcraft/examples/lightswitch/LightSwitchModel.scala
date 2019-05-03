@@ -38,21 +38,32 @@ import org.nlpcraft.common._
 import org.nlpcraft.model.builder.NCModelBuilder
 import org.nlpcraft.model.intent.{NCIntentSolver, NCIntentSolverContext}
 import org.nlpcraft.model.intent.NCIntentSolver._
-import org.nlpcraft.model.utils.NCTokenUtils
+import org.nlpcraft.model.utils.NCTokenUtils._
 
 import scala.collection.JavaConverters._
 
 /**
-  *
+  * This example provides very simple implementation for NLI-powered light switch.
+  * You can say something like this:
+  * <ul>
+  *     <li><code>Turn the lights off in the entire house.</code></li>
+  *     <li><code>Switch on the illumination in the master bedroom closet.</code></li>
+  * </ul>
+  * You can easily modify intent callbacks to perform the actual light switching using
+  * HomeKit or Arduino-based controllers.
   */
 class LightSwitchModel extends NCModelProviderAdapter {
     val solver = new NCIntentSolver
+    
+    // Add two intents for on and off operations.
+    // Each intent expects one action ('ls:action-on' or 'ls:action-off' token)
+    // and the optional set of locations (defaults to the entire house if empty).
     
     solver.addIntent(
         new CONV_INTENT(
             "on-intent",
             new TERM("id == ls:action-on", 1, 1), // Term #1 (index=0).
-            new TERM("id == ls:place", 0, 10)     // Term #2 (index=1).
+            new TERM("id == ls:location", 0, 10)  // Term #2 (index=1).
         ),
         onMatch(_: NCIntentSolverContext, true)
     )
@@ -60,23 +71,32 @@ class LightSwitchModel extends NCModelProviderAdapter {
         new CONV_INTENT(
             "off-intent",
             new TERM("id == ls:action-off", 1, 1), // Term #1 (index=0).
-            new TERM("id == ls:place", 0, 10)      // Term #2 (index=1).
+            new TERM("id == ls:location", 0, 10)   // Term #2 (index=1).
         ),
         onMatch(_: NCIntentSolverContext, false)
     )
     
     /**
-      * 
-      * @param ctx
-      * @return
+      * Intent matching callback.
+      *
+      * @param ctx Intent solver context with specifics of the winning match.
+      * @param onOff On or off operation.
+      * @return Query result to be sent to the REST caller.
       */
     def onMatch(ctx: NCIntentSolverContext, onOff: Boolean): NCQueryResult = {
-        val term2 = ctx.getIntentTokens.get(1).asScala
+        // Get all the tokens from the winning intent for the locations.
+        val locationToks = ctx.getIntentTokens.get(1).asScala // Term #2 (index=1).
         
-        val onOffStr = if (onOff) "on" else "off"
-        val placeStr = if (term2 == null) "entire house" else term2.map(NCTokenUtils.getOriginalText).mkString(", ")
+        val status = if (onOff) "on" else "off"
+        val location =
+            if (locationToks == null || locationToks.isEmpty)
+                // Default to the entire house.
+                "entire house"
+            else
+                // Make a comma-separate list of all the locations.
+                locationToks.map(getOriginalText).mkString(", ")
         
-        val response = s"Lights '$onOffStr' in '${placeStr.toLowerCase}'."
+        val response = s"Lights '$status' in '${location.toLowerCase}'."
         
         println(response)
         
@@ -84,6 +104,7 @@ class LightSwitchModel extends NCModelProviderAdapter {
     }
     
     setup(
+        // Read the static configuration from YAML file in the same directory.
         NCModelBuilder.newYamlModel(
             classOf[LightSwitchModel].getClassLoader.
                 getResourceAsStream("org/nlpcraft/examples/lightswitch/lightswitch_model.yaml")
