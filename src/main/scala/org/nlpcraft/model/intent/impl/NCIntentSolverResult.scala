@@ -34,14 +34,14 @@ package org.nlpcraft.model.intent.impl
 import java.util.{List ⇒ JList}
 
 import org.nlpcraft.model._
-import org.nlpcraft.model.intent.NCIntentSolver.IntentCallback
+import org.nlpcraft.model.intent.NCIntentSolverContext
 
 /**
   * Intent solver engine result. Using basic case class for easier Java interop.
   */
 case class NCIntentSolverResult(
     intentId: String,
-    fn: IntentCallback, // For Java interop.
+    fn: java.util.function.Function[NCIntentSolverContext, NCQueryResult], // For Java interop.
     toks: JList[JList[NCToken]], // For Java interop.
     isExactMatch: Boolean,
     variant: NCIntentSolverVariant,

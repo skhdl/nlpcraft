@@ -31,6 +31,7 @@
 
 package org.nlpcraft.model.intent.impl
 
+import java.util.function.Function
 import java.util.{ArrayList ⇒ JArrayList, List ⇒ JList}
 
 import com.typesafe.scalalogging.LazyLogging
@@ -38,8 +39,9 @@ import org.apache.commons.lang3.tuple.Pair
 import org.nlpcraft.common._
 import org.nlpcraft.common.ascii.NCAsciiTable
 import org.nlpcraft.model.intent.NCIntentSolver._
+import org.nlpcraft.model.intent.NCIntentSolverContext
 import org.nlpcraft.model.utils.NCTokenUtils._
-import org.nlpcraft.model.{NCSentence, NCToken}
+import org.nlpcraft.model.{NCQueryResult, NCSentence, NCToken}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -165,10 +167,10 @@ object NCIntentSolverEngine extends LazyLogging {
     def solve(
         sen: NCSentence,
         conv: JList[NCToken],
-        intents: JList[Pair[INTENT, IntentCallback]]): JList[NCIntentSolverResult] = {
+        intents: JList[Pair[INTENT, Function[NCIntentSolverContext, NCQueryResult]]]): JList[NCIntentSolverResult] = {
         case class MatchHolder(
             intentMatch: IntentMatch, // Match.
-            callback: IntentCallback, // Callback function.
+            callback: Function[NCIntentSolverContext, NCQueryResult], // Callback function.
             variant: NCIntentSolverVariant, // Variant used for the match.
             variantIdx: Int // Variant index.
         )

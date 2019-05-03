@@ -9,7 +9,6 @@ import scala.collection.JavaConverters._
 import com.typesafe.scalalogging.LazyLogging
 import org.nlpcraft.common.version.{NCVersion, NCVersionManager}
 import org.nlpcraft.common.{NCE, U}
-import org.nlpcraft.model.intent.NCIntentSolver.IntentCallback
 import org.nlpcraft.model.intent.{NCIntentSolver, NCIntentSolverContext}
 import org.nlpcraft.model.{NCElement, NCMetadata, NCModel, NCModelDescriptor, NCProbeContext, NCQueryContext, NCQueryResult}
 import resource.managed
@@ -138,7 +137,7 @@ object NCDumpWriterScala extends LazyLogging {
         intents.foreach(i ⇒
             solverFix.addIntent(
                 i,
-                new IntentCallback {
+                new java.util.function.Function[NCIntentSolverContext, NCQueryResult] {
                     override def apply(t: NCIntentSolverContext): NCQueryResult =
                         NCQueryResult.json(
                             s"""

@@ -212,7 +212,7 @@ public class NCIntentSolver implements Serializable {
     private final Supplier<NCQueryResult> notFound;
     
     // Added intents.
-    private final List<Pair<INTENT, IntentCallback>> intents = new ArrayList<>();
+    private final List<Pair<INTENT, Function<NCIntentSolverContext, NCQueryResult>>> intents = new ArrayList<>();
     
     /**
      * Marker type of pattern items. Only built-in {@link OR}, {@link AND}, {@link NAND}, {@link NOR}, {@link XOR},
@@ -238,15 +238,6 @@ public class NCIntentSolver implements Serializable {
                 String.format("Intent DSL %s combinator should have at least two elements near: %s", name, str));
         }
     }
-
-    /**
-     * Callback provided by the user for an intent when it is matched. It takes solver
-     * context as a parameter and should return query result. It can also throw either
-     * {@link NCRejection} or {@link NCIntentSkip} exceptions.
-     *
-     * @see NCIntentSolver#addIntent(INTENT, IntentCallback)
-     */
-    public interface IntentCallback extends Function<NCIntentSolverContext, NCQueryResult>, Serializable {}
 
     /**
      * Checks that combinator is one of the built-in implementations.
@@ -1508,7 +1499,7 @@ public class NCIntentSolver implements Serializable {
      * @param fun A callback function that will be called when given intent is found to be the best match.
      * @return Returns this solver for call chaining.
      */
-    public NCIntentSolver addIntent(INTENT intent, IntentCallback fun) {
+    public NCIntentSolver addIntent(INTENT intent, Function<NCIntentSolverContext, NCQueryResult> fun) {
         if (intent == null)
             throw new IllegalArgumentException("Intent cannot be null.");
         if (fun == null)

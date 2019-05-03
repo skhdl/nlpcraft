@@ -38,7 +38,6 @@ import org.nlpcraft.common._
 import org.nlpcraft.model.builder.NCModelBuilder
 
 import scala.collection.JavaConverters._
-//import scala.collection.{Iterable, Seq}
 
 /**
   * Echo example model provider.
