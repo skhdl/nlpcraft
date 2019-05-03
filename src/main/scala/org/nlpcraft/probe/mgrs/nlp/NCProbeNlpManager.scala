@@ -146,7 +146,12 @@ object NCProbeNlpManager extends NCProbeLifecycle("NLP manager") {
         senMeta: Map[String, Serializable],
         mdlId: String
     ): Unit = {
-        logger.info(s"Sentence received: ${nlpSen.text}")
+        logger.info(s"Sentence received [" +
+            s"txt='${nlpSen.text}', " +
+            s"usrId=$usrId, " +
+            s"mdlId=$mdlId, " +
+            s"srvReqId=$srvReqId" +
+        s"]")
     
         /**
           *

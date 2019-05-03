@@ -145,7 +145,11 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 "data" → data
             )
 
-            logger.info(s"New request received: $txt0")
+            logger.info(s"New request received [" +
+                s"txt='$txt0', " +
+                s"usr=${usr.firstName} ${usr.lastName} (${usr.email}), " +
+                s"mdlId=$mdlId" +
+            s"]")
 
             // Enrich the user input and send it to the probe.
             NCProbeManager.askProbe(

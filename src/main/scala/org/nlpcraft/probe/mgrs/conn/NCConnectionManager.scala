@@ -143,7 +143,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
         resp.getType match {
             case "P2S_PROBE_OK" ⇒ logger.trace("Downlink handshake OK.") // Bingo!
             case "P2S_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
-            case _ ⇒ err(s"Unexpected server message: ${resp.getType}")
+            case _ ⇒ err(s"Unexpected REST server message: ${resp.getType}")
         }
     
         sock
@@ -230,9 +230,9 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                 resp.getType match {
                     case "S2P_PROBE_MULTIPLE_INSTANCES" ⇒ err("Duplicate probes ID detected. Each probe has to have a unique ID.")
                     case "S2P_PROBE_NOT_FOUND" ⇒ err("Probe failed to start due to unknown error.")
-                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"Server does not support probe version: ${ver.version}")
+                    case "S2P_PROBE_VERSION_MISMATCH" ⇒ err(s"REST server does not support probe version: ${ver.version}")
                     case "S2P_PROBE_OK" ⇒ logger.trace("Uplink handshake OK.") // Bingo!
-                    case _ ⇒ err(s"Unknown server message: ${resp.getType}")
+                    case _ ⇒ err(s"Unknown REST server message: ${resp.getType}")
                 }
     
                 sock
@@ -296,7 +296,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
             
             while (!t.isInterrupted)
                 try {
-                    logger.info(s"Establishing server connection to [" +
+                    logger.info(s"Establishing REST server connection to [" +
                         s"uplink=${config.upLink}, " +
                         s"downlink=${config.downLink}" +
                     s"]")
@@ -328,7 +328,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                                 NCCommandManager.processServerMessage(upSock.read[NCProbeMessage](cryptoKey))
                             catch {
                                 case _: InterruptedIOException | _: InterruptedException ⇒ ()
-                                case _: EOFException ⇒ exit(t, s"Uplink server connection closed.")
+                                case _: EOFException ⇒ exit(t, s"Uplink REST server connection closed.")
                                 case e: Exception ⇒ exit(t, s"Uplink connection failed: ${e.getMessage}")
                             }
                     }
@@ -363,7 +363,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                             }
                             catch {
                                 case _: InterruptedIOException | _: InterruptedException ⇒ ()
-                                case _: EOFException ⇒ exit(t, s"Downlink server connection closed.")
+                                case _: EOFException ⇒ exit(t, s"Downlink REST server connection closed.")
                                 case e: Exception ⇒ exit(t, s"Downlink connection failed: ${e.getMessage}")
                             }
                     }
@@ -372,7 +372,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                     upThread.start()
                     dnThread.start()
 
-                    logger.info("Server connection established.")
+                    logger.info("REST server connection established.")
                     
                     while (!t.isInterrupted && latch.getCount > 0) U.ignoreInterrupt {
                         latch.await()
@@ -381,12 +381,12 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                     closeAll()
 
                     if (!isStopping) {
-                        logger.info(s"Server connection closed (retrying in ${RETRY_TIMEOUT / 1000}s).")
+                        logger.info(s"REST server connection closed (retrying in ${RETRY_TIMEOUT / 1000}s).")
                         
                         timeout()
                     }
                     else
-                        logger.info(s"Server connection closed.")
+                        logger.info(s"REST server connection closed.")
                 }
                 catch {
                     case e: HandshakeError ⇒
@@ -397,7 +397,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                             logger.error(e.getMessage)
     
                         // Ack the handshake error message.
-                        logger.error(s"Failed during server connection handshake (aborting).")
+                        logger.error(s"Failed during REST server connection handshake (aborting).")
     
                         abort()
 
@@ -407,9 +407,9 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
 
                         // Ack the IO error message.
                         if (e.getMessage != null)
-                            logger.error(s"Failed to establish server connection (retrying in ${RETRY_TIMEOUT / 1000}s): ${e.getMessage}")
+                            logger.error(s"Failed to establish REST server connection (retrying in ${RETRY_TIMEOUT / 1000}s): ${e.getMessage}")
                         else
-                            logger.error(s"Failed to establish server connection (retrying in ${RETRY_TIMEOUT / 1000}s).")
+                            logger.error(s"Failed to establish REST server connection (retrying in ${RETRY_TIMEOUT / 1000}s).")
 
                         timeout()
 
@@ -418,7 +418,7 @@ object NCConnectionManager extends NCProbeLifecycle("Connection manager") {
                         closeAll()
     
                         // Ack the error message.
-                        logger.error("Unexpected error establishing server connection (aborting).", e)
+                        logger.error("Unexpected error establishing REST server connection (aborting).", e)
     
                         abort()
                 }
