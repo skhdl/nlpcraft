@@ -40,7 +40,7 @@ import org.nlpcraft.common.nlp.core.NCNlpCoreManager
 import org.nlpcraft.common.nlp.dict.NCDictionaryManager
 import org.nlpcraft.common.nlp.numeric.NCNumericManager
 import org.nlpcraft.common.version._
-import org.nlpcraft.server.sql.NCSqlManager
+import org.nlpcraft.server.sql.{NCSql, NCSqlManager}
 import org.nlpcraft.server.endpoints.NCEndpointManager
 import org.nlpcraft.server.geo.NCGeoManager
 import org.nlpcraft.server.ignite.{NCIgniteInstance, NCIgniteRunner}
@@ -123,7 +123,8 @@ object NCServer extends App with NCIgniteInstance with LazyLogging {
             // Additional parameters.
             Map(
                 "IGNITE_VERSION" → ignite.version().toString,
-                "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size()
+                "IGNITE_CLUSTER_SIZE" → ignite.cluster().nodes().size(),
+                "REQUESTS_COUNT" → NCSql.sql { NCSqlManager.getLogsCount }
             )
         )
     
