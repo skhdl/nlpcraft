@@ -44,6 +44,7 @@ import org.nlpcraft.model.utils.NCTokenUtils._
 import org.nlpcraft.model.{NCQueryResult, NCSentence, NCToken}
 
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
@@ -211,7 +212,6 @@ object NCIntentSolverEngine extends LazyLogging {
         val sorted =
             matches.sortWith((m1: MatchHolder, m2: MatchHolder) ⇒
                 // 1. First with maximum weight.
-
                 m1.intentMatch.weight.compare(m2.intentMatch.weight) match {
                     case x1 if x1 < 0 ⇒ false
                     case x1 if x1 > 0 ⇒ true
@@ -222,18 +222,30 @@ object NCIntentSolverEngine extends LazyLogging {
                         m1.variant.compareTo(m2.variant) match {
                             case x2 if x2 < 0 ⇒ false
                             case x2 if x2 > 0 ⇒ true
-                            // Default, no matter, any value.
                             case x2 ⇒
                                 require(x2 == 0)
 
-                                def calcHash(m: MatchHolder): Int =
-                                    m.variant.tokens.map(t ⇒
-                                        s"${t.getId}${t.getGroup}${t.getValue}${t.getMetadata.getString("NLP_NORMTEXT")}"
-                                    ).mkString("").hashCode
+                                // 3. Tries to compare by 'weight' of system tokens fields.
+                                // It can be applied only for same tokens types.
+                                // First with maximum weight.
+                                Integer.compare(
+                                    calcSystemTokensWeight(m1.variant), calcSystemTokensWeight(m2.variant)
+                                ) match {
+                                    case x3 if x3 < 0 ⇒ false
+                                    case x3 if x3 > 0 ⇒ true
+                                    case x3 ⇒
+                                        // Default, no matter, any value.
+                                        require(x3 == 0)
 
-                                // Order doesn't make sense here.
-                                // It is just to provide deterministic result for the matches with the same weight.
-                                calcHash(m1) > calcHash(m2)
+                                        def calcHash(m: MatchHolder): Int =
+                                            m.variant.tokens.map(t ⇒
+                                                s"${t.getId}${t.getGroup}${t.getValue}${t.getMetadata.getString("NLP_NORMTEXT")}"
+                                            ).mkString("").hashCode
+
+                                        // Order doesn't make sense here.
+                                        // It is just to provide deterministic result for the matches with the same weight.
+                                        calcHash(m1) > calcHash(m2)
+                                }
                         }
                 }
             )
@@ -265,7 +277,35 @@ object NCIntentSolverEngine extends LazyLogging {
             )
         )
     }
-    
+
+    /**
+      *
+      * @param v
+      * @return
+      */
+    private def calcSystemTokensWeight(v: NCIntentSolverVariant): Int = {
+        val x = v.tokens.asScala.map(t ⇒
+            if (isGeo(t))
+                t.getMetadata.getInteger("GEO_WEIGHT")
+            else if (isNumeric(t))
+                t.getMetadata.getInteger("NUM_WEIGHT")
+            else if (isDate(t))
+                t.getMetadata.getInteger("DATE_WEIGHT")
+            else if (isCoordinate(t))
+                t.getMetadata.getInteger("COORDINATE_WEIGHT")
+            else if (isFunction(t))
+                t.getMetadata.getInteger("FUNCTION_WEIGHT")
+            else
+                0
+        ).sum
+
+        println("v="+v.tokens.asScala)
+        println("x="+x)
+        println()
+
+        x
+    }
+
     /**
       *
       * @param im

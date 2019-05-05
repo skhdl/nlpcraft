@@ -188,6 +188,19 @@ public class NCTokenUtils {
 
         return tok.getId().equals("nlp:geo");
     }
+    
+    /**
+     * TODO:
+     * Whether or not this token has {@code nlp:coordinate} {@link NCToken#getId() ID}.
+     *
+     * @param tok A token.
+     * @return Whether or not this token has {@code nlp:coordinate} {@link NCToken#getId() ID}.
+     */
+    static public boolean isCoordinate(NCToken tok) {
+        assert tok != null;
+        
+        return tok.getId().equals("nlp:coordinate");
+    }
 
     /**
      * Whether or not this token has {@code nlp:nlp} {@link NCToken#getId() ID}.

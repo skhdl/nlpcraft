@@ -101,8 +101,30 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
         for (toks ← ns.tokenMixWithStopWords(withQuoted = true)) {
             val len = toks.map(_.words).sum
 
-            def mkNote(kind: NCGeoLocationKind, seq: (String, Any)*): NCNlpSentenceNote =
-                NCNlpSentenceNote(toks.map(_.index), "nlp:geo", Seq("kind" → kind.toString, "length" → len) ++ seq :_*)
+            def mkNote(kind: NCGeoLocationKind, seq: (String, Any)*): NCNlpSentenceNote = {
+                // Default.
+                var weight =
+                    kind match {
+                        case CONTINENT ⇒ 0
+                        case SUBCONTINENT ⇒ 1
+                        case METRO ⇒ 2
+                        case COUNTRY ⇒ 3
+                        case REGION ⇒ 4
+                        case CITY ⇒ 5
+                        case _ ⇒ throw new AssertionError(s"sUnexpected kind: $kind")
+                    }
+
+                // Exceptions.
+                // "USA" as country is more important than cities with same name.
+                if (kind != CITY && toks.map(_.normText).mkString(" ") == "usa")
+                    weight = 6
+
+                NCNlpSentenceNote(
+                    toks.map(_.index),
+                    "nlp:geo",
+                    Seq("kind" → kind.toString, "length" → len, "weight" → weight) ++ seq :_*
+                )
+            }
 
             def make(e: NCGeoEntry): NCNlpSentenceNote =
                 e match {
@@ -253,6 +275,7 @@ object NCGeoEnricher extends NCNlpEnricher("Geo enricher") {
             case COUNTRY ⇒ getValue(note, "country")
             case REGION ⇒ getValue(note, "region")
             case CITY ⇒ getValue(note, "city")
+            case _ ⇒ throw new AssertionError(s"sUnexpected kind: $kind")
         }
 
     private def getKind(note: NCNlpSentenceNote): NCGeoLocationKind = NCGeoLocationKind.withName(getValue(note, "kind"))

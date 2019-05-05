@@ -422,7 +422,8 @@ object NCFunctionEnricher extends NCProbeEnricher("Function enricher") {
             Seq(
                 "type" → f.toString,
                 "length" → len,
-                "indexes" → elemToks.getOrElse(Seq.empty).map(_.index).asJava
+                "indexes" → elemToks.getOrElse(Seq.empty).map(_.index).asJava,
+                "weight" → 0 // Default.
             ) ++ optArgs: _*
         )
 

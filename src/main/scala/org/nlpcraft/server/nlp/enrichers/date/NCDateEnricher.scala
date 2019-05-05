@@ -389,7 +389,8 @@ object NCDateEnricher extends NCNlpEnricher("Date enricher") {
             "from" → range.from,
             "to" → range.to,
             "periods" → range.periods,
-            "length" → (to - from + 1)
+            "length" → (to - from + 1),
+            "weight" → 0 // Default.
         )
 
     private def addNote(

@@ -224,7 +224,8 @@ object NCCoordinatesEnricher extends NCProbeEnricher("Coordinates enricher") {
                                 toks.map(_.index),
                                 "nlp:coordinate",
                                 "latitude" → lat.value,
-                                "longitude" → lon.value
+                                "longitude" → lon.value,
+                                "weight" → 0 // Default.
                             )
 
                             toks.foreach(_.add(note))

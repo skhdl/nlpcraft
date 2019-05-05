@@ -229,7 +229,8 @@ object NCNumericEnricher extends NCNlpEnricher("Numeric enricher") {
                 "isNotEqualCondition" → (from == to && !fromIncl && !toIncl),
                 "isFromNegativeInfinity" → (from == MIN_VALUE),
                 "isToPositiveInfinity" → (to == MAX_VALUE),
-                "length" → toks.map(_.words).sum
+                "length" → toks.map(_.words).sum,
+                "weight" → 0 // Default.
             )
 
         unitOpt match {
