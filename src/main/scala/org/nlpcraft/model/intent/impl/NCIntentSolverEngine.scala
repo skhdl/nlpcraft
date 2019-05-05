@@ -218,10 +218,10 @@ object NCIntentSolverEngine extends LazyLogging {
                     case x1 ⇒
                         require(x1 == 0)
 
-                        // 2. First with minimum variant.
+                        // 2. First with maximum variant.
                         m1.variant.compareTo(m2.variant) match {
-                            case x2 if x2 < 0 ⇒ true
-                            case x2 if x2 > 0 ⇒ false
+                            case x2 if x2 < 0 ⇒ false
+                            case x2 if x2 > 0 ⇒ true
                             // Default, no matter, any value.
                             case x2 ⇒
                                 require(x2 == 0)
