@@ -96,11 +96,7 @@ class LightSwitchModel extends NCModelProviderAdapter {
                 // Make a comma-separate list of all the locations.
                 locationToks.map(getOriginalText).mkString(", ")
         
-        val response = s"Lights '$status' in '${location.toLowerCase}'."
-        
-        println(response)
-        
-        NCQueryResult.text(response)
+        NCQueryResult.text(s"Lights '$status' in '${location.toLowerCase}'.")
     }
     
     setup(

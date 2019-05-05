@@ -212,13 +212,13 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                     case Some(holder) ⇒
                         holder.close()
             
-                        logger.info(s"Probe closed and removed: $probeKey")
+                        logger.info(s"Probe removed: $probeKey")
                 }
 
             case Some(hld) ⇒
                 hld.close()
                 
-                logger.info(s"Pending probe closed and removed: $probeKey")
+                logger.info(s"Pending probe removed: $probeKey")
         }
     }
     
@@ -775,10 +775,11 @@ object NCProbeManager extends NCLifecycle("Probe manager") {
                 )
                 
                 logger.info(s"Sentence sent to probe [" +
-                    s"txt=$txt, " +
+                    s"txt='$txt', " +
                     s"mdlId=$mdlId, " +
-                    s"probeId=${holder.probeKey.probeId}" +
-                    s"]")
+                    s"probeId=${holder.probeKey.probeId}, " +
+                    s"srvReqId=$srvReqId" +
+                s"]")
 
                 NCProcessLogManager.updateProbe(
                     srvReqId,

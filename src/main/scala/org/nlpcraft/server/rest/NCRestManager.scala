@@ -32,12 +32,12 @@
 package org.nlpcraft.server.rest
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.headers._
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCode}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Directive0, Route, _}
 import akka.stream.ActorMaterializer
@@ -46,7 +46,7 @@ import org.apache.commons.validator.routines.UrlValidator
 import org.nlpcraft.common.{NCException, NCLifecycle, _}
 import org.nlpcraft.server.NCConfigurable
 import org.nlpcraft.server.apicodes.NCApiStatusCode._
-import org.nlpcraft.server.mdo.NCUserMdo
+import org.nlpcraft.server.mdo.{NCQueryStateMdo, NCUserMdo}
 import org.nlpcraft.server.notification.NCNotificationManager
 import org.nlpcraft.server.probe.NCProbeManager
 import org.nlpcraft.server.query.NCQueryManager
@@ -123,7 +123,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                corsHandler(complete(StatusCodes.Unauthorized, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.Unauthorized, code, errMsg)
 
             case e: SignInFailure ⇒
                 val errMsg = e.getLocalizedMessage
@@ -131,7 +131,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
 
-                corsHandler(complete(StatusCodes.Unauthorized, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.Unauthorized, code, errMsg)
 
             case e: NotImplemented ⇒
                 val errMsg = e.getLocalizedMessage
@@ -139,7 +139,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                corsHandler(complete(StatusCodes.NotImplemented, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.NotImplemented, code, errMsg)
 
             case e: InvalidArguments ⇒
                 val errMsg = e.getLocalizedMessage
@@ -147,7 +147,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                corsHandler(complete(StatusCodes.BadRequest, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.BadRequest, code, errMsg)
 
             case e: AdminRequired ⇒
                 val errMsg = e.getLocalizedMessage
@@ -155,7 +155,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
 
-                corsHandler(complete(StatusCodes.Forbidden, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.Forbidden, code, errMsg)
 
             case e: InvalidOperation ⇒
                 val errMsg = e.getLocalizedMessage
@@ -163,7 +163,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg, "email" → e.email)
 
-                corsHandler(complete(StatusCodes.Forbidden, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.Forbidden, code, errMsg)
 
             // General exception.
             case e: NCException ⇒
@@ -172,9 +172,9 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                 NCNotificationManager.addEvent(code, "errMsg" → errMsg)
 
-                logger.error(s"Unexpected error: $errMsg", e)
+                logger.warn(s"Unexpected error: $errMsg")
 
-                corsHandler(complete(StatusCodes.BadRequest, mkErrorBody(code, errMsg)))
+                completeError(StatusCodes.BadRequest, code, errMsg)
 
             // Unexpected errors.
             case e: Throwable ⇒
@@ -184,9 +184,26 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 NCNotificationManager.addEvent(code, "exception" → e.getClass.getSimpleName, "errMsg" → errMsg)
 
                 logger.error(s"Unexpected system error: $errMsg", e)
-
-                corsHandler(complete(InternalServerError, mkErrorBody(code, errMsg)))
+    
+                completeError(StatusCodes.InternalServerError, code, errMsg)
         }
+    
+    /**
+      *
+      * @param statusCode
+      * @param errCode
+      * @param errMsg
+      */
+    private def completeError(statusCode: StatusCode, errCode: String, errMsg: String): Route = {
+        corsHandler(
+            complete(
+                HttpResponse(
+                    status = statusCode,
+                    entity = HttpEntity(ContentTypes.`application/json`, mkErrorBody(errCode, errMsg))
+                )
+            )
+        )
+    }
 
     /**
       *
@@ -289,6 +306,36 @@ object NCRestManager extends NCLifecycle("REST manager") {
                 userId
             case None ⇒ initiatorUsr.id
         }
+    
+    /**
+      *
+      * @param qryState
+      * @return
+      */
+    private def convertToJavaMap(qryState: NCQueryStateMdo): java.util.Map[String, Any] = {
+        Map(
+            "srvReqId" → qryState.srvReqId,
+            "txt" → qryState.text,
+            "usrId" → qryState.userId,
+            "mdlId" → qryState.modelId,
+            "probeId" → qryState.probeId.orNull,
+            "status" → qryState.status,
+            "resType" → qryState.resultType.orNull,
+            "resBody" → (
+                if (qryState.resultBody.isDefined &&
+                    qryState.resultType.isDefined &&
+                    qryState.resultType.get == "json"
+                )
+                    U.js2Obj(qryState.resultBody.get)
+                else
+                    qryState.resultBody.orNull
+                ),
+            "error" → qryState.error.orNull,
+            "errorCode" → qryState.errorCode.map(Integer.valueOf).orNull,
+            "createTstamp" → qryState.createTstamp.getTime,
+            "updateTstamp" → qryState.updateTstamp.getTime
+        ).filter(_._2 != null).asJava
+    }
 
     /**
       * Starts this component.
@@ -296,6 +343,54 @@ object NCRestManager extends NCLifecycle("REST manager") {
     override def start(): NCLifecycle = {
         val routes: Route =
             corsHandler (post {
+                /**/
+                path(API / "test" / "ask") {
+                    case class Req(
+                        acsTok: String,
+                        txt: String,
+                        mdlId: String,
+                        data: Option[spray.json.JsValue]
+                    )
+        
+                    implicit val reqFmt: RootJsonFormat[Req] = jsonFormat4(Req)
+        
+                    entity(as[Req]) { req ⇒
+                        checkLength("acsTok", req.acsTok, 256)
+                        checkLength("txt", req.txt, 1024)
+                        checkLength("mdlId", req.mdlId, 32)
+            
+                        val dataJsOpt =
+                            req.data match {
+                                case Some(data) ⇒ Some(data.compactPrint)
+                                case None ⇒ None
+                            }
+            
+                        checkLengthOpt("data", dataJsOpt, 512000)
+            
+                        val userId = authenticate(req.acsTok).id
+            
+                        optionalHeaderValueByName("User-Agent") { usrAgent ⇒
+                            extractClientIP { rmtAddr ⇒
+                                val state = convertToJavaMap(NCQueryManager.syncAsk(
+                                    userId,
+                                    req.txt,
+                                    req.mdlId,
+                                    usrAgent,
+                                    rmtAddr.toOption match {
+                                        case Some(a) ⇒ Some(a.getHostAddress)
+                                        case None ⇒ None
+                                    },
+                                    dataJsOpt
+                                ))
+    
+                                // We have to use GSON (not spray) here to serialize `resBody` field.
+                                val js = GSON.toJson(Map("status" → API_OK.toString, "state" → state).asJava)
+    
+                                complete(HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, js)))
+                            }
+                        }
+                    }
+                } ~
                 /**/
                 path(API / "ask") {
                     case class Req(
@@ -329,7 +424,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                         optionalHeaderValueByName("User-Agent") { usrAgent ⇒
                             extractClientIP { rmtAddr ⇒
-                                val newSrvReqId = NCQueryManager.ask(
+                                val newSrvReqId = NCQueryManager.asyncAsk(
                                     userId,
                                     req.txt,
                                     req.mdlId,
@@ -401,31 +496,7 @@ object NCRestManager extends NCLifecycle("REST manager") {
 
                         val userId = authenticate(req.acsTok).id
 
-                        val states =
-                            NCQueryManager.check(userId, req.srvReqIds, req.maxRows).map(p ⇒
-                                Map(
-                                    "srvReqId" → p.srvReqId,
-                                    "txt" → p.text,
-                                    "usrId" → p.userId,
-                                    "mdlId" → p.modelId,
-                                    "probeId" → p.probeId.orNull,
-                                    "status" → p.status,
-                                    "resType" → p.resultType.orNull,
-                                    "resBody" → (
-                                                if (p.resultBody.isDefined &&
-                                                    p.resultType.isDefined &&
-                                                    p.resultType.get == "json"
-                                                )
-                                                    U.js2Obj(p.resultBody.get)
-                                                else
-                                                    p.resultBody.orNull
-                                                ),
-                                    "error" → p.error.orNull,
-                                    "errorCode" → p.errorCode.map(Integer.valueOf).orNull,
-                                    "createTstamp" → p.createTstamp.getTime,
-                                    "updateTstamp" → p.updateTstamp.getTime
-                                ).filter(_._2 != null).asJava
-                            )
+                        val states = NCQueryManager.check(userId, req.srvReqIds, req.maxRows).map(convertToJavaMap)
 
                         // We have to use GSON (not spray) here to serialize `resBody` field.
                         val js = GSON.toJson(Map("status" → API_OK.toString, "states" → states.asJava).asJava)

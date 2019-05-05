@@ -55,6 +55,9 @@ import scala.util.control.Exception._
 object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance {
     @volatile private var cache: IgniteCache[String/*Server request ID*/, NCQueryStateMdo] = _
     
+    private final val SYNC_ASK_MUX = new Object()
+    private final val SYNC_ASK_MAX_WAIT_MS = 20 * 1000 // 20 secs.
+
     private final val MAX_WORDS = 100
 
     /**
@@ -71,8 +74,9 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
         
         super.start()
     }
-
+    
     /**
+      * Synchronous handler for `/test/ask` REST call.
       *
       * @param usrId
       * @param txt
@@ -83,7 +87,62 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
       * @return
       */
     @throws[NCE]
-    def ask(
+    def syncAsk(
+        usrId: Long,
+        txt: String,
+        mdlId: String,
+        usrAgent: Option[String],
+        rmtAddr: Option[String],
+        data: Option[String]
+    ): NCQueryStateMdo = {
+        ensureStarted()
+    
+        val srvReqId = U.genGuid()
+    
+        spawnAskFuture(srvReqId, usrId, txt, mdlId, usrAgent, rmtAddr, data)
+    
+        var qryState: NCQueryStateMdo = null
+        
+        val start = System.currentTimeMillis()
+        
+        catching(wrapIE) {
+            var found = false
+            
+            while (!found)
+                cache.values.filter(x ⇒ x.srvReqId == "1"/*srvReqId*/ && x.status == QRY_READY.toString).lastOption match {
+                    case None ⇒
+                        if (System.currentTimeMillis() - start > SYNC_ASK_MAX_WAIT_MS)
+                            throw new NCE(s"Synchronous call timed out (max wait is ${SYNC_ASK_MAX_WAIT_MS}ms).")
+    
+                        // Busy wait.
+                        SYNC_ASK_MUX.synchronized {
+                            SYNC_ASK_MUX.wait(1000)
+                        }
+                        
+                    case Some(x) ⇒
+                        found = true // Break from the wait.
+                        qryState = x
+                }
+    
+            cancel0(Right(Set(srvReqId)))
+        }
+    
+        qryState
+    }
+
+    /**
+      * Asynchronous handler for `/ask` REST call.
+      *
+      * @param usrId
+      * @param txt
+      * @param mdlId
+      * @param usrAgent
+      * @param rmtAddr
+      * @param data
+      * @return
+      */
+    @throws[NCE]
+    def asyncAsk(
         usrId: Long,
         txt: String,
         mdlId: String,
@@ -93,19 +152,44 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     ): String = {
         ensureStarted()
 
+        val srvReqId = U.genGuid()
+
+        spawnAskFuture(srvReqId, usrId, txt, mdlId, usrAgent, rmtAddr, data)
+        
+        srvReqId
+    }
+    
+    /**
+      * @param srvReqId
+      * @param usrId
+      * @param txt
+      * @param mdlId
+      * @param usrAgent
+      * @param rmtAddr
+      * @param data
+      * @return
+      */
+    @throws[NCE]
+    private def spawnAskFuture(
+        srvReqId: String,
+        usrId: Long,
+        txt: String,
+        mdlId: String,
+        usrAgent: Option[String],
+        rmtAddr: Option[String],
+        data: Option[String]
+    ): Unit = {
         val txt0 = txt.trim()
-
+        
         val rcvTstamp = U.nowUtcTs()
-
+        
         // Check user.
         val usr = NCUserManager.getUser(usrId).getOrElse(throw new NCE(s"Unknown user ID: $usrId"))
-
+        
         // Check input length.
         if (txt0.split(" ").length > MAX_WORDS)
             throw new NCE(s"User input is too long (max is $MAX_WORDS words).")
-
-        val srvReqId = U.genGuid()
-
+        
         catching(wrapIE) {
             // Enlist for tracking.
             cache += srvReqId → NCQueryStateMdo(
@@ -121,7 +205,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 updateTstamp = rcvTstamp
             )
         }
-
+        
         // Add processing log.
         NCProcessLogManager.newEntry(
             usrId,
@@ -134,8 +218,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
             rcvTstamp,
             data.orNull
         )
-
-        val fut = Future {
+        
+        Future {
             NCNotificationManager.addEvent("NC_NEW_QRY",
                 "userId" → usrId,
                 "modelId" → mdlId,
@@ -144,13 +228,13 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 "rmtAddr" → rmtAddr,
                 "data" → data
             )
-
+            
             logger.info(s"New request received [" +
                 s"txt='$txt0', " +
                 s"usr=${usr.firstName} ${usr.lastName} (${usr.email}), " +
                 s"mdlId=$mdlId" +
-            s"]")
-
+                s"]")
+            
             // Enrich the user input and send it to the probe.
             NCProbeManager.askProbe(
                 srvReqId,
@@ -162,31 +246,27 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
                 rmtAddr,
                 data
             )
-        }
-        
-        fut onFailure {
+        } onFailure {
             case e: NCE ⇒
                 logger.info(s"Query processing failed: ${e.getLocalizedMessage}", e)
-        
+            
                 setError(
                     srvReqId,
                     e.getLocalizedMessage,
                     NCErrorCodes.SYSTEM_ERROR
                 )
-
+        
             case e: Throwable ⇒
                 logger.error(s"System error processing query: ${e.getLocalizedMessage}", e)
-                
+            
                 setError(
                     srvReqId,
                     "Processing failed due to a system error.",
                     NCErrorCodes.UNEXPECTED_ERROR
                 )
         }
-        
-        srvReqId
     }
-    
+
     /**
       *
       * @param srvReqId
@@ -351,6 +431,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     }
 
     /**
+      * Handler for `/cancel` REST call.
       *
       * @param srvReqIds Server request IDs.
       */
@@ -358,6 +439,7 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def cancel(srvReqIds: Set[String]): Unit = cancel0(Right(srvReqIds))
 
     /**
+      * Handler for `/cancel` REST call.
       *
       * @param usrId User ID.
       */
@@ -365,7 +447,8 @@ object NCQueryManager extends NCLifecycle("Query manager") with NCIgniteInstance
     def cancel(usrId: Long): Unit = cancel0(Left(usrId))
 
     /**
-      *
+      * Handler for `/check` REST call.
+      * 
       * @param usrId
       * @param srvReqIdsOpt
       * @param maxRowsOpt
