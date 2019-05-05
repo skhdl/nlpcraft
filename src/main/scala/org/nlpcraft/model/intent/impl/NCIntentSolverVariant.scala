@@ -78,12 +78,16 @@ case class NCIntentSolverVariant(tokens: util.List[NCToken]) extends Ordered[NCI
     override def compare(v: NCIntentSolverVariant): Int =
         if (userToks > v.userToks) 1
         else if (userToks < v.userToks) -1
+
         else if (wordCnt > v.wordCnt) 1
         else if (wordCnt < v.wordCnt) -1
+
         else if (totalUserDirect > v.totalUserDirect) 1
         else if (totalUserDirect < v.totalUserDirect) -1
+
         else if (avgWordsPerTok > v.avgWordsPerTok) 1
         else if (avgWordsPerTok < v.avgWordsPerTok) -1
+
         else Integer.compare(v.totalSparsity, totalSparsity)
 
     override def toString: String =
