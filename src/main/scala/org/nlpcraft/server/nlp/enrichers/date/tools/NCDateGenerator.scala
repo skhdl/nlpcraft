@@ -44,10 +44,10 @@ import scala.collection.mutable.{LinkedHashMap ⇒ LHM}
 /**
  * Pre-built date ranges generator.
  */
-object DLDateGenerator {
+object NCDateGenerator {
     // For english names generation.
     Locale.setDefault(Locale.forLanguageTag("EN"))
-    
+
     private[date] val FMT_DATES =
         mkFormatters(YEAR_MONTH_DAY1, dupD = true, dupM = false) ++
         mkFormatters(YEAR_MONTH_DAY2, dupD = true, dupM = false) ++
@@ -484,16 +484,19 @@ object DLDateGenerator {
 
         val prefixes = qs.map(q ⇒ {
             val seq = q match {
-                case 1 ⇒ Seq("1st", "first")
-                case 2 ⇒ Seq("2nd", "second")
-                case 3 ⇒ Seq("3rd", "third")
-                case 4 ⇒ Seq("4th", "fourth")
+                case 1 ⇒ Seq("1", "1st", "first")
+                case 2 ⇒ Seq("2", "2nd", "second")
+                case 3 ⇒ Seq("3", "3rd", "third")
+                case 4 ⇒ Seq("4", "4th", "fourth", "last")
 
                 case _  ⇒ throw new AssertionError();
             }
 
             q → seq
         }).toMap
+
+        for (q ← qs)
+            prefixes(q).foreach(p ⇒ df += s"$p quarter" → s"${q}q")
 
         for (y ← YEARS_SEQ.map(_.toString); q ← qs) {
             val yShort = y.drop(2)
@@ -845,7 +848,7 @@ object DLDateGeneratorRunner extends App {
 
     private def convert(entry: (String, String)) = s"${entry._1} | ${entry._2}"
 
-    import DLDateGenerator._
+    import NCDateGenerator._
 
     U.mkTextFile(FULL_FILE, generateFull().map(convert))
     U.mkTextFile(PARTS_FILE, generateParts().map(convert))
